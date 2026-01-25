@@ -117,258 +117,152 @@ const editElementModal = document.getElementById('editElementModal');
 
 // ===== Google Gemini API Integration =====
 const GeminiAPI = {
-    async generateLandingContent(niche, offer, landingGoal) {
-        const goalDescription = landingGoal || 'Запись на консультацию';
+    // Базовый запрос к Gemini
+    async callGemini(prompt) {
+        const apiUrl = `${CONFIG.GEMINI_API_URL}?key=${CONFIG.GEMINI_API_KEY}`;
 
-        const prompt = `Создай структуру лендинга для ниши "${niche}" с оффером "${offer}".
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: prompt }]
+                }],
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 500
+                }
+            })
+        });
 
-ЦЕЛЬ ЛЕНДИНГА: ${goalDescription}
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Gemini API Error:', errorData);
+            throw new Error(`API Error: ${response.status}`);
+        }
 
-Адаптируй ВСЕ тексты под указанную цель. Например:
-- Если цель "Продажа курса" — кнопки должны быть "Купить курс", "Записаться на курс", форма для покупки и т.д.
-- Если цель "Сбор заявок на вебинар" — "Записаться на вебинар", "Забронировать место" и т.д.
-- Если цель "Продажа товара" — "Купить", "Заказать", "Добавить в корзину" и т.д.
+        const data = await response.json();
+        return data.candidates[0].content.parts[0].text.trim();
+    },
 
-Верни структуру СТРОГО в таком формате (КЛЮЧ: значение):
----
-HERO_TITLE: [Главный заголовок, привлекающий внимание к ${goalDescription}]
-HERO_SUBTITLE: [Подзаголовок с ключевой выгодой]
-HERO_DESCRIPTION: [Краткое описание предложения]
-HERO_CTA: [Кнопка призыва к действию, соответствующая цели: ${goalDescription}]
+    // Генерация одного блока
+    async generateBlock(blockType, niche, offer, goal) {
+        const prompts = {
+            hero: `Напиши контент для главного блока (hero) лендинга.
+Ниша: "${niche}"
+Оффер: "${offer}"
+Цель: "${goal}"
 
-TARGET_TITLE: Это для вас, если вы
-TARGET_1: [Описание целевой аудитории 1]
-TARGET_2: [Описание целевой аудитории 2]
-TARGET_3: [Описание целевой аудитории 3]
-TARGET_4: [Описание целевой аудитории 4]
-TARGET_5: [Описание целевой аудитории 5]
+Ответь ТОЛЬКО в формате JSON (без markdown):
+{"title":"заголовок","subtitle":"подзаголовок","description":"описание","cta":"текст кнопки"}`,
 
-BENEFITS_TITLE: [Заголовок секции преимуществ, адаптированный под цель]
-BENEFIT_1: [Преимущество 1]
-BENEFIT_2: [Преимущество 2]
-BENEFIT_3: [Преимущество 3]
-BENEFIT_4: [Преимущество 4]
-BENEFIT_5: [Преимущество 5]
+            target: `Напиши контент для блока "Для кого это" на лендинге.
+Ниша: "${niche}"
+Оффер: "${offer}"
+Цель: "${goal}"
 
-FORM_TITLE: [Заголовок формы, соответствующий цели: ${goalDescription}]
-FORM_ACTIVITY_OPTIONS: [Вариант 1], [Вариант 2], [Вариант 3], Другое
-FORM_INTEREST_OPTIONS: [Направление 1], [Направление 2], [Направление 3], Помощь в выборе
-FORM_CTA: [Кнопка отправки формы, соответствующая цели]
+Ответь ТОЛЬКО в формате JSON (без markdown):
+{"title":"заголовок блока","items":["пункт 1","пункт 2","пункт 3","пункт 4","пункт 5"]}`,
 
-GIFT_TITLE: [Заголовок бонуса/подарка]
-GIFT_DESCRIPTION: [Описание что получит пользователь]
-GIFT_ITEM_1: [Пункт подарка 1]
-GIFT_ITEM_2: [Пункт подарка 2]
-GIFT_ITEM_3: [Пункт подарка 3]
+            benefits: `Напиши контент для блока "Преимущества/Что вы получите" на лендинге.
+Ниша: "${niche}"
+Оффер: "${offer}"
+Цель: "${goal}"
 
-FINAL_CTA_TITLE: [Финальный призыв к действию]
-FINAL_CTA_TEXT: [Мотивирующий текст]
-FINAL_CTA_BUTTON: [Кнопка, соответствующая цели: ${goalDescription}]
-FINAL_GUARANTEE: [Гарантия или обещание]
----
+Ответь ТОЛЬКО в формате JSON (без markdown):
+{"title":"заголовок блока","items":["преимущество 1","преимущество 2","преимущество 3","преимущество 4","преимущество 5"]}`,
 
-ВАЖНО: Верни ТОЛЬКО структуру в указанном формате. Все тексты должны быть адаптированы под цель "${goalDescription}" для ниши "${niche}". Не добавляй пояснений.`;
+            form: `Напиши контент для блока с формой заявки на лендинге.
+Ниша: "${niche}"
+Оффер: "${offer}"
+Цель: "${goal}"
+
+Ответь ТОЛЬКО в формате JSON (без markdown):
+{"title":"заголовок формы","cta":"текст кнопки отправки"}`,
+
+            gift: `Напиши контент для блока "Подарок/Бонус" на лендинге.
+Ниша: "${niche}"
+Оффер: "${offer}"
+Цель: "${goal}"
+
+Ответь ТОЛЬКО в формате JSON (без markdown):
+{"title":"заголовок","description":"описание подарка","items":["бонус 1","бонус 2","бонус 3"]}`,
+
+            finalCta: `Напиши контент для финального призыва к действию на лендинге.
+Ниша: "${niche}"
+Оффер: "${offer}"
+Цель: "${goal}"
+
+Ответь ТОЛЬКО в формате JSON (без markdown):
+{"title":"заголовок","text":"мотивирующий текст","button":"текст кнопки","guarantee":"гарантия"}`
+        };
 
         try {
-            const apiUrl = `${CONFIG.GEMINI_API_URL}?key=${CONFIG.GEMINI_API_KEY}`;
-
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: prompt
-                        }]
-                    }],
-                    generationConfig: {
-                        temperature: 0.7,
-                        maxOutputTokens: 2000
-                    }
-                })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error('Gemini API Error:', errorData);
-                throw new Error(`API Error: ${response.status}`);
-            }
-
-            const data = await response.json();
-            const content = data.candidates[0].content.parts[0].text;
-
-            return this.parseResponse(content);
+            const response = await this.callGemini(prompts[blockType]);
+            // Убираем возможные markdown-обертки
+            const cleanJson = response.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+            return JSON.parse(cleanJson);
         } catch (error) {
-            console.error('Error calling Gemini API:', error);
-            // Fallback to local generation
-            return this.generateFallback(niche, offer, landingGoal);
+            console.error(`Error generating ${blockType}:`, error);
+            return this.getFallback(blockType, niche, goal);
         }
     },
 
-    parseResponse(text) {
-        const result = {};
-        const lines = text.split('\n');
-
-        for (const line of lines) {
-            const match = line.match(/^([A-Z_]+):\s*(.+)$/);
-            if (match) {
-                result[match[1]] = match[2].trim();
-            }
-        }
-
-        return {
-            hero: {
-                title: result.HERO_TITLE || 'Заголовок',
-                subtitle: result.HERO_SUBTITLE || 'Подзаголовок',
-                description: result.HERO_DESCRIPTION || 'Описание',
-                cta: result.HERO_CTA || 'Записаться'
-            },
-            target: {
-                title: result.TARGET_TITLE || 'Это для вас, если вы',
-                items: [
-                    result.TARGET_1,
-                    result.TARGET_2,
-                    result.TARGET_3,
-                    result.TARGET_4,
-                    result.TARGET_5
-                ].filter(Boolean)
-            },
-            benefits: {
-                title: result.BENEFITS_TITLE || 'Что вы получите',
-                items: [
-                    result.BENEFIT_1,
-                    result.BENEFIT_2,
-                    result.BENEFIT_3,
-                    result.BENEFIT_4,
-                    result.BENEFIT_5
-                ].filter(Boolean)
-            },
-            form: {
-                title: result.FORM_TITLE || 'Оставьте заявку',
-                activityOptions: result.FORM_ACTIVITY_OPTIONS?.split(',').map(s => s.trim()) || ['Вариант 1', 'Вариант 2', 'Другое'],
-                interestOptions: result.FORM_INTEREST_OPTIONS?.split(',').map(s => s.trim()) || ['Направление 1', 'Направление 2', 'Помощь в выборе'],
-                cta: result.FORM_CTA || 'Отправить заявку'
-            },
-            gift: {
-                title: result.GIFT_TITLE || 'Ваш подарок',
-                description: result.GIFT_DESCRIPTION || 'Получите полезный материал',
-                items: [
-                    result.GIFT_ITEM_1,
-                    result.GIFT_ITEM_2,
-                    result.GIFT_ITEM_3
-                ].filter(Boolean)
-            },
-            finalCta: {
-                title: result.FINAL_CTA_TITLE || 'Сделайте первый шаг',
-                text: result.FINAL_CTA_TEXT || 'Мы ждем вас',
-                button: result.FINAL_CTA_BUTTON || 'Получить план',
-                guarantee: result.FINAL_GUARANTEE || 'Ваши данные в безопасности'
-            }
-        };
-    },
-
-    generateFallback(niche, offer, landingGoal) {
+    // Поэтапная генерация всего контента
+    async generateLandingContent(niche, offer, landingGoal, onProgress) {
         const goal = landingGoal || 'Оставить заявку';
-        const ctaText = this.getCtaForGoal(landingGoal);
+        const blocks = ['hero', 'target', 'benefits', 'form', 'gift', 'finalCta'];
+        const content = {};
 
-        return {
+        for (let i = 0; i < blocks.length; i++) {
+            const blockType = blocks[i];
+            if (onProgress) {
+                onProgress(blockType, i + 1, blocks.length);
+            }
+            content[blockType] = await this.generateBlock(blockType, niche, offer, goal);
+        }
+
+        return content;
+    },
+
+    // Fallback для блока
+    getFallback(blockType, niche, goal) {
+        const fallbacks = {
             hero: {
-                title: `${offer || `Лучшее предложение в сфере ${niche}`}`,
-                subtitle: `Получите то, что давно искали — качественное решение для ваших задач.`,
-                description: `Узнайте подробности и сделайте первый шаг уже сегодня.`,
-                cta: ctaText.main
+                title: `Лучшее решение в сфере ${niche}`,
+                subtitle: 'Получите результат, который превзойдёт ожидания',
+                description: 'Узнайте подробности и сделайте первый шаг уже сегодня',
+                cta: goal || 'Узнать подробнее'
             },
             target: {
                 title: 'Это для вас, если вы',
-                items: [
-                    `Интересуетесь сферой ${niche}`,
-                    'Хотите получить качественный результат',
-                    'Цените профессиональный подход',
-                    'Готовы к позитивным изменениям',
-                    'Ищете надежное решение'
-                ]
+                items: ['Хотите получить качественный результат', 'Цените профессиональный подход', 'Готовы к позитивным изменениям', 'Ищете надёжное решение', 'Хотите сэкономить время']
             },
             benefits: {
                 title: 'Что вы получите',
-                items: [
-                    'Профессиональный подход к вашей задаче',
-                    'Индивидуальное решение под ваши потребности',
-                    'Поддержку на каждом этапе',
-                    'Гарантию качества',
-                    'Результат, который превзойдет ожидания'
-                ]
+                items: ['Профессиональный подход', 'Индивидуальное решение', 'Поддержку на каждом этапе', 'Гарантию качества', 'Результат в срок']
             },
             form: {
-                title: ctaText.formTitle,
-                activityOptions: ['Вариант 1', 'Вариант 2', 'Вариант 3', 'Другое'],
-                interestOptions: ['Основное', 'Дополнительное', 'Помощь в выборе'],
-                cta: ctaText.formButton
+                title: 'Оставьте заявку',
+                cta: 'Отправить'
             },
             gift: {
-                title: 'Бонус для вас',
-                description: 'Получите дополнительную ценность прямо сейчас',
-                items: [
-                    'Полезные материалы по теме',
-                    'Практические рекомендации',
-                    'Эксклюзивный контент'
-                ]
+                title: 'Ваш бонус',
+                description: 'Получите дополнительную ценность',
+                items: ['Полезные материалы', 'Практические рекомендации', 'Эксклюзивный контент']
             },
             finalCta: {
                 title: 'Не откладывайте на потом',
                 text: 'Сделайте шаг к вашей цели прямо сейчас',
-                button: ctaText.main,
-                guarantee: 'Мы гарантируем качество и безопасность ваших данных.'
+                button: goal || 'Начать',
+                guarantee: 'Гарантируем качество и безопасность ваших данных'
             }
         };
+        return fallbacks[blockType];
     },
 
-    getCtaForGoal(landingGoal) {
-        const goal = (landingGoal || '').toLowerCase();
-
-        if (goal.includes('курс') || goal.includes('обучен')) {
-            return {
-                main: 'ЗАПИСАТЬСЯ НА КУРС',
-                formTitle: 'Запишитесь на курс',
-                formButton: 'ПОЛУЧИТЬ ДОСТУП К КУРСУ'
-            };
-        }
-        if (goal.includes('вебинар')) {
-            return {
-                main: 'ЗАПИСАТЬСЯ НА ВЕБИНАР',
-                formTitle: 'Забронируйте место на вебинаре',
-                formButton: 'ЗАБРОНИРОВАТЬ МЕСТО'
-            };
-        }
-        if (goal.includes('товар') || goal.includes('купить') || goal.includes('продаж')) {
-            return {
-                main: 'КУПИТЬ СЕЙЧАС',
-                formTitle: 'Оформите заказ',
-                formButton: 'ОФОРМИТЬ ЗАКАЗ'
-            };
-        }
-        if (goal.includes('консультац')) {
-            return {
-                main: 'ЗАПИСАТЬСЯ НА КОНСУЛЬТАЦИЮ',
-                formTitle: 'Запишитесь на консультацию',
-                formButton: 'ОТПРАВИТЬ ЗАЯВКУ'
-            };
-        }
-        if (goal.includes('заявк') || goal.includes('лид')) {
-            return {
-                main: 'ОСТАВИТЬ ЗАЯВКУ',
-                formTitle: 'Оставьте заявку',
-                formButton: 'ОТПРАВИТЬ ЗАЯВКУ'
-            };
-        }
-
-        return {
-            main: 'УЗНАТЬ ПОДРОБНЕЕ',
-            formTitle: 'Свяжитесь с нами',
-            formButton: 'ОТПРАВИТЬ'
-        };
-    }
 };
 
 // ===== Image Generator (Mock + Ready for API) =====
@@ -1065,17 +959,30 @@ generateBtn.addEventListener('click', async () => {
     state.landingGoal = landingGoal;
 
     // Show loading
-    generateBtn.querySelector('.btn-text').style.display = 'none';
-    generateBtn.querySelector('.btn-loader').style.display = 'inline';
-    generateBtn.querySelector('.btn-loader').textContent = 'Генерация через AI...';
+    const btnText = generateBtn.querySelector('.btn-text');
+    const btnLoader = generateBtn.querySelector('.btn-loader');
+    btnText.style.display = 'none';
+    btnLoader.style.display = 'inline';
     generateBtn.disabled = true;
+
+    // Названия блоков для отображения прогресса
+    const blockNames = {
+        hero: 'Главный блок',
+        target: 'Для кого это',
+        benefits: 'Преимущества',
+        form: 'Форма заявки',
+        gift: 'Бонус/Подарок',
+        finalCta: 'Финальный призыв'
+    };
 
     try {
         // Step 1: Apply niche styles
         StyleGenerator.applyStyles(niche);
 
-        // Step 2: Generate content via Claude API
-        const content = await GeminiAPI.generateLandingContent(niche, offer, landingGoal);
+        // Step 2: Generate content via Gemini API с прогрессом
+        const content = await GeminiAPI.generateLandingContent(niche, offer, landingGoal, (blockType, current, total) => {
+            btnLoader.textContent = `Генерация: ${blockNames[blockType]} (${current}/${total})...`;
+        });
         state.generatedContent = content;
 
         // Step 3: Build landing page
