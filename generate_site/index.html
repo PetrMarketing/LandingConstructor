@@ -276,6 +276,26 @@
         </div>
     </div>
 
+    <!-- Модальное окно: Предпросмотр ответа Gemini -->
+    <div class="modal" id="previewResponseModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>✨ Ответ от Gemini AI</h3>
+                <button class="modal-close" data-close>&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: #64748b; margin-bottom: 15px;">Проверьте сгенерированный контент перед созданием лендинга:</p>
+                <div class="response-preview" id="geminiResponsePreview">
+                    <!-- Контент будет вставлен динамически -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="regenerateBtn">🔄 Перегенерировать</button>
+                <button class="btn btn-primary" id="acceptResponseBtn">✓ Принять и создать</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Модальное окно: Редактирование элемента -->
     <div class="modal" id="editElementModal">
         <div class="modal-content">

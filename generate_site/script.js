@@ -1045,6 +1045,106 @@ document.getElementById('photos').addEventListener('change', (e) => {
     });
 });
 
+// ===== Preview Response Modal =====
+const previewResponseModal = document.getElementById('previewResponseModal');
+const geminiResponsePreview = document.getElementById('geminiResponsePreview');
+let pendingContent = null;
+
+function showResponsePreview(content) {
+    pendingContent = content;
+
+    // Форматируем контент для отображения
+    const html = `
+        <div class="response-block">
+            <div class="response-block-title">🚀 Главный блок (Hero)</div>
+            <div class="response-block-content">
+                <strong>Заголовок:</strong> ${content.hero?.title || '-'}<br>
+                <strong>Подзаголовок:</strong> ${content.hero?.subtitle || '-'}<br>
+                <strong>Описание:</strong> ${content.hero?.description || '-'}<br>
+                <strong>Кнопка:</strong> ${content.hero?.cta || '-'}
+            </div>
+        </div>
+        <div class="response-block">
+            <div class="response-block-title">👥 Для кого это (Target)</div>
+            <div class="response-block-content">
+                <strong>Заголовок:</strong> ${content.target?.title || '-'}
+                <ul>${(content.target?.items || []).map(item => `<li>${item}</li>`).join('')}</ul>
+            </div>
+        </div>
+        <div class="response-block">
+            <div class="response-block-title">✨ Преимущества (Benefits)</div>
+            <div class="response-block-content">
+                <strong>Заголовок:</strong> ${content.benefits?.title || '-'}
+                <ul>${(content.benefits?.items || []).map(item => `<li>${item}</li>`).join('')}</ul>
+            </div>
+        </div>
+        <div class="response-block">
+            <div class="response-block-title">📝 Форма заявки</div>
+            <div class="response-block-content">
+                <strong>Заголовок:</strong> ${content.form?.title || '-'}<br>
+                <strong>Кнопка:</strong> ${content.form?.cta || '-'}
+            </div>
+        </div>
+        <div class="response-block">
+            <div class="response-block-title">🎁 Бонус/Подарок</div>
+            <div class="response-block-content">
+                <strong>Заголовок:</strong> ${content.gift?.title || '-'}<br>
+                <strong>Описание:</strong> ${content.gift?.description || '-'}
+                <ul>${(content.gift?.items || []).map(item => `<li>${item}</li>`).join('')}</ul>
+            </div>
+        </div>
+        <div class="response-block">
+            <div class="response-block-title">🎯 Финальный призыв</div>
+            <div class="response-block-content">
+                <strong>Заголовок:</strong> ${content.finalCta?.title || '-'}<br>
+                <strong>Текст:</strong> ${content.finalCta?.text || '-'}<br>
+                <strong>Кнопка:</strong> ${content.finalCta?.button || '-'}<br>
+                <strong>Гарантия:</strong> ${content.finalCta?.guarantee || '-'}
+            </div>
+        </div>
+    `;
+
+    geminiResponsePreview.innerHTML = html;
+    previewResponseModal.classList.add('active');
+}
+
+function hideResponsePreview() {
+    previewResponseModal.classList.remove('active');
+}
+
+function buildLandingFromContent(content) {
+    state.generatedContent = content;
+
+    // Build landing page
+    const html = LandingBuilder.build(content);
+    previewContainer.innerHTML = html;
+
+    // Initialize features
+    initSortable();
+    updateBlocksList();
+    initTimers();
+}
+
+// Accept button
+document.getElementById('acceptResponseBtn').addEventListener('click', () => {
+    if (pendingContent) {
+        hideResponsePreview();
+        buildLandingFromContent(pendingContent);
+        pendingContent = null;
+    }
+});
+
+// Regenerate button
+document.getElementById('regenerateBtn').addEventListener('click', () => {
+    hideResponsePreview();
+    pendingContent = null;
+    // Trigger generation again
+    generateBtn.click();
+});
+
+// Close modal
+previewResponseModal.querySelector('.modal-close').addEventListener('click', hideResponsePreview);
+
 // Generate Landing
 generateBtn.addEventListener('click', async () => {
     // Проверка API ключа
@@ -1081,24 +1181,17 @@ generateBtn.addEventListener('click', async () => {
         const content = await GeminiAPI.generateLandingContent(niche, offer, landingGoal, () => {
             btnLoader.textContent = 'Ожидаем ответ от Gemini...';
         });
-        state.generatedContent = content;
 
-        // Step 3: Build landing page
-        const html = LandingBuilder.build(content);
-        previewContainer.innerHTML = html;
-
-        // Step 4: Initialize features
-        initSortable();
-        updateBlocksList();
-        initTimers();
+        // Step 3: Show preview modal
+        showResponsePreview(content);
 
     } catch (error) {
         console.error('Generation error:', error);
         alert('Ошибка генерации: ' + error.message + '\n\nПроверьте консоль браузера (F12) для деталей.');
     } finally {
         // Hide loading
-        generateBtn.querySelector('.btn-text').style.display = 'inline';
-        generateBtn.querySelector('.btn-loader').style.display = 'none';
+        btnText.style.display = 'inline';
+        btnLoader.style.display = 'none';
         generateBtn.disabled = false;
     }
 });
