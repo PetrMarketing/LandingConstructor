@@ -2,9 +2,8 @@
 
 // Configuration
 const CONFIG = {
-    CLAUDE_API_KEY: localStorage.getItem('claude_api_key') || '',
-    CLAUDE_API_URL: 'https://api.anthropic.com/v1/messages',
-    MODEL: 'claude-3-5-sonnet-20241022',
+    GEMINI_API_KEY: localStorage.getItem('gemini_api_key') || '',
+    GEMINI_API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
     // Image Generation (TODO: подключить реальный API)
     IMAGE_API_KEY: '',
     IMAGE_API_URL: '',
@@ -20,7 +19,7 @@ const ApiKeyManager = {
         this.setupEventListeners();
 
         // Показать модалку если нет ключа
-        if (!CONFIG.CLAUDE_API_KEY) {
+        if (!CONFIG.GEMINI_API_KEY) {
             this.show();
         }
     },
@@ -62,22 +61,22 @@ const ApiKeyManager = {
             return;
         }
 
-        if (!apiKey.startsWith('sk-ant-')) {
-            alert('Неверный формат API ключа. Ключ должен начинаться с "sk-ant-"');
+        if (!apiKey.startsWith('AIza')) {
+            alert('Неверный формат API ключа. Ключ Google Gemini должен начинаться с "AIza"');
             return;
         }
 
-        CONFIG.CLAUDE_API_KEY = apiKey;
+        CONFIG.GEMINI_API_KEY = apiKey;
 
         if (saveCheckbox?.checked) {
-            localStorage.setItem('claude_api_key', apiKey);
+            localStorage.setItem('gemini_api_key', apiKey);
         }
 
         this.hide();
     },
 
     hasKey() {
-        return !!CONFIG.CLAUDE_API_KEY;
+        return !!CONFIG.GEMINI_API_KEY;
     },
 
     promptIfNeeded() {
@@ -116,8 +115,8 @@ const addBlockModal = document.getElementById('addBlockModal');
 const exportModal = document.getElementById('exportModal');
 const editElementModal = document.getElementById('editElementModal');
 
-// ===== Claude API Integration =====
-const ClaudeAPI = {
+// ===== Google Gemini API Integration =====
+const GeminiAPI = {
     async generateLandingContent(niche, offer, landingGoal) {
         const goalDescription = landingGoal || 'Запись на консультацию';
 
@@ -171,36 +170,38 @@ FINAL_GUARANTEE: [Гарантия или обещание]
 ВАЖНО: Верни ТОЛЬКО структуру в указанном формате. Все тексты должны быть адаптированы под цель "${goalDescription}" для ниши "${niche}". Не добавляй пояснений.`;
 
         try {
-            const response = await fetch(CONFIG.CLAUDE_API_URL, {
+            const apiUrl = `${CONFIG.GEMINI_API_URL}?key=${CONFIG.GEMINI_API_KEY}`;
+
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': CONFIG.CLAUDE_API_KEY,
-                    'anthropic-version': '2023-06-01',
-                    'anthropic-dangerous-direct-browser-access': 'true'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: CONFIG.MODEL,
-                    max_tokens: 2000,
-                    messages: [{
-                        role: 'user',
-                        content: prompt
-                    }]
+                    contents: [{
+                        parts: [{
+                            text: prompt
+                        }]
+                    }],
+                    generationConfig: {
+                        temperature: 0.7,
+                        maxOutputTokens: 2000
+                    }
                 })
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
-                console.error('Claude API Error:', errorData);
+                console.error('Gemini API Error:', errorData);
                 throw new Error(`API Error: ${response.status}`);
             }
 
             const data = await response.json();
-            const content = data.content[0].text;
+            const content = data.candidates[0].content.parts[0].text;
 
             return this.parseResponse(content);
         } catch (error) {
-            console.error('Error calling Claude API:', error);
+            console.error('Error calling Gemini API:', error);
             // Fallback to local generation
             return this.generateFallback(niche, offer, landingGoal);
         }
@@ -1074,7 +1075,7 @@ generateBtn.addEventListener('click', async () => {
         StyleGenerator.applyStyles(niche);
 
         // Step 2: Generate content via Claude API
-        const content = await ClaudeAPI.generateLandingContent(niche, offer, landingGoal);
+        const content = await GeminiAPI.generateLandingContent(niche, offer, landingGoal);
         state.generatedContent = content;
 
         // Step 3: Build landing page
