@@ -2,13 +2,91 @@
 
 // Configuration
 const CONFIG = {
-    CLAUDE_API_KEY: '', // Вставьте ваш API ключ
+    CLAUDE_API_KEY: localStorage.getItem('claude_api_key') || '',
     CLAUDE_API_URL: 'https://api.anthropic.com/v1/messages',
     MODEL: 'claude-3-5-sonnet-20241022',
     // Image Generation (TODO: подключить реальный API)
     IMAGE_API_KEY: '',
     IMAGE_API_URL: '',
     IMAGE_SERVICE: 'mock' // 'openai', 'stability', 'replicate', 'mock'
+};
+
+// ===== API Key Management =====
+const ApiKeyManager = {
+    modal: null,
+
+    init() {
+        this.modal = document.getElementById('apiKeyModal');
+        this.setupEventListeners();
+
+        // Показать модалку если нет ключа
+        if (!CONFIG.CLAUDE_API_KEY) {
+            this.show();
+        }
+    },
+
+    setupEventListeners() {
+        const saveBtn = document.getElementById('saveApiKeyBtn');
+        const skipBtn = document.getElementById('skipApiKeyBtn');
+        const input = document.getElementById('apiKeyInput');
+
+        saveBtn?.addEventListener('click', () => this.save());
+        skipBtn?.addEventListener('click', () => this.hide());
+
+        // Enter для сохранения
+        input?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.save();
+        });
+    },
+
+    show() {
+        if (this.modal) {
+            this.modal.classList.add('active');
+            document.getElementById('apiKeyInput')?.focus();
+        }
+    },
+
+    hide() {
+        if (this.modal) {
+            this.modal.classList.remove('active');
+        }
+    },
+
+    save() {
+        const input = document.getElementById('apiKeyInput');
+        const saveCheckbox = document.getElementById('saveApiKey');
+        const apiKey = input?.value.trim();
+
+        if (!apiKey) {
+            alert('Пожалуйста, введите API ключ');
+            return;
+        }
+
+        if (!apiKey.startsWith('sk-ant-')) {
+            alert('Неверный формат API ключа. Ключ должен начинаться с "sk-ant-"');
+            return;
+        }
+
+        CONFIG.CLAUDE_API_KEY = apiKey;
+
+        if (saveCheckbox?.checked) {
+            localStorage.setItem('claude_api_key', apiKey);
+        }
+
+        this.hide();
+    },
+
+    hasKey() {
+        return !!CONFIG.CLAUDE_API_KEY;
+    },
+
+    promptIfNeeded() {
+        if (!this.hasKey()) {
+            this.show();
+            return false;
+        }
+        return true;
+    }
 };
 
 // State
@@ -967,6 +1045,11 @@ document.getElementById('photos').addEventListener('change', (e) => {
 
 // Generate Landing
 generateBtn.addEventListener('click', async () => {
+    // Проверка API ключа
+    if (!ApiKeyManager.promptIfNeeded()) {
+        return;
+    }
+
     const niche = document.getElementById('niche').value.trim();
     const offer = document.getElementById('offer').value.trim();
     const landingGoal = document.getElementById('landingGoal').value.trim();
@@ -1590,5 +1673,7 @@ function downloadAsZip() {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    // Инициализация менеджера API ключей
+    ApiKeyManager.init();
     console.log('AI Landing Constructor with Claude API initialized');
 });

@@ -147,6 +147,35 @@
         </div>
     </main>
 
+    <!-- Модальное окно: Ввод API ключа -->
+    <div class="modal" id="apiKeyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔑 Введите API ключ Claude</h3>
+            </div>
+            <div class="modal-body">
+                <p style="color: #64748b; margin-bottom: 20px;">
+                    Для генерации контента через AI необходим API ключ Anthropic Claude.
+                    Получить ключ можно на <a href="https://console.anthropic.com/" target="_blank" style="color: #2563eb;">console.anthropic.com</a>
+                </p>
+                <div class="form-group">
+                    <label for="apiKeyInput">API ключ</label>
+                    <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-...">
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="saveApiKey" checked>
+                        <span style="font-weight: normal;">Сохранить ключ в браузере</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="skipApiKeyBtn">Пропустить</button>
+                <button class="btn btn-primary" id="saveApiKeyBtn">Сохранить и продолжить</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Модальное окно: Добавление блока -->
     <div class="modal" id="addBlockModal">
         <div class="modal-content">
