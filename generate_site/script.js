@@ -117,34 +117,60 @@ const editElementModal = document.getElementById('editElementModal');
 
 // ===== Google Gemini API Integration =====
 const GeminiAPI = {
-    // Базовый запрос к Gemini
-    async callGemini(prompt) {
+    // Задержка между запросами (мс)
+    delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    },
+
+    // Базовый запрос к Gemini с retry
+    async callGemini(prompt, retries = 3) {
         const apiUrl = `${CONFIG.GEMINI_API_URL}?key=${CONFIG.GEMINI_API_KEY}`;
 
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{ text: prompt }]
-                }],
-                generationConfig: {
-                    temperature: 0.7,
-                    maxOutputTokens: 500
-                }
-            })
-        });
+        for (let attempt = 1; attempt <= retries; attempt++) {
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: prompt }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.7,
+                            maxOutputTokens: 500
+                        }
+                    })
+                });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error('Gemini API Error:', errorData);
-            throw new Error(`API Error: ${response.status}`);
+                if (response.status === 429) {
+                    // Too Many Requests - ждём и пробуем снова
+                    const waitTime = attempt * 2000; // 2с, 4с, 6с
+                    console.log(`Rate limited (429). Waiting ${waitTime/1000}s before retry ${attempt}/${retries}...`);
+                    await this.delay(waitTime);
+                    continue;
+                }
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('Gemini API Error:', errorData);
+                    throw new Error(`API Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text.trim();
+
+            } catch (error) {
+                if (attempt === retries) {
+                    throw error;
+                }
+                console.log(`Attempt ${attempt} failed, retrying...`);
+                await this.delay(1000);
+            }
         }
 
-        const data = await response.json();
-        return data.candidates[0].content.parts[0].text.trim();
+        throw new Error('Max retries exceeded');
     },
 
     // Генерация одного блока
@@ -227,10 +253,21 @@ const GeminiAPI = {
 
         for (let i = 0; i < blocks.length; i++) {
             const blockType = blocks[i];
+
+            // Показываем прогресс
             if (onProgress) {
                 onProgress(blockType, i + 1, blocks.length);
             }
+
+            // Генерируем блок и ждём завершения
+            console.log(`Generating block: ${blockType}...`);
             content[blockType] = await this.generateBlock(blockType, niche, offer, goal);
+            console.log(`Block ${blockType} completed:`, content[blockType]);
+
+            // Пауза 1.5 секунды между запросами чтобы не превысить лимит
+            if (i < blocks.length - 1) {
+                await this.delay(1500);
+            }
         }
 
         return content;
