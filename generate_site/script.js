@@ -245,32 +245,91 @@ const GeminiAPI = {
         }
     },
 
-    // Поэтапная генерация всего контента
+    // Генерация всего контента ОДНИМ запросом
     async generateLandingContent(niche, offer, landingGoal, onProgress) {
         const goal = landingGoal || 'Оставить заявку';
-        const blocks = ['hero', 'target', 'benefits', 'form', 'gift', 'finalCta'];
-        const content = {};
 
-        for (let i = 0; i < blocks.length; i++) {
-            const blockType = blocks[i];
-
-            // Показываем прогресс
-            if (onProgress) {
-                onProgress(blockType, i + 1, blocks.length);
-            }
-
-            // Генерируем блок и ждём завершения
-            console.log(`Generating block: ${blockType}...`);
-            content[blockType] = await this.generateBlock(blockType, niche, offer, goal);
-            console.log(`Block ${blockType} completed:`, content[blockType]);
-
-            // Пауза 1.5 секунды между запросами чтобы не превысить лимит
-            if (i < blocks.length - 1) {
-                await this.delay(1500);
-            }
+        if (onProgress) {
+            onProgress('all', 1, 1);
         }
 
-        return content;
+        const prompt = `Создай контент для лендинга.
+Ниша: "${niche}"
+Оффер: "${offer}"
+Цель: "${goal}"
+
+Ответь СТРОГО в формате JSON (без markdown, без пояснений):
+{
+  "hero": {
+    "title": "продающий заголовок",
+    "subtitle": "подзаголовок с выгодой",
+    "description": "краткое описание предложения",
+    "cta": "текст кнопки"
+  },
+  "target": {
+    "title": "Это для вас, если вы",
+    "items": ["пункт 1", "пункт 2", "пункт 3", "пункт 4", "пункт 5"]
+  },
+  "benefits": {
+    "title": "Что вы получите",
+    "items": ["выгода 1", "выгода 2", "выгода 3", "выгода 4", "выгода 5"]
+  },
+  "form": {
+    "title": "заголовок формы",
+    "cta": "текст кнопки",
+    "activityOptions": ["вариант 1", "вариант 2", "вариант 3", "другое"],
+    "interestOptions": ["направление 1", "направление 2", "помощь в выборе"]
+  },
+  "gift": {
+    "title": "заголовок бонуса",
+    "description": "описание подарка",
+    "items": ["бонус 1", "бонус 2", "бонус 3"]
+  },
+  "finalCta": {
+    "title": "финальный призыв",
+    "text": "мотивирующий текст",
+    "button": "текст кнопки",
+    "guarantee": "гарантия"
+  }
+}`;
+
+        try {
+            console.log('Sending request to Gemini...');
+            const response = await this.callGemini(prompt);
+            console.log('Gemini raw response:', response);
+
+            // Убираем markdown обёртки
+            const cleanJson = response
+                .replace(/```json\n?/g, '')
+                .replace(/```\n?/g, '')
+                .trim();
+
+            const content = JSON.parse(cleanJson);
+            console.log('Parsed content:', content);
+
+            // Добавляем дефолты для формы если нет
+            if (content.form) {
+                content.form.activityOptions = content.form.activityOptions || ['Вариант 1', 'Вариант 2', 'Другое'];
+                content.form.interestOptions = content.form.interestOptions || ['Направление 1', 'Направление 2', 'Помощь в выборе'];
+            }
+
+            return content;
+        } catch (error) {
+            console.error('Generation failed:', error);
+            return this.getFullFallback(niche, goal);
+        }
+    },
+
+    // Полный fallback для всех блоков
+    getFullFallback(niche, goal) {
+        return {
+            hero: this.getFallback('hero', niche, goal),
+            target: this.getFallback('target', niche, goal),
+            benefits: this.getFallback('benefits', niche, goal),
+            form: this.getFallback('form', niche, goal),
+            gift: this.getFallback('gift', niche, goal),
+            finalCta: this.getFallback('finalCta', niche, goal)
+        };
     },
 
     // Fallback для блока
@@ -1013,23 +1072,14 @@ generateBtn.addEventListener('click', async () => {
     btnLoader.style.display = 'inline';
     generateBtn.disabled = true;
 
-    // Названия блоков для отображения прогресса
-    const blockNames = {
-        hero: 'Главный блок',
-        target: 'Для кого это',
-        benefits: 'Преимущества',
-        form: 'Форма заявки',
-        gift: 'Бонус/Подарок',
-        finalCta: 'Финальный призыв'
-    };
-
     try {
         // Step 1: Apply niche styles
         StyleGenerator.applyStyles(niche);
 
-        // Step 2: Generate content via Gemini API с прогрессом
-        const content = await GeminiAPI.generateLandingContent(niche, offer, landingGoal, (blockType, current, total) => {
-            btnLoader.textContent = `Генерация: ${blockNames[blockType]} (${current}/${total})...`;
+        // Step 2: Generate content via Gemini API
+        btnLoader.textContent = 'Генерация контента через AI...';
+        const content = await GeminiAPI.generateLandingContent(niche, offer, landingGoal, () => {
+            btnLoader.textContent = 'Ожидаем ответ от Gemini...';
         });
         state.generatedContent = content;
 
