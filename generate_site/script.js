@@ -180,7 +180,7 @@ const GeminiAPI = {
 Цель: "${goal}"
 
 Ответь ТОЛЬКО в формате JSON (без markdown):
-{"title":"заголовок формы","cta":"текст кнопки отправки"}`,
+{"title":"заголовок формы","cta":"текст кнопки","activityOptions":["вариант1","вариант2","вариант3","другое"],"interestOptions":["направление1","направление2","помощь в выборе"]}`,
 
             gift: `Напиши контент для блока "Подарок/Бонус" на лендинге.
 Ниша: "${niche}"
@@ -201,9 +201,18 @@ const GeminiAPI = {
 
         try {
             const response = await this.callGemini(prompts[blockType]);
+            console.log(`Gemini response for ${blockType}:`, response);
             // Убираем возможные markdown-обертки
             const cleanJson = response.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-            return JSON.parse(cleanJson);
+            const parsed = JSON.parse(cleanJson);
+
+            // Добавляем дефолтные поля для формы если их нет
+            if (blockType === 'form') {
+                parsed.activityOptions = parsed.activityOptions || ['Вариант 1', 'Вариант 2', 'Вариант 3', 'Другое'];
+                parsed.interestOptions = parsed.interestOptions || ['Направление 1', 'Направление 2', 'Помощь в выборе'];
+            }
+
+            return parsed;
         } catch (error) {
             console.error(`Error generating ${blockType}:`, error);
             return this.getFallback(blockType, niche, goal);
@@ -246,7 +255,9 @@ const GeminiAPI = {
             },
             form: {
                 title: 'Оставьте заявку',
-                cta: 'Отправить'
+                cta: 'Отправить',
+                activityOptions: ['Специалист', 'Руководитель', 'Начинающий', 'Другое'],
+                interestOptions: ['Основное направление', 'Дополнительные услуги', 'Помощь в выборе']
             },
             gift: {
                 title: 'Ваш бонус',
@@ -996,7 +1007,7 @@ generateBtn.addEventListener('click', async () => {
 
     } catch (error) {
         console.error('Generation error:', error);
-        alert('Произошла ошибка при генерации. Попробуйте снова.');
+        alert('Ошибка генерации: ' + error.message + '\n\nПроверьте консоль браузера (F12) для деталей.');
     } finally {
         // Hide loading
         generateBtn.querySelector('.btn-text').style.display = 'inline';
