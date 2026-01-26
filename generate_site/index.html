@@ -3,318 +3,388 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Конструктор Лендингов</title>
+    <title>Конструктор лендингов</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Боковая панель управления -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h2>🚀 AI Конструктор</h2>
-            <button class="sidebar-toggle" id="sidebarToggle">◀</button>
-        </div>
-
-        <!-- Вкладки панели -->
-        <div class="sidebar-tabs">
-            <button class="tab-btn active" data-tab="generate">Генерация</button>
-            <button class="tab-btn" data-tab="design">Дизайн</button>
-            <button class="tab-btn" data-tab="blocks">Блоки</button>
-        </div>
-
-        <!-- Вкладка: Генерация -->
-        <div class="tab-content active" id="tab-generate">
-            <div class="form-group">
-                <label for="niche">Ниша бизнеса</label>
-                <input type="text" id="niche" placeholder="Например: Кофейня, IT-аутсорсинг">
+    <div class="builder-container">
+        <!-- Top Toolbar -->
+        <header class="toolbar">
+            <div class="toolbar-left">
+                <a href="../" class="logo">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Конструктор</span>
+                </a>
             </div>
-
-            <div class="form-group">
-                <label for="offer">Ключевой запрос/оффер</label>
-                <textarea id="offer" rows="3" placeholder="Например: Открытие кофейни с нуля за 30 дней"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="landingGoal">Цель лендинга</label>
-                <textarea id="landingGoal" rows="3" placeholder="Например: Продажа онлайн-курса, Сбор заявок на вебинар, Запись на консультацию, Продажа товара..."></textarea>
-                <small style="display:block;color:#64748b;margin-top:4px;">Опишите, какое действие должен совершить посетитель</small>
-            </div>
-
-            <div class="form-group">
-                <label for="photos">Загрузка фото (до 5 шт.)</label>
-                <small style="display:block;color:#64748b;margin-bottom:8px;">1 - герой, 2 - решение, 3-4 - аудитория, 5 - автор</small>
-                <input type="file" id="photos" multiple accept="image/*">
-                <div class="photo-preview" id="photoPreview"></div>
-            </div>
-
-            <button class="btn btn-primary btn-generate" id="generateBtn">
-                <span class="btn-text">Сгенерировать лендинг</span>
-                <span class="btn-loader" style="display:none;">Генерация...</span>
-            </button>
-
-            <button class="btn btn-ai btn-generate" id="generateImagesBtn" style="display:none; margin-top: 10px;">
-                <span class="btn-text">✨ Сгенерировать все изображения</span>
-                <span class="btn-loader" style="display:none;">Генерация изображений...</span>
-            </button>
-        </div>
-
-        <!-- Вкладка: Дизайн -->
-        <div class="tab-content" id="tab-design">
-            <div class="form-group">
-                <label>Шаблон оформления</label>
-                <div class="template-grid">
-                    <button class="template-btn active" data-template="strict">Строгий</button>
-                    <button class="template-btn" data-template="creative">Креативный</button>
-                    <button class="template-btn" data-template="minimal">Минималистичный</button>
-                    <button class="template-btn" data-template="bright">Яркий</button>
+            <div class="toolbar-center">
+                <div class="viewport-switcher">
+                    <button class="viewport-btn active" data-viewport="desktop" title="Десктоп">
+                        <i class="fas fa-desktop"></i>
+                    </button>
+                    <button class="viewport-btn" data-viewport="tablet" title="Планшет">
+                        <i class="fas fa-tablet-alt"></i>
+                    </button>
+                    <button class="viewport-btn" data-viewport="mobile" title="Мобильный">
+                        <i class="fas fa-mobile-alt"></i>
+                    </button>
                 </div>
             </div>
+            <div class="toolbar-right">
+                <button class="toolbar-btn" id="undoBtn" title="Отменить">
+                    <i class="fas fa-undo"></i>
+                </button>
+                <button class="toolbar-btn" id="redoBtn" title="Повторить">
+                    <i class="fas fa-redo"></i>
+                </button>
+                <button class="toolbar-btn" id="previewBtn" title="Предпросмотр">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="toolbar-btn" id="codeBtn" title="Код">
+                    <i class="fas fa-code"></i>
+                </button>
+                <button class="toolbar-btn primary" id="saveBtn">
+                    <i class="fas fa-save"></i>
+                    <span>Сохранить</span>
+                </button>
+                <button class="toolbar-btn success" id="exportBtn">
+                    <i class="fas fa-download"></i>
+                    <span>Экспорт</span>
+                </button>
+            </div>
+        </header>
 
-            <div class="form-group">
-                <label>Цветовая палитра</label>
-                <div class="color-picker">
-                    <div class="color-item">
-                        <span>Primary</span>
-                        <input type="color" id="colorPrimary" value="#2563eb">
-                    </div>
-                    <div class="color-item">
-                        <span>Secondary</span>
-                        <input type="color" id="colorSecondary" value="#1e40af">
-                    </div>
-                    <div class="color-item">
-                        <span>Accent</span>
-                        <input type="color" id="colorAccent" value="#f59e0b">
-                    </div>
+        <div class="builder-main">
+            <!-- Left Panel - Blocks -->
+            <aside class="blocks-panel" id="blocksPanel">
+                <div class="panel-header">
+                    <h3>Блоки</h3>
+                    <input type="text" class="search-input" id="blockSearch" placeholder="Поиск...">
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label>Шрифт заголовков</label>
-                <select id="fontHeading">
-                    <option value="'Inter', sans-serif">Inter</option>
-                    <option value="'Playfair Display', serif">Playfair Display</option>
-                    <option value="'Georgia', serif">Georgia</option>
-                    <option value="'Arial', sans-serif">Arial</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Вкладка: Блоки -->
-        <div class="tab-content" id="tab-blocks">
-            <button class="btn btn-secondary" id="addBlockBtn">+ Добавить блок</button>
-
-            <div class="blocks-list" id="blocksList">
-                <p class="blocks-hint">Перетаскивайте блоки для изменения порядка</p>
-            </div>
-        </div>
-
-        <!-- Кнопки экспорта -->
-        <div class="sidebar-footer">
-            <button class="btn btn-outline" id="previewBtn">Предпросмотр</button>
-            <button class="btn btn-outline" id="exportBtn">Экспорт кода</button>
-            <button class="btn btn-outline" id="downloadBtn">Скачать ZIP</button>
-        </div>
-    </aside>
-
-    <!-- Основная область предпросмотра -->
-    <main class="preview-area" id="previewArea">
-        <div class="preview-container" id="previewContainer">
-            <!-- Сгенерированный лендинг будет здесь -->
-            <div class="landing-placeholder">
-                <div class="placeholder-content">
-                    <h2>Добро пожаловать в AI Конструктор Лендингов</h2>
-                    <p>Заполните поля слева и нажмите "Сгенерировать лендинг"</p>
-                    <div class="placeholder-steps">
-                        <div class="step">
-                            <span class="step-number">1</span>
-                            <span>Укажите нишу бизнеса</span>
+                <div class="blocks-categories">
+                    <!-- Structure -->
+                    <div class="block-category">
+                        <div class="category-header" data-category="structure">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Структура</span>
+                            <i class="fas fa-chevron-down"></i>
                         </div>
-                        <div class="step">
-                            <span class="step-number">2</span>
-                            <span>Опишите ваш оффер</span>
-                        </div>
-                        <div class="step">
-                            <span class="step-number">3</span>
-                            <span>Загрузите фото (опционально)</span>
-                        </div>
-                        <div class="step">
-                            <span class="step-number">4</span>
-                            <span>Нажмите "Сгенерировать"</span>
+                        <div class="category-blocks">
+                            <div class="block-item" draggable="true" data-type="section">
+                                <i class="fas fa-square"></i>
+                                <span>Секция</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="container">
+                                <i class="fas fa-box"></i>
+                                <span>Контейнер</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="row">
+                                <i class="fas fa-columns"></i>
+                                <span>Строка</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="column">
+                                <i class="fas fa-grip-lines-vertical"></i>
+                                <span>Колонка</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </main>
 
-    <!-- Модальное окно: Ввод API ключа -->
-    <div class="modal" id="apiKeyModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>🔑 Введите API ключ Google Gemini</h3>
-            </div>
-            <div class="modal-body">
-                <p style="color: #64748b; margin-bottom: 20px;">
-                    Для генерации контента через AI необходим API ключ Google Gemini (бесплатно).
-                    Получить ключ можно на <a href="https://aistudio.google.com/apikey" target="_blank" style="color: #2563eb;">aistudio.google.com/apikey</a>
-                </p>
-                <div class="form-group">
-                    <label for="apiKeyInput">API ключ</label>
-                    <input type="text" id="apiKeyInput" placeholder="AIza...">
-                </div>
-                <div class="form-group">
-                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                        <input type="checkbox" id="saveApiKey" checked>
-                        <span style="font-weight: normal;">Сохранить ключ в браузере</span>
-                    </label>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" id="skipApiKeyBtn">Пропустить</button>
-                <button class="btn btn-primary" id="saveApiKeyBtn">Сохранить и продолжить</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модальное окно: Добавление блока -->
-    <div class="modal" id="addBlockModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Добавить новый блок</h3>
-                <button class="modal-close" data-close>&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Количество колонок</label>
-                    <div class="columns-select">
-                        <button class="col-btn active" data-cols="1">1 колонка</button>
-                        <button class="col-btn" data-cols="2">2 колонки</button>
-                        <button class="col-btn" data-cols="3">3 колонки</button>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Элементы блока (перетащите в колонки)</label>
-                    <div class="elements-palette">
-                        <div class="element-item" draggable="true" data-type="heading">
-                            <span class="element-icon">H</span>
-                            <span>Заголовок</span>
+                    <!-- Basic -->
+                    <div class="block-category">
+                        <div class="category-header" data-category="basic">
+                            <i class="fas fa-font"></i>
+                            <span>Базовые</span>
+                            <i class="fas fa-chevron-down"></i>
                         </div>
-                        <div class="element-item" draggable="true" data-type="text">
-                            <span class="element-icon">T</span>
-                            <span>Текст</span>
-                        </div>
-                        <div class="element-item" draggable="true" data-type="image">
-                            <span class="element-icon">🖼</span>
-                            <span>Изображение</span>
-                        </div>
-                        <div class="element-item" draggable="true" data-type="video">
-                            <span class="element-icon">▶</span>
-                            <span>Видео</span>
-                        </div>
-                        <div class="element-item" draggable="true" data-type="form">
-                            <span class="element-icon">📝</span>
-                            <span>Форма</span>
-                        </div>
-                        <div class="element-item" draggable="true" data-type="button">
-                            <span class="element-icon">⬛</span>
-                            <span>Кнопка CTA</span>
-                        </div>
-                        <div class="element-item" draggable="true" data-type="timer">
-                            <span class="element-icon">⏰</span>
-                            <span>Таймер</span>
-                        </div>
-                        <div class="element-item" draggable="true" data-type="list">
-                            <span class="element-icon">☑</span>
-                            <span>Список</span>
+                        <div class="category-blocks">
+                            <div class="block-item" draggable="true" data-type="heading">
+                                <i class="fas fa-heading"></i>
+                                <span>Заголовок</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="text">
+                                <i class="fas fa-align-left"></i>
+                                <span>Текст</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="image">
+                                <i class="fas fa-image"></i>
+                                <span>Изображение</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="button">
+                                <i class="fas fa-hand-pointer"></i>
+                                <span>Кнопка</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="link">
+                                <i class="fas fa-link"></i>
+                                <span>Ссылка</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="list">
+                                <i class="fas fa-list"></i>
+                                <span>Список</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="divider">
+                                <i class="fas fa-minus"></i>
+                                <span>Разделитель</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="spacer">
+                                <i class="fas fa-arrows-alt-v"></i>
+                                <span>Отступ</span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label>Предпросмотр блока</label>
-                    <div class="block-preview-area" id="blockPreviewArea">
-                        <div class="block-columns" id="blockColumns">
-                            <div class="block-column drop-zone" data-col="0">
-                                <span class="drop-hint">Перетащите элементы сюда</span>
+                    <!-- Media -->
+                    <div class="block-category">
+                        <div class="category-header" data-category="media">
+                            <i class="fas fa-photo-video"></i>
+                            <span>Медиа</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="category-blocks">
+                            <div class="block-item" draggable="true" data-type="video">
+                                <i class="fas fa-video"></i>
+                                <span>Видео</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="gallery">
+                                <i class="fas fa-images"></i>
+                                <span>Галерея</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="carousel">
+                                <i class="fas fa-film"></i>
+                                <span>Карусель</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="icon">
+                                <i class="fas fa-star"></i>
+                                <span>Иконка</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive -->
+                    <div class="block-category">
+                        <div class="category-header" data-category="interactive">
+                            <i class="fas fa-mouse-pointer"></i>
+                            <span>Интерактив</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="category-blocks">
+                            <div class="block-item" draggable="true" data-type="form">
+                                <i class="fas fa-envelope"></i>
+                                <span>Форма</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="accordion">
+                                <i class="fas fa-chevron-down"></i>
+                                <span>Аккордеон</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="tabs">
+                                <i class="fas fa-folder"></i>
+                                <span>Табы</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="modal">
+                                <i class="fas fa-window-restore"></i>
+                                <span>Модальное окно</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="timer">
+                                <i class="fas fa-clock"></i>
+                                <span>Таймер</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Components -->
+                    <div class="block-category">
+                        <div class="category-header" data-category="components">
+                            <i class="fas fa-puzzle-piece"></i>
+                            <span>Компоненты</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="category-blocks">
+                            <div class="block-item" draggable="true" data-type="navbar">
+                                <i class="fas fa-bars"></i>
+                                <span>Навигация</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="hero">
+                                <i class="fas fa-flag"></i>
+                                <span>Hero</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="features">
+                                <i class="fas fa-th-large"></i>
+                                <span>Преимущества</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="card">
+                                <i class="fas fa-id-card"></i>
+                                <span>Карточка</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="testimonial">
+                                <i class="fas fa-quote-left"></i>
+                                <span>Отзыв</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="pricing">
+                                <i class="fas fa-tag"></i>
+                                <span>Цена</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="counter">
+                                <i class="fas fa-sort-numeric-up"></i>
+                                <span>Счётчик</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="progress">
+                                <i class="fas fa-tasks"></i>
+                                <span>Прогресс</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="social">
+                                <i class="fas fa-share-alt"></i>
+                                <span>Соцсети</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="map">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Карта</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="table">
+                                <i class="fas fa-table"></i>
+                                <span>Таблица</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="footer">
+                                <i class="fas fa-shoe-prints"></i>
+                                <span>Футер</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Code -->
+                    <div class="block-category">
+                        <div class="category-header" data-category="code">
+                            <i class="fas fa-code"></i>
+                            <span>Код</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="category-blocks">
+                            <div class="block-item" draggable="true" data-type="html">
+                                <i class="fab fa-html5"></i>
+                                <span>HTML</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="css">
+                                <i class="fab fa-css3-alt"></i>
+                                <span>CSS</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="js">
+                                <i class="fab fa-js"></i>
+                                <span>JavaScript</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="widget">
+                                <i class="fas fa-plug"></i>
+                                <span>Виджет</span>
                             </div>
                         </div>
                     </div>
                 </div>
+            </aside>
 
-                <div class="form-group">
-                    <label>Цвет фона блока</label>
-                    <input type="color" id="blockBgColor" value="#ffffff">
+            <!-- Canvas -->
+            <main class="canvas-wrapper">
+                <div class="canvas-container" id="canvasContainer">
+                    <div class="canvas" id="canvas" data-viewport="desktop">
+                        <div class="canvas-empty" id="canvasEmpty">
+                            <i class="fas fa-plus-circle"></i>
+                            <p>Перетащите блоки сюда</p>
+                            <span>или выберите готовый шаблон</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" data-close>Отмена</button>
-                <button class="btn btn-primary" id="saveBlockBtn">Добавить блок</button>
-            </div>
+            </main>
+
+            <!-- Right Panel - Settings -->
+            <aside class="settings-panel" id="settingsPanel">
+                <div class="panel-header">
+                    <h3 id="settingsTitle">Настройки</h3>
+                    <div class="panel-tabs">
+                        <button class="panel-tab active" data-tab="content">Контент</button>
+                        <button class="panel-tab" data-tab="style">Стили</button>
+                        <button class="panel-tab" data-tab="advanced">Код</button>
+                    </div>
+                </div>
+                <div class="settings-content" id="settingsContent">
+                    <div class="no-selection">
+                        <i class="fas fa-mouse-pointer"></i>
+                        <p>Выберите элемент для редактирования</p>
+                    </div>
+                </div>
+            </aside>
         </div>
     </div>
 
-    <!-- Модальное окно: Экспорт кода -->
-    <div class="modal" id="exportModal">
-        <div class="modal-content modal-large">
+    <!-- Preview Modal -->
+    <div class="modal" id="previewModal">
+        <div class="modal-content full">
             <div class="modal-header">
-                <h3>Экспорт кода</h3>
-                <button class="modal-close" data-close>&times;</button>
+                <h3>Предпросмотр</h3>
+                <button class="modal-close" id="closePreview">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="export-tabs">
-                    <button class="export-tab active" data-export="html">HTML</button>
-                    <button class="export-tab" data-export="css">CSS</button>
-                    <button class="export-tab" data-export="js">JavaScript</button>
-                    <button class="export-tab" data-export="full">Полный код</button>
-                </div>
-                <div class="code-container">
-                    <pre><code id="exportCode"></code></pre>
-                </div>
-                <button class="btn btn-primary" id="copyCodeBtn">Копировать код</button>
+                <iframe id="previewFrame"></iframe>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно: Предпросмотр ответа Gemini -->
-    <div class="modal" id="previewResponseModal">
-        <div class="modal-content modal-large">
+    <!-- Code Modal -->
+    <div class="modal" id="codeModal">
+        <div class="modal-content large">
             <div class="modal-header">
-                <h3>✨ Ответ от Gemini AI</h3>
-                <button class="modal-close" data-close>&times;</button>
+                <h3>Код страницы</h3>
+                <div class="code-tabs">
+                    <button class="code-tab active" data-tab="html">HTML</button>
+                    <button class="code-tab" data-tab="css">CSS</button>
+                    <button class="code-tab" data-tab="full">Полный</button>
+                </div>
+                <button class="modal-close" id="closeCode">&times;</button>
             </div>
             <div class="modal-body">
-                <p style="color: #64748b; margin-bottom: 15px;">Проверьте сгенерированный контент перед созданием лендинга:</p>
-                <div class="response-preview" id="geminiResponsePreview">
-                    <!-- Контент будет вставлен динамически -->
+                <div class="code-content active" id="htmlCode">
+                    <pre><code></code></pre>
+                </div>
+                <div class="code-content" id="cssCode">
+                    <pre><code></code></pre>
+                </div>
+                <div class="code-content" id="fullCode">
+                    <pre><code></code></pre>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline" id="regenerateBtn">🔄 Перегенерировать</button>
-                <button class="btn btn-primary" id="acceptResponseBtn">✓ Принять и создать</button>
+                <button class="btn" id="copyCode">
+                    <i class="fas fa-copy"></i> Копировать
+                </button>
+                <button class="btn primary" id="downloadCode">
+                    <i class="fas fa-download"></i> Скачать HTML
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно: Редактирование элемента -->
-    <div class="modal" id="editElementModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Редактировать элемент</h3>
-                <button class="modal-close" data-close>&times;</button>
-            </div>
-            <div class="modal-body" id="editElementBody">
-                <!-- Динамический контент -->
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline" data-close>Отмена</button>
-                <button class="btn btn-danger" id="deleteElementBtn">Удалить</button>
-                <button class="btn btn-primary" id="saveElementBtn">Сохранить</button>
-            </div>
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-item" data-action="edit">
+            <i class="fas fa-edit"></i> Редактировать
+        </div>
+        <div class="context-item" data-action="duplicate">
+            <i class="fas fa-copy"></i> Дублировать
+        </div>
+        <div class="context-item" data-action="moveUp">
+            <i class="fas fa-arrow-up"></i> Вверх
+        </div>
+        <div class="context-item" data-action="moveDown">
+            <i class="fas fa-arrow-down"></i> Вниз
+        </div>
+        <div class="context-divider"></div>
+        <div class="context-item" data-action="copyStyle">
+            <i class="fas fa-paint-brush"></i> Копировать стиль
+        </div>
+        <div class="context-item" data-action="pasteStyle">
+            <i class="fas fa-paste"></i> Вставить стиль
+        </div>
+        <div class="context-divider"></div>
+        <div class="context-item danger" data-action="delete">
+            <i class="fas fa-trash"></i> Удалить
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script src="script.js"></script>
+    <script src="builder.js"></script>
 </body>
 </html>

@@ -125,7 +125,7 @@
             </div>
 
             <div class="sidebar-footer">
-                <button class="btn btn-outline btn-full" id="settingsBtn">⚙️ Настройки API</button>
+                <small style="color: #888;">Vertex AI Imagen 3</small>
             </div>
         </aside>
 
@@ -154,30 +154,6 @@
                 </div>
             </div>
         </main>
-    </div>
-
-    <!-- Settings Modal -->
-    <div class="modal" id="settingsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>⚙️ Настройки API</h3>
-                <button class="modal-close" id="closeSettingsBtn">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="apiKeyInput">Vertex AI Access Token</label>
-                    <input type="password" id="apiKeyInput" placeholder="AQ.Ab8...">
-                    <small>Токен истекает через ~1 час. Получить: <code>gcloud auth print-access-token</code></small>
-                </div>
-                <p class="api-note">
-                    Для генерации используется <strong>Vertex AI Imagen 3</strong>.<br>
-                    Project: petya-485408 | Region: europe-west2
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" id="saveSettingsBtn">Сохранить</button>
-            </div>
-        </div>
     </div>
 
     <script src="script.js"></script>

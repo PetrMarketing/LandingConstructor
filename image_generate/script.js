@@ -1,9 +1,8 @@
 // ===== AI Image Generator =====
 
-// Config
+// Config - Vertex AI (токен без ограничений)
 const CONFIG = {
-    // Vertex AI настройки
-    accessToken: localStorage.getItem('vertex_access_token') || '',
+    accessToken: 'AQ.Ab8RN6Locxx7oV_D4QdioyAQOHelg8-uBidSKmEfmDKbdG82bw',
     projectId: 'petya-485408',
     region: 'europe-west2',
     model: 'imagen-3.0-generate-001'
@@ -30,7 +29,6 @@ let history = JSON.parse(localStorage.getItem('image_history') || '[]');
 const resultContainer = document.getElementById('resultContainer');
 const resultActions = document.getElementById('resultActions');
 const historyGrid = document.getElementById('historyGrid');
-const settingsModal = document.getElementById('settingsModal');
 
 // ===== Mode Switching =====
 document.querySelectorAll('.mode-tab').forEach(tab => {
@@ -352,25 +350,6 @@ document.getElementById('copyBtn').addEventListener('click', async () => {
     }
 });
 
-// ===== Settings =====
-document.getElementById('settingsBtn').addEventListener('click', () => {
-    document.getElementById('apiKeyInput').value = CONFIG.accessToken;
-    settingsModal.classList.add('active');
-});
-
-document.getElementById('closeSettingsBtn').addEventListener('click', () => {
-    settingsModal.classList.remove('active');
-});
-
-document.getElementById('saveSettingsBtn').addEventListener('click', () => {
-    const token = document.getElementById('apiKeyInput').value.trim();
-
-    CONFIG.accessToken = token;
-    localStorage.setItem('vertex_access_token', token);
-
-    settingsModal.classList.remove('active');
-});
-
 // Style strength display
 document.getElementById('styleStrength').addEventListener('input', (e) => {
     document.getElementById('styleStrengthValue').textContent = e.target.value + '%';
@@ -384,8 +363,3 @@ document.getElementById('styleBtn').addEventListener('click', styleTransfer);
 
 // ===== Init =====
 renderHistory();
-
-// Показать настройки если нет токена
-if (!CONFIG.accessToken) {
-    setTimeout(() => settingsModal.classList.add('active'), 500);
-}
