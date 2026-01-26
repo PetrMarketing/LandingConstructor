@@ -2,11 +2,11 @@
 
 // Config
 const CONFIG = {
-    apiKey: localStorage.getItem('vertex_api_key') || '',
-    projectId: localStorage.getItem('vertex_project_id') || '',
-    // Using Gemini for image generation as it's easier to access
     geminiKey: localStorage.getItem('gemini_api_key') || '',
-    geminiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
+    // Imagen через Gemini API
+    imagenUrl: 'https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict',
+    // Gemini для улучшения промптов
+    geminiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent'
 };
 
 // State
@@ -128,32 +128,54 @@ async function callGeminiForImage(prompt) {
     return data.candidates[0].content.parts[0].text;
 }
 
-// Generate real AI image using Pollinations.ai (free, no API key needed)
+// Generate image using Imagen API (через Gemini API)
 async function generateAIImage(prompt, ratio) {
-    const [w, h] = ratio === '1:1' ? [512, 512] :
-                   ratio === '16:9' ? [768, 432] :
-                   ratio === '9:16' ? [432, 768] :
-                   [640, 480];
-
-    // Encode prompt for URL
-    const encodedPrompt = encodeURIComponent(prompt);
-
-    // Pollinations.ai free image generation API
-    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${w}&height=${h}&nologo=true`;
-
-    // Fetch the image and convert to data URL for local storage
-    const response = await fetch(imageUrl);
-    if (!response.ok) {
-        throw new Error('Ошибка генерации изображения');
+    if (!CONFIG.geminiKey) {
+        throw new Error('API ключ не установлен. Откройте настройки.');
     }
 
-    const blob = await response.blob();
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
+    // Imagen поддерживает: 1:1, 3:4, 4:3, 16:9, 9:16
+    const aspectRatio = ratio === '4:3' ? '4:3' : ratio;
+
+    const response = await fetch(CONFIG.imagenUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': CONFIG.geminiKey
+        },
+        body: JSON.stringify({
+            instances: [{ prompt: prompt }],
+            parameters: {
+                sampleCount: 1,
+                aspectRatio: aspectRatio
+            }
+        })
     });
+
+    if (!response.ok) {
+        const error = await response.json();
+        const errorMsg = error.error?.message || `API Error: ${response.status}`;
+
+        // Понятные сообщения об ошибках
+        if (errorMsg.includes('quota') || errorMsg.includes('rate')) {
+            throw new Error('Превышен лимит запросов. Подождите минуту.');
+        }
+        if (errorMsg.includes('safety') || errorMsg.includes('blocked')) {
+            throw new Error('Изображение заблокировано фильтром безопасности. Измените промпт.');
+        }
+        throw new Error(errorMsg);
+    }
+
+    const data = await response.json();
+
+    // Проверяем наличие изображения в ответе
+    if (!data.predictions?.[0]?.bytesBase64Encoded) {
+        throw new Error('Не удалось сгенерировать изображение');
+    }
+
+    // Возвращаем data URL из base64
+    const base64Image = data.predictions[0].bytesBase64Encoded;
+    return `data:image/png;base64,${base64Image}`;
 }
 
 // ===== Generation Functions =====
@@ -358,8 +380,7 @@ document.getElementById('copyBtn').addEventListener('click', async () => {
 
 // ===== Settings =====
 document.getElementById('settingsBtn').addEventListener('click', () => {
-    document.getElementById('apiKeyInput').value = CONFIG.apiKey || CONFIG.geminiKey;
-    document.getElementById('projectIdInput').value = CONFIG.projectId;
+    document.getElementById('apiKeyInput').value = CONFIG.geminiKey;
     settingsModal.classList.add('active');
 });
 
@@ -369,15 +390,9 @@ document.getElementById('closeSettingsBtn').addEventListener('click', () => {
 
 document.getElementById('saveSettingsBtn').addEventListener('click', () => {
     const apiKey = document.getElementById('apiKeyInput').value.trim();
-    const projectId = document.getElementById('projectIdInput').value.trim();
 
-    CONFIG.apiKey = apiKey;
     CONFIG.geminiKey = apiKey;
-    CONFIG.projectId = projectId;
-
-    localStorage.setItem('vertex_api_key', apiKey);
     localStorage.setItem('gemini_api_key', apiKey);
-    localStorage.setItem('vertex_project_id', projectId);
 
     settingsModal.classList.remove('active');
 });
@@ -396,5 +411,7 @@ document.getElementById('styleBtn').addEventListener('click', styleTransfer);
 // ===== Init =====
 renderHistory();
 
-// Note: Pollinations.ai doesn't require API key
-// Gemini API key is optional - for prompt enhancement only
+// Показать настройки если нет API ключа
+if (!CONFIG.geminiKey) {
+    setTimeout(() => settingsModal.classList.add('active'), 500);
+}
