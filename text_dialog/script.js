@@ -1,12 +1,13 @@
 // ===== Chat with AI - OpenRouter =====
 
 // Config
-const CONFIG = {
-    apiKey: localStorage.getItem('openrouter_api_key') || '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',
-    model: localStorage.getItem('openrouter_model') || 'google/gemini-2.0-flash-001',
-    temperature: parseFloat(localStorage.getItem('openrouter_temperature') || '0.7'),
-    apiUrl: 'https://openrouter.ai/api/v1/chat/completions'
-};
+const CONFIG = {                                                                                                                                             
+      apiUrl: window.location.hostname === 'localhost'                                                                                                         
+          ? 'http://localhost:8000'                                                                                                                            
+          : 'https://ai-tools-backend-d3zr.onrender.com',                                                                                                      
+      model: localStorage.getItem('chat_model') || 'openrouter/auto',                                                                                          
+      temperature: parseFloat(localStorage.getItem('chat_temperature') || '0.7')                                                                               
+  };
 
 // State
 let chatHistory = [];
