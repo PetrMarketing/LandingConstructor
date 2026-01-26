@@ -2,11 +2,17 @@
 
 // Config
 const CONFIG = {
-    geminiKey: localStorage.getItem('gemini_api_key') || '',
-    // Gemini 2.0 Flash Experimental (поддерживает генерацию изображений)
-    imageModel: 'gemini-2.0-flash-exp',
-    apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models'
+    // Vertex AI настройки
+    accessToken: localStorage.getItem('vertex_access_token') || '',
+    projectId: 'petya-485408',
+    region: 'europe-west2',
+    model: 'imagen-3.0-generate-001'
 };
+
+// Vertex AI endpoint
+function getVertexUrl() {
+    return `https://${CONFIG.region}-aiplatform.googleapis.com/v1/projects/${CONFIG.projectId}/locations/${CONFIG.region}/publishers/google/models/${CONFIG.model}:predict`;
+}
 
 // State
 let currentMode = 'generate';
@@ -97,56 +103,30 @@ setupUpload('styleSourceUploadArea', 'styleSourceInput', 'styleSourcePreview', '
 setupUpload('styleRefUploadArea', 'styleRefInput', 'styleRefPreview', 'styleRef');
 
 // ===== API Calls =====
-async function callGeminiForText(prompt) {
-    if (!CONFIG.geminiKey) {
-        throw new Error('API ключ не установлен. Откройте настройки.');
-    }
-
-    const url = `${CONFIG.apiUrl}/gemini-1.5-flash:generateContent?key=${CONFIG.geminiKey}`;
-
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            contents: [{
-                parts: [{ text: prompt }]
-            }],
-            generationConfig: {
-                temperature: 0.9,
-                maxOutputTokens: 1024
-            }
-        })
-    });
-
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || `API Error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data.candidates[0].content.parts[0].text;
-}
-
-// Generate image using Gemini 2.0 Flash Exp
+// Generate image using Vertex AI Imagen
 async function generateAIImage(prompt, ratio) {
-    if (!CONFIG.geminiKey) {
-        throw new Error('API ключ не установлен. Откройте настройки.');
+    if (!CONFIG.accessToken) {
+        throw new Error('Access Token не установлен. Откройте настройки.');
     }
 
-    const url = `${CONFIG.apiUrl}/${CONFIG.imageModel}:generateContent?key=${CONFIG.geminiKey}`;
+    // Imagen поддерживает: 1:1, 3:4, 4:3, 9:16, 16:9
+    const aspectRatio = ratio === '4:3' ? '4:3' :
+                        ratio === '16:9' ? '16:9' :
+                        ratio === '9:16' ? '9:16' : '1:1';
 
-    const response = await fetch(url, {
+    const response = await fetch(getVertexUrl(), {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${CONFIG.accessToken}`
         },
         body: JSON.stringify({
-            contents: [{
-                role: "user",
-                parts: [{ text: prompt }]
+            instances: [{
+                prompt: prompt
             }],
-            generationConfig: {
-                responseModalities: ["TEXT", "IMAGE"]
+            parameters: {
+                sampleCount: 1,
+                aspectRatio: aspectRatio
             }
         })
     });
@@ -156,32 +136,28 @@ async function generateAIImage(prompt, ratio) {
         const errorMsg = error.error?.message || `API Error: ${response.status}`;
 
         // Понятные сообщения об ошибках
+        if (response.status === 401 || errorMsg.includes('token')) {
+            throw new Error('Токен истёк или недействителен. Обновите Access Token в настройках.');
+        }
         if (errorMsg.includes('quota') || errorMsg.includes('rate')) {
             throw new Error('Превышен лимит запросов. Подождите минуту.');
         }
         if (errorMsg.includes('safety') || errorMsg.includes('blocked')) {
             throw new Error('Изображение заблокировано фильтром безопасности. Измените промпт.');
         }
-        if (errorMsg.includes('not found') || errorMsg.includes('does not exist')) {
-            throw new Error('Модель недоступна. Попробуйте позже или проверьте API ключ.');
-        }
         throw new Error(errorMsg);
     }
 
     const data = await response.json();
 
-    // Ищем изображение в ответе
-    const parts = data.candidates?.[0]?.content?.parts || [];
-    const imagePart = parts.find(p => p.inlineData?.mimeType?.startsWith('image/'));
-
-    if (!imagePart) {
-        throw new Error('Модель не вернула изображение. Попробуйте другой промпт.');
+    // Проверяем наличие изображения
+    if (!data.predictions?.[0]?.bytesBase64Encoded) {
+        throw new Error('Не удалось сгенерировать изображение. Попробуйте другой промпт.');
     }
 
     // Возвращаем data URL из base64
-    const mimeType = imagePart.inlineData.mimeType;
-    const base64Image = imagePart.inlineData.data;
-    return `data:${mimeType};base64,${base64Image}`;
+    const base64Image = data.predictions[0].bytesBase64Encoded;
+    return `data:image/png;base64,${base64Image}`;
 }
 
 // ===== Generation Functions =====
@@ -378,7 +354,7 @@ document.getElementById('copyBtn').addEventListener('click', async () => {
 
 // ===== Settings =====
 document.getElementById('settingsBtn').addEventListener('click', () => {
-    document.getElementById('apiKeyInput').value = CONFIG.geminiKey;
+    document.getElementById('apiKeyInput').value = CONFIG.accessToken;
     settingsModal.classList.add('active');
 });
 
@@ -387,10 +363,10 @@ document.getElementById('closeSettingsBtn').addEventListener('click', () => {
 });
 
 document.getElementById('saveSettingsBtn').addEventListener('click', () => {
-    const apiKey = document.getElementById('apiKeyInput').value.trim();
+    const token = document.getElementById('apiKeyInput').value.trim();
 
-    CONFIG.geminiKey = apiKey;
-    localStorage.setItem('gemini_api_key', apiKey);
+    CONFIG.accessToken = token;
+    localStorage.setItem('vertex_access_token', token);
 
     settingsModal.classList.remove('active');
 });
@@ -409,7 +385,7 @@ document.getElementById('styleBtn').addEventListener('click', styleTransfer);
 // ===== Init =====
 renderHistory();
 
-// Показать настройки если нет API ключа
-if (!CONFIG.geminiKey) {
+// Показать настройки если нет токена
+if (!CONFIG.accessToken) {
     setTimeout(() => settingsModal.classList.add('active'), 500);
 }
