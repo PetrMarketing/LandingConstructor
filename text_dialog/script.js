@@ -1,11 +1,11 @@
-// ===== Chat with AI - Google Gemini =====
+// ===== Chat with AI - OpenRouter =====
 
 // Config
 const CONFIG = {
-    apiKey: localStorage.getItem('gemini_api_key') || '',
-    model: localStorage.getItem('gemini_model') || 'gemini-1.5-flash',
-    temperature: parseFloat(localStorage.getItem('gemini_temperature') || '0.7'),
-    apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models'
+    apiKey: localStorage.getItem('openrouter_api_key') || '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',
+    model: localStorage.getItem('openrouter_model') || 'google/gemini-2.0-flash-001',
+    temperature: parseFloat(localStorage.getItem('openrouter_temperature') || '0.7'),
+    apiUrl: 'https://openrouter.ai/api/v1/chat/completions'
 };
 
 // State
@@ -22,34 +22,36 @@ const chatTitle = document.getElementById('chatTitle');
 const settingsModal = document.getElementById('settingsModal');
 
 // ===== API =====
-async function sendToGemini(message, retryCount = 0) {
+async function sendToOpenRouter(message, retryCount = 0) {
     if (!CONFIG.apiKey) {
         throw new Error('API ключ не установлен. Откройте настройки.');
     }
 
-    const url = `${CONFIG.apiUrl}/${CONFIG.model}:generateContent?key=${CONFIG.apiKey}`;
-
-    // Build conversation history for context
-    const contents = chatHistory.map(msg => ({
-        role: msg.role === 'user' ? 'user' : 'model',
-        parts: [{ text: msg.content }]
+    // Build conversation history for context (OpenAI format)
+    const messages = chatHistory.map(msg => ({
+        role: msg.role === 'user' ? 'user' : 'assistant',
+        content: msg.content
     }));
 
     // Add current message
-    contents.push({
+    messages.push({
         role: 'user',
-        parts: [{ text: message }]
+        content: message
     });
 
-    const response = await fetch(url, {
+    const response = await fetch(CONFIG.apiUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${CONFIG.apiKey}`,
+            'HTTP-Referer': window.location.href,
+            'X-Title': 'AI Chat'
+        },
         body: JSON.stringify({
-            contents,
-            generationConfig: {
-                temperature: CONFIG.temperature,
-                maxOutputTokens: 2048
-            }
+            model: CONFIG.model,
+            messages: messages,
+            temperature: CONFIG.temperature,
+            max_tokens: 2048
         })
     });
 
@@ -59,25 +61,25 @@ async function sendToGemini(message, retryCount = 0) {
 
         // Handle rate limit - retry after waiting
         if (response.status === 429 && retryCount < 3) {
-            // Extract wait time from error message
-            const waitMatch = errorMsg.match(/retry in (\d+\.?\d*)/i);
-            const waitTime = waitMatch ? Math.ceil(parseFloat(waitMatch[1])) : 30;
-
+            const waitTime = 30;
             showRetryCountdown(waitTime);
             await new Promise(resolve => setTimeout(resolve, waitTime * 1000));
-            return sendToGemini(message, retryCount + 1);
+            return sendToOpenRouter(message, retryCount + 1);
         }
 
         // User-friendly error messages
-        if (errorMsg.includes('quota') || errorMsg.includes('rate')) {
-            throw new Error(`Превышен лимит запросов. Подождите минуту или используйте другую модель в настройках.`);
+        if (errorMsg.includes('quota') || errorMsg.includes('rate') || errorMsg.includes('limit')) {
+            throw new Error('Превышен лимит запросов. Подождите минуту.');
+        }
+        if (errorMsg.includes('credit') || errorMsg.includes('balance')) {
+            throw new Error('Недостаточно кредитов на аккаунте OpenRouter.');
         }
 
         throw new Error(errorMsg || `API Error: ${response.status}`);
     }
 
     const data = await response.json();
-    return data.candidates[0].content.parts[0].text;
+    return data.choices[0].message.content;
 }
 
 function showRetryCountdown(seconds) {
@@ -235,7 +237,7 @@ async function sendMessage() {
     // Send to API
     setLoading(true);
     try {
-        const response = await sendToGemini(message);
+        const response = await sendToOpenRouter(message);
         addMessage('assistant', response);
     } catch (error) {
         console.error('Error:', error);
@@ -259,9 +261,9 @@ function saveSettings() {
     CONFIG.model = document.getElementById('modelSelect').value;
     CONFIG.temperature = parseFloat(document.getElementById('temperatureInput').value);
 
-    localStorage.setItem('gemini_api_key', CONFIG.apiKey);
-    localStorage.setItem('gemini_model', CONFIG.model);
-    localStorage.setItem('gemini_temperature', CONFIG.temperature);
+    localStorage.setItem('openrouter_api_key', CONFIG.apiKey);
+    localStorage.setItem('openrouter_model', CONFIG.model);
+    localStorage.setItem('openrouter_temperature', CONFIG.temperature);
 
     settingsModal.classList.remove('active');
 }
@@ -300,8 +302,3 @@ document.getElementById('temperatureInput').addEventListener('input', (e) => {
 // ===== Init =====
 createNewChat();
 renderChatList();
-
-// Show settings if no API key
-if (!CONFIG.apiKey) {
-    setTimeout(() => settingsModal.classList.add('active'), 500);
-}
