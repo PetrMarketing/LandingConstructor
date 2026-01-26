@@ -1,12 +1,11 @@
 // ===== AI Image Generator =====
 
 // Config - Vertex AI (токен без ограничений)
-const CONFIG = {
-    accessToken: 'AQ.Ab8RN6Locxx7oV_D4QdioyAQOHelg8-uBidSKmEfmDKbdG82bw',
-    projectId: 'petya-485408',
-    region: 'europe-west2',
-    model: 'imagen-3.0-generate-001'
-};
+const CONFIG = {                                                                                                                                             
+      apiUrl: window.location.hostname === 'localhost'                                                                                                         
+          ? 'http://localhost:8000'                                                                                                                            
+          : 'https://ai-tools-backend-d3zr.onrender.com'                                                                                                       
+  };
 
 // Vertex AI endpoint
 function getVertexUrl() {
