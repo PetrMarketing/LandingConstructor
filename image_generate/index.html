@@ -165,16 +165,17 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="apiKeyInput">API ключ Vertex AI</label>
-                    <input type="password" id="apiKeyInput" placeholder="Введите ключ...">
+                    <label for="apiKeyInput">API ключ Gemini (опционально)</label>
+                    <input type="password" id="apiKeyInput" placeholder="AIza...">
+                    <small>Для улучшения промптов. Без ключа генерация работает.</small>
                 </div>
                 <div class="form-group">
-                    <label for="projectIdInput">Project ID</label>
-                    <input type="text" id="projectIdInput" placeholder="your-project-id">
+                    <label for="projectIdInput">Project ID (не используется)</label>
+                    <input type="text" id="projectIdInput" placeholder="your-project-id" disabled>
                 </div>
                 <p class="api-note">
-                    Для генерации изображений используется Vertex AI Imagen.<br>
-                    <a href="https://cloud.google.com/vertex-ai" target="_blank">Документация Vertex AI</a>
+                    Для генерации изображений используется <strong>Pollinations.ai</strong> (бесплатно).<br>
+                    Gemini API используется опционально для улучшения промптов.
                 </p>
             </div>
             <div class="modal-footer">

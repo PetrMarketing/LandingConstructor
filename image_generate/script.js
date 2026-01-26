@@ -128,61 +128,32 @@ async function callGeminiForImage(prompt) {
     return data.candidates[0].content.parts[0].text;
 }
 
-// Generate placeholder image using external service
-async function generatePlaceholderImage(prompt, ratio) {
-    // Using placeholder service for demo
-    // In production, replace with actual Vertex AI or DALL-E API
+// Generate real AI image using Pollinations.ai (free, no API key needed)
+async function generateAIImage(prompt, ratio) {
     const [w, h] = ratio === '1:1' ? [512, 512] :
                    ratio === '16:9' ? [768, 432] :
                    ratio === '9:16' ? [432, 768] :
                    [640, 480];
 
-    // For demo: create a canvas with the prompt text
-    const canvas = document.createElement('canvas');
-    canvas.width = w;
-    canvas.height = h;
-    const ctx = canvas.getContext('2d');
+    // Encode prompt for URL
+    const encodedPrompt = encodeURIComponent(prompt);
 
-    // Gradient background
-    const gradient = ctx.createLinearGradient(0, 0, w, h);
-    gradient.addColorStop(0, '#8b5cf6');
-    gradient.addColorStop(1, '#3b82f6');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, w, h);
+    // Pollinations.ai free image generation API
+    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${w}&height=${h}&nologo=true`;
 
-    // Text
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 20px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+    // Fetch the image and convert to data URL for local storage
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+        throw new Error('Ошибка генерации изображения');
+    }
 
-    // Word wrap
-    const words = prompt.split(' ');
-    let lines = [];
-    let currentLine = '';
-    words.forEach(word => {
-        const testLine = currentLine + word + ' ';
-        if (ctx.measureText(testLine).width > w - 40) {
-            lines.push(currentLine);
-            currentLine = word + ' ';
-        } else {
-            currentLine = testLine;
-        }
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
     });
-    lines.push(currentLine);
-
-    const lineHeight = 28;
-    const startY = h / 2 - (lines.length * lineHeight) / 2;
-    lines.forEach((line, i) => {
-        ctx.fillText(line.trim(), w / 2, startY + i * lineHeight);
-    });
-
-    // Add "AI Generated" label
-    ctx.font = '14px Arial';
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    ctx.fillText('AI Демо-изображение', w / 2, h - 30);
-
-    return canvas.toDataURL('image/png');
 }
 
 // ===== Generation Functions =====
@@ -190,7 +161,8 @@ function showLoading() {
     resultContainer.innerHTML = `
         <div class="loading-spinner">
             <div class="spinner"></div>
-            <p>Генерация изображения...</p>
+            <p>Генерация AI изображения...</p>
+            <small style="color: #888; margin-top: 8px;">Это может занять 10-30 секунд</small>
         </div>
     `;
     resultActions.style.display = 'none';
@@ -241,8 +213,8 @@ async function generateImage() {
             }
         }
 
-        // Generate image (demo mode)
-        const imageUrl = await generatePlaceholderImage(enhancedPrompt, currentRatio);
+        // Generate real AI image
+        const imageUrl = await generateAIImage(enhancedPrompt, currentRatio);
         showResult(imageUrl);
 
     } catch (error) {
@@ -268,7 +240,7 @@ async function editImage() {
     setButtonLoading('editBtn', true);
 
     try {
-        const imageUrl = await generatePlaceholderImage(`Редактирование: ${prompt}`, '1:1');
+        const imageUrl = await generateAIImage(`${prompt}, photo editing, high quality`, '1:1');
         showResult(imageUrl);
     } catch (error) {
         showError(error.message);
@@ -289,7 +261,8 @@ async function combineImages() {
     setButtonLoading('combineBtn', true);
 
     try {
-        const imageUrl = await generatePlaceholderImage(`Объединение: ${prompt || 'два изображения'}`, '1:1');
+        const combinedPrompt = prompt || 'artistic combination of two images';
+        const imageUrl = await generateAIImage(`${combinedPrompt}, blend, fusion, creative composition`, '1:1');
         showResult(imageUrl);
     } catch (error) {
         showError(error.message);
@@ -310,7 +283,8 @@ async function styleTransfer() {
     setButtonLoading('styleBtn', true);
 
     try {
-        const imageUrl = await generatePlaceholderImage(`Стилизация с силой ${strength}%`, '1:1');
+        const stylePrompt = `artistic style transfer, stylized image, artistic interpretation, strength ${strength}%`;
+        const imageUrl = await generateAIImage(stylePrompt, '1:1');
         showResult(imageUrl);
     } catch (error) {
         showError(error.message);
@@ -422,7 +396,5 @@ document.getElementById('styleBtn').addEventListener('click', styleTransfer);
 // ===== Init =====
 renderHistory();
 
-// Show settings if no API key
-if (!CONFIG.geminiKey && !CONFIG.apiKey) {
-    setTimeout(() => settingsModal.classList.add('active'), 500);
-}
+// Note: Pollinations.ai doesn't require API key
+// Gemini API key is optional - for prompt enhancement only
