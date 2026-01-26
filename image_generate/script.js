@@ -3,10 +3,9 @@
 // Config
 const CONFIG = {
     geminiKey: localStorage.getItem('gemini_api_key') || '',
-    // Imagen через Gemini API
-    imagenUrl: 'https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict',
-    // Gemini для улучшения промптов
-    geminiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent'
+    // Gemini с генерацией изображений (Nano Banana)
+    imageModel: 'gemini-2.0-flash-exp-image-generation',
+    apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models'
 };
 
 // State
@@ -98,12 +97,12 @@ setupUpload('styleSourceUploadArea', 'styleSourceInput', 'styleSourcePreview', '
 setupUpload('styleRefUploadArea', 'styleRefInput', 'styleRefPreview', 'styleRef');
 
 // ===== API Calls =====
-async function callGeminiForImage(prompt) {
+async function callGeminiForText(prompt) {
     if (!CONFIG.geminiKey) {
         throw new Error('API ключ не установлен. Откройте настройки.');
     }
 
-    const url = `${CONFIG.geminiUrl}?key=${CONFIG.geminiKey}`;
+    const url = `${CONFIG.apiUrl}/gemini-1.5-flash:generateContent?key=${CONFIG.geminiKey}`;
 
     const response = await fetch(url, {
         method: 'POST',
@@ -128,26 +127,25 @@ async function callGeminiForImage(prompt) {
     return data.candidates[0].content.parts[0].text;
 }
 
-// Generate image using Imagen API (через Gemini API)
+// Generate image using Gemini Native Image Generation (Nano Banana)
 async function generateAIImage(prompt, ratio) {
     if (!CONFIG.geminiKey) {
         throw new Error('API ключ не установлен. Откройте настройки.');
     }
 
-    // Imagen поддерживает: 1:1, 3:4, 4:3, 16:9, 9:16
-    const aspectRatio = ratio === '4:3' ? '4:3' : ratio;
+    const url = `${CONFIG.apiUrl}/${CONFIG.imageModel}:generateContent?key=${CONFIG.geminiKey}`;
 
-    const response = await fetch(CONFIG.imagenUrl, {
+    const response = await fetch(url, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': CONFIG.geminiKey
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            instances: [{ prompt: prompt }],
-            parameters: {
-                sampleCount: 1,
-                aspectRatio: aspectRatio
+            contents: [{
+                parts: [{ text: prompt }]
+            }],
+            generationConfig: {
+                responseModalities: ["TEXT", "IMAGE"]
             }
         })
     });
@@ -163,19 +161,26 @@ async function generateAIImage(prompt, ratio) {
         if (errorMsg.includes('safety') || errorMsg.includes('blocked')) {
             throw new Error('Изображение заблокировано фильтром безопасности. Измените промпт.');
         }
+        if (errorMsg.includes('not found') || errorMsg.includes('does not exist')) {
+            throw new Error('Модель недоступна. Попробуйте позже или проверьте API ключ.');
+        }
         throw new Error(errorMsg);
     }
 
     const data = await response.json();
 
-    // Проверяем наличие изображения в ответе
-    if (!data.predictions?.[0]?.bytesBase64Encoded) {
-        throw new Error('Не удалось сгенерировать изображение');
+    // Ищем изображение в ответе
+    const parts = data.candidates?.[0]?.content?.parts || [];
+    const imagePart = parts.find(p => p.inlineData?.mimeType?.startsWith('image/'));
+
+    if (!imagePart) {
+        throw new Error('Модель не вернула изображение. Попробуйте другой промпт.');
     }
 
     // Возвращаем data URL из base64
-    const base64Image = data.predictions[0].bytesBase64Encoded;
-    return `data:image/png;base64,${base64Image}`;
+    const mimeType = imagePart.inlineData.mimeType;
+    const base64Image = imagePart.inlineData.data;
+    return `data:${mimeType};base64,${base64Image}`;
 }
 
 // ===== Generation Functions =====
@@ -221,18 +226,10 @@ async function generateImage() {
     setButtonLoading('generateBtn', true);
 
     try {
-        // Generate enhanced prompt using Gemini
+        // Используем промпт напрямую (Gemini сам хорошо понимает)
         let enhancedPrompt = prompt;
-        if (CONFIG.geminiKey) {
-            try {
-                const enhanceResponse = await callGeminiForImage(
-                    `Улучши этот промпт для генерации изображения, сделай его более детальным и художественным (ответь только улучшенным промптом, без пояснений): ${prompt}`
-                );
-                enhancedPrompt = enhanceResponse;
-                console.log('Enhanced prompt:', enhancedPrompt);
-            } catch (e) {
-                console.log('Could not enhance prompt:', e);
-            }
+        if (negative) {
+            enhancedPrompt += `. Avoid: ${negative}`;
         }
 
         // Generate real AI image
