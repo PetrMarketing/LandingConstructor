@@ -3,8 +3,8 @@
 // Config
 const CONFIG = {
     geminiKey: localStorage.getItem('gemini_api_key') || '',
-    // Gemini с генерацией изображений (Nano Banana)
-    imageModel: 'gemini-2.0-flash-exp-image-generation',
+    // Gemini 2.0 Flash Experimental (поддерживает генерацию изображений)
+    imageModel: 'gemini-2.0-flash-exp',
     apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models'
 };
 
@@ -127,7 +127,7 @@ async function callGeminiForText(prompt) {
     return data.candidates[0].content.parts[0].text;
 }
 
-// Generate image using Gemini Native Image Generation (Nano Banana)
+// Generate image using Gemini 2.0 Flash Exp
 async function generateAIImage(prompt, ratio) {
     if (!CONFIG.geminiKey) {
         throw new Error('API ключ не установлен. Откройте настройки.');
@@ -142,6 +142,7 @@ async function generateAIImage(prompt, ratio) {
         },
         body: JSON.stringify({
             contents: [{
+                role: "user",
                 parts: [{ text: prompt }]
             }],
             generationConfig: {
