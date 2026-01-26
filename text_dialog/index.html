@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чат с AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>💬 Чат с AI</h2>
+                <a href="../" class="back-link">← Назад</a>
+            </div>
+            <div class="chat-list" id="chatList">
+                <button class="new-chat-btn" id="newChatBtn">+ Новый чат</button>
+                <!-- Список чатов -->
+            </div>
+            <div class="sidebar-footer">
+                <button class="btn btn-outline" id="settingsBtn">⚙️ Настройки</button>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-area">
+            <div class="chat-header">
+                <h3 id="chatTitle">Новый чат</h3>
+                <button class="btn btn-outline" id="clearChatBtn">🗑️ Очистить</button>
+            </div>
+
+            <div class="messages-container" id="messagesContainer">
+                <div class="welcome-message">
+                    <div class="welcome-icon">🤖</div>
+                    <h2>Привет! Я AI-ассистент</h2>
+                    <p>Задайте мне любой вопрос, и я постараюсь помочь.</p>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <textarea id="messageInput" placeholder="Введите сообщение..." rows="1"></textarea>
+                    <button class="send-btn" id="sendBtn">
+                        <span class="send-icon">➤</span>
+                        <span class="loading-icon" style="display:none;">⏳</span>
+                    </button>
+                </div>
+                <p class="input-hint">Enter — отправить, Shift+Enter — новая строка</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚙️ Настройки</h3>
+                <button class="modal-close" id="closeSettingsBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="apiKeyInput">API ключ Google Gemini</label>
+                    <input type="password" id="apiKeyInput" placeholder="AIza...">
+                    <small>Получить ключ: <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a></small>
+                </div>
+                <div class="form-group">
+                    <label for="modelSelect">Модель</label>
+                    <select id="modelSelect">
+                        <option value="gemini-2.0-flash">Gemini 2.0 Flash (быстрая)</option>
+                        <option value="gemini-1.5-pro">Gemini 1.5 Pro (умная)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="temperatureInput">Креативность (0-1)</label>
+                    <input type="range" id="temperatureInput" min="0" max="1" step="0.1" value="0.7">
+                    <span id="temperatureValue">0.7</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="saveSettingsBtn">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

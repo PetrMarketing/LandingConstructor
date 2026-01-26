@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генерация изображений AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🎨 AI Изображения</h2>
+                <a href="../" class="back-link">← Назад</a>
+            </div>
+
+            <nav class="mode-tabs">
+                <button class="mode-tab active" data-mode="generate">Генерация</button>
+                <button class="mode-tab" data-mode="edit">Редактирование</button>
+                <button class="mode-tab" data-mode="combine">Объединение</button>
+                <button class="mode-tab" data-mode="style">Стилизация</button>
+            </nav>
+
+            <!-- Generate Mode -->
+            <div class="mode-content active" id="mode-generate">
+                <div class="form-group">
+                    <label for="promptInput">Описание изображения</label>
+                    <textarea id="promptInput" rows="4" placeholder="Опишите, что хотите увидеть..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="negativePrompt">Негативный промпт</label>
+                    <textarea id="negativePrompt" rows="2" placeholder="Что НЕ должно быть на изображении"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Соотношение сторон</label>
+                    <div class="ratio-buttons">
+                        <button class="ratio-btn active" data-ratio="1:1">1:1</button>
+                        <button class="ratio-btn" data-ratio="16:9">16:9</button>
+                        <button class="ratio-btn" data-ratio="9:16">9:16</button>
+                        <button class="ratio-btn" data-ratio="4:3">4:3</button>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-full" id="generateBtn">
+                    <span class="btn-text">✨ Сгенерировать</span>
+                    <span class="btn-loader" style="display:none;">Генерация...</span>
+                </button>
+            </div>
+
+            <!-- Edit Mode -->
+            <div class="mode-content" id="mode-edit">
+                <div class="form-group">
+                    <label>Загрузите изображение</label>
+                    <div class="upload-area" id="editUploadArea">
+                        <input type="file" id="editImageInput" accept="image/*" hidden>
+                        <span>📁 Нажмите или перетащите</span>
+                    </div>
+                    <img id="editPreview" class="preview-image" style="display:none;">
+                </div>
+                <div class="form-group">
+                    <label for="editPrompt">Что изменить?</label>
+                    <textarea id="editPrompt" rows="3" placeholder="Опишите изменения..."></textarea>
+                </div>
+                <button class="btn btn-primary btn-full" id="editBtn">
+                    <span class="btn-text">🖌️ Редактировать</span>
+                    <span class="btn-loader" style="display:none;">Обработка...</span>
+                </button>
+            </div>
+
+            <!-- Combine Mode -->
+            <div class="mode-content" id="mode-combine">
+                <div class="form-group">
+                    <label>Изображение 1</label>
+                    <div class="upload-area" id="combine1UploadArea">
+                        <input type="file" id="combine1Input" accept="image/*" hidden>
+                        <span>📁 Загрузить</span>
+                    </div>
+                    <img id="combine1Preview" class="preview-image" style="display:none;">
+                </div>
+                <div class="form-group">
+                    <label>Изображение 2</label>
+                    <div class="upload-area" id="combine2UploadArea">
+                        <input type="file" id="combine2Input" accept="image/*" hidden>
+                        <span>📁 Загрузить</span>
+                    </div>
+                    <img id="combine2Preview" class="preview-image" style="display:none;">
+                </div>
+                <div class="form-group">
+                    <label for="combinePrompt">Как объединить?</label>
+                    <textarea id="combinePrompt" rows="2" placeholder="Опишите результат..."></textarea>
+                </div>
+                <button class="btn btn-primary btn-full" id="combineBtn">
+                    <span class="btn-text">🔀 Объединить</span>
+                    <span class="btn-loader" style="display:none;">Обработка...</span>
+                </button>
+            </div>
+
+            <!-- Style Mode -->
+            <div class="mode-content" id="mode-style">
+                <div class="form-group">
+                    <label>Исходное изображение</label>
+                    <div class="upload-area" id="styleSourceUploadArea">
+                        <input type="file" id="styleSourceInput" accept="image/*" hidden>
+                        <span>📁 Загрузить</span>
+                    </div>
+                    <img id="styleSourcePreview" class="preview-image" style="display:none;">
+                </div>
+                <div class="form-group">
+                    <label>Изображение со стилем</label>
+                    <div class="upload-area" id="styleRefUploadArea">
+                        <input type="file" id="styleRefInput" accept="image/*" hidden>
+                        <span>📁 Загрузить стиль</span>
+                    </div>
+                    <img id="styleRefPreview" class="preview-image" style="display:none;">
+                </div>
+                <div class="form-group">
+                    <label for="styleStrength">Сила стилизации</label>
+                    <input type="range" id="styleStrength" min="0" max="100" value="50">
+                    <span id="styleStrengthValue">50%</span>
+                </div>
+                <button class="btn btn-primary btn-full" id="styleBtn">
+                    <span class="btn-text">🎭 Стилизовать</span>
+                    <span class="btn-loader" style="display:none;">Обработка...</span>
+                </button>
+            </div>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-outline btn-full" id="settingsBtn">⚙️ Настройки API</button>
+            </div>
+        </aside>
+
+        <!-- Result Area -->
+        <main class="result-area">
+            <div class="result-header">
+                <h3>Результат</h3>
+                <div class="result-actions" style="display:none;" id="resultActions">
+                    <button class="btn btn-outline" id="downloadBtn">📥 Скачать</button>
+                    <button class="btn btn-outline" id="copyBtn">📋 Копировать</button>
+                </div>
+            </div>
+
+            <div class="result-container" id="resultContainer">
+                <div class="placeholder">
+                    <div class="placeholder-icon">🖼️</div>
+                    <h3>Здесь появится результат</h3>
+                    <p>Выберите режим и создайте изображение</p>
+                </div>
+            </div>
+
+            <div class="history-section">
+                <h4>История генераций</h4>
+                <div class="history-grid" id="historyGrid">
+                    <!-- Generated images history -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚙️ Настройки API</h3>
+                <button class="modal-close" id="closeSettingsBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="apiKeyInput">API ключ Vertex AI</label>
+                    <input type="password" id="apiKeyInput" placeholder="Введите ключ...">
+                </div>
+                <div class="form-group">
+                    <label for="projectIdInput">Project ID</label>
+                    <input type="text" id="projectIdInput" placeholder="your-project-id">
+                </div>
+                <p class="api-note">
+                    Для генерации изображений используется Vertex AI Imagen.<br>
+                    <a href="https://cloud.google.com/vertex-ai" target="_blank">Документация Vertex AI</a>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="saveSettingsBtn">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

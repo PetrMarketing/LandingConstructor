@@ -1,0 +1,438 @@
+/* ===== Variables ===== */
+:root {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --accent: #8b5cf6;
+    --accent-hover: #7c3aed;
+    --border: #334155;
+    --success: #10b981;
+    --error: #ef4444;
+}
+
+/* ===== Reset ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+/* ===== Layout ===== */
+.app-container {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    min-height: 100vh;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    margin-bottom: 20px;
+}
+
+.sidebar-header h2 {
+    font-size: 1.25rem;
+    color: var(--accent);
+    margin-bottom: 10px;
+}
+
+.back-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.875rem;
+}
+
+.back-link:hover {
+    color: var(--accent);
+}
+
+/* ===== Mode Tabs ===== */
+.mode-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.mode-tab {
+    padding: 10px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.mode-tab:hover {
+    background: var(--border);
+}
+
+.mode-tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+/* ===== Mode Content ===== */
+.mode-content {
+    display: none;
+    flex: 1;
+}
+
+.mode-content.active {
+    display: block;
+}
+
+/* ===== Form ===== */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.form-group textarea,
+.form-group input[type="text"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    resize: vertical;
+}
+
+.form-group textarea:focus,
+.form-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.form-group input[type="range"] {
+    width: 100%;
+    margin-top: 5px;
+}
+
+/* ===== Upload Area ===== */
+.upload-area {
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-secondary);
+}
+
+.upload-area:hover {
+    border-color: var(--accent);
+    background: rgba(139, 92, 246, 0.1);
+}
+
+.upload-area.dragover {
+    border-color: var(--accent);
+    background: rgba(139, 92, 246, 0.2);
+}
+
+.preview-image {
+    width: 100%;
+    max-height: 150px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+/* ===== Ratio Buttons ===== */
+.ratio-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.ratio-btn {
+    flex: 1;
+    padding: 8px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.ratio-btn:hover {
+    background: var(--border);
+}
+
+.ratio-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+/* ===== Buttons ===== */
+.btn {
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+}
+
+.btn-primary:disabled {
+    background: var(--bg-tertiary);
+    cursor: not-allowed;
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+}
+
+.btn-outline:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.btn-full {
+    width: 100%;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+/* ===== Result Area ===== */
+.result-area {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.result-header h3 {
+    font-size: 1.125rem;
+}
+
+.result-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* ===== Result Container ===== */
+.result-container {
+    flex: 1;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    overflow: hidden;
+}
+
+.placeholder {
+    text-align: center;
+    padding: 40px;
+}
+
+.placeholder-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.placeholder h3 {
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.placeholder p {
+    color: var(--text-secondary);
+}
+
+.result-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.loading-spinner {
+    text-align: center;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ===== History ===== */
+.history-section {
+    margin-top: 20px;
+}
+
+.history-section h4 {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+}
+
+.history-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+}
+
+.history-item {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.history-item:hover {
+    border-color: var(--accent);
+}
+
+.history-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ===== Modal ===== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    border: 1px solid var(--border);
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid var(--border);
+    text-align: right;
+}
+
+.api-note {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 15px;
+    padding: 10px;
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+}
+
+.api-note a {
+    color: var(--accent);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .app-container {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        display: none;
+    }
+}
