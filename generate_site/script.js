@@ -3,7 +3,7 @@
 // Configuration
 const CONFIG = {
     GEMINI_API_KEY: localStorage.getItem('gemini_api_key') || '',
-    GEMINI_API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+    GEMINI_API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
     // Image Generation (TODO: подключить реальный API)
     IMAGE_API_KEY: '',
     IMAGE_API_URL: '',

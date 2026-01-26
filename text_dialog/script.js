@@ -3,7 +3,7 @@
 // Config
 const CONFIG = {
     apiKey: localStorage.getItem('gemini_api_key') || '',
-    model: localStorage.getItem('gemini_model') || 'gemini-2.0-flash',
+    model: localStorage.getItem('gemini_model') || 'gemini-1.5-flash',
     temperature: parseFloat(localStorage.getItem('gemini_temperature') || '0.7'),
     apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models'
 };
@@ -22,7 +22,7 @@ const chatTitle = document.getElementById('chatTitle');
 const settingsModal = document.getElementById('settingsModal');
 
 // ===== API =====
-async function sendToGemini(message) {
+async function sendToGemini(message, retryCount = 0) {
     if (!CONFIG.apiKey) {
         throw new Error('API ключ не установлен. Откройте настройки.');
     }
@@ -55,11 +55,43 @@ async function sendToGemini(message) {
 
     if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error?.message || `API Error: ${response.status}`);
+        const errorMsg = error.error?.message || '';
+
+        // Handle rate limit - retry after waiting
+        if (response.status === 429 && retryCount < 3) {
+            // Extract wait time from error message
+            const waitMatch = errorMsg.match(/retry in (\d+\.?\d*)/i);
+            const waitTime = waitMatch ? Math.ceil(parseFloat(waitMatch[1])) : 30;
+
+            showRetryCountdown(waitTime);
+            await new Promise(resolve => setTimeout(resolve, waitTime * 1000));
+            return sendToGemini(message, retryCount + 1);
+        }
+
+        // User-friendly error messages
+        if (errorMsg.includes('quota') || errorMsg.includes('rate')) {
+            throw new Error(`Превышен лимит запросов. Подождите минуту или используйте другую модель в настройках.`);
+        }
+
+        throw new Error(errorMsg || `API Error: ${response.status}`);
     }
 
     const data = await response.json();
     return data.candidates[0].content.parts[0].text;
+}
+
+function showRetryCountdown(seconds) {
+    const loader = sendBtn.querySelector('.loading-icon');
+    let remaining = seconds;
+
+    const interval = setInterval(() => {
+        loader.textContent = `⏳ ${remaining}с`;
+        remaining--;
+        if (remaining < 0) {
+            clearInterval(interval);
+            loader.textContent = '⏳';
+        }
+    }, 1000);
 }
 
 // ===== UI Functions =====
