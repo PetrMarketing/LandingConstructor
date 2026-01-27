@@ -49,37 +49,160 @@ fileInput.addEventListener('change', (e) => {
     }
 });
 
-function handleFile(file) {
-    const maxSize = 500000; // 500KB
+async function handleFile(file) {
+    const maxSize = 10000000; // 10MB для PDF
     if (file.size > maxSize) {
-        alert('Файл слишком большой. Максимальный размер: 500KB');
+        alert('Файл слишком большой. Максимальный размер: 10MB');
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        uploadedFile = file;
-        fileContent = e.target.result;
+    uploadedFile = file;
+    fileName.textContent = file.name;
 
-        // Show preview
-        fileName.textContent = file.name;
-        fileContentPreview.textContent = fileContent.substring(0, 1000) + (fileContent.length > 1000 ? '...' : '');
+    const ext = file.name.split('.').pop().toLowerCase();
 
+    try {
+        // Показываем индикатор загрузки
+        fileContentPreview.textContent = 'Загрузка файла...';
         uploadArea.style.display = 'none';
         filePreview.style.display = 'block';
+
+        if (ext === 'pdf') {
+            fileContent = await extractPdfText(file);
+        } else if (ext === 'xmind') {
+            fileContent = await extractXmindText(file);
+        } else {
+            // Текстовые файлы
+            fileContent = await readTextFile(file);
+        }
+
+        // Show preview
+        fileContentPreview.textContent = fileContent.substring(0, 1000) + (fileContent.length > 1000 ? '...' : '');
         generateSection.style.display = 'block';
-    };
-    reader.readAsText(file);
+
+    } catch (error) {
+        console.error('Error reading file:', error);
+        alert('Ошибка чтения файла: ' + error.message);
+        resetUpload();
+    }
 }
 
-document.getElementById('removeFile').addEventListener('click', () => {
+function readTextFile(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = reject;
+        reader.readAsText(file);
+    });
+}
+
+async function extractPdfText(file) {
+    const arrayBuffer = await file.arrayBuffer();
+
+    // Устанавливаем путь к воркеру PDF.js
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let fullText = '';
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map(item => item.str).join(' ');
+        fullText += `\n--- Страница ${i} ---\n${pageText}\n`;
+    }
+
+    return fullText.trim();
+}
+
+async function extractXmindText(file) {
+    const arrayBuffer = await file.arrayBuffer();
+    const zip = await JSZip.loadAsync(arrayBuffer);
+
+    // XMind 8+ использует content.json
+    let contentFile = zip.file('content.json');
+
+    if (contentFile) {
+        const content = await contentFile.async('string');
+        const data = JSON.parse(content);
+        return parseXmindJson(data);
+    }
+
+    // Старый формат XMind использует content.xml
+    contentFile = zip.file('content.xml');
+    if (contentFile) {
+        const content = await contentFile.async('string');
+        return parseXmindXml(content);
+    }
+
+    throw new Error('Не удалось прочитать содержимое .xmind файла');
+}
+
+function parseXmindJson(data) {
+    let result = '';
+
+    function extractTopics(topic, level = 0) {
+        const indent = '  '.repeat(level);
+        const title = topic.title || '';
+
+        if (title) {
+            result += `${indent}${level === 0 ? '' : '• '}${title}\n`;
+        }
+
+        if (topic.children && topic.children.attached) {
+            topic.children.attached.forEach(child => extractTopics(child, level + 1));
+        }
+    }
+
+    if (Array.isArray(data)) {
+        data.forEach(sheet => {
+            if (sheet.rootTopic) {
+                result += `\n=== ${sheet.title || 'Карта'} ===\n`;
+                extractTopics(sheet.rootTopic);
+            }
+        });
+    }
+
+    return result.trim();
+}
+
+function parseXmindXml(xmlContent) {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlContent, 'text/xml');
+    let result = '';
+
+    function extractTopics(element, level = 0) {
+        const indent = '  '.repeat(level);
+        const titleEl = element.querySelector(':scope > title');
+        const title = titleEl ? titleEl.textContent : '';
+
+        if (title) {
+            result += `${indent}${level === 0 ? '' : '• '}${title}\n`;
+        }
+
+        const children = element.querySelectorAll(':scope > children > topics > topic');
+        children.forEach(child => extractTopics(child, level + 1));
+    }
+
+    const topics = xmlDoc.querySelectorAll('topic');
+    if (topics.length > 0) {
+        extractTopics(topics[0]);
+    }
+
+    return result.trim();
+}
+
+function resetUpload() {
     uploadedFile = null;
     fileContent = '';
     fileInput.value = '';
-
     uploadArea.style.display = 'block';
     filePreview.style.display = 'none';
     generateSection.style.display = 'none';
+}
+
+document.getElementById('removeFile').addEventListener('click', () => {
+    resetUpload();
     resultsSection.style.display = 'none';
 });
 

@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Генератор презентаций</title>
     <link rel="stylesheet" href="style.css">
+    <!-- PDF.js для чтения PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <!-- JSZip для чтения .xmind -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
     <div class="app-container">
@@ -27,8 +31,8 @@
                     <div class="upload-icon">📄</div>
                     <h2>Загрузите файл</h2>
                     <p>Перетащите файл сюда или нажмите для выбора</p>
-                    <p class="upload-formats">Поддерживаемые форматы: .txt, .md, .json, .csv</p>
-                    <input type="file" id="fileInput" accept=".txt,.md,.json,.csv,.xml" hidden>
+                    <p class="upload-formats">Поддерживаемые форматы: .txt, .md, .json, .csv, .pdf, .xmind</p>
+                    <input type="file" id="fileInput" accept=".txt,.md,.json,.csv,.xml,.pdf,.xmind" hidden>
                 </div>
 
                 <div class="file-preview" id="filePreview" style="display:none;">
