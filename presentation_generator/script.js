@@ -6,13 +6,8 @@ const CONFIG = {
         : 'https://ai-tools-backend-d3zr.onrender.com'
 };
 
-// Референсные изображения для генерации слайдов
-const REFERENCE_IMAGES = [
-    'https://sun9-11.userapi.com/impg/SFMyhk8cGPf0KTT3rYeYYG8BZb-5kaS6YcYrHA/HgF1GVRjYZ8.jpg?size=1920x1080&quality=95&sign=5c8f9b7e3f4a6d2c1b0e9d8c7a6f5e4d&type=album',
-    'https://sun9-9.userapi.com/impg/2D3_sFMKcVYcVBZ3sKKJLZbR9cPZVvXYg8j9Bg/xyz123.jpg?size=1920x1080&quality=95&sign=abc123&type=album',
-    'https://sun9-56.userapi.com/impg/anotherimage.jpg?size=1920x1080&quality=95&sign=def456&type=album',
-    'https://sun9-76.userapi.com/impg/yetanotherimage.jpg?size=1920x1080&quality=95&sign=ghi789&type=album'
-];
+// Референсные изображения отключены (VK URLs недоступны для OpenRouter)
+const REFERENCE_IMAGES = [];
 
 // State
 let uploadedFile = null;
