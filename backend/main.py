@@ -1,4 +1,5 @@
 import os
+import re
 import httpx
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -49,16 +50,41 @@ async def chat(request: ChatRequest):
 
 @app.post("/api/generate-image")
 async def generate_image(request: ImageRequest):
-    if not VERTEX_ACCESS_TOKEN:
-        raise HTTPException(status_code=500, detail="VERTEX_ACCESS_TOKEN не настроен")
-    url = f"https://{VERTEX_REGION}-aiplatform.googleapis.com/v1/projects/{VERTEX_PROJECT_ID}/locations/{VERTEX_REGION}/publishers/google/models/imagegeneration:predict"
+    if not OPENROUTER_API_KEY:
+        raise HTTPException(status_code=500, detail="OPENROUTER_API_KEY не настроен")
+
+    # Используем Gemini 3 Pro Image Preview через OpenRouter
     async with httpx.AsyncClient(timeout=120.0) as client:
-        response = await client.post(url, headers={"Content-Type": "application/json", "Authorization": f"Bearer {VERTEX_ACCESS_TOKEN}"}, json={"instances": [{"prompt": request.prompt}], "parameters": {"sampleCount": 1, "aspectRatio": request.aspect_ratio}})
+        response = await client.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                "HTTP-Referer": "https://ai-tools-backend-d3zr.onrender.com",
+                "X-Title": "AI Tools Image Generator"
+            },
+            json={
+                "model": "google/gemini-2.0-flash-exp-image-generation:free",
+                "messages": [
+                    {"role": "user", "content": f"Generate an image: {request.prompt}. Aspect ratio: {request.aspect_ratio}"}
+                ]
+            }
+        )
+
         if response.status_code != 200:
             error = response.json()
             detail = error.get("error", {}).get("message", str(error))
-            raise HTTPException(status_code=response.status_code, detail=f"Vertex AI: {detail}")
+            raise HTTPException(status_code=response.status_code, detail=f"OpenRouter: {detail}")
+
         data = response.json()
-        if not data.get("predictions"):
-            raise HTTPException(status_code=400, detail="Не удалось сгенерировать")
-        return {"success": True, "image": f"data:image/png;base64,{data['predictions'][0]['bytesBase64Encoded']}"}
+        content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+
+        # Проверяем есть ли изображение в ответе
+        if "data:image" in content or "base64" in content.lower():
+            # Извлекаем base64 из ответа
+            match = re.search(r'data:image/[^;]+;base64,([A-Za-z0-9+/=]+)', content)
+            if match:
+                return {"success": True, "image": match.group(0)}
+
+        # Если модель вернула текст вместо изображения
+        return {"success": False, "error": "Модель не сгенерировала изображение", "text_response": content}
