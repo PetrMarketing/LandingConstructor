@@ -189,12 +189,6 @@ async function sendMessage() {
     const message = messageInput.value.trim();
     if (!message) return;
 
-    // Check API key
-    if (!CONFIG.apiKey) {
-        settingsModal.classList.add('active');
-        return;
-    }
-
     messageInput.value = '';
     messageInput.style.height = 'auto';
 
@@ -217,20 +211,17 @@ async function sendMessage() {
 
 // ===== Settings =====
 function loadSettings() {
-    document.getElementById('apiKeyInput').value = CONFIG.apiKey;
     document.getElementById('modelSelect').value = CONFIG.model;
     document.getElementById('temperatureInput').value = CONFIG.temperature;
     document.getElementById('temperatureValue').textContent = CONFIG.temperature;
 }
 
 function saveSettings() {
-    CONFIG.apiKey = document.getElementById('apiKeyInput').value.trim();
     CONFIG.model = document.getElementById('modelSelect').value;
     CONFIG.temperature = parseFloat(document.getElementById('temperatureInput').value);
 
-    localStorage.setItem('openrouter_api_key', CONFIG.apiKey);
-    localStorage.setItem('openrouter_model', CONFIG.model);
-    localStorage.setItem('openrouter_temperature', CONFIG.temperature);
+    localStorage.setItem('chat_model', CONFIG.model);
+    localStorage.setItem('chat_temperature', CONFIG.temperature);
 
     settingsModal.classList.remove('active');
 }

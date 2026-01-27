@@ -60,22 +60,16 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="apiKeyInput">API ключ OpenRouter</label>
-                    <input type="password" id="apiKeyInput" placeholder="sk-or-v1-...">
-                    <small>Получить ключ: <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a></small>
-                </div>
-                <div class="form-group">
                     <label for="modelSelect">Модель</label>
                     <select id="modelSelect">
-                        <option value="google/gemini-2.0-flash-001">Gemini 2.0 Flash (рекомендуется)</option>
-                        <option value="google/gemini-2.5-flash-preview">Gemini 2.5 Flash Preview</option>
+                        <option value="openrouter/auto">Авто (рекомендуется)</option>
+                        <option value="google/gemini-2.0-flash-exp:free">Gemini 2.0 Flash</option>
                         <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
                         <option value="openai/gpt-4o-mini">GPT-4o Mini</option>
-                        <option value="openai/gpt-4o">GPT-4o</option>
-                        <option value="meta-llama/llama-3.3-70b-instruct">Llama 3.3 70B</option>
+                        <option value="meta-llama/llama-3.3-70b-instruct:free">Llama 3.3 70B</option>
                         <option value="deepseek/deepseek-chat">DeepSeek Chat</option>
                     </select>
-                    <small>OpenRouter даёт доступ к разным моделям</small>
+                    <small>Выбор модели для генерации ответов</small>
                 </div>
                 <div class="form-group">
                     <label for="temperatureInput">Креативность (0-1)</label>
