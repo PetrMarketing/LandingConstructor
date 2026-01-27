@@ -64,7 +64,7 @@ async def generate_image(request: ImageRequest):
                 "X-Title": "AI Tools Image Generator"
             },
             json={
-                "model": "google/gemini-2.0-flash-exp-image-generation:free",
+                "model": "google/gemini-2.0-flash-exp-image-generation",
                 "messages": [
                     {"role": "user", "content": f"Generate an image: {request.prompt}. Aspect ratio: {request.aspect_ratio}"}
                 ]
