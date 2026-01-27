@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Планировщик контента</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <a href="../" class="back-link">← Назад</a>
+                <h1>📅 Планировщик контента</h1>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-primary" id="addProjectBtn">+ Добавить проект</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- No Projects State -->
+            <section class="no-projects-section" id="noProjectsSection">
+                <div class="empty-state">
+                    <div class="empty-icon">📱</div>
+                    <h2>Нет добавленных проектов</h2>
+                    <p>Добавьте Telegram бота, чтобы начать планировать посты</p>
+                    <button class="btn btn-primary btn-large" id="addFirstProjectBtn">+ Добавить проект</button>
+                </div>
+            </section>
+
+            <!-- Calendar Section -->
+            <section class="calendar-section" id="calendarSection" style="display:none;">
+                <!-- Filters -->
+                <div class="calendar-filters">
+                    <div class="filter-group">
+                        <label>Проект:</label>
+                        <select id="projectFilter">
+                            <option value="all">Все проекты</option>
+                        </select>
+                    </div>
+                    <div class="month-navigation">
+                        <button class="btn btn-icon" id="prevMonth">←</button>
+                        <span class="current-month" id="currentMonth">Январь 2026</span>
+                        <button class="btn btn-icon" id="nextMonth">→</button>
+                    </div>
+                </div>
+
+                <!-- Calendar Grid -->
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <div class="weekday">Пн</div>
+                        <div class="weekday">Вт</div>
+                        <div class="weekday">Ср</div>
+                        <div class="weekday">Чт</div>
+                        <div class="weekday">Пт</div>
+                        <div class="weekday weekend">Сб</div>
+                        <div class="weekday weekend">Вс</div>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- Days will be rendered here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add Project Modal -->
+    <div class="modal-overlay" id="addProjectModal" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Добавить проект</h3>
+                <button class="modal-close" id="closeProjectModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название проекта:</label>
+                    <input type="text" id="projectName" placeholder="Например: Мой канал">
+                </div>
+                <div class="form-group">
+                    <label>API ключ Telegram бота:</label>
+                    <input type="text" id="projectBotToken" placeholder="123456789:ABCdefGHIjklMNOpqrsTUVwxyz">
+                    <p class="form-hint">Получите токен у @BotFather в Telegram</p>
+                </div>
+                <div class="form-group">
+                    <label>Chat ID канала/группы:</label>
+                    <input type="text" id="projectChatId" placeholder="-1001234567890 или @username">
+                    <p class="form-hint">ID канала или @username</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelProjectBtn">Отмена</button>
+                <button class="btn btn-primary" id="saveProjectBtn">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Post Modal -->
+    <div class="modal-overlay" id="schedulePostModal" style="display:none;">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <h3>Запланировать пост</h3>
+                <button class="modal-close" id="closePostModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="post-form">
+                    <!-- Project Selection -->
+                    <div class="form-group">
+                        <label>Проект:</label>
+                        <select id="postProject">
+                            <!-- Projects will be populated -->
+                        </select>
+                    </div>
+
+                    <!-- Date and Time -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Дата:</label>
+                            <input type="date" id="postDate">
+                        </div>
+                        <div class="form-group">
+                            <label>Время:</label>
+                            <input type="time" id="postTime" value="12:00">
+                        </div>
+                    </div>
+
+                    <!-- Post Text -->
+                    <div class="form-group">
+                        <label>Текст поста:</label>
+                        <div class="textarea-with-btn">
+                            <textarea id="postText" placeholder="Введите текст поста..." rows="5"></textarea>
+                            <button class="btn btn-outline btn-generate" id="generateTextBtn">✨ Сгенерировать</button>
+                        </div>
+                    </div>
+
+                    <!-- Image -->
+                    <div class="form-group">
+                        <label>Изображение:</label>
+                        <div class="image-upload-area" id="postImageArea">
+                            <input type="file" id="postImageInput" accept="image/*" hidden>
+                            <img id="postImagePreview" style="display:none;">
+                            <div class="image-placeholder" id="imagePlaceholder">
+                                <span>Нажмите для выбора файла</span>
+                                <button class="btn btn-outline btn-small" id="generateImageBtn">✨ Сгенерировать</button>
+                            </div>
+                            <button class="btn btn-icon image-remove" id="removeImageBtn" style="display:none;">×</button>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="form-group">
+                        <label>Кнопки (опционально):</label>
+                        <div class="post-buttons-list" id="postButtonsList">
+                            <!-- Buttons will be added here -->
+                        </div>
+                        <button class="btn btn-outline btn-small" id="addPostButton">+ Добавить кнопку</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelPostBtn">Отмена</button>
+                <button class="btn btn-primary" id="savePostBtn">Запланировать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate Text Modal -->
+    <div class="modal-overlay" id="generateTextModal" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Сгенерировать текст</h3>
+                <button class="modal-close" id="closeGenerateTextModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Опишите, о чём должен быть пост:</label>
+                    <textarea id="textPrompt" placeholder="Например: Пост о скидках на курсы программирования" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelGenerateText">Отмена</button>
+                <button class="btn btn-primary" id="confirmGenerateText">Сгенерировать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate Image Modal -->
+    <div class="modal-overlay" id="generateImageModal" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Сгенерировать изображение</h3>
+                <button class="modal-close" id="closeGenerateImageModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Опишите изображение:</label>
+                    <textarea id="imagePrompt" placeholder="Например: Яркий баннер со скидкой 50%" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelGenerateImage">Отмена</button>
+                <button class="btn btn-primary" id="confirmGenerateImage">Сгенерировать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Button Modal -->
+    <div class="modal-overlay" id="addButtonModal" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Добавить кнопку</h3>
+                <button class="modal-close" id="closeButtonModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Текст кнопки:</label>
+                    <input type="text" id="buttonText" placeholder="Например: Перейти на сайт">
+                </div>
+                <div class="form-group">
+                    <label>Ссылка:</label>
+                    <input type="url" id="buttonUrl" placeholder="https://example.com">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelButtonBtn">Отмена</button>
+                <button class="btn btn-primary" id="saveButtonBtn">Добавить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Post Modal -->
+    <div class="modal-overlay" id="viewPostModal" style="display:none;">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <h3>Запланированный пост</h3>
+                <button class="modal-close" id="closeViewPostModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="post-preview" id="postPreview">
+                    <!-- Post preview will be rendered here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline btn-danger" id="deletePostBtn">Удалить</button>
+                <button class="btn btn-outline" id="editPostBtn">Редактировать</button>
+                <button class="btn btn-primary" id="sendNowBtn">Отправить сейчас</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

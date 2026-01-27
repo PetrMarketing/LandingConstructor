@@ -1,0 +1,838 @@
+// ===== Планировщик контента =====
+
+const CONFIG = {
+    apiUrl: window.location.hostname === 'localhost'
+        ? 'http://localhost:8000'
+        : 'https://ai-tools-backend-d3zr.onrender.com',
+    botToken: '8528588924:AAEYggmQxAo-sVZajljhtlsR4T-92fMeE3M'
+};
+
+// State
+let projects = JSON.parse(localStorage.getItem('posting_projects') || '[]');
+let posts = JSON.parse(localStorage.getItem('posting_posts') || '[]');
+let currentDate = new Date();
+let currentPostButtons = [];
+let editingPostId = null;
+let selectedDate = null;
+
+// DOM Elements
+const noProjectsSection = document.getElementById('noProjectsSection');
+const calendarSection = document.getElementById('calendarSection');
+const calendarGrid = document.getElementById('calendarGrid');
+const currentMonthEl = document.getElementById('currentMonth');
+const projectFilter = document.getElementById('projectFilter');
+
+// ===== Initialization =====
+function init() {
+    updateUI();
+    renderCalendar();
+    setupEventListeners();
+    checkScheduledPosts();
+
+    // Check posts every minute
+    setInterval(checkScheduledPosts, 60000);
+}
+
+function updateUI() {
+    if (projects.length === 0) {
+        noProjectsSection.style.display = 'block';
+        calendarSection.style.display = 'none';
+    } else {
+        noProjectsSection.style.display = 'none';
+        calendarSection.style.display = 'block';
+        updateProjectFilters();
+    }
+}
+
+function updateProjectFilters() {
+    // Update filter dropdown
+    projectFilter.innerHTML = '<option value="all">Все проекты</option>';
+    projects.forEach(p => {
+        projectFilter.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+    });
+
+    // Update post project dropdown
+    const postProject = document.getElementById('postProject');
+    if (postProject) {
+        postProject.innerHTML = projects.map(p =>
+            `<option value="${p.id}">${p.name}</option>`
+        ).join('');
+    }
+}
+
+// ===== Calendar =====
+function renderCalendar() {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+
+    // Update month title
+    const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+                        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+    currentMonthEl.textContent = `${monthNames[month]} ${year}`;
+
+    // Get first day of month and total days
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const totalDays = lastDay.getDate();
+
+    // Get starting weekday (0 = Sunday, we need Monday = 0)
+    let startWeekday = firstDay.getDay() - 1;
+    if (startWeekday < 0) startWeekday = 6;
+
+    // Get filter value
+    const filterProject = projectFilter.value;
+
+    // Build calendar HTML
+    let html = '';
+    const today = new Date();
+
+    // Previous month days
+    const prevMonth = new Date(year, month, 0);
+    const prevMonthDays = prevMonth.getDate();
+
+    for (let i = startWeekday - 1; i >= 0; i--) {
+        const day = prevMonthDays - i;
+        html += `<div class="calendar-day other-month">
+            <div class="day-number">${day}</div>
+        </div>`;
+    }
+
+    // Current month days
+    for (let day = 1; day <= totalDays; day++) {
+        const date = new Date(year, month, day);
+        const dateStr = formatDate(date);
+        const isToday = date.toDateString() === today.toDateString();
+
+        // Get posts for this day
+        let dayPosts = posts.filter(p => p.date === dateStr);
+        if (filterProject !== 'all') {
+            dayPosts = dayPosts.filter(p => p.projectId === filterProject);
+        }
+
+        const hasPosts = dayPosts.length > 0;
+
+        html += `<div class="calendar-day ${isToday ? 'today' : ''} ${hasPosts ? 'has-posts' : ''}" data-date="${dateStr}">
+            <div class="day-number">${day}</div>
+            <div class="day-posts">
+                ${dayPosts.slice(0, 3).map(post => {
+                    const project = projects.find(p => p.id === post.projectId);
+                    const statusClass = post.status || 'scheduled';
+                    return `<div class="day-post ${statusClass}" data-post-id="${post.id}" title="${post.text?.substring(0, 50) || 'Пост'}">
+                        ${post.time} ${project ? project.name : ''}
+                    </div>`;
+                }).join('')}
+                ${dayPosts.length > 3 ? `<div class="day-post" style="background: var(--bg-tertiary);">+${dayPosts.length - 3} ещё</div>` : ''}
+            </div>
+            <button class="schedule-btn" data-date="${dateStr}">+ Запланировать</button>
+        </div>`;
+    }
+
+    // Next month days
+    const remainingDays = 42 - (startWeekday + totalDays);
+    for (let day = 1; day <= remainingDays; day++) {
+        html += `<div class="calendar-day other-month">
+            <div class="day-number">${day}</div>
+        </div>`;
+    }
+
+    calendarGrid.innerHTML = html;
+
+    // Add click handlers
+    document.querySelectorAll('.schedule-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openScheduleModal(btn.dataset.date);
+        });
+    });
+
+    document.querySelectorAll('.day-post[data-post-id]').forEach(el => {
+        el.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openViewPostModal(el.dataset.postId);
+        });
+    });
+}
+
+function formatDate(date) {
+    return date.toISOString().split('T')[0];
+}
+
+// ===== Event Listeners =====
+function setupEventListeners() {
+    // Navigation
+    document.getElementById('prevMonth').addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar();
+    });
+
+    document.getElementById('nextMonth').addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar();
+    });
+
+    projectFilter.addEventListener('change', renderCalendar);
+
+    // Add Project
+    document.getElementById('addProjectBtn').addEventListener('click', openProjectModal);
+    document.getElementById('addFirstProjectBtn').addEventListener('click', openProjectModal);
+    document.getElementById('closeProjectModal').addEventListener('click', closeProjectModal);
+    document.getElementById('cancelProjectBtn').addEventListener('click', closeProjectModal);
+    document.getElementById('saveProjectBtn').addEventListener('click', saveProject);
+
+    // Schedule Post
+    document.getElementById('closePostModal').addEventListener('click', closePostModal);
+    document.getElementById('cancelPostBtn').addEventListener('click', closePostModal);
+    document.getElementById('savePostBtn').addEventListener('click', savePost);
+
+    // Generate Text
+    document.getElementById('generateTextBtn').addEventListener('click', openGenerateTextModal);
+    document.getElementById('closeGenerateTextModal').addEventListener('click', () => {
+        document.getElementById('generateTextModal').style.display = 'none';
+    });
+    document.getElementById('cancelGenerateText').addEventListener('click', () => {
+        document.getElementById('generateTextModal').style.display = 'none';
+    });
+    document.getElementById('confirmGenerateText').addEventListener('click', generateText);
+
+    // Image Upload
+    const imageArea = document.getElementById('postImageArea');
+    const imageInput = document.getElementById('postImageInput');
+
+    imageArea.addEventListener('click', (e) => {
+        if (e.target.id !== 'generateImageBtn' && e.target.id !== 'removeImageBtn') {
+            imageInput.click();
+        }
+    });
+
+    imageInput.addEventListener('change', handleImageUpload);
+    document.getElementById('removeImageBtn').addEventListener('click', removeImage);
+
+    // Generate Image
+    document.getElementById('generateImageBtn').addEventListener('click', openGenerateImageModal);
+    document.getElementById('closeGenerateImageModal').addEventListener('click', () => {
+        document.getElementById('generateImageModal').style.display = 'none';
+    });
+    document.getElementById('cancelGenerateImage').addEventListener('click', () => {
+        document.getElementById('generateImageModal').style.display = 'none';
+    });
+    document.getElementById('confirmGenerateImage').addEventListener('click', generateImage);
+
+    // Post Buttons
+    document.getElementById('addPostButton').addEventListener('click', openAddButtonModal);
+    document.getElementById('closeButtonModal').addEventListener('click', () => {
+        document.getElementById('addButtonModal').style.display = 'none';
+    });
+    document.getElementById('cancelButtonBtn').addEventListener('click', () => {
+        document.getElementById('addButtonModal').style.display = 'none';
+    });
+    document.getElementById('saveButtonBtn').addEventListener('click', addPostButton);
+
+    // View Post
+    document.getElementById('closeViewPostModal').addEventListener('click', () => {
+        document.getElementById('viewPostModal').style.display = 'none';
+    });
+    document.getElementById('deletePostBtn').addEventListener('click', deletePost);
+    document.getElementById('editPostBtn').addEventListener('click', editPost);
+    document.getElementById('sendNowBtn').addEventListener('click', sendPostNow);
+
+    // Close modals on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                overlay.style.display = 'none';
+            }
+        });
+    });
+
+    // Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+        }
+    });
+}
+
+// ===== Project Modal =====
+function openProjectModal() {
+    document.getElementById('projectName').value = '';
+    document.getElementById('projectBotToken').value = '';
+    document.getElementById('projectChatId').value = '';
+    document.getElementById('addProjectModal').style.display = 'flex';
+}
+
+function closeProjectModal() {
+    document.getElementById('addProjectModal').style.display = 'none';
+}
+
+async function saveProject() {
+    const name = document.getElementById('projectName').value.trim();
+    const botToken = document.getElementById('projectBotToken').value.trim();
+    const chatId = document.getElementById('projectChatId').value.trim();
+
+    if (!name) {
+        showToast('Введите название проекта', true);
+        return;
+    }
+
+    if (!botToken) {
+        showToast('Введите API ключ бота', true);
+        return;
+    }
+
+    if (!chatId) {
+        showToast('Введите Chat ID', true);
+        return;
+    }
+
+    // Verify bot token
+    showLoading('Проверка бота...');
+
+    try {
+        const response = await fetch(`https://api.telegram.org/bot${botToken}/getMe`);
+        const data = await response.json();
+
+        if (!data.ok) {
+            throw new Error('Неверный токен бота');
+        }
+
+        const project = {
+            id: Date.now().toString(),
+            name,
+            botToken,
+            chatId,
+            botUsername: data.result.username,
+            createdAt: new Date().toISOString()
+        };
+
+        projects.push(project);
+        saveProjects();
+
+        closeProjectModal();
+        updateUI();
+        renderCalendar();
+        showToast('Проект добавлен');
+
+    } catch (error) {
+        showToast('Ошибка: ' + error.message, true);
+    } finally {
+        hideLoading();
+    }
+}
+
+// ===== Schedule Post Modal =====
+function openScheduleModal(date) {
+    if (projects.length === 0) {
+        showToast('Сначала добавьте проект', true);
+        return;
+    }
+
+    selectedDate = date;
+    editingPostId = null;
+    currentPostButtons = [];
+
+    // Reset form
+    document.getElementById('postDate').value = date;
+    document.getElementById('postTime').value = '12:00';
+    document.getElementById('postText').value = '';
+    removeImage();
+    renderPostButtons();
+
+    // Update project dropdown
+    updateProjectFilters();
+
+    document.getElementById('schedulePostModal').style.display = 'flex';
+}
+
+function closePostModal() {
+    document.getElementById('schedulePostModal').style.display = 'none';
+    editingPostId = null;
+}
+
+async function savePost() {
+    const projectId = document.getElementById('postProject').value;
+    const date = document.getElementById('postDate').value;
+    const time = document.getElementById('postTime').value;
+    const text = document.getElementById('postText').value.trim();
+    const imagePreview = document.getElementById('postImagePreview');
+    const image = imagePreview.style.display !== 'none' ? imagePreview.src : null;
+
+    if (!text && !image) {
+        showToast('Добавьте текст или изображение', true);
+        return;
+    }
+
+    const post = {
+        id: editingPostId || Date.now().toString(),
+        projectId,
+        date,
+        time,
+        text,
+        image,
+        buttons: [...currentPostButtons],
+        status: 'scheduled',
+        createdAt: editingPostId ? undefined : new Date().toISOString()
+    };
+
+    if (editingPostId) {
+        const index = posts.findIndex(p => p.id === editingPostId);
+        if (index !== -1) {
+            post.createdAt = posts[index].createdAt;
+            posts[index] = post;
+        }
+    } else {
+        posts.push(post);
+    }
+
+    savePosts();
+    closePostModal();
+    renderCalendar();
+    showToast(editingPostId ? 'Пост обновлен' : 'Пост запланирован');
+}
+
+// ===== Image Handling =====
+async function handleImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+        showToast('Выберите изображение', true);
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        setPostImage(e.target.result);
+    };
+    reader.readAsDataURL(file);
+}
+
+function setPostImage(src) {
+    const preview = document.getElementById('postImagePreview');
+    const placeholder = document.getElementById('imagePlaceholder');
+    const removeBtn = document.getElementById('removeImageBtn');
+    const area = document.getElementById('postImageArea');
+
+    preview.src = src;
+    preview.style.display = 'block';
+    placeholder.style.display = 'none';
+    removeBtn.style.display = 'flex';
+    area.classList.add('has-image');
+}
+
+function removeImage(e) {
+    if (e) e.stopPropagation();
+
+    const preview = document.getElementById('postImagePreview');
+    const placeholder = document.getElementById('imagePlaceholder');
+    const removeBtn = document.getElementById('removeImageBtn');
+    const area = document.getElementById('postImageArea');
+    const input = document.getElementById('postImageInput');
+
+    preview.src = '';
+    preview.style.display = 'none';
+    placeholder.style.display = 'flex';
+    removeBtn.style.display = 'none';
+    area.classList.remove('has-image');
+    input.value = '';
+}
+
+// ===== Generate Text =====
+function openGenerateTextModal() {
+    document.getElementById('textPrompt').value = '';
+    document.getElementById('generateTextModal').style.display = 'flex';
+}
+
+async function generateText() {
+    const prompt = document.getElementById('textPrompt').value.trim();
+
+    if (!prompt) {
+        showToast('Опишите, о чём должен быть пост', true);
+        return;
+    }
+
+    showLoading('Генерация текста...');
+
+    try {
+        const response = await fetch(`${CONFIG.apiUrl}/api/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                messages: [{
+                    role: 'user',
+                    content: `Напиши пост для Telegram канала на тему: ${prompt}
+
+Требования:
+- Пост должен быть кратким и увлекательным
+- Используй эмодзи умеренно
+- Добавь призыв к действию в конце
+- Не используй хештеги
+- Максимум 500 символов`
+                }],
+                model: 'openrouter/auto',
+                temperature: 0.7
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.detail || 'Ошибка генерации');
+        }
+
+        document.getElementById('postText').value = data.content;
+        document.getElementById('generateTextModal').style.display = 'none';
+        showToast('Текст сгенерирован');
+
+    } catch (error) {
+        showToast('Ошибка: ' + error.message, true);
+    } finally {
+        hideLoading();
+    }
+}
+
+// ===== Generate Image =====
+function openGenerateImageModal() {
+    document.getElementById('imagePrompt').value = '';
+    document.getElementById('generateImageModal').style.display = 'flex';
+}
+
+async function generateImage() {
+    const prompt = document.getElementById('imagePrompt').value.trim();
+
+    if (!prompt) {
+        showToast('Опишите изображение', true);
+        return;
+    }
+
+    showLoading('Генерация изображения...');
+
+    try {
+        const response = await fetch(`${CONFIG.apiUrl}/api/generate-image`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                prompt: prompt,
+                aspect_ratio: '1:1'
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.detail || 'Ошибка генерации');
+        }
+
+        setPostImage(data.image);
+        document.getElementById('generateImageModal').style.display = 'none';
+        showToast('Изображение сгенерировано');
+
+    } catch (error) {
+        showToast('Ошибка: ' + error.message, true);
+    } finally {
+        hideLoading();
+    }
+}
+
+// ===== Post Buttons =====
+function openAddButtonModal() {
+    document.getElementById('buttonText').value = '';
+    document.getElementById('buttonUrl').value = '';
+    document.getElementById('addButtonModal').style.display = 'flex';
+}
+
+function addPostButton() {
+    const text = document.getElementById('buttonText').value.trim();
+    const url = document.getElementById('buttonUrl').value.trim();
+
+    if (!text) {
+        showToast('Введите текст кнопки', true);
+        return;
+    }
+
+    if (!url) {
+        showToast('Введите ссылку', true);
+        return;
+    }
+
+    currentPostButtons.push({ text, url });
+    renderPostButtons();
+    document.getElementById('addButtonModal').style.display = 'none';
+}
+
+function renderPostButtons() {
+    const container = document.getElementById('postButtonsList');
+    container.innerHTML = currentPostButtons.map((btn, index) => `
+        <div class="post-button-item">
+            <div class="button-info">
+                <div class="button-text">${escapeHtml(btn.text)}</div>
+                <div class="button-url">${escapeHtml(btn.url)}</div>
+            </div>
+            <button class="remove-btn" data-index="${index}">×</button>
+        </div>
+    `).join('');
+
+    container.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentPostButtons.splice(parseInt(btn.dataset.index), 1);
+            renderPostButtons();
+        });
+    });
+}
+
+// ===== View Post Modal =====
+function openViewPostModal(postId) {
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+
+    editingPostId = postId;
+    const project = projects.find(p => p.id === post.projectId);
+
+    const statusLabels = {
+        scheduled: 'Запланирован',
+        sent: 'Отправлен',
+        failed: 'Ошибка'
+    };
+
+    document.getElementById('postPreview').innerHTML = `
+        <div class="post-preview-header">
+            <span class="post-preview-project">${project ? project.name : 'Неизвестный проект'}</span>
+            <span class="post-status ${post.status || 'scheduled'}">${statusLabels[post.status] || 'Запланирован'}</span>
+        </div>
+        <div class="post-preview-time">${post.date} в ${post.time}</div>
+        ${post.image ? `<img src="${post.image}" class="post-preview-image">` : ''}
+        <div class="post-preview-text">${escapeHtml(post.text || '')}</div>
+        ${post.buttons && post.buttons.length > 0 ? `
+            <div class="post-preview-buttons">
+                ${post.buttons.map(btn => `
+                    <a href="${btn.url}" target="_blank" class="post-preview-button">${escapeHtml(btn.text)}</a>
+                `).join('')}
+            </div>
+        ` : ''}
+    `;
+
+    // Show/hide buttons based on status
+    const deleteBtn = document.getElementById('deletePostBtn');
+    const editBtn = document.getElementById('editPostBtn');
+    const sendBtn = document.getElementById('sendNowBtn');
+
+    if (post.status === 'sent') {
+        editBtn.style.display = 'none';
+        sendBtn.style.display = 'none';
+    } else {
+        editBtn.style.display = 'inline-flex';
+        sendBtn.style.display = 'inline-flex';
+    }
+
+    document.getElementById('viewPostModal').style.display = 'flex';
+}
+
+function deletePost() {
+    if (!editingPostId) return;
+
+    if (!confirm('Удалить этот пост?')) return;
+
+    posts = posts.filter(p => p.id !== editingPostId);
+    savePosts();
+
+    document.getElementById('viewPostModal').style.display = 'none';
+    renderCalendar();
+    showToast('Пост удален');
+}
+
+function editPost() {
+    if (!editingPostId) return;
+
+    const post = posts.find(p => p.id === editingPostId);
+    if (!post) return;
+
+    document.getElementById('viewPostModal').style.display = 'none';
+
+    // Fill form with post data
+    document.getElementById('postProject').value = post.projectId;
+    document.getElementById('postDate').value = post.date;
+    document.getElementById('postTime').value = post.time;
+    document.getElementById('postText').value = post.text || '';
+
+    if (post.image) {
+        setPostImage(post.image);
+    } else {
+        removeImage();
+    }
+
+    currentPostButtons = post.buttons ? [...post.buttons] : [];
+    renderPostButtons();
+
+    updateProjectFilters();
+    document.getElementById('schedulePostModal').style.display = 'flex';
+}
+
+async function sendPostNow() {
+    if (!editingPostId) return;
+
+    const post = posts.find(p => p.id === editingPostId);
+    if (!post) return;
+
+    await sendPost(post);
+
+    document.getElementById('viewPostModal').style.display = 'none';
+    renderCalendar();
+}
+
+// ===== Send Post to Telegram =====
+async function sendPost(post) {
+    const project = projects.find(p => p.id === post.projectId);
+    if (!project) {
+        showToast('Проект не найден', true);
+        return false;
+    }
+
+    showLoading('Отправка поста...');
+
+    try {
+        let result;
+
+        // Build inline keyboard if buttons exist
+        let replyMarkup = null;
+        if (post.buttons && post.buttons.length > 0) {
+            replyMarkup = {
+                inline_keyboard: post.buttons.map(btn => [{
+                    text: btn.text,
+                    url: btn.url
+                }])
+            };
+        }
+
+        if (post.image) {
+            // Send photo with caption
+            const formData = new FormData();
+            formData.append('chat_id', project.chatId);
+            formData.append('caption', post.text || '');
+            formData.append('parse_mode', 'HTML');
+
+            if (replyMarkup) {
+                formData.append('reply_markup', JSON.stringify(replyMarkup));
+            }
+
+            // Convert base64 to blob if needed
+            if (post.image.startsWith('data:')) {
+                const response = await fetch(post.image);
+                const blob = await response.blob();
+                formData.append('photo', blob, 'image.jpg');
+            } else {
+                formData.append('photo', post.image);
+            }
+
+            const response = await fetch(`https://api.telegram.org/bot${project.botToken}/sendPhoto`, {
+                method: 'POST',
+                body: formData
+            });
+
+            result = await response.json();
+        } else {
+            // Send text message
+            const payload = {
+                chat_id: project.chatId,
+                text: post.text,
+                parse_mode: 'HTML'
+            };
+
+            if (replyMarkup) {
+                payload.reply_markup = replyMarkup;
+            }
+
+            const response = await fetch(`https://api.telegram.org/bot${project.botToken}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            result = await response.json();
+        }
+
+        if (result.ok) {
+            post.status = 'sent';
+            post.sentAt = new Date().toISOString();
+            savePosts();
+            showToast('Пост отправлен!');
+            return true;
+        } else {
+            throw new Error(result.description || 'Ошибка отправки');
+        }
+
+    } catch (error) {
+        post.status = 'failed';
+        post.error = error.message;
+        savePosts();
+        showToast('Ошибка: ' + error.message, true);
+        return false;
+    } finally {
+        hideLoading();
+    }
+}
+
+// ===== Check Scheduled Posts =====
+function checkScheduledPosts() {
+    const now = new Date();
+    const currentDate = formatDate(now);
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+    posts.forEach(post => {
+        if (post.status === 'scheduled' && post.date === currentDate && post.time <= currentTime) {
+            sendPost(post);
+        }
+    });
+}
+
+// ===== Storage =====
+function saveProjects() {
+    localStorage.setItem('posting_projects', JSON.stringify(projects));
+}
+
+function savePosts() {
+    localStorage.setItem('posting_posts', JSON.stringify(posts));
+}
+
+// ===== UI Helpers =====
+function showLoading(text = 'Загрузка...') {
+    let overlay = document.querySelector('.loading-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'loading-overlay';
+        overlay.innerHTML = `
+            <div class="loading-spinner">⏳</div>
+            <div class="loading-text">${text}</div>
+        `;
+        document.body.appendChild(overlay);
+    } else {
+        overlay.querySelector('.loading-text').textContent = text;
+        overlay.style.display = 'flex';
+    }
+}
+
+function hideLoading() {
+    const overlay = document.querySelector('.loading-overlay');
+    if (overlay) {
+        overlay.style.display = 'none';
+    }
+}
+
+function showToast(message, isError = false) {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${isError ? 'error' : ''}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.remove(), 3000);
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Initialize
+init();
