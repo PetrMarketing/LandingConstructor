@@ -12,6 +12,7 @@ const CONFIG = {
 let chatHistory = [];
 let chats = JSON.parse(localStorage.getItem('ai_chats') || '[]');
 let currentChatId = null;
+let attachedFiles = [];
 
 // DOM Elements
 const messagesContainer = document.getElementById('messagesContainer');
@@ -184,21 +185,85 @@ function clearChat() {
     createNewChat();
 }
 
+// ===== File Handling =====
+function handleFileSelect(e) {
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
+        if (file.size > 100000) {
+            alert(`Файл ${file.name} слишком большой (макс. 100KB)`);
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            attachedFiles.push({
+                name: file.name,
+                content: event.target.result
+            });
+            renderAttachedFiles();
+        };
+        reader.readAsText(file);
+    });
+    e.target.value = '';
+}
+
+function renderAttachedFiles() {
+    const container = document.getElementById('attachedFiles');
+    if (attachedFiles.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+    container.style.display = 'flex';
+    container.innerHTML = attachedFiles.map((file, i) => `
+        <div class="attached-file">
+            <span class="file-icon">📄</span>
+            <span class="file-name">${file.name}</span>
+            <button class="file-remove" onclick="removeFile(${i})">×</button>
+        </div>
+    `).join('');
+}
+
+function removeFile(index) {
+    attachedFiles.splice(index, 1);
+    renderAttachedFiles();
+}
+
+function getFilesContent() {
+    if (attachedFiles.length === 0) return '';
+    return '\n\n📎 Прикреплённые файлы:\n' + attachedFiles.map(f =>
+        `\n--- ${f.name} ---\n${f.content}`
+    ).join('\n');
+}
+
+function clearAttachedFiles() {
+    attachedFiles = [];
+    renderAttachedFiles();
+}
+
 // ===== Send Message =====
 async function sendMessage() {
     const message = messageInput.value.trim();
-    if (!message) return;
+    const filesContent = getFilesContent();
+
+    if (!message && attachedFiles.length === 0) return;
+
+    const fullMessage = message + filesContent;
 
     messageInput.value = '';
     messageInput.style.height = 'auto';
 
-    // Add user message
-    addMessage('user', message);
+    // Show message with file indicators
+    let displayMessage = message;
+    if (attachedFiles.length > 0) {
+        displayMessage += `\n\n📎 Файлы: ${attachedFiles.map(f => f.name).join(', ')}`;
+    }
+    addMessage('user', displayMessage);
+
+    clearAttachedFiles();
 
     // Send to API
     setLoading(true);
     try {
-        const response = await sendToBackend(message);
+        const response = await sendToBackend(fullMessage);
         addMessage('assistant', response);
     } catch (error) {
         console.error('Error:', error);
@@ -256,6 +321,12 @@ document.getElementById('saveSettingsBtn').addEventListener('click', saveSetting
 document.getElementById('temperatureInput').addEventListener('input', (e) => {
     document.getElementById('temperatureValue').textContent = e.target.value;
 });
+
+// File attachment
+document.getElementById('attachBtn').addEventListener('click', () => {
+    document.getElementById('fileInput').click();
+});
+document.getElementById('fileInput').addEventListener('change', handleFileSelect);
 
 // ===== Init =====
 createNewChat();

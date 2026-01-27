@@ -39,14 +39,17 @@
             </div>
 
             <div class="input-area">
+                <div class="attached-files" id="attachedFiles" style="display:none;"></div>
                 <div class="input-wrapper">
+                    <button class="attach-btn" id="attachBtn" title="Прикрепить файл">📎</button>
+                    <input type="file" id="fileInput" multiple accept=".txt,.md,.json,.js,.py,.html,.css,.csv,.xml,.log" style="display:none;">
                     <textarea id="messageInput" placeholder="Введите сообщение..." rows="1"></textarea>
                     <button class="send-btn" id="sendBtn">
                         <span class="send-icon">➤</span>
                         <span class="loading-icon" style="display:none;">⏳</span>
                     </button>
                 </div>
-                <p class="input-hint">Enter — отправить, Shift+Enter — новая строка</p>
+                <p class="input-hint">📎 — прикрепить файл | Enter — отправить | Shift+Enter — новая строка</p>
             </div>
         </main>
     </div>
