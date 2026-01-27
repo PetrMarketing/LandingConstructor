@@ -55,7 +55,9 @@ async def generate_image(request: ImageRequest):
     async with httpx.AsyncClient(timeout=120.0) as client:
         response = await client.post(url, headers={"Content-Type": "application/json", "Authorization": f"Bearer {VERTEX_ACCESS_TOKEN}"}, json={"instances": [{"prompt": request.prompt}], "parameters": {"sampleCount": 1, "aspectRatio": request.aspect_ratio}})
         if response.status_code != 200:
-            raise HTTPException(status_code=response.status_code, detail="Ошибка Vertex AI")
+            error = response.json()
+            detail = error.get("error", {}).get("message", str(error))
+            raise HTTPException(status_code=response.status_code, detail=f"Vertex AI: {detail}")
         data = response.json()
         if not data.get("predictions"):
             raise HTTPException(status_code=400, detail="Не удалось сгенерировать")
