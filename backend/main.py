@@ -35,7 +35,7 @@ class SlideRequest(BaseModel):
     color1: str = "#8b5cf6"
     color2: str = "#10b981"
     user_image: Optional[str] = None
-    reference_urls: Optional[List[str]] = None
+    reference_images: Optional[List[str]] = None  # base64 images
 
 @app.get("/")
 async def root():
@@ -163,6 +163,8 @@ async def generate_slide(request: SlideRequest):
         raise HTTPException(status_code=500, detail="OPENROUTER_API_KEY не настроен")
 
     # Формируем промпт для генерации слайда
+    has_references = request.reference_images and any(request.reference_images)
+
     prompt = f"""Сделай слайд для презентации размером 1920х1080 px.
 
 С текстом (ВАЖНО!!! добавляй только этот текст, не добавляй дополнительно):
@@ -171,7 +173,7 @@ async def generate_slide(request: SlideRequest):
 
 Картинка должна соответствовать тексту.
 
-ВАЖНО! Используй современный минималистичный дизайн.
+{"ВАЖНО! Используй стиль и дизайн с приложенных референсных изображений. Не копируй содержимое, только стиль!" if has_references else "ВАЖНО! Используй современный минималистичный дизайн."}
 Цветовая схема: основные акценты {request.color1} и {request.color2}
 Фон должен быть темным или градиентным.
 Текст должен быть читаемым и контрастным.
@@ -181,13 +183,14 @@ async def generate_slide(request: SlideRequest):
     # Формируем сообщения с изображениями
     content_parts = []
 
-    # Добавляем референсные изображения если есть
-    if request.reference_urls:
-        for i, url in enumerate(request.reference_urls[:4]):
-            content_parts.append({
-                "type": "image_url",
-                "image_url": {"url": url}
-            })
+    # Добавляем референсные изображения если есть (base64)
+    if request.reference_images:
+        for i, img_base64 in enumerate(request.reference_images[:4]):
+            if img_base64:
+                content_parts.append({
+                    "type": "image_url",
+                    "image_url": {"url": img_base64}
+                })
 
     # Добавляем изображение пользователя (лого/фото) если есть
     if request.user_image:

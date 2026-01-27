@@ -650,6 +650,86 @@ body {
     color: var(--text-secondary);
 }
 
+/* ===== References Upload ===== */
+.references-upload {
+    margin-bottom: 25px;
+}
+
+.references-upload > label {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.references-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.reference-upload-area {
+    aspect-ratio: 16/9;
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.reference-upload-area:hover {
+    border-color: var(--accent);
+    background: rgba(139, 92, 246, 0.05);
+}
+
+.reference-upload-area.has-image {
+    border-style: solid;
+}
+
+.reference-placeholder {
+    color: var(--text-secondary);
+    font-size: 2rem;
+    font-weight: 300;
+}
+
+.reference-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.reference-remove {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--error);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reference-remove:hover {
+    background: #dc2626;
+}
+
+@media (max-width: 768px) {
+    .references-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 /* ===== Preview Section ===== */
 .preview-section {
     margin-top: 40px;

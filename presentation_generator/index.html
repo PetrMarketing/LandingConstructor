@@ -96,11 +96,41 @@
                 </div>
 
                 <div class="logo-upload">
-                    <label>Вставьте лого или фото:</label>
+                    <label>Вставьте лого или фото (будет на слайдах):</label>
                     <div class="logo-upload-area" id="logoUploadArea">
                         <input type="file" id="logoInput" accept="image/*" hidden>
                         <img id="logoPreview" style="display:none;">
                         <span id="logoPlaceholder">Нажмите для загрузки</span>
+                    </div>
+                </div>
+
+                <div class="references-upload">
+                    <label>Референсы дизайна (до 4 картинок - AI возьмет стиль с них):</label>
+                    <div class="references-grid" id="referencesGrid">
+                        <div class="reference-upload-area" data-index="0">
+                            <input type="file" class="reference-input" accept="image/*" hidden>
+                            <img class="reference-preview" style="display:none;">
+                            <span class="reference-placeholder">+</span>
+                            <button class="reference-remove" style="display:none;">×</button>
+                        </div>
+                        <div class="reference-upload-area" data-index="1">
+                            <input type="file" class="reference-input" accept="image/*" hidden>
+                            <img class="reference-preview" style="display:none;">
+                            <span class="reference-placeholder">+</span>
+                            <button class="reference-remove" style="display:none;">×</button>
+                        </div>
+                        <div class="reference-upload-area" data-index="2">
+                            <input type="file" class="reference-input" accept="image/*" hidden>
+                            <img class="reference-preview" style="display:none;">
+                            <span class="reference-placeholder">+</span>
+                            <button class="reference-remove" style="display:none;">×</button>
+                        </div>
+                        <div class="reference-upload-area" data-index="3">
+                            <input type="file" class="reference-input" accept="image/*" hidden>
+                            <img class="reference-preview" style="display:none;">
+                            <span class="reference-placeholder">+</span>
+                            <button class="reference-remove" style="display:none;">×</button>
+                        </div>
                     </div>
                 </div>
 

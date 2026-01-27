@@ -6,8 +6,8 @@ const CONFIG = {
         : 'https://ai-tools-backend-d3zr.onrender.com'
 };
 
-// Референсные изображения отключены (VK URLs недоступны для OpenRouter)
-const REFERENCE_IMAGES = [];
+// Референсные изображения (загружаются пользователем как base64)
+let referenceImages = [];
 
 // State
 let uploadedFile = null;
@@ -631,6 +631,54 @@ function fileToBase64(file) {
     });
 }
 
+// ===== References Upload =====
+document.querySelectorAll('.reference-upload-area').forEach(area => {
+    const input = area.querySelector('.reference-input');
+    const preview = area.querySelector('.reference-preview');
+    const placeholder = area.querySelector('.reference-placeholder');
+    const removeBtn = area.querySelector('.reference-remove');
+    const index = parseInt(area.dataset.index);
+
+    area.addEventListener('click', (e) => {
+        if (e.target !== removeBtn) {
+            input.click();
+        }
+    });
+
+    input.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            alert('Пожалуйста, выберите изображение');
+            return;
+        }
+
+        try {
+            const base64 = await fileToBase64(file);
+            referenceImages[index] = base64;
+            preview.src = base64;
+            preview.style.display = 'block';
+            placeholder.style.display = 'none';
+            removeBtn.style.display = 'flex';
+            area.classList.add('has-image');
+        } catch (error) {
+            console.error('Error loading reference:', error);
+        }
+    });
+
+    removeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        referenceImages[index] = null;
+        preview.src = '';
+        preview.style.display = 'none';
+        placeholder.style.display = 'block';
+        removeBtn.style.display = 'none';
+        area.classList.remove('has-image');
+        input.value = '';
+    });
+});
+
 // ===== Generate Slide Images =====
 const generateFirstSlideBtn = document.getElementById('generateFirstSlideBtn');
 const confirmStyleBtn = document.getElementById('confirmStyleBtn');
@@ -689,6 +737,9 @@ async function generateFirstSlide() {
 }
 
 async function generateSlideImage(slideText, color1, color2) {
+    // Фильтруем только загруженные референсы (не null)
+    const refs = referenceImages.filter(Boolean);
+
     const response = await fetch(`${CONFIG.apiUrl}/api/generate-slide`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -697,7 +748,7 @@ async function generateSlideImage(slideText, color1, color2) {
             color1: color1,
             color2: color2,
             user_image: userLogoBase64,
-            reference_urls: REFERENCE_IMAGES
+            reference_images: refs  // base64 изображения
         })
     });
 
@@ -821,6 +872,7 @@ document.getElementById('newPresentationBtn').addEventListener('click', () => {
     generatedSlides = [];
     generatedSlideImages = [];
     userLogoBase64 = null;
+    referenceImages = [];
     fileInput.value = '';
     logoInput.value = '';
 
@@ -835,6 +887,20 @@ document.getElementById('newPresentationBtn').addEventListener('click', () => {
     // Сброс лого
     logoPreview.style.display = 'none';
     logoPlaceholder.style.display = 'block';
+
+    // Сброс референсов
+    document.querySelectorAll('.reference-upload-area').forEach(area => {
+        const preview = area.querySelector('.reference-preview');
+        const placeholder = area.querySelector('.reference-placeholder');
+        const removeBtn = area.querySelector('.reference-remove');
+        const input = area.querySelector('.reference-input');
+        preview.src = '';
+        preview.style.display = 'none';
+        placeholder.style.display = 'block';
+        removeBtn.style.display = 'none';
+        area.classList.remove('has-image');
+        input.value = '';
+    });
 
     // Сброс галереи
     document.getElementById('generatedSlidesGallery').innerHTML = '';
