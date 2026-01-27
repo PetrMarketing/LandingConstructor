@@ -41,7 +41,9 @@ async def chat(request: ChatRequest):
     async with httpx.AsyncClient(timeout=60.0) as client:
         response = await client.post("https://openrouter.ai/api/v1/chat/completions", headers={"Content-Type": "application/json", "Authorization": f"Bearer {OPENROUTER_API_KEY}"}, json={"model": request.model, "messages": messages, "temperature": request.temperature, "max_tokens": 2048})
         if response.status_code != 200:
-            raise HTTPException(status_code=response.status_code, detail="Ошибка API")
+            error = response.json()
+            detail = error.get("error", {}).get("message", str(error))
+            raise HTTPException(status_code=response.status_code, detail=f"OpenRouter: {detail}")
         data = response.json()
         return {"success": True, "content": data["choices"][0]["message"]["content"]}
 
