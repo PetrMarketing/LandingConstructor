@@ -39,7 +39,7 @@ async def chat(request: ChatRequest):
     for msg in request.messages:
         messages.append({"role": msg.role, "content": msg.content})
     async with httpx.AsyncClient(timeout=60.0) as client:
-        response = await client.post("https://openrouter.ai/api/v1/chat/completions", headers={"Content-Type": "application/json", "Authorization": f"Bearer {OPENROUTER_API_KEY}"}, json={"model": request.model, "messages": messages, "temperature": request.temperature, "max_tokens": 2048})
+        response = await client.post("https://openrouter.ai/api/v1/chat/completions", headers={"Content-Type": "application/json", "Authorization": f"Bearer {OPENROUTER_API_KEY}", "HTTP-Referer": "https://ai-tools-backend-d3zr.onrender.com", "X-Title": "AI Tools"}, json={"model": request.model, "messages": messages, "temperature": request.temperature, "max_tokens": 2048})
         if response.status_code != 200:
             error = response.json()
             detail = error.get("error", {}).get("message", str(error))
