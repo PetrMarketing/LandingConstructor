@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор презентаций</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <a href="../" class="back-link">← Назад</a>
+                <h1>📊 Генератор презентаций</h1>
+            </div>
+            <div class="header-right">
+                <span class="slide-counter" id="slideCounter">0 слайдов</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Upload Section -->
+            <section class="upload-section" id="uploadSection">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📄</div>
+                    <h2>Загрузите файл</h2>
+                    <p>Перетащите файл сюда или нажмите для выбора</p>
+                    <p class="upload-formats">Поддерживаемые форматы: .txt, .md, .json, .csv</p>
+                    <input type="file" id="fileInput" accept=".txt,.md,.json,.csv,.xml" hidden>
+                </div>
+
+                <div class="file-preview" id="filePreview" style="display:none;">
+                    <div class="file-info">
+                        <span class="file-icon">📄</span>
+                        <span class="file-name" id="fileName"></span>
+                        <button class="file-remove" id="removeFile">×</button>
+                    </div>
+                    <div class="file-content-preview" id="fileContentPreview"></div>
+                </div>
+
+                <div class="generate-section" id="generateSection" style="display:none;">
+                    <div class="options">
+                        <div class="option-group">
+                            <label>Количество слайдов (примерно):</label>
+                            <select id="slideCount">
+                                <option value="5">5 слайдов</option>
+                                <option value="10" selected>10 слайдов</option>
+                                <option value="15">15 слайдов</option>
+                                <option value="20">20 слайдов</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="generate-btn" id="generateBtn">
+                        <span class="btn-text">🚀 Сгенерировать презентацию</span>
+                        <span class="btn-loader" style="display:none;">⏳ Генерация...</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" style="display:none;">
+                <div class="results-header">
+                    <h2>Структура презентации</h2>
+                    <div class="results-actions">
+                        <button class="btn btn-outline" id="copyAllBtn">📋 Копировать всё</button>
+                        <button class="btn btn-outline" id="newPresentationBtn">+ Новая презентация</button>
+                    </div>
+                </div>
+
+                <div class="slides-container" id="slidesContainer">
+                    <!-- Slides will be rendered here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
