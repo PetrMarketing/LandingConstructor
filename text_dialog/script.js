@@ -1,13 +1,12 @@
-// ===== Chat with AI - OpenRouter =====
+// ===== Chat with AI - через Backend =====
 
-// Config
-const CONFIG = {                                                                                                                                             
-      apiUrl: window.location.hostname === 'localhost'                                                                                                         
-          ? 'http://localhost:8000'                                                                                                                            
-          : 'https://ai-tools-backend-d3zr.onrender.com',                                                                                                      
-      model: localStorage.getItem('chat_model') || 'openrouter/auto',                                                                                          
-      temperature: parseFloat(localStorage.getItem('chat_temperature') || '0.7')                                                                               
-  };
+const CONFIG = {
+    apiUrl: window.location.hostname === 'localhost'
+        ? 'http://localhost:8000'
+        : 'https://ai-tools-backend-d3zr.onrender.com',
+    model: localStorage.getItem('chat_model') || 'openrouter/auto',
+    temperature: parseFloat(localStorage.getItem('chat_temperature') || '0.7')
+};
 
 // State
 let chatHistory = [];
@@ -23,64 +22,31 @@ const chatTitle = document.getElementById('chatTitle');
 const settingsModal = document.getElementById('settingsModal');
 
 // ===== API =====
-async function sendToOpenRouter(message, retryCount = 0) {
-    if (!CONFIG.apiKey) {
-        throw new Error('API ключ не установлен. Откройте настройки.');
-    }
-
-    // Build conversation history for context (OpenAI format)
+async function sendToBackend(message) {
     const messages = chatHistory.map(msg => ({
         role: msg.role === 'user' ? 'user' : 'assistant',
         content: msg.content
     }));
 
-    // Add current message
-    messages.push({
-        role: 'user',
-        content: message
-    });
+    messages.push({ role: 'user', content: message });
 
-    const response = await fetch(CONFIG.apiUrl, {
+    const response = await fetch(`${CONFIG.apiUrl}/api/chat`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${CONFIG.apiKey}`,
-            'HTTP-Referer': window.location.href,
-            'X-Title': 'AI Chat'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            model: CONFIG.model,
             messages: messages,
-            temperature: CONFIG.temperature,
-            max_tokens: 2048
+            model: CONFIG.model,
+            temperature: CONFIG.temperature
         })
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-        const error = await response.json();
-        const errorMsg = error.error?.message || '';
-
-        // Handle rate limit - retry after waiting
-        if (response.status === 429 && retryCount < 3) {
-            const waitTime = 30;
-            showRetryCountdown(waitTime);
-            await new Promise(resolve => setTimeout(resolve, waitTime * 1000));
-            return sendToOpenRouter(message, retryCount + 1);
-        }
-
-        // User-friendly error messages
-        if (errorMsg.includes('quota') || errorMsg.includes('rate') || errorMsg.includes('limit')) {
-            throw new Error('Превышен лимит запросов. Подождите минуту.');
-        }
-        if (errorMsg.includes('credit') || errorMsg.includes('balance')) {
-            throw new Error('Недостаточно кредитов на аккаунте OpenRouter.');
-        }
-
-        throw new Error(errorMsg || `API Error: ${response.status}`);
+        throw new Error(data.detail || 'Ошибка сервера');
     }
 
-    const data = await response.json();
-    return data.choices[0].message.content;
+    return data.content;
 }
 
 function showRetryCountdown(seconds) {
@@ -238,7 +204,7 @@ async function sendMessage() {
     // Send to API
     setLoading(true);
     try {
-        const response = await sendToOpenRouter(message);
+        const response = await sendToBackend(message);
         addMessage('assistant', response);
     } catch (error) {
         console.error('Error:', error);

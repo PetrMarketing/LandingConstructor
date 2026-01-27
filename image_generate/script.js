@@ -1,16 +1,10 @@
-// ===== AI Image Generator =====
+// ===== AI Image Generator - через Backend =====
 
-// Config - Vertex AI (токен без ограничений)
-const CONFIG = {                                                                                                                                             
-      apiUrl: window.location.hostname === 'localhost'                                                                                                         
-          ? 'http://localhost:8000'                                                                                                                            
-          : 'https://ai-tools-backend-d3zr.onrender.com'                                                                                                       
-  };
-
-// Vertex AI endpoint
-function getVertexUrl() {
-    return `https://${CONFIG.region}-aiplatform.googleapis.com/v1/projects/${CONFIG.projectId}/locations/${CONFIG.region}/publishers/google/models/${CONFIG.model}:predict`;
-}
+const CONFIG = {
+    apiUrl: window.location.hostname === 'localhost'
+        ? 'http://localhost:8000'
+        : 'https://ai-tools-backend-d3zr.onrender.com'
+};
 
 // State
 let currentMode = 'generate';
@@ -100,61 +94,34 @@ setupUpload('styleSourceUploadArea', 'styleSourceInput', 'styleSourcePreview', '
 setupUpload('styleRefUploadArea', 'styleRefInput', 'styleRefPreview', 'styleRef');
 
 // ===== API Calls =====
-// Generate image using Vertex AI Imagen
+// Generate image через Backend
 async function generateAIImage(prompt, ratio) {
-    if (!CONFIG.accessToken) {
-        throw new Error('Access Token не установлен. Откройте настройки.');
-    }
-
-    // Imagen поддерживает: 1:1, 3:4, 4:3, 9:16, 16:9
     const aspectRatio = ratio === '4:3' ? '4:3' :
                         ratio === '16:9' ? '16:9' :
                         ratio === '9:16' ? '9:16' : '1:1';
 
-    const response = await fetch(getVertexUrl(), {
+    const response = await fetch(`${CONFIG.apiUrl}/api/generate-image`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${CONFIG.accessToken}`
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            instances: [{
-                prompt: prompt
-            }],
-            parameters: {
-                sampleCount: 1,
-                aspectRatio: aspectRatio
-            }
+            prompt: prompt,
+            aspect_ratio: aspectRatio
         })
     });
 
-    if (!response.ok) {
-        const error = await response.json();
-        const errorMsg = error.error?.message || `API Error: ${response.status}`;
-
-        // Понятные сообщения об ошибках
-        if (response.status === 401 || errorMsg.includes('token')) {
-            throw new Error('Токен истёк или недействителен. Обновите Access Token в настройках.');
-        }
-        if (errorMsg.includes('quota') || errorMsg.includes('rate')) {
-            throw new Error('Превышен лимит запросов. Подождите минуту.');
-        }
-        if (errorMsg.includes('safety') || errorMsg.includes('blocked')) {
-            throw new Error('Изображение заблокировано фильтром безопасности. Измените промпт.');
-        }
-        throw new Error(errorMsg);
-    }
-
     const data = await response.json();
 
-    // Проверяем наличие изображения
-    if (!data.predictions?.[0]?.bytesBase64Encoded) {
-        throw new Error('Не удалось сгенерировать изображение. Попробуйте другой промпт.');
+    if (!response.ok) {
+        throw new Error(data.detail || 'Ошибка генерации изображения');
     }
 
-    // Возвращаем data URL из base64
-    const base64Image = data.predictions[0].bytesBase64Encoded;
-    return `data:image/png;base64,${base64Image}`;
+    if (!data.image) {
+        throw new Error('Не удалось сгенерировать изображение');
+    }
+
+    return data.image;
 }
 
 // ===== Generation Functions =====
