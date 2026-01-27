@@ -64,10 +64,11 @@ async def generate_image(request: ImageRequest):
                 "X-Title": "AI Tools Image Generator"
             },
             json={
-                "model": "nanobanana/gemini-3-pro-image-preview",
+                "model": "google/gemini-3-pro-image-preview",
                 "messages": [
-                    {"role": "user", "content": f"Generate an image: {request.prompt}. Aspect ratio: {request.aspect_ratio}"}
-                ]
+                    {"role": "user", "content": f"Generate an image: {request.prompt}"}
+                ],
+                "modalities": ["image", "text"]
             }
         )
 
@@ -77,14 +78,21 @@ async def generate_image(request: ImageRequest):
             raise HTTPException(status_code=response.status_code, detail=f"OpenRouter: {detail}")
 
         data = response.json()
-        content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+        message = data.get("choices", [{}])[0].get("message", {})
 
-        # Проверяем есть ли изображение в ответе
-        if "data:image" in content or "base64" in content.lower():
-            # Извлекаем base64 из ответа
-            match = re.search(r'data:image/[^;]+;base64,([A-Za-z0-9+/=]+)', content)
+        # Проверяем наличие изображений в ответе
+        images = message.get("images", [])
+        if images:
+            image_url = images[0].get("image_url", {}).get("url", "")
+            if image_url:
+                return {"success": True, "image": image_url}
+
+        # Проверяем content на наличие base64 изображения
+        content = message.get("content", "")
+        if content and "data:image" in content:
+            match = re.search(r'data:image/[^;]+;base64,[A-Za-z0-9+/=]+', content)
             if match:
                 return {"success": True, "image": match.group(0)}
 
         # Если модель вернула текст вместо изображения
-        return {"success": False, "error": "Модель не сгенерировала изображение", "text_response": content}
+        raise HTTPException(status_code=400, detail="Не удалось сгенерировать изображение")
