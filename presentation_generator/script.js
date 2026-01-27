@@ -6,8 +6,17 @@ const CONFIG = {
         : 'https://ai-tools-backend-d3zr.onrender.com'
 };
 
-// Референсные изображения (загружаются пользователем как base64)
-let referenceImages = [];
+// Дефолтные референсные изображения (GitHub raw URLs)
+const DEFAULT_REFERENCES = [
+    'https://raw.githubusercontent.com/PetrMarketing/LandingConstructor/main/presentation_generator/ref1.png',
+    'https://raw.githubusercontent.com/PetrMarketing/LandingConstructor/main/presentation_generator/ref2.png',
+    'https://raw.githubusercontent.com/PetrMarketing/LandingConstructor/main/presentation_generator/ref3.png',
+    'https://raw.githubusercontent.com/PetrMarketing/LandingConstructor/main/presentation_generator/ref4.png',
+    'https://raw.githubusercontent.com/PetrMarketing/LandingConstructor/main/presentation_generator/ref5.png'
+];
+
+// Референсные изображения (URL или base64)
+let referenceImages = [...DEFAULT_REFERENCES];
 
 // State
 let uploadedFile = null;
@@ -632,52 +641,66 @@ function fileToBase64(file) {
 }
 
 // ===== References Upload =====
-document.querySelectorAll('.reference-upload-area').forEach(area => {
-    const input = area.querySelector('.reference-input');
-    const preview = area.querySelector('.reference-preview');
-    const placeholder = area.querySelector('.reference-placeholder');
-    const removeBtn = area.querySelector('.reference-remove');
-    const index = parseInt(area.dataset.index);
+function initReferencesUI() {
+    document.querySelectorAll('.reference-upload-area').forEach(area => {
+        const input = area.querySelector('.reference-input');
+        const preview = area.querySelector('.reference-preview');
+        const placeholder = area.querySelector('.reference-placeholder');
+        const removeBtn = area.querySelector('.reference-remove');
+        const index = parseInt(area.dataset.index);
 
-    area.addEventListener('click', (e) => {
-        if (e.target !== removeBtn) {
-            input.click();
-        }
-    });
-
-    input.addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        if (!file.type.startsWith('image/')) {
-            alert('Пожалуйста, выберите изображение');
-            return;
-        }
-
-        try {
-            const base64 = await fileToBase64(file);
-            referenceImages[index] = base64;
-            preview.src = base64;
+        // Загружаем дефолтный референс если есть
+        if (DEFAULT_REFERENCES[index]) {
+            preview.src = DEFAULT_REFERENCES[index];
             preview.style.display = 'block';
             placeholder.style.display = 'none';
             removeBtn.style.display = 'flex';
             area.classList.add('has-image');
-        } catch (error) {
-            console.error('Error loading reference:', error);
         }
-    });
 
-    removeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        referenceImages[index] = null;
-        preview.src = '';
-        preview.style.display = 'none';
-        placeholder.style.display = 'block';
-        removeBtn.style.display = 'none';
-        area.classList.remove('has-image');
-        input.value = '';
+        area.addEventListener('click', (e) => {
+            if (e.target !== removeBtn) {
+                input.click();
+            }
+        });
+
+        input.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                alert('Пожалуйста, выберите изображение');
+                return;
+            }
+
+            try {
+                const base64 = await fileToBase64(file);
+                referenceImages[index] = base64;
+                preview.src = base64;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+                removeBtn.style.display = 'flex';
+                area.classList.add('has-image');
+            } catch (error) {
+                console.error('Error loading reference:', error);
+            }
+        });
+
+        removeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            referenceImages[index] = null;
+            preview.src = '';
+            preview.style.display = 'none';
+            placeholder.style.display = 'block';
+            removeBtn.style.display = 'none';
+            area.classList.remove('has-image');
+            input.value = '';
+        });
     });
-});
+}
+
+// Инициализация референсов
+initReferencesUI();
 
 // ===== Generate Slide Images =====
 const generateFirstSlideBtn = document.getElementById('generateFirstSlideBtn');
@@ -888,17 +911,28 @@ document.getElementById('newPresentationBtn').addEventListener('click', () => {
     logoPreview.style.display = 'none';
     logoPlaceholder.style.display = 'block';
 
-    // Сброс референсов
+    // Сброс референсов к дефолтным
+    referenceImages = [...DEFAULT_REFERENCES];
     document.querySelectorAll('.reference-upload-area').forEach(area => {
         const preview = area.querySelector('.reference-preview');
         const placeholder = area.querySelector('.reference-placeholder');
         const removeBtn = area.querySelector('.reference-remove');
         const input = area.querySelector('.reference-input');
-        preview.src = '';
-        preview.style.display = 'none';
-        placeholder.style.display = 'block';
-        removeBtn.style.display = 'none';
-        area.classList.remove('has-image');
+        const index = parseInt(area.dataset.index);
+
+        if (DEFAULT_REFERENCES[index]) {
+            preview.src = DEFAULT_REFERENCES[index];
+            preview.style.display = 'block';
+            placeholder.style.display = 'none';
+            removeBtn.style.display = 'flex';
+            area.classList.add('has-image');
+        } else {
+            preview.src = '';
+            preview.style.display = 'none';
+            placeholder.style.display = 'block';
+            removeBtn.style.display = 'none';
+            area.classList.remove('has-image');
+        }
         input.value = '';
     });
 
