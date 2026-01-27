@@ -254,8 +254,6 @@ function setupEventListeners() {
 
 // ===== Project Modal =====
 function openProjectModal() {
-    document.getElementById('projectName').value = '';
-    document.getElementById('projectBotToken').value = '';
     document.getElementById('projectChatId').value = '';
     document.getElementById('addProjectModal').style.display = 'flex';
 }
@@ -265,42 +263,38 @@ function closeProjectModal() {
 }
 
 async function saveProject() {
-    const name = document.getElementById('projectName').value.trim();
-    const botToken = document.getElementById('projectBotToken').value.trim();
     const chatId = document.getElementById('projectChatId').value.trim();
 
-    if (!name) {
-        showToast('Введите название проекта', true);
-        return;
-    }
-
-    if (!botToken) {
-        showToast('Введите API ключ бота', true);
-        return;
-    }
-
     if (!chatId) {
-        showToast('Введите Chat ID', true);
+        showToast('Введите Chat ID канала', true);
         return;
     }
 
-    // Verify bot token
-    showLoading('Проверка бота...');
+    showLoading('Проверка канала...');
 
     try {
-        const response = await fetch(`https://api.telegram.org/bot${botToken}/getMe`);
+        // Get chat info to verify and get name
+        const response = await fetch(`https://api.telegram.org/bot${CONFIG.botToken}/getChat?chat_id=${encodeURIComponent(chatId)}`);
         const data = await response.json();
 
         if (!data.ok) {
-            throw new Error('Неверный токен бота');
+            throw new Error(data.description || 'Канал не найден. Убедитесь, что бот добавлен в канал как администратор.');
+        }
+
+        const chat = data.result;
+        const name = chat.title || chat.username || chatId;
+
+        // Check if already added
+        if (projects.some(p => p.chatId === chatId || p.chatId === chat.id.toString())) {
+            throw new Error('Этот канал уже добавлен');
         }
 
         const project = {
             id: Date.now().toString(),
             name,
-            botToken,
-            chatId,
-            botUsername: data.result.username,
+            chatId: chat.id.toString(),
+            username: chat.username || null,
+            type: chat.type,
             createdAt: new Date().toISOString()
         };
 
@@ -310,7 +304,7 @@ async function saveProject() {
         closeProjectModal();
         updateUI();
         renderCalendar();
-        showToast('Проект добавлен');
+        showToast(`Канал "${name}" добавлен`);
 
     } catch (error) {
         showToast('Ошибка: ' + error.message, true);
@@ -722,7 +716,7 @@ async function sendPost(post) {
                 formData.append('photo', post.image);
             }
 
-            const response = await fetch(`https://api.telegram.org/bot${project.botToken}/sendPhoto`, {
+            const response = await fetch(`https://api.telegram.org/bot${CONFIG.botToken}/sendPhoto`, {
                 method: 'POST',
                 body: formData
             });
@@ -740,7 +734,7 @@ async function sendPost(post) {
                 payload.reply_markup = replyMarkup;
             }
 
-            const response = await fetch(`https://api.telegram.org/bot${project.botToken}/sendMessage`, {
+            const response = await fetch(`https://api.telegram.org/bot${CONFIG.botToken}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)

@@ -76,18 +76,9 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Название проекта:</label>
-                    <input type="text" id="projectName" placeholder="Например: Мой канал">
-                </div>
-                <div class="form-group">
-                    <label>API ключ Telegram бота:</label>
-                    <input type="text" id="projectBotToken" placeholder="123456789:ABCdefGHIjklMNOpqrsTUVwxyz">
-                    <p class="form-hint">Получите токен у @BotFather в Telegram</p>
-                </div>
-                <div class="form-group">
-                    <label>Chat ID канала/группы:</label>
-                    <input type="text" id="projectChatId" placeholder="-1001234567890 или @username">
-                    <p class="form-hint">ID канала или @username</p>
+                    <label>ID или @username канала:</label>
+                    <input type="text" id="projectChatId" placeholder="@mychannel или -1001234567890">
+                    <p class="form-hint">Убедитесь, что бот добавлен в канал как администратор</p>
                 </div>
             </div>
             <div class="modal-footer">
