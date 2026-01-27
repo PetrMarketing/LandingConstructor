@@ -68,8 +68,10 @@
                 <div class="results-header">
                     <h2>Структура презентации</h2>
                     <div class="results-actions">
+                        <button class="btn btn-primary" id="addSlideBtn">+ Добавить слайд</button>
                         <button class="btn btn-outline" id="copyAllBtn">📋 Копировать всё</button>
-                        <button class="btn btn-outline" id="newPresentationBtn">+ Новая презентация</button>
+                        <button class="btn btn-primary" id="goToDesignBtn" style="display:none;">Далее: Дизайн →</button>
+                        <button class="btn btn-outline" id="newPresentationBtn">+ Новая</button>
                     </div>
                 </div>
 
@@ -77,7 +79,86 @@
                     <!-- Slides will be rendered here -->
                 </div>
             </section>
+
+            <!-- Design Section -->
+            <section class="design-section" id="designSection" style="display:none;">
+                <h2>Настройки дизайна</h2>
+
+                <div class="color-pickers">
+                    <div class="color-picker-group">
+                        <label>Акцентный цвет 1:</label>
+                        <input type="color" id="accentColor1" value="#8b5cf6">
+                    </div>
+                    <div class="color-picker-group">
+                        <label>Акцентный цвет 2:</label>
+                        <input type="color" id="accentColor2" value="#10b981">
+                    </div>
+                </div>
+
+                <div class="logo-upload">
+                    <label>Вставьте лого или фото:</label>
+                    <div class="logo-upload-area" id="logoUploadArea">
+                        <input type="file" id="logoInput" accept="image/*" hidden>
+                        <img id="logoPreview" style="display:none;">
+                        <span id="logoPlaceholder">Нажмите для загрузки</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="generateFirstSlideBtn">Сгенерировать первый слайд</button>
+            </section>
+
+            <!-- Preview Section -->
+            <section class="preview-section" id="previewSection" style="display:none;">
+                <h2>Превью первого слайда</h2>
+                <div class="slide-preview-container">
+                    <img id="slidePreviewImage" alt="Превью слайда">
+                    <div class="preview-loading" id="previewLoading" style="display:none;">
+                        <div class="loading-spinner">⏳</div>
+                        <span>Генерация слайда...</span>
+                    </div>
+                </div>
+                <div class="preview-actions">
+                    <button class="btn btn-primary" id="confirmStyleBtn">✓ Подтвердить</button>
+                    <button class="btn btn-outline" id="regenerateBtn">↻ Перегенерировать</button>
+                </div>
+            </section>
+
+            <!-- Generation Progress Section -->
+            <section class="generation-progress" id="generationProgress" style="display:none;">
+                <h2>Генерация презентации</h2>
+                <div class="progress-info">
+                    <span id="progressText">Слайд 1 из 10</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+                <div class="generated-slides" id="generatedSlidesGallery"></div>
+            </section>
         </main>
+    </div>
+
+    <!-- Modal for adding slide -->
+    <div class="modal-overlay" id="addSlideModal" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Добавить слайд</h3>
+                <button class="modal-close" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Заголовок слайда:</label>
+                    <input type="text" id="newSlideTitle" placeholder="Введите заголовок">
+                </div>
+                <div class="form-group">
+                    <label>Содержимое:</label>
+                    <textarea id="newSlideContent" placeholder="• Тезис 1&#10;• Тезис 2&#10;• Тезис 3" rows="6"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelAddSlideBtn">Отмена</button>
+                <button class="btn btn-primary" id="confirmAddSlideBtn">Добавить</button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>

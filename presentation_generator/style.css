@@ -237,6 +237,20 @@ body {
 .results-actions {
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+#goToDesignBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(139, 92, 246, 0); }
 }
 
 .btn {
@@ -306,19 +320,6 @@ body {
     font-size: 1rem;
 }
 
-.slide-copy {
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    padding: 5px 10px;
-    font-size: 0.8rem;
-}
-
-.slide-copy:hover {
-    color: var(--accent);
-}
-
 .slide-content {
     padding: 20px;
     line-height: 1.8;
@@ -364,6 +365,456 @@ body {
     color: var(--text-secondary);
 }
 
+/* ===== Button Primary ===== */
+.btn-primary {
+    background: var(--accent);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+}
+
+.btn-primary:disabled {
+    background: var(--bg-tertiary);
+    cursor: not-allowed;
+}
+
+/* ===== Modal ===== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    color: var(--error);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 15px 20px;
+    border-top: 1px solid var(--border);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* ===== Slide Card Drag & Drop ===== */
+.slide-card {
+    position: relative;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.slide-card[draggable="true"] {
+    cursor: default;
+}
+
+.slide-card.dragging {
+    opacity: 0.4;
+    cursor: grabbing;
+    transform: scale(0.98);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.slide-card.drag-over {
+    border: 2px dashed var(--accent);
+    background: rgba(139, 92, 246, 0.1);
+    transform: scale(1.01);
+}
+
+.drag-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    color: var(--text-secondary);
+    cursor: grab;
+    font-size: 1.2rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.drag-handle:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+.slide-delete {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 5px 8px;
+    line-height: 1;
+    margin-left: 5px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.slide-delete:hover {
+    color: var(--error);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.slide-copy {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 5px 8px;
+    font-size: 1rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.slide-copy:hover {
+    color: var(--accent);
+    background: rgba(139, 92, 246, 0.1);
+}
+
+/* ===== Design Section ===== */
+.design-section {
+    margin-top: 40px;
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 30px;
+}
+
+.design-section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 25px;
+}
+
+.color-pickers {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.color-picker-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.color-picker-group label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.color-picker-group input[type="color"] {
+    width: 50px;
+    height: 40px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    background: none;
+    padding: 2px;
+}
+
+.color-picker-group input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.color-picker-group input[type="color"]::-webkit-color-swatch {
+    border-radius: 5px;
+    border: none;
+}
+
+.logo-upload {
+    margin-bottom: 25px;
+}
+
+.logo-upload > label {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.logo-upload-area {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-upload-area:hover {
+    border-color: var(--accent);
+    background: rgba(139, 92, 246, 0.05);
+}
+
+#logoPreview {
+    max-width: 200px;
+    max-height: 150px;
+    border-radius: 8px;
+}
+
+#logoPlaceholder {
+    color: var(--text-secondary);
+}
+
+/* ===== Preview Section ===== */
+.preview-section {
+    margin-top: 40px;
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 30px;
+}
+
+.preview-section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 25px;
+}
+
+.slide-preview-container {
+    background: var(--bg-tertiary);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    position: relative;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#slidePreviewImage {
+    max-width: 100%;
+    max-height: 500px;
+    display: block;
+}
+
+.preview-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    color: var(--text-secondary);
+}
+
+.preview-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* ===== Generation Progress ===== */
+.generation-progress {
+    margin-top: 40px;
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 30px;
+}
+
+.generation-progress h2 {
+    font-size: 1.25rem;
+    margin-bottom: 25px;
+}
+
+.progress-info {
+    margin-bottom: 25px;
+}
+
+#progressText {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.progress-bar {
+    height: 8px;
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--success));
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.generated-slides {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.generated-slide-thumb {
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: transform 0.2s;
+}
+
+.generated-slide-thumb:hover {
+    transform: scale(1.02);
+}
+
+.generated-slide-thumb img {
+    width: 100%;
+    display: block;
+}
+
+.generated-slide-thumb .slide-thumb-info {
+    padding: 10px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.generated-slide-thumb.error {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: var(--error);
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.generated-slide-thumb.error .slide-thumb-info {
+    color: var(--error);
+}
+
+/* ===== Streaming Text ===== */
+.streaming-text {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-top: 20px;
+    font-family: monospace;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.streaming-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1em;
+    background: var(--accent);
+    animation: blink 0.7s infinite;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
     .header {
@@ -387,5 +838,19 @@ body {
     .results-header {
         flex-direction: column;
         gap: 15px;
+    }
+
+    .color-pickers {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .preview-actions {
+        flex-direction: column;
+    }
+
+    .modal {
+        width: 95%;
+        margin: 10px;
     }
 }
