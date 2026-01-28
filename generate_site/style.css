@@ -1537,3 +1537,138 @@ body {
 .layer-item.is-hidden .layer-name {
     text-decoration: line-through;
 }
+
+/* ===== Edit Button Groups ===== */
+.edit-btn-group,
+.edit-btn-group-multi {
+    display: flex;
+    gap: 2px;
+    background: var(--bg-primary);
+    border-radius: var(--radius-sm);
+    padding: 4px;
+}
+
+.edit-btn-group button,
+.edit-btn-group-multi button {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all 0.15s;
+    font-size: 14px;
+}
+
+.edit-btn-group button:hover,
+.edit-btn-group-multi button:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.edit-btn-group button.active,
+.edit-btn-group-multi button.active {
+    background: var(--accent);
+    color: white;
+}
+
+/* ===== Edit Range Row ===== */
+.edit-range-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.edit-range-row input[type="range"] {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--bg-tertiary);
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.edit-range-row input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 2px solid var(--bg-secondary);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.edit-range-row input[type="range"]::-webkit-slider-thumb:hover {
+    background: var(--accent-hover);
+    transform: scale(1.1);
+}
+
+.edit-range-row span {
+    min-width: 50px;
+    font-size: 13px;
+    color: var(--text-primary);
+    text-align: right;
+    font-weight: 500;
+    background: var(--bg-tertiary);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+}
+
+/* ===== Edit Section Title Icons ===== */
+.edit-section h4 i {
+    color: var(--accent);
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+}
+
+/* ===== Edit Color Improved ===== */
+.edit-color {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.edit-color input[type="color"] {
+    width: 44px;
+    height: 44px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    padding: 2px;
+}
+
+.edit-color input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.edit-color input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 2px;
+}
+
+.edit-color input[type="text"] {
+    flex: 1;
+}
+
+/* ===== Edit Hint Improved ===== */
+.edit-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: var(--bg-primary);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--accent);
+}
+
+/* ===== Textarea Code Style ===== */
+.edit-textarea.code {
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    background: var(--bg-primary);
+    tab-size: 2;
+}

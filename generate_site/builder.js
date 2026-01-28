@@ -756,10 +756,57 @@ function updateEditingElementFromForm() {
 
     // Styles
     editContent.querySelectorAll('[data-style]').forEach(input => {
-        if (input.value) {
-            el.styles[input.dataset.style] = input.value;
+        const val = input.value;
+        const unit = input.dataset.unit || '';
+        if (val) {
+            el.styles[input.dataset.style] = val.includes(unit) || !unit ? val : val + unit;
         } else {
             delete el.styles[input.dataset.style];
+        }
+    });
+
+    // Custom fields
+    editContent.querySelectorAll('[data-custom]').forEach(input => {
+        const custom = input.dataset.custom;
+
+        if (custom === 'listItems') {
+            const items = input.value.split('\n').filter(i => i.trim());
+            el.content = items.map(i => `<li>${i}</li>`).join('');
+        }
+
+        if (custom === 'listType') {
+            el.tag = input.value;
+        }
+
+        if (custom === 'headingLevel') {
+            el.tag = input.value;
+        }
+
+        if (custom === 'videoUrl') {
+            const url = input.value;
+            let embedUrl = url;
+
+            // Convert YouTube URL to embed
+            const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/);
+            if (ytMatch) {
+                embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}`;
+            }
+
+            // Convert Vimeo URL to embed
+            const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+            if (vimeoMatch) {
+                embedUrl = `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+            }
+
+            el.content = `<iframe width="100%" height="315" src="${embedUrl}" frameborder="0" allowfullscreen></iframe>`;
+        }
+    });
+
+    // Button groups (single select)
+    editContent.querySelectorAll('.edit-btn-group').forEach(group => {
+        const activeBtn = group.querySelector('.active');
+        if (activeBtn && group.dataset.style) {
+            el.styles[group.dataset.style] = activeBtn.dataset.value;
         }
     });
 
@@ -782,73 +829,599 @@ function renderEditContent(tab) {
     }
 
     editContent.innerHTML = html;
+
+    // Setup interactive handlers
+    setupEditHandlers();
+}
+
+function setupEditHandlers() {
+    // Range sliders - update display value
+    editContent.querySelectorAll('input[type="range"]').forEach(range => {
+        const display = range.parentElement.querySelector('span');
+        range.addEventListener('input', () => {
+            const unit = range.dataset.unit || '';
+            display.textContent = range.value + unit;
+        });
+    });
+
+    // Color inputs - sync color picker and text input
+    editContent.querySelectorAll('.edit-color').forEach(colorRow => {
+        const colorPicker = colorRow.querySelector('input[type="color"]');
+        const textInput = colorRow.querySelector('input[type="text"]');
+
+        if (colorPicker && textInput) {
+            colorPicker.addEventListener('input', () => {
+                textInput.value = colorPicker.value;
+            });
+            textInput.addEventListener('input', () => {
+                if (/^#[0-9A-Fa-f]{6}$/.test(textInput.value)) {
+                    colorPicker.value = textInput.value;
+                }
+            });
+        }
+    });
+
+    // Button groups (single select)
+    editContent.querySelectorAll('.edit-btn-group').forEach(group => {
+        group.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                group.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    });
+
+    // Button groups multi (toggle)
+    editContent.querySelectorAll('.edit-btn-group-multi').forEach(group => {
+        group.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.classList.toggle('active');
+
+                // Update style immediately
+                const style = btn.dataset.style;
+                const value = btn.dataset.value;
+
+                if (btn.classList.contains('active')) {
+                    state.editingElement.styles[style] = value;
+                } else {
+                    delete state.editingElement.styles[style];
+                }
+            });
+        });
+    });
 }
 
 function renderContentTab(el) {
-    let html = '<div class="edit-section">';
+    const s = el.styles || {};
 
-    if (el.tag === 'img') {
-        html += `
-            <div class="edit-row">
-                <label>URL изображения</label>
-                <input type="text" class="edit-input" data-attr="src" value="${el.attrs?.src || ''}">
+    // Настройки по типам элементов
+    const typeSettings = {
+        // ===== ТЕКСТ =====
+        heading: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-heading"></i> Заголовок</h4>
+                <div class="edit-row">
+                    <label>Текст заголовка</label>
+                    <input type="text" class="edit-input" data-prop="content" value="${escapeHtml(el.content)}">
+                </div>
+                <div class="edit-row">
+                    <label>Уровень заголовка</label>
+                    <select class="edit-select" data-custom="headingLevel">
+                        <option value="h1" ${el.tag === 'h1' ? 'selected' : ''}>H1 - Главный</option>
+                        <option value="h2" ${el.tag === 'h2' ? 'selected' : ''}>H2 - Подзаголовок</option>
+                        <option value="h3" ${el.tag === 'h3' ? 'selected' : ''}>H3 - Секция</option>
+                        <option value="h4" ${el.tag === 'h4' ? 'selected' : ''}>H4 - Подсекция</option>
+                    </select>
+                </div>
             </div>
-            <div class="edit-row">
-                <label>Alt текст</label>
-                <input type="text" class="edit-input" data-attr="alt" value="${el.attrs?.alt || ''}">
+            <div class="edit-section">
+                <h4><i class="fas fa-palette"></i> Оформление текста</h4>
+                <div class="edit-row">
+                    <label>Размер шрифта</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="12" max="72" value="${parseInt(s.fontSize) || 32}" data-style="fontSize" data-unit="px">
+                        <span>${parseInt(s.fontSize) || 32}px</span>
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Цвет текста</label>
+                    <div class="edit-color">
+                        <input type="color" value="${s.color || '#1e293b'}" data-style="color">
+                        <input type="text" class="edit-input" value="${s.color || '#1e293b'}" data-style="color">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Выравнивание</label>
+                    <div class="edit-btn-group" data-style="textAlign">
+                        <button type="button" class="${s.textAlign === 'left' || !s.textAlign ? 'active' : ''}" data-value="left"><i class="fas fa-align-left"></i></button>
+                        <button type="button" class="${s.textAlign === 'center' ? 'active' : ''}" data-value="center"><i class="fas fa-align-center"></i></button>
+                        <button type="button" class="${s.textAlign === 'right' ? 'active' : ''}" data-value="right"><i class="fas fa-align-right"></i></button>
+                    </div>
+                </div>
             </div>
-        `;
-    } else if (el.tag === 'a') {
-        html += `
-            <div class="edit-row">
-                <label>Текст</label>
-                <input type="text" class="edit-input" data-prop="content" value="${escapeHtml(el.content)}">
+        `,
+
+        text: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-align-left"></i> Текст</h4>
+                <div class="edit-row">
+                    <label>Содержимое</label>
+                    <textarea class="edit-textarea" data-prop="content" rows="5">${escapeHtml(el.content)}</textarea>
+                </div>
             </div>
-            <div class="edit-row">
-                <label>Ссылка (href)</label>
-                <input type="text" class="edit-input" data-attr="href" value="${el.attrs?.href || '#'}">
+            <div class="edit-section">
+                <h4><i class="fas fa-palette"></i> Оформление</h4>
+                <div class="edit-row">
+                    <label>Размер шрифта</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="12" max="32" value="${parseInt(s.fontSize) || 16}" data-style="fontSize" data-unit="px">
+                        <span>${parseInt(s.fontSize) || 16}px</span>
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Цвет текста</label>
+                    <div class="edit-color">
+                        <input type="color" value="${s.color || '#475569'}" data-style="color">
+                        <input type="text" class="edit-input" value="${s.color || '#475569'}" data-style="color">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Стиль текста</label>
+                    <div class="edit-btn-group-multi">
+                        <button type="button" class="${s.fontWeight === 'bold' ? 'active' : ''}" data-style="fontWeight" data-value="bold" title="Жирный"><i class="fas fa-bold"></i></button>
+                        <button type="button" class="${s.fontStyle === 'italic' ? 'active' : ''}" data-style="fontStyle" data-value="italic" title="Курсив"><i class="fas fa-italic"></i></button>
+                        <button type="button" class="${s.textDecoration === 'underline' ? 'active' : ''}" data-style="textDecoration" data-value="underline" title="Подчёркнутый"><i class="fas fa-underline"></i></button>
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Выравнивание</label>
+                    <div class="edit-btn-group" data-style="textAlign">
+                        <button type="button" class="${s.textAlign === 'left' || !s.textAlign ? 'active' : ''}" data-value="left"><i class="fas fa-align-left"></i></button>
+                        <button type="button" class="${s.textAlign === 'center' ? 'active' : ''}" data-value="center"><i class="fas fa-align-center"></i></button>
+                        <button type="button" class="${s.textAlign === 'right' ? 'active' : ''}" data-value="right"><i class="fas fa-align-right"></i></button>
+                        <button type="button" class="${s.textAlign === 'justify' ? 'active' : ''}" data-value="justify"><i class="fas fa-align-justify"></i></button>
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Межстрочный интервал</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="1" max="3" step="0.1" value="${parseFloat(s.lineHeight) || 1.6}" data-style="lineHeight">
+                        <span>${parseFloat(s.lineHeight) || 1.6}</span>
+                    </div>
+                </div>
             </div>
-            <div class="edit-row">
-                <label>Открывать в</label>
-                <select class="edit-select" data-attr="target">
-                    <option value="">Текущем окне</option>
-                    <option value="_blank" ${el.attrs?.target === '_blank' ? 'selected' : ''}>Новом окне</option>
-                </select>
+        `,
+
+        // ===== ИЗОБРАЖЕНИЕ =====
+        image: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-image"></i> Изображение</h4>
+                <div class="edit-row">
+                    <label>URL изображения</label>
+                    <input type="text" class="edit-input" data-attr="src" value="${el.attrs?.src || ''}" placeholder="https://...">
+                </div>
+                <div class="edit-row">
+                    <label>Описание (alt)</label>
+                    <input type="text" class="edit-input" data-attr="alt" value="${el.attrs?.alt || ''}" placeholder="Описание изображения">
+                </div>
             </div>
-        `;
-    } else if (['style', 'script'].includes(el.tag)) {
-        html += `
-            <div class="edit-row">
-                <label>Код</label>
-                <textarea class="edit-textarea code" data-prop="content" rows="15">${escapeHtml(el.content)}</textarea>
+            <div class="edit-section">
+                <h4><i class="fas fa-expand"></i> Размер</h4>
+                <div class="edit-grid">
+                    <div class="edit-row">
+                        <label>Ширина</label>
+                        <input type="text" class="edit-input" data-style="width" value="${s.width || ''}" placeholder="100% или 400px">
+                    </div>
+                    <div class="edit-row">
+                        <label>Макс. ширина</label>
+                        <input type="text" class="edit-input" data-style="maxWidth" value="${s.maxWidth || '100%'}" placeholder="100%">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Скругление углов</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="0" max="50" value="${parseInt(s.borderRadius) || 8}" data-style="borderRadius" data-unit="px">
+                        <span>${parseInt(s.borderRadius) || 8}px</span>
+                    </div>
+                </div>
             </div>
-        `;
-    } else if (el.tag === 'i') {
-        html += `
-            <div class="edit-row">
-                <label>Класс иконки (Font Awesome)</label>
-                <input type="text" class="edit-input" data-attr="class" value="${el.attrs?.class || 'fas fa-star'}">
+        `,
+
+        // ===== КНОПКА =====
+        button: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-hand-pointer"></i> Кнопка</h4>
+                <div class="edit-row">
+                    <label>Текст кнопки</label>
+                    <input type="text" class="edit-input" data-prop="content" value="${escapeHtml(el.content)}">
+                </div>
+                <div class="edit-row">
+                    <label>Ссылка</label>
+                    <input type="text" class="edit-input" data-attr="href" value="${el.attrs?.href || '#'}" placeholder="https://...">
+                </div>
+                <div class="edit-row">
+                    <label>Открывать в</label>
+                    <select class="edit-select" data-attr="target">
+                        <option value="">Текущем окне</option>
+                        <option value="_blank" ${el.attrs?.target === '_blank' ? 'selected' : ''}>Новом окне</option>
+                    </select>
+                </div>
             </div>
-            <p class="edit-hint">Примеры: fas fa-star, fas fa-heart, fab fa-telegram</p>
-        `;
-    } else {
-        html += `
-            <div class="edit-row">
-                <label>HTML контент</label>
-                <textarea class="edit-textarea" data-prop="content" rows="10">${escapeHtml(el.content)}</textarea>
+            <div class="edit-section">
+                <h4><i class="fas fa-palette"></i> Оформление</h4>
+                <div class="edit-row">
+                    <label>Цвет кнопки</label>
+                    <div class="edit-color">
+                        <input type="color" value="${s.backgroundColor || '#3b82f6'}" data-style="backgroundColor">
+                        <input type="text" class="edit-input" value="${s.backgroundColor || '#3b82f6'}" data-style="backgroundColor">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Цвет текста</label>
+                    <div class="edit-color">
+                        <input type="color" value="${s.color || '#ffffff'}" data-style="color">
+                        <input type="text" class="edit-input" value="${s.color || '#ffffff'}" data-style="color">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Размер текста</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="12" max="24" value="${parseInt(s.fontSize) || 16}" data-style="fontSize" data-unit="px">
+                        <span>${parseInt(s.fontSize) || 16}px</span>
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Скругление</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="0" max="30" value="${parseInt(s.borderRadius) || 8}" data-style="borderRadius" data-unit="px">
+                        <span>${parseInt(s.borderRadius) || 8}px</span>
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Внутренний отступ</label>
+                    <input type="text" class="edit-input" data-style="padding" value="${s.padding || '12px 24px'}" placeholder="12px 24px">
+                </div>
             </div>
-        `;
+        `,
+
+        // ===== ССЫЛКА =====
+        link: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-link"></i> Ссылка</h4>
+                <div class="edit-row">
+                    <label>Текст ссылки</label>
+                    <input type="text" class="edit-input" data-prop="content" value="${escapeHtml(el.content)}">
+                </div>
+                <div class="edit-row">
+                    <label>URL</label>
+                    <input type="text" class="edit-input" data-attr="href" value="${el.attrs?.href || '#'}" placeholder="https://...">
+                </div>
+                <div class="edit-row">
+                    <label>Открывать в</label>
+                    <select class="edit-select" data-attr="target">
+                        <option value="">Текущем окне</option>
+                        <option value="_blank" ${el.attrs?.target === '_blank' ? 'selected' : ''}>Новом окне</option>
+                    </select>
+                </div>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-palette"></i> Оформление</h4>
+                <div class="edit-row">
+                    <label>Цвет ссылки</label>
+                    <div class="edit-color">
+                        <input type="color" value="${s.color || '#3b82f6'}" data-style="color">
+                        <input type="text" class="edit-input" value="${s.color || '#3b82f6'}" data-style="color">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Подчёркивание</label>
+                    <select class="edit-select" data-style="textDecoration">
+                        <option value="underline" ${s.textDecoration !== 'none' ? 'selected' : ''}>С подчёркиванием</option>
+                        <option value="none" ${s.textDecoration === 'none' ? 'selected' : ''}>Без подчёркивания</option>
+                    </select>
+                </div>
+            </div>
+        `,
+
+        // ===== СПИСОК =====
+        list: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-list"></i> Список</h4>
+                <div class="edit-row">
+                    <label>Пункты списка (каждый с новой строки)</label>
+                    <textarea class="edit-textarea" data-custom="listItems" rows="6">${extractListItems(el.content)}</textarea>
+                </div>
+                <div class="edit-row">
+                    <label>Тип списка</label>
+                    <select class="edit-select" data-custom="listType">
+                        <option value="ul" ${el.tag === 'ul' ? 'selected' : ''}>Маркированный (•)</option>
+                        <option value="ol" ${el.tag === 'ol' ? 'selected' : ''}>Нумерованный (1, 2, 3)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-palette"></i> Оформление</h4>
+                <div class="edit-row">
+                    <label>Цвет текста</label>
+                    <div class="edit-color">
+                        <input type="color" value="${s.color || '#475569'}" data-style="color">
+                        <input type="text" class="edit-input" value="${s.color || '#475569'}" data-style="color">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Размер шрифта</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="12" max="24" value="${parseInt(s.fontSize) || 16}" data-style="fontSize" data-unit="px">
+                        <span>${parseInt(s.fontSize) || 16}px</span>
+                    </div>
+                </div>
+            </div>
+        `,
+
+        // ===== РАЗДЕЛИТЕЛЬ =====
+        divider: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-minus"></i> Разделитель</h4>
+                <div class="edit-row">
+                    <label>Толщина линии</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="1" max="10" value="${parseInt(s.borderTopWidth) || 1}" data-style="borderTopWidth" data-unit="px">
+                        <span>${parseInt(s.borderTopWidth) || 1}px</span>
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Цвет</label>
+                    <div class="edit-color">
+                        <input type="color" value="${s.borderTopColor || '#e2e8f0'}" data-style="borderTopColor">
+                        <input type="text" class="edit-input" value="${s.borderTopColor || '#e2e8f0'}" data-style="borderTopColor">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Стиль линии</label>
+                    <select class="edit-select" data-style="borderTopStyle">
+                        <option value="solid" ${s.borderTopStyle !== 'dashed' && s.borderTopStyle !== 'dotted' ? 'selected' : ''}>Сплошная</option>
+                        <option value="dashed" ${s.borderTopStyle === 'dashed' ? 'selected' : ''}>Пунктирная</option>
+                        <option value="dotted" ${s.borderTopStyle === 'dotted' ? 'selected' : ''}>Точечная</option>
+                    </select>
+                </div>
+                <div class="edit-row">
+                    <label>Ширина</label>
+                    <input type="text" class="edit-input" data-style="width" value="${s.width || '100%'}" placeholder="100% или 200px">
+                </div>
+            </div>
+        `,
+
+        // ===== ОТСТУП =====
+        spacer: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-arrows-alt-v"></i> Отступ</h4>
+                <div class="edit-row">
+                    <label>Высота отступа</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="10" max="200" value="${parseInt(s.height) || 40}" data-style="height" data-unit="px">
+                        <span>${parseInt(s.height) || 40}px</span>
+                    </div>
+                </div>
+            </div>
+        `,
+
+        // ===== ВИДЕО =====
+        video: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-video"></i> Видео</h4>
+                <div class="edit-row">
+                    <label>Ссылка на YouTube</label>
+                    <input type="text" class="edit-input" data-custom="videoUrl" value="${extractVideoUrl(el.content)}" placeholder="https://www.youtube.com/watch?v=...">
+                </div>
+                <p class="edit-hint">Вставьте ссылку на видео YouTube или Vimeo</p>
+            </div>
+        `,
+
+        // ===== ИКОНКА =====
+        icon: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-star"></i> Иконка</h4>
+                <div class="edit-row">
+                    <label>Класс иконки</label>
+                    <input type="text" class="edit-input" data-attr="class" value="${el.attrs?.class || 'fas fa-star'}">
+                </div>
+                <p class="edit-hint">Примеры: fas fa-star, fas fa-heart, fas fa-check, fab fa-telegram</p>
+                <div class="edit-row">
+                    <label>Размер</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="16" max="120" value="${parseInt(s.fontSize) || 48}" data-style="fontSize" data-unit="px">
+                        <span>${parseInt(s.fontSize) || 48}px</span>
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Цвет</label>
+                    <div class="edit-color">
+                        <input type="color" value="${s.color || '#3b82f6'}" data-style="color">
+                        <input type="text" class="edit-input" value="${s.color || '#3b82f6'}" data-style="color">
+                    </div>
+                </div>
+            </div>
+        `,
+
+        // ===== КОНТЕЙНЕРЫ =====
+        section: () => renderContainerSettings(el, 'Секция', 'fa-square'),
+        container: () => renderContainerSettings(el, 'Контейнер', 'fa-box'),
+        row: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-columns"></i> Строка</h4>
+                <p class="edit-hint">Перетащите сюда колонки или другие элементы</p>
+                <div class="edit-row">
+                    <label>Расстояние между элементами</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="0" max="60" value="${parseInt(s.gap) || 20}" data-style="gap" data-unit="px">
+                        <span>${parseInt(s.gap) || 20}px</span>
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Выравнивание по горизонтали</label>
+                    <select class="edit-select" data-style="justifyContent">
+                        <option value="flex-start" ${s.justifyContent === 'flex-start' ? 'selected' : ''}>В начале</option>
+                        <option value="center" ${s.justifyContent === 'center' ? 'selected' : ''}>По центру</option>
+                        <option value="flex-end" ${s.justifyContent === 'flex-end' ? 'selected' : ''}>В конце</option>
+                        <option value="space-between" ${s.justifyContent === 'space-between' ? 'selected' : ''}>Равномерно</option>
+                    </select>
+                </div>
+                <div class="edit-row">
+                    <label>Выравнивание по вертикали</label>
+                    <select class="edit-select" data-style="alignItems">
+                        <option value="stretch" ${!s.alignItems || s.alignItems === 'stretch' ? 'selected' : ''}>Растянуть</option>
+                        <option value="flex-start" ${s.alignItems === 'flex-start' ? 'selected' : ''}>Сверху</option>
+                        <option value="center" ${s.alignItems === 'center' ? 'selected' : ''}>По центру</option>
+                        <option value="flex-end" ${s.alignItems === 'flex-end' ? 'selected' : ''}>Снизу</option>
+                    </select>
+                </div>
+            </div>
+        `,
+        column: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-grip-lines-vertical"></i> Колонка</h4>
+                <p class="edit-hint">Перетащите сюда текст, изображения и другие элементы</p>
+                <div class="edit-row">
+                    <label>Ширина колонки</label>
+                    <select class="edit-select" data-style="flex">
+                        <option value="1" ${s.flex === '1' || !s.flex ? 'selected' : ''}>Авто (равная)</option>
+                        <option value="0 0 25%" ${s.flex === '0 0 25%' ? 'selected' : ''}>25%</option>
+                        <option value="0 0 33.33%" ${s.flex === '0 0 33.33%' ? 'selected' : ''}>33%</option>
+                        <option value="0 0 50%" ${s.flex === '0 0 50%' ? 'selected' : ''}>50%</option>
+                        <option value="0 0 66.66%" ${s.flex === '0 0 66.66%' ? 'selected' : ''}>66%</option>
+                        <option value="0 0 75%" ${s.flex === '0 0 75%' ? 'selected' : ''}>75%</option>
+                    </select>
+                </div>
+                <div class="edit-row">
+                    <label>Внутренний отступ</label>
+                    <input type="text" class="edit-input" data-style="padding" value="${s.padding || '10px'}" placeholder="10px">
+                </div>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-fill-drip"></i> Фон</h4>
+                <div class="edit-row">
+                    <label>Цвет фона</label>
+                    <div class="edit-color">
+                        <input type="color" value="${s.backgroundColor || '#ffffff'}" data-style="backgroundColor">
+                        <input type="text" class="edit-input" value="${s.backgroundColor || ''}" data-style="backgroundColor" placeholder="Прозрачный">
+                    </div>
+                </div>
+            </div>
+        `,
+
+        // ===== КОД =====
+        html: () => `
+            <div class="edit-section">
+                <h4><i class="fab fa-html5"></i> HTML код</h4>
+                <div class="edit-row">
+                    <textarea class="edit-textarea code" data-prop="content" rows="15">${escapeHtml(el.content)}</textarea>
+                </div>
+            </div>
+        `,
+        css: () => `
+            <div class="edit-section">
+                <h4><i class="fab fa-css3-alt"></i> CSS стили</h4>
+                <div class="edit-row">
+                    <textarea class="edit-textarea code" data-prop="content" rows="15">${escapeHtml(el.content)}</textarea>
+                </div>
+            </div>
+        `,
+        js: () => `
+            <div class="edit-section">
+                <h4><i class="fab fa-js"></i> JavaScript код</h4>
+                <div class="edit-row">
+                    <textarea class="edit-textarea code" data-prop="content" rows="15">${escapeHtml(el.content)}</textarea>
+                </div>
+            </div>
+        `,
+        widget: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-plug"></i> Виджет</h4>
+                <div class="edit-row">
+                    <label>Вставьте код виджета</label>
+                    <textarea class="edit-textarea code" data-prop="content" rows="10">${escapeHtml(el.content)}</textarea>
+                </div>
+                <p class="edit-hint">Код виджета от стороннего сервиса (чат, формы, аналитика и т.д.)</p>
+            </div>
+        `
+    };
+
+    // Если есть специфичные настройки для типа - используем их
+    if (typeSettings[el.type]) {
+        return typeSettings[el.type]();
     }
 
-    html += '</div>';
-    return html;
+    // Для остальных типов - общие настройки
+    return `
+        <div class="edit-section">
+            <h4><i class="fas ${el.icon}"></i> ${el.label}</h4>
+            <div class="edit-row">
+                <label>HTML содержимое</label>
+                <textarea class="edit-textarea" data-prop="content" rows="10">${escapeHtml(el.content)}</textarea>
+            </div>
+        </div>
+    `;
+}
+
+// Настройки для контейнеров
+function renderContainerSettings(el, title, icon) {
+    const s = el.styles || {};
+    return `
+        <div class="edit-section">
+            <h4><i class="fas ${icon}"></i> ${title}</h4>
+            <p class="edit-hint">Перетащите сюда другие блоки: колонки, строки, текст, изображения и т.д.</p>
+        </div>
+        <div class="edit-section">
+            <h4><i class="fas fa-fill-drip"></i> Фон</h4>
+            <div class="edit-row">
+                <label>Цвет фона</label>
+                <div class="edit-color">
+                    <input type="color" value="${s.backgroundColor || '#ffffff'}" data-style="backgroundColor">
+                    <input type="text" class="edit-input" value="${s.backgroundColor || ''}" data-style="backgroundColor" placeholder="Прозрачный">
+                </div>
+            </div>
+            <div class="edit-row">
+                <label>Изображение фона</label>
+                <input type="text" class="edit-input" data-style="backgroundImage" value="${s.backgroundImage || ''}" placeholder="url(https://...)">
+            </div>
+        </div>
+        <div class="edit-section">
+            <h4><i class="fas fa-arrows-alt"></i> Отступы</h4>
+            <div class="edit-row">
+                <label>Внутренний отступ</label>
+                <input type="text" class="edit-input" data-style="padding" value="${s.padding || '60px 20px'}" placeholder="60px 20px">
+            </div>
+            <div class="edit-row">
+                <label>Максимальная ширина</label>
+                <input type="text" class="edit-input" data-style="maxWidth" value="${s.maxWidth || ''}" placeholder="1200px">
+            </div>
+        </div>
+    `;
+}
+
+// Вспомогательные функции
+function extractListItems(content) {
+    const matches = content.match(/<li[^>]*>(.*?)<\/li>/gi) || [];
+    return matches.map(m => m.replace(/<\/?li[^>]*>/gi, '')).join('\n');
+}
+
+function extractVideoUrl(content) {
+    const match = content.match(/src="([^"]+)"/);
+    if (match) {
+        const embedUrl = match[1];
+        const videoId = embedUrl.match(/embed\/([^?]+)/);
+        if (videoId) {
+            return `https://www.youtube.com/watch?v=${videoId[1]}`;
+        }
+    }
+    return '';
 }
 
 function renderStyleTab(el) {
     const s = el.styles || {};
     return `
         <div class="edit-section">
-            <h4>Размеры</h4>
+            <h4><i class="fas fa-expand-arrows-alt"></i> Размер</h4>
             <div class="edit-grid">
                 <div class="edit-row">
                     <label>Ширина</label>
@@ -858,169 +1431,69 @@ function renderStyleTab(el) {
                     <label>Высота</label>
                     <input type="text" class="edit-input" data-style="height" value="${s.height || ''}" placeholder="auto">
                 </div>
-                <div class="edit-row">
-                    <label>Мин. ширина</label>
-                    <input type="text" class="edit-input" data-style="minWidth" value="${s.minWidth || ''}">
-                </div>
-                <div class="edit-row">
-                    <label>Макс. ширина</label>
-                    <input type="text" class="edit-input" data-style="maxWidth" value="${s.maxWidth || ''}">
-                </div>
+            </div>
+            <div class="edit-row">
+                <label>Максимальная ширина</label>
+                <input type="text" class="edit-input" data-style="maxWidth" value="${s.maxWidth || ''}" placeholder="1200px или 100%">
             </div>
         </div>
 
         <div class="edit-section">
-            <h4>Отступы внутренние (padding)</h4>
-            <div class="edit-grid four">
-                <div class="edit-row"><label>Верх</label><input type="text" class="edit-input" data-style="paddingTop" value="${s.paddingTop || ''}"></div>
-                <div class="edit-row"><label>Право</label><input type="text" class="edit-input" data-style="paddingRight" value="${s.paddingRight || ''}"></div>
-                <div class="edit-row"><label>Низ</label><input type="text" class="edit-input" data-style="paddingBottom" value="${s.paddingBottom || ''}"></div>
-                <div class="edit-row"><label>Лево</label><input type="text" class="edit-input" data-style="paddingLeft" value="${s.paddingLeft || ''}"></div>
+            <h4><i class="fas fa-arrows-alt"></i> Отступы</h4>
+            <div class="edit-row">
+                <label>Внутренний отступ (padding)</label>
+                <input type="text" class="edit-input" data-style="padding" value="${s.padding || ''}" placeholder="20px или 10px 20px">
             </div>
             <div class="edit-row">
-                <label>Все стороны</label>
-                <input type="text" class="edit-input" data-style="padding" value="${s.padding || ''}" placeholder="20px">
-            </div>
-        </div>
-
-        <div class="edit-section">
-            <h4>Отступы внешние (margin)</h4>
-            <div class="edit-grid four">
-                <div class="edit-row"><label>Верх</label><input type="text" class="edit-input" data-style="marginTop" value="${s.marginTop || ''}"></div>
-                <div class="edit-row"><label>Право</label><input type="text" class="edit-input" data-style="marginRight" value="${s.marginRight || ''}"></div>
-                <div class="edit-row"><label>Низ</label><input type="text" class="edit-input" data-style="marginBottom" value="${s.marginBottom || ''}"></div>
-                <div class="edit-row"><label>Лево</label><input type="text" class="edit-input" data-style="marginLeft" value="${s.marginLeft || ''}"></div>
-            </div>
-            <div class="edit-row">
-                <label>Все стороны</label>
+                <label>Внешний отступ (margin)</label>
                 <input type="text" class="edit-input" data-style="margin" value="${s.margin || ''}" placeholder="0 auto">
             </div>
         </div>
 
         <div class="edit-section">
-            <h4>Фон</h4>
+            <h4><i class="fas fa-fill-drip"></i> Фон</h4>
             <div class="edit-row">
                 <label>Цвет фона</label>
                 <div class="edit-color">
                     <input type="color" data-style="backgroundColor" value="${s.backgroundColor || '#ffffff'}">
-                    <input type="text" class="edit-input" data-style="backgroundColor" value="${s.backgroundColor || ''}">
+                    <input type="text" class="edit-input" data-style="backgroundColor" value="${s.backgroundColor || ''}" placeholder="Прозрачный">
                 </div>
             </div>
             <div class="edit-row">
-                <label>Изображение фона</label>
-                <input type="text" class="edit-input" data-style="backgroundImage" value="${s.backgroundImage || ''}" placeholder="url(...)">
+                <label>Изображение фона (URL)</label>
+                <input type="text" class="edit-input" data-style="backgroundImage" value="${s.backgroundImage || ''}" placeholder="url(https://...)">
             </div>
             <div class="edit-row">
                 <label>Размер фона</label>
                 <select class="edit-select" data-style="backgroundSize">
-                    <option value="">—</option>
-                    <option value="cover" ${s.backgroundSize === 'cover' ? 'selected' : ''}>Cover</option>
-                    <option value="contain" ${s.backgroundSize === 'contain' ? 'selected' : ''}>Contain</option>
-                    <option value="auto" ${s.backgroundSize === 'auto' ? 'selected' : ''}>Auto</option>
+                    <option value="">Авто</option>
+                    <option value="cover" ${s.backgroundSize === 'cover' ? 'selected' : ''}>Заполнить (cover)</option>
+                    <option value="contain" ${s.backgroundSize === 'contain' ? 'selected' : ''}>Вместить (contain)</option>
                 </select>
             </div>
         </div>
 
         <div class="edit-section">
-            <h4>Текст</h4>
-            <div class="edit-row">
-                <label>Цвет текста</label>
-                <div class="edit-color">
-                    <input type="color" data-style="color" value="${s.color || '#000000'}">
-                    <input type="text" class="edit-input" data-style="color" value="${s.color || ''}">
-                </div>
-            </div>
-            <div class="edit-grid">
-                <div class="edit-row">
-                    <label>Размер шрифта</label>
-                    <input type="text" class="edit-input" data-style="fontSize" value="${s.fontSize || ''}" placeholder="16px">
-                </div>
-                <div class="edit-row">
-                    <label>Жирность</label>
-                    <select class="edit-select" data-style="fontWeight">
-                        <option value="">—</option>
-                        <option value="normal" ${s.fontWeight === 'normal' ? 'selected' : ''}>Normal</option>
-                        <option value="500" ${s.fontWeight === '500' ? 'selected' : ''}>Medium</option>
-                        <option value="600" ${s.fontWeight === '600' ? 'selected' : ''}>Semibold</option>
-                        <option value="bold" ${s.fontWeight === 'bold' ? 'selected' : ''}>Bold</option>
-                    </select>
-                </div>
-            </div>
-            <div class="edit-row">
-                <label>Выравнивание</label>
-                <select class="edit-select" data-style="textAlign">
-                    <option value="">—</option>
-                    <option value="left" ${s.textAlign === 'left' ? 'selected' : ''}>Слева</option>
-                    <option value="center" ${s.textAlign === 'center' ? 'selected' : ''}>По центру</option>
-                    <option value="right" ${s.textAlign === 'right' ? 'selected' : ''}>Справа</option>
-                    <option value="justify" ${s.textAlign === 'justify' ? 'selected' : ''}>По ширине</option>
-                </select>
-            </div>
-            <div class="edit-row">
-                <label>Высота строки</label>
-                <input type="text" class="edit-input" data-style="lineHeight" value="${s.lineHeight || ''}" placeholder="1.5">
-            </div>
-        </div>
-
-        <div class="edit-section">
-            <h4>Границы</h4>
+            <h4><i class="fas fa-border-style"></i> Граница и тень</h4>
             <div class="edit-row">
                 <label>Граница</label>
                 <input type="text" class="edit-input" data-style="border" value="${s.border || ''}" placeholder="1px solid #ccc">
             </div>
             <div class="edit-row">
-                <label>Скругление</label>
-                <input type="text" class="edit-input" data-style="borderRadius" value="${s.borderRadius || ''}" placeholder="8px">
+                <label>Скругление углов</label>
+                <div class="edit-range-row">
+                    <input type="range" min="0" max="50" value="${parseInt(s.borderRadius) || 0}" data-style="borderRadius" data-unit="px">
+                    <span>${parseInt(s.borderRadius) || 0}px</span>
+                </div>
             </div>
             <div class="edit-row">
                 <label>Тень</label>
-                <input type="text" class="edit-input" data-style="boxShadow" value="${s.boxShadow || ''}" placeholder="0 4px 6px rgba(0,0,0,0.1)">
-            </div>
-        </div>
-
-        <div class="edit-section">
-            <h4>Flexbox</h4>
-            <div class="edit-row">
-                <label>Display</label>
-                <select class="edit-select" data-style="display">
-                    <option value="">—</option>
-                    <option value="block" ${s.display === 'block' ? 'selected' : ''}>Block</option>
-                    <option value="flex" ${s.display === 'flex' ? 'selected' : ''}>Flex</option>
-                    <option value="grid" ${s.display === 'grid' ? 'selected' : ''}>Grid</option>
-                    <option value="inline-block" ${s.display === 'inline-block' ? 'selected' : ''}>Inline-block</option>
-                    <option value="none" ${s.display === 'none' ? 'selected' : ''}>None</option>
+                <select class="edit-select" data-style="boxShadow">
+                    <option value="" ${!s.boxShadow ? 'selected' : ''}>Без тени</option>
+                    <option value="0 2px 4px rgba(0,0,0,0.1)" ${s.boxShadow?.includes('2px 4px') ? 'selected' : ''}>Лёгкая</option>
+                    <option value="0 4px 6px rgba(0,0,0,0.1)" ${s.boxShadow?.includes('4px 6px') ? 'selected' : ''}>Средняя</option>
+                    <option value="0 10px 25px rgba(0,0,0,0.15)" ${s.boxShadow?.includes('10px 25px') ? 'selected' : ''}>Большая</option>
                 </select>
-            </div>
-            <div class="edit-grid">
-                <div class="edit-row">
-                    <label>Justify</label>
-                    <select class="edit-select" data-style="justifyContent">
-                        <option value="">—</option>
-                        <option value="flex-start" ${s.justifyContent === 'flex-start' ? 'selected' : ''}>Start</option>
-                        <option value="center" ${s.justifyContent === 'center' ? 'selected' : ''}>Center</option>
-                        <option value="flex-end" ${s.justifyContent === 'flex-end' ? 'selected' : ''}>End</option>
-                        <option value="space-between" ${s.justifyContent === 'space-between' ? 'selected' : ''}>Space Between</option>
-                        <option value="space-around" ${s.justifyContent === 'space-around' ? 'selected' : ''}>Space Around</option>
-                    </select>
-                </div>
-                <div class="edit-row">
-                    <label>Align</label>
-                    <select class="edit-select" data-style="alignItems">
-                        <option value="">—</option>
-                        <option value="flex-start" ${s.alignItems === 'flex-start' ? 'selected' : ''}>Start</option>
-                        <option value="center" ${s.alignItems === 'center' ? 'selected' : ''}>Center</option>
-                        <option value="flex-end" ${s.alignItems === 'flex-end' ? 'selected' : ''}>End</option>
-                        <option value="stretch" ${s.alignItems === 'stretch' ? 'selected' : ''}>Stretch</option>
-                    </select>
-                </div>
-            </div>
-            <div class="edit-row">
-                <label>Gap</label>
-                <input type="text" class="edit-input" data-style="gap" value="${s.gap || ''}" placeholder="20px">
-            </div>
-            <div class="edit-row">
-                <label>Flex</label>
-                <input type="text" class="edit-input" data-style="flex" value="${s.flex || ''}" placeholder="1">
             </div>
         </div>
     `;
