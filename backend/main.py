@@ -117,7 +117,7 @@ async def generate_image(request: ImageRequest):
     if not OPENROUTER_API_KEY:
         raise HTTPException(status_code=500, detail="OPENROUTER_API_KEY не настроен")
 
-    # Используем Gemini 3 Pro Image Preview через OpenRouter
+    # Используем Gemini 2.0 Flash Image Generation через OpenRouter
     async with httpx.AsyncClient(timeout=120.0) as client:
         response = await client.post(
             "https://openrouter.ai/api/v1/chat/completions",
@@ -128,11 +128,10 @@ async def generate_image(request: ImageRequest):
                 "X-Title": "AI Tools Image Generator"
             },
             json={
-                "model": "google/gemini-3-pro-image-preview",
+                "model": "google/gemini-2.0-flash-exp-image-generation:free",
                 "messages": [
                     {"role": "user", "content": f"Generate an image: {request.prompt}"}
-                ],
-                "modalities": ["image", "text"]
+                ]
             }
         )
 
@@ -221,11 +220,10 @@ async def generate_slide(request: SlideRequest):
                 "X-Title": "AI Tools Slide Generator"
             },
             json={
-                "model": "google/gemini-2.0-flash-exp:free",
+                "model": "google/gemini-2.0-flash-exp-image-generation:free",
                 "messages": [
                     {"role": "user", "content": content_parts}
-                ],
-                "modalities": ["image", "text"]
+                ]
             }
         )
 
