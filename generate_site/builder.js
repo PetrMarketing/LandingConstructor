@@ -544,12 +544,22 @@ function renderElement(element, depth = 0) {
     });
 
     // Render children for containers
-    if (element.isContainer && element.children?.length) {
+    if (element.isContainer) {
         const childContainer = document.createElement('div');
         childContainer.className = 'element-children';
-        element.children.forEach(child => {
-            childContainer.appendChild(renderElement(child, depth + 1));
-        });
+
+        if (element.children?.length) {
+            element.children.forEach(child => {
+                childContainer.appendChild(renderElement(child, depth + 1));
+            });
+        } else {
+            // Empty container placeholder
+            const placeholder = document.createElement('div');
+            placeholder.className = 'container-placeholder';
+            placeholder.innerHTML = '<i class="fas fa-plus"></i> Перетащите блоки сюда';
+            childContainer.appendChild(placeholder);
+        }
+
         el.appendChild(childContainer);
     }
 
@@ -596,6 +606,18 @@ function renderElement(element, depth = 0) {
     el.addEventListener('dragleave', (e) => {
         if (!el.contains(e.relatedTarget)) {
             el.classList.remove('drop-before', 'drop-after', 'drop-target');
+        }
+    });
+
+    // Drop handler for elements
+    el.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        el.classList.remove('drop-before', 'drop-after', 'drop-target');
+
+        if (draggedBlockType && dropTargetId && dropPosition) {
+            handleDropAtPosition(dropTargetId, dropPosition);
         }
     });
 

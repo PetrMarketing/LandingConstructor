@@ -1672,3 +1672,50 @@ body {
     background: var(--bg-primary);
     tab-size: 2;
 }
+
+/* ===== Container Placeholder ===== */
+.container-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 80px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    color: #94a3b8;
+    font-size: 14px;
+    background: rgba(148, 163, 184, 0.05);
+    margin: 8px;
+    transition: all 0.2s;
+}
+
+.container-placeholder i {
+    font-size: 18px;
+}
+
+.builder-element.is-container:hover .container-placeholder {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.builder-element.is-container.drop-target .container-placeholder {
+    border-color: var(--success);
+    color: var(--success);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+/* ===== Element Children ===== */
+.element-children {
+    position: relative;
+    min-height: 20px;
+}
+
+/* ===== Container Min Height ===== */
+.builder-element.is-container {
+    min-height: 100px;
+}
+
+.builder-element.is-container > .element-children {
+    min-height: 80px;
+}
