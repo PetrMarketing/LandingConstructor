@@ -35,10 +35,11 @@ function init() {
     updateUI();
     renderCalendar();
     setupEventListeners();
-    checkScheduledPosts();
 
-    // Check posts every minute
-    setInterval(checkScheduledPosts, 60000);
+    // Check posts immediately and every 30 seconds
+    console.log(`[Scheduler] Started with timezone: ${selectedTimezone}`);
+    checkScheduledPosts();
+    setInterval(checkScheduledPosts, 30000);
 }
 
 function updateUI() {
@@ -906,15 +907,27 @@ function checkScheduledPosts() {
     const year = parts.find(p => p.type === 'year').value;
     const month = parts.find(p => p.type === 'month').value;
     const day = parts.find(p => p.type === 'day').value;
-    const hour = parts.find(p => p.type === 'hour').value;
+    let hour = parts.find(p => p.type === 'hour').value;
     const minute = parts.find(p => p.type === 'minute').value;
 
+    // Fix midnight case (some locales return 24 instead of 00)
+    if (hour === '24') hour = '00';
+
     const currentDate = `${year}-${month}-${day}`;
-    const currentTime = `${hour}:${minute}`;
+    // Convert to minutes for proper comparison
+    const currentMinutes = parseInt(hour) * 60 + parseInt(minute);
+
+    console.log(`[Scheduler] Checking posts at ${currentDate} ${hour}:${minute} (${selectedTimezone})`);
 
     posts.forEach(post => {
-        if (post.status === 'scheduled' && post.date === currentDate && post.time <= currentTime) {
-            sendPost(post);
+        if (post.status === 'scheduled' && post.date === currentDate) {
+            const [postHour, postMinute] = post.time.split(':').map(Number);
+            const postMinutes = postHour * 60 + postMinute;
+
+            if (postMinutes <= currentMinutes) {
+                console.log(`[Scheduler] Sending post: ${post.id} scheduled for ${post.time}`);
+                sendPost(post);
+            }
         }
     });
 }
