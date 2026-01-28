@@ -270,7 +270,7 @@ async def generate_image(request: ImageRequest):
                 "X-Title": "AI Tools Image Generator"
             },
             json={
-                "model": "google/gemini-2.5-flash-image-preview",
+                "model": "google/gemini-2.5-flash-image",
                 "messages": [
                     {"role": "user", "content": f"Generate an image: {request.prompt}"}
                 ]
@@ -362,7 +362,7 @@ async def generate_slide(request: SlideRequest):
                 "X-Title": "AI Tools Slide Generator"
             },
             json={
-                "model": "google/gemini-2.5-flash-image-preview",
+                "model": "google/gemini-2.5-flash-image",
                 "messages": [
                     {"role": "user", "content": content_parts}
                 ]
