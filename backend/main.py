@@ -4,6 +4,7 @@ import httpx
 import json
 import time
 import asyncio
+import base64
 from datetime import datetime
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request
@@ -80,7 +81,6 @@ async def send_telegram_post(post: dict):
                 # Send photo with caption
                 if image.startswith('data:'):
                     # Base64 image - need to convert to file
-                    import base64
                     # Extract base64 data
                     header, b64data = image.split(',', 1)
                     image_data = base64.b64decode(b64data)
