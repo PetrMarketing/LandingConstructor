@@ -1309,6 +1309,563 @@ function renderContentTab(el) {
             </div>
         `,
 
+        // ===== МЕДИА =====
+        gallery: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-images"></i> Галерея</h4>
+                <div class="edit-row">
+                    <label>Изображения (URL, каждое с новой строки)</label>
+                    <textarea class="edit-textarea" data-custom="galleryImages" rows="5">${extractGalleryImages(el.content)}</textarea>
+                </div>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-th"></i> Сетка</h4>
+                <div class="edit-row">
+                    <label>Колонок в ряду</label>
+                    <select class="edit-select" data-style="gridTemplateColumns">
+                        <option value="repeat(2, 1fr)" ${s.gridTemplateColumns?.includes('2') ? 'selected' : ''}>2 колонки</option>
+                        <option value="repeat(3, 1fr)" ${s.gridTemplateColumns?.includes('3') ? 'selected' : ''}>3 колонки</option>
+                        <option value="repeat(4, 1fr)" ${s.gridTemplateColumns?.includes('4') ? 'selected' : ''}>4 колонки</option>
+                    </select>
+                </div>
+                <div class="edit-row">
+                    <label>Отступ между фото</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="0" max="30" value="${parseInt(s.gap) || 10}" data-style="gap" data-unit="px">
+                        <span>${parseInt(s.gap) || 10}px</span>
+                    </div>
+                </div>
+            </div>
+        `,
+
+        carousel: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-film"></i> Карусель</h4>
+                <div class="edit-row">
+                    <label>Изображения (URL, каждое с новой строки)</label>
+                    <textarea class="edit-textarea" data-custom="carouselImages" rows="5">${extractCarouselImages(el.content)}</textarea>
+                </div>
+                <p class="edit-hint">Добавьте URL изображений для слайдов карусели</p>
+            </div>
+        `,
+
+        // ===== ИНТЕРАКТИВ =====
+        form: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-envelope"></i> Форма обратной связи</h4>
+                <div class="edit-row">
+                    <label>Текст кнопки отправки</label>
+                    <input type="text" class="edit-input" data-custom="formButtonText" value="${extractFormButton(el.content)}">
+                </div>
+                <div class="edit-row">
+                    <label>Поля формы</label>
+                    <div class="edit-checkbox-row">
+                        <input type="checkbox" id="fieldName" checked disabled>
+                        <label for="fieldName">Имя</label>
+                    </div>
+                    <div class="edit-checkbox-row">
+                        <input type="checkbox" id="fieldEmail" checked disabled>
+                        <label for="fieldEmail">Email</label>
+                    </div>
+                    <div class="edit-checkbox-row">
+                        <input type="checkbox" id="fieldPhone" data-custom="formPhone" ${el.content.includes('phone') ? 'checked' : ''}>
+                        <label for="fieldPhone">Телефон</label>
+                    </div>
+                    <div class="edit-checkbox-row">
+                        <input type="checkbox" id="fieldMessage" data-custom="formMessage" ${el.content.includes('textarea') ? 'checked' : ''}>
+                        <label for="fieldMessage">Сообщение</label>
+                    </div>
+                </div>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-palette"></i> Оформление</h4>
+                <div class="edit-row">
+                    <label>Цвет кнопки</label>
+                    <div class="edit-color">
+                        <input type="color" value="#3b82f6" data-custom="formButtonColor">
+                        <input type="text" class="edit-input" value="#3b82f6" data-custom="formButtonColor">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Максимальная ширина</label>
+                    <input type="text" class="edit-input" data-style="maxWidth" value="${s.maxWidth || '400px'}" placeholder="400px">
+                </div>
+            </div>
+        `,
+
+        accordion: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-chevron-down"></i> Аккордеон (FAQ)</h4>
+                <div class="edit-row">
+                    <label>Вопросы и ответы</label>
+                    <textarea class="edit-textarea" data-custom="accordionItems" rows="8" placeholder="Вопрос 1
+Ответ на вопрос 1
+
+Вопрос 2
+Ответ на вопрос 2">${extractAccordionItems(el.content)}</textarea>
+                </div>
+                <p class="edit-hint">Формат: Вопрос, затем Ответ. Разделяйте пары пустой строкой.</p>
+            </div>
+        `,
+
+        tabs: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-folder"></i> Табы</h4>
+                <div class="edit-row">
+                    <label>Табы и содержимое</label>
+                    <textarea class="edit-textarea" data-custom="tabsItems" rows="8" placeholder="Таб 1
+Содержимое первого таба
+
+Таб 2
+Содержимое второго таба">${extractTabsItems(el.content)}</textarea>
+                </div>
+                <p class="edit-hint">Формат: Название таба, затем содержимое. Разделяйте пары пустой строкой.</p>
+            </div>
+        `,
+
+        modal: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-window-restore"></i> Модальное окно</h4>
+                <div class="edit-row">
+                    <label>Текст кнопки открытия</label>
+                    <input type="text" class="edit-input" data-custom="modalButtonText" value="${extractModalButton(el.content)}">
+                </div>
+                <div class="edit-row">
+                    <label>Заголовок окна</label>
+                    <input type="text" class="edit-input" data-custom="modalTitle" value="${extractModalTitle(el.content)}">
+                </div>
+                <div class="edit-row">
+                    <label>Содержимое окна</label>
+                    <textarea class="edit-textarea" data-custom="modalContent" rows="4">${extractModalContent(el.content)}</textarea>
+                </div>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-palette"></i> Оформление</h4>
+                <div class="edit-row">
+                    <label>Цвет кнопки</label>
+                    <div class="edit-color">
+                        <input type="color" value="#3b82f6" data-custom="modalButtonColor">
+                        <input type="text" class="edit-input" value="#3b82f6">
+                    </div>
+                </div>
+            </div>
+        `,
+
+        timer: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-clock"></i> Таймер обратного отсчёта</h4>
+                <div class="edit-row">
+                    <label>Дата окончания</label>
+                    <input type="datetime-local" class="edit-input" data-custom="timerDate" value="${getTimerDate(el.content)}">
+                </div>
+                <div class="edit-row">
+                    <label>Показывать</label>
+                    <div class="edit-checkbox-row">
+                        <input type="checkbox" id="showDays" checked>
+                        <label for="showDays">Дни</label>
+                    </div>
+                    <div class="edit-checkbox-row">
+                        <input type="checkbox" id="showHours" checked>
+                        <label for="showHours">Часы</label>
+                    </div>
+                    <div class="edit-checkbox-row">
+                        <input type="checkbox" id="showMinutes" checked>
+                        <label for="showMinutes">Минуты</label>
+                    </div>
+                    <div class="edit-checkbox-row">
+                        <input type="checkbox" id="showSeconds" checked>
+                        <label for="showSeconds">Секунды</label>
+                    </div>
+                </div>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-palette"></i> Оформление</h4>
+                <div class="edit-row">
+                    <label>Размер цифр</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="24" max="72" value="48" data-custom="timerFontSize">
+                        <span>48px</span>
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Цвет цифр</label>
+                    <div class="edit-color">
+                        <input type="color" value="#1e293b" data-custom="timerColor">
+                        <input type="text" class="edit-input" value="#1e293b">
+                    </div>
+                </div>
+            </div>
+        `,
+
+        // ===== КОМПОНЕНТЫ =====
+        navbar: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-bars"></i> Навигация</h4>
+                <div class="edit-row">
+                    <label>Логотип (текст)</label>
+                    <input type="text" class="edit-input" data-custom="navLogo" value="${extractNavLogo(el.content)}">
+                </div>
+                <div class="edit-row">
+                    <label>Пункты меню (каждый с новой строки)</label>
+                    <textarea class="edit-textarea" data-custom="navItems" rows="4">${extractNavItems(el.content)}</textarea>
+                </div>
+                <p class="edit-hint">Формат: Название или Название|ссылка</p>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-palette"></i> Оформление</h4>
+                <div class="edit-row">
+                    <label>Цвет фона</label>
+                    <div class="edit-color">
+                        <input type="color" value="${s.backgroundColor || '#ffffff'}" data-style="backgroundColor">
+                        <input type="text" class="edit-input" value="${s.backgroundColor || '#ffffff'}" data-style="backgroundColor">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Цвет текста</label>
+                    <div class="edit-color">
+                        <input type="color" value="#475569" data-custom="navTextColor">
+                        <input type="text" class="edit-input" value="#475569">
+                    </div>
+                </div>
+            </div>
+        `,
+
+        hero: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-flag"></i> Hero секция</h4>
+                <div class="edit-row">
+                    <label>Заголовок</label>
+                    <input type="text" class="edit-input" data-custom="heroTitle" value="${extractHeroTitle(el.content)}">
+                </div>
+                <div class="edit-row">
+                    <label>Подзаголовок</label>
+                    <textarea class="edit-textarea" data-custom="heroSubtitle" rows="2">${extractHeroSubtitle(el.content)}</textarea>
+                </div>
+                <div class="edit-row">
+                    <label>Текст кнопки</label>
+                    <input type="text" class="edit-input" data-custom="heroButton" value="${extractHeroButton(el.content)}">
+                </div>
+                <div class="edit-row">
+                    <label>Ссылка кнопки</label>
+                    <input type="text" class="edit-input" data-custom="heroButtonLink" value="#" placeholder="https://...">
+                </div>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-palette"></i> Оформление</h4>
+                <div class="edit-row">
+                    <label>Цвет фона</label>
+                    <div class="edit-color">
+                        <input type="color" value="${s.backgroundColor || '#f8fafc'}" data-style="backgroundColor">
+                        <input type="text" class="edit-input" value="${s.backgroundColor || '#f8fafc'}" data-style="backgroundColor">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Цвет кнопки</label>
+                    <div class="edit-color">
+                        <input type="color" value="#3b82f6" data-custom="heroButtonColor">
+                        <input type="text" class="edit-input" value="#3b82f6">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Внутренний отступ</label>
+                    <input type="text" class="edit-input" data-style="padding" value="${s.padding || '100px 20px'}">
+                </div>
+            </div>
+        `,
+
+        features: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-th-large"></i> Преимущества</h4>
+                <div class="edit-row">
+                    <label>Преимущества</label>
+                    <textarea class="edit-textarea" data-custom="featuresItems" rows="10" placeholder="🚀
+Быстро
+Описание преимущества
+
+💡
+Удобно
+Описание преимущества">${extractFeaturesItems(el.content)}</textarea>
+                </div>
+                <p class="edit-hint">Формат: Иконка/эмодзи, Заголовок, Описание. Разделяйте блоки пустой строкой.</p>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-th"></i> Сетка</h4>
+                <div class="edit-row">
+                    <label>Колонок</label>
+                    <select class="edit-select" data-custom="featuresCols">
+                        <option value="2">2 колонки</option>
+                        <option value="3" selected>3 колонки</option>
+                        <option value="4">4 колонки</option>
+                    </select>
+                </div>
+            </div>
+        `,
+
+        card: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-id-card"></i> Карточка</h4>
+                <div class="edit-row">
+                    <label>URL изображения</label>
+                    <input type="text" class="edit-input" data-custom="cardImage" value="${extractCardImage(el.content)}">
+                </div>
+                <div class="edit-row">
+                    <label>Заголовок</label>
+                    <input type="text" class="edit-input" data-custom="cardTitle" value="${extractCardTitle(el.content)}">
+                </div>
+                <div class="edit-row">
+                    <label>Описание</label>
+                    <textarea class="edit-textarea" data-custom="cardDescription" rows="3">${extractCardDescription(el.content)}</textarea>
+                </div>
+                <div class="edit-row">
+                    <label>Текст ссылки</label>
+                    <input type="text" class="edit-input" data-custom="cardLinkText" value="Подробнее →">
+                </div>
+                <div class="edit-row">
+                    <label>URL ссылки</label>
+                    <input type="text" class="edit-input" data-custom="cardLink" value="#" placeholder="https://...">
+                </div>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-palette"></i> Оформление</h4>
+                <div class="edit-row">
+                    <label>Скругление</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="0" max="24" value="${parseInt(s.borderRadius) || 8}" data-style="borderRadius" data-unit="px">
+                        <span>${parseInt(s.borderRadius) || 8}px</span>
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Максимальная ширина</label>
+                    <input type="text" class="edit-input" data-style="maxWidth" value="${s.maxWidth || '350px'}">
+                </div>
+            </div>
+        `,
+
+        testimonial: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-quote-left"></i> Отзыв</h4>
+                <div class="edit-row">
+                    <label>Текст отзыва</label>
+                    <textarea class="edit-textarea" data-custom="testimonialText" rows="3">${extractTestimonialText(el.content)}</textarea>
+                </div>
+                <div class="edit-row">
+                    <label>Имя автора</label>
+                    <input type="text" class="edit-input" data-custom="testimonialName" value="${extractTestimonialName(el.content)}">
+                </div>
+                <div class="edit-row">
+                    <label>Должность / компания</label>
+                    <input type="text" class="edit-input" data-custom="testimonialRole" value="${extractTestimonialRole(el.content)}">
+                </div>
+                <div class="edit-row">
+                    <label>Фото (URL)</label>
+                    <input type="text" class="edit-input" data-custom="testimonialPhoto" value="${extractTestimonialPhoto(el.content)}">
+                </div>
+            </div>
+        `,
+
+        pricing: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-tag"></i> Тариф</h4>
+                <div class="edit-row">
+                    <label>Название тарифа</label>
+                    <input type="text" class="edit-input" data-custom="pricingName" value="${extractPricingName(el.content)}">
+                </div>
+                <div class="edit-grid">
+                    <div class="edit-row">
+                        <label>Цена</label>
+                        <input type="text" class="edit-input" data-custom="pricingPrice" value="${extractPricingPrice(el.content)}">
+                    </div>
+                    <div class="edit-row">
+                        <label>Период</label>
+                        <input type="text" class="edit-input" data-custom="pricingPeriod" value="/мес" placeholder="/мес, /год">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Преимущества (каждое с новой строки)</label>
+                    <textarea class="edit-textarea" data-custom="pricingFeatures" rows="4">${extractPricingFeatures(el.content)}</textarea>
+                </div>
+                <div class="edit-row">
+                    <label>Текст кнопки</label>
+                    <input type="text" class="edit-input" data-custom="pricingButton" value="Выбрать">
+                </div>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-palette"></i> Оформление</h4>
+                <div class="edit-row">
+                    <label>Цвет кнопки</label>
+                    <div class="edit-color">
+                        <input type="color" value="#3b82f6" data-custom="pricingButtonColor">
+                        <input type="text" class="edit-input" value="#3b82f6">
+                    </div>
+                </div>
+            </div>
+        `,
+
+        counter: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-sort-numeric-up"></i> Счётчики</h4>
+                <div class="edit-row">
+                    <label>Счётчики</label>
+                    <textarea class="edit-textarea" data-custom="counterItems" rows="6" placeholder="500+
+Клиентов
+
+10
+Лет опыта
+
+99%
+Довольных">${extractCounterItems(el.content)}</textarea>
+                </div>
+                <p class="edit-hint">Формат: Число, затем Подпись. Разделяйте пары пустой строкой.</p>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-palette"></i> Оформление</h4>
+                <div class="edit-row">
+                    <label>Цвет чисел</label>
+                    <div class="edit-color">
+                        <input type="color" value="#3b82f6" data-custom="counterColor">
+                        <input type="text" class="edit-input" value="#3b82f6">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Размер чисел</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="24" max="72" value="48" data-custom="counterFontSize">
+                        <span>48px</span>
+                    </div>
+                </div>
+            </div>
+        `,
+
+        progress: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-tasks"></i> Прогресс-бары</h4>
+                <div class="edit-row">
+                    <label>Навыки / прогресс</label>
+                    <textarea class="edit-textarea" data-custom="progressItems" rows="6" placeholder="HTML/CSS
+90
+
+JavaScript
+75
+
+React
+60">${extractProgressItems(el.content)}</textarea>
+                </div>
+                <p class="edit-hint">Формат: Название, затем процент (0-100). Разделяйте пары пустой строкой.</p>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-palette"></i> Оформление</h4>
+                <div class="edit-row">
+                    <label>Цвет заполнения</label>
+                    <div class="edit-color">
+                        <input type="color" value="#3b82f6" data-custom="progressColor">
+                        <input type="text" class="edit-input" value="#3b82f6">
+                    </div>
+                </div>
+            </div>
+        `,
+
+        social: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-share-alt"></i> Социальные сети</h4>
+                <div class="edit-row">
+                    <label>Facebook</label>
+                    <input type="text" class="edit-input" data-custom="socialFacebook" placeholder="https://facebook.com/...">
+                </div>
+                <div class="edit-row">
+                    <label>Instagram</label>
+                    <input type="text" class="edit-input" data-custom="socialInstagram" placeholder="https://instagram.com/...">
+                </div>
+                <div class="edit-row">
+                    <label>Telegram</label>
+                    <input type="text" class="edit-input" data-custom="socialTelegram" placeholder="https://t.me/...">
+                </div>
+                <div class="edit-row">
+                    <label>VK</label>
+                    <input type="text" class="edit-input" data-custom="socialVk" placeholder="https://vk.com/...">
+                </div>
+                <div class="edit-row">
+                    <label>YouTube</label>
+                    <input type="text" class="edit-input" data-custom="socialYoutube" placeholder="https://youtube.com/...">
+                </div>
+                <div class="edit-row">
+                    <label>WhatsApp</label>
+                    <input type="text" class="edit-input" data-custom="socialWhatsapp" placeholder="https://wa.me/...">
+                </div>
+            </div>
+        `,
+
+        map: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-map-marker-alt"></i> Карта</h4>
+                <div class="edit-row">
+                    <label>Код карты (iframe)</label>
+                    <textarea class="edit-textarea code" data-custom="mapEmbed" rows="6">${extractMapEmbed(el.content)}</textarea>
+                </div>
+                <p class="edit-hint">Вставьте код iframe с Google Maps или Яндекс.Карт</p>
+                <div class="edit-row">
+                    <label>Высота карты</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="200" max="600" value="300" data-custom="mapHeight">
+                        <span>300px</span>
+                    </div>
+                </div>
+            </div>
+        `,
+
+        table: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-table"></i> Таблица</h4>
+                <div class="edit-row">
+                    <label>Заголовки (через |)</label>
+                    <input type="text" class="edit-input" data-custom="tableHeaders" value="${extractTableHeaders(el.content)}" placeholder="Колонка 1|Колонка 2|Колонка 3">
+                </div>
+                <div class="edit-row">
+                    <label>Данные (каждая строка с новой строки, ячейки через |)</label>
+                    <textarea class="edit-textarea" data-custom="tableRows" rows="5">${extractTableRows(el.content)}</textarea>
+                </div>
+                <p class="edit-hint">Пример: Ячейка 1|Ячейка 2|Ячейка 3</p>
+            </div>
+        `,
+
+        footer: () => `
+            <div class="edit-section">
+                <h4><i class="fas fa-shoe-prints"></i> Футер</h4>
+                <div class="edit-row">
+                    <label>Название компании</label>
+                    <input type="text" class="edit-input" data-custom="footerCompany" value="${extractFooterCompany(el.content)}">
+                </div>
+                <div class="edit-row">
+                    <label>Копирайт</label>
+                    <input type="text" class="edit-input" data-custom="footerCopyright" value="${extractFooterCopyright(el.content)}">
+                </div>
+                <div class="edit-row">
+                    <label>Email</label>
+                    <input type="text" class="edit-input" data-custom="footerEmail" value="${extractFooterEmail(el.content)}">
+                </div>
+                <div class="edit-row">
+                    <label>Телефон</label>
+                    <input type="text" class="edit-input" data-custom="footerPhone" value="${extractFooterPhone(el.content)}">
+                </div>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-palette"></i> Оформление</h4>
+                <div class="edit-row">
+                    <label>Цвет фона</label>
+                    <div class="edit-color">
+                        <input type="color" value="${s.backgroundColor || '#1e293b'}" data-style="backgroundColor">
+                        <input type="text" class="edit-input" value="${s.backgroundColor || '#1e293b'}" data-style="backgroundColor">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Цвет текста</label>
+                    <div class="edit-color">
+                        <input type="color" value="${s.color || '#ffffff'}" data-style="color">
+                        <input type="text" class="edit-input" value="${s.color || '#ffffff'}" data-style="color">
+                    </div>
+                </div>
+            </div>
+        `,
+
         // ===== КОД =====
         html: () => `
             <div class="edit-section">
@@ -1399,7 +1956,7 @@ function renderContainerSettings(el, title, icon) {
     `;
 }
 
-// Вспомогательные функции
+// Вспомогательные функции для извлечения данных
 function extractListItems(content) {
     const matches = content.match(/<li[^>]*>(.*?)<\/li>/gi) || [];
     return matches.map(m => m.replace(/<\/?li[^>]*>/gi, '')).join('\n');
@@ -1415,6 +1972,183 @@ function extractVideoUrl(content) {
         }
     }
     return '';
+}
+
+function extractGalleryImages(content) {
+    const matches = content.match(/src="([^"]+)"/gi) || [];
+    return matches.map(m => m.replace(/src="|"/g, '')).join('\n');
+}
+
+function extractCarouselImages(content) {
+    return extractGalleryImages(content);
+}
+
+function extractFormButton(content) {
+    const match = content.match(/<button[^>]*>([^<]+)<\/button>/i);
+    return match ? match[1] : 'Отправить';
+}
+
+function extractAccordionItems(content) {
+    const questions = content.match(/<summary[^>]*>([^<]+)<\/summary>/gi) || [];
+    const answers = content.match(/<p[^>]*>([^<]+)<\/p>/gi) || [];
+    let result = [];
+    for (let i = 0; i < questions.length; i++) {
+        const q = questions[i].replace(/<\/?summary[^>]*>/gi, '');
+        const a = answers[i] ? answers[i].replace(/<\/?p[^>]*>/gi, '') : '';
+        result.push(q + '\n' + a);
+    }
+    return result.join('\n\n');
+}
+
+function extractTabsItems(content) {
+    const tabs = content.match(/<button[^>]*>([^<]+)<\/button>/gi) || [];
+    return tabs.map(t => t.replace(/<\/?button[^>]*>/gi, '')).join('\n');
+}
+
+function extractModalButton(content) {
+    const match = content.match(/<button[^>]*>([^<]+)<\/button>/i);
+    return match ? match[1] : 'Открыть окно';
+}
+
+function extractModalTitle(content) {
+    const match = content.match(/<h3[^>]*>([^<]+)<\/h3>/i);
+    return match ? match[1] : 'Заголовок окна';
+}
+
+function extractModalContent(content) {
+    const match = content.match(/<p>([^<]+)<\/p>/);
+    return match ? match[1] : 'Содержимое модального окна';
+}
+
+function getTimerDate(content) {
+    const now = new Date();
+    now.setDate(now.getDate() + 7);
+    return now.toISOString().slice(0, 16);
+}
+
+function extractNavLogo(content) {
+    const match = content.match(/>([^<]+)<\/a>/);
+    return match ? match[1] : 'Logo';
+}
+
+function extractNavItems(content) {
+    const matches = content.match(/<a[^>]*>([^<]+)<\/a>/gi) || [];
+    return matches.slice(1).map(m => m.replace(/<\/?a[^>]*>/gi, '')).join('\n');
+}
+
+function extractHeroTitle(content) {
+    const match = content.match(/<h1[^>]*>([^<]+)<\/h1>/i);
+    return match ? match[1] : 'Заголовок';
+}
+
+function extractHeroSubtitle(content) {
+    const match = content.match(/<p[^>]*>([^<]+)<\/p>/i);
+    return match ? match[1] : 'Подзаголовок';
+}
+
+function extractHeroButton(content) {
+    const match = content.match(/<a[^>]*>([^<]+)<\/a>/i);
+    return match ? match[1] : 'Начать';
+}
+
+function extractFeaturesItems(content) {
+    return '🚀\nБыстро\nОписание\n\n💡\nУдобно\nОписание\n\n✨\nКачественно\nОписание';
+}
+
+function extractCardImage(content) {
+    const match = content.match(/src="([^"]+)"/);
+    return match ? match[1] : '';
+}
+
+function extractCardTitle(content) {
+    const match = content.match(/<h3[^>]*>([^<]+)<\/h3>/i);
+    return match ? match[1] : 'Заголовок';
+}
+
+function extractCardDescription(content) {
+    const match = content.match(/<p[^>]*>([^<]+)<\/p>/i);
+    return match ? match[1] : 'Описание';
+}
+
+function extractTestimonialText(content) {
+    const match = content.match(/"([^"]+)"/);
+    return match ? match[1] : 'Отзыв клиента';
+}
+
+function extractTestimonialName(content) {
+    const match = content.match(/font-weight:600[^>]*>([^<]+)</i);
+    return match ? match[1] : 'Имя Фамилия';
+}
+
+function extractTestimonialRole(content) {
+    const match = content.match(/font-size:14px[^>]*>([^<]+)</i);
+    return match ? match[1] : 'Должность';
+}
+
+function extractTestimonialPhoto(content) {
+    const match = content.match(/src="([^"]+)"/);
+    return match ? match[1] : '';
+}
+
+function extractPricingName(content) {
+    const match = content.match(/<h3[^>]*>([^<]+)<\/h3>/i);
+    return match ? match[1] : 'Базовый';
+}
+
+function extractPricingPrice(content) {
+    const match = content.match(/(\$?\d+)/);
+    return match ? match[1] : '$29';
+}
+
+function extractPricingFeatures(content) {
+    const matches = content.match(/✓\s*([^<]+)/gi) || [];
+    return matches.map(m => m.replace('✓ ', '')).join('\n');
+}
+
+function extractCounterItems(content) {
+    return '500+\nКлиентов\n\n10\nЛет опыта\n\n99%\nДовольных';
+}
+
+function extractProgressItems(content) {
+    return 'HTML/CSS\n90\n\nJavaScript\n75';
+}
+
+function extractMapEmbed(content) {
+    const match = content.match(/<iframe[^>]+>/i);
+    return match ? match[0] + '</iframe>' : '';
+}
+
+function extractTableHeaders(content) {
+    const matches = content.match(/<th[^>]*>([^<]+)<\/th>/gi) || [];
+    return matches.map(m => m.replace(/<\/?th[^>]*>/gi, '')).join('|');
+}
+
+function extractTableRows(content) {
+    const rows = content.match(/<tr>[\s\S]*?<\/tr>/gi) || [];
+    return rows.slice(1).map(row => {
+        const cells = row.match(/<td[^>]*>([^<]+)<\/td>/gi) || [];
+        return cells.map(c => c.replace(/<\/?td[^>]*>/gi, '')).join('|');
+    }).join('\n');
+}
+
+function extractFooterCompany(content) {
+    const match = content.match(/<h4[^>]*>([^<]+)<\/h4>/i);
+    return match ? match[1] : 'Компания';
+}
+
+function extractFooterCopyright(content) {
+    const match = content.match(/©\s*\d+\s*([^<]+)/i);
+    return match ? '© 2024 ' + match[1] : '© 2024 Все права защищены';
+}
+
+function extractFooterEmail(content) {
+    const match = content.match(/[\w.-]+@[\w.-]+\.\w+/);
+    return match ? match[0] : 'email@example.com';
+}
+
+function extractFooterPhone(content) {
+    const match = content.match(/\+?\d[\d\s()-]+/);
+    return match ? match[0] : '+7 (999) 123-45-67';
 }
 
 function renderStyleTab(el) {
