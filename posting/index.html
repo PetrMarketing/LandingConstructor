@@ -41,6 +41,22 @@
                             <option value="all">Все проекты</option>
                         </select>
                     </div>
+                    <div class="filter-group">
+                        <label>Часовой пояс:</label>
+                        <select id="timezoneSelect">
+                            <option value="Europe/Kaliningrad">Калининград (UTC+2)</option>
+                            <option value="Europe/Moscow" selected>Москва (UTC+3)</option>
+                            <option value="Europe/Samara">Самара (UTC+4)</option>
+                            <option value="Asia/Yekaterinburg">Екатеринбург (UTC+5)</option>
+                            <option value="Asia/Omsk">Омск (UTC+6)</option>
+                            <option value="Asia/Krasnoyarsk">Красноярск (UTC+7)</option>
+                            <option value="Asia/Irkutsk">Иркутск (UTC+8)</option>
+                            <option value="Asia/Yakutsk">Якутск (UTC+9)</option>
+                            <option value="Asia/Vladivostok">Владивосток (UTC+10)</option>
+                            <option value="Asia/Magadan">Магадан (UTC+11)</option>
+                            <option value="Asia/Kamchatka">Камчатка (UTC+12)</option>
+                        </select>
+                    </div>
                     <div class="month-navigation">
                         <button class="btn btn-icon" id="prevMonth">←</button>
                         <span class="current-month" id="currentMonth">Январь 2026</span>
@@ -134,6 +150,7 @@
                         <div class="form-group">
                             <label>Время:</label>
                             <input type="time" id="postTime" value="12:00">
+                            <span class="timezone-hint" id="timezoneHint">Москва (UTC+3)</span>
                         </div>
                     </div>
 

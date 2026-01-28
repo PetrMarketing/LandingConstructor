@@ -10,6 +10,7 @@ const CONFIG = {
 // State
 let projects = JSON.parse(localStorage.getItem('posting_projects') || '[]');
 let posts = JSON.parse(localStorage.getItem('posting_posts') || '[]');
+let selectedTimezone = localStorage.getItem('posting_timezone') || 'Europe/Moscow';
 let currentDate = new Date();
 let currentPostButtons = [];
 let editingPostId = null;
@@ -25,6 +26,12 @@ const projectFilter = document.getElementById('projectFilter');
 
 // ===== Initialization =====
 function init() {
+    // Initialize timezone selector
+    const timezoneSelect = document.getElementById('timezoneSelect');
+    if (timezoneSelect) {
+        timezoneSelect.value = selectedTimezone;
+    }
+
     updateUI();
     renderCalendar();
     setupEventListeners();
@@ -172,6 +179,14 @@ function setupEventListeners() {
     });
 
     projectFilter.addEventListener('change', renderCalendar);
+
+    // Timezone selector
+    document.getElementById('timezoneSelect').addEventListener('change', (e) => {
+        selectedTimezone = e.target.value;
+        localStorage.setItem('posting_timezone', selectedTimezone);
+        updateTimezoneHint();
+        showToast(`Часовой пояс: ${e.target.selectedOptions[0].text}`);
+    });
 
     // Add Project
     document.getElementById('addProjectBtn').addEventListener('click', openProjectModal);
@@ -421,10 +436,23 @@ function openScheduleModal(date) {
     renderPostButtons();
     updateCharCounter();
 
+    // Update timezone hint
+    updateTimezoneHint();
+
     // Update project dropdown
     updateProjectFilters();
 
     document.getElementById('schedulePostModal').style.display = 'flex';
+}
+
+function updateTimezoneHint() {
+    const hint = document.getElementById('timezoneHint');
+    if (hint) {
+        const select = document.getElementById('timezoneSelect');
+        if (select && select.selectedOptions[0]) {
+            hint.textContent = select.selectedOptions[0].text;
+        }
+    }
 }
 
 function closePostModal() {
@@ -869,15 +897,38 @@ async function sendPost(post) {
 
 // ===== Check Scheduled Posts =====
 function checkScheduledPosts() {
+    // Get current time in selected timezone
     const now = new Date();
-    const currentDate = formatDate(now);
-    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const tzOptions = { timeZone: selectedTimezone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
+    const formatter = new Intl.DateTimeFormat('en-CA', tzOptions);
+    const parts = formatter.formatToParts(now);
+
+    const year = parts.find(p => p.type === 'year').value;
+    const month = parts.find(p => p.type === 'month').value;
+    const day = parts.find(p => p.type === 'day').value;
+    const hour = parts.find(p => p.type === 'hour').value;
+    const minute = parts.find(p => p.type === 'minute').value;
+
+    const currentDate = `${year}-${month}-${day}`;
+    const currentTime = `${hour}:${minute}`;
 
     posts.forEach(post => {
         if (post.status === 'scheduled' && post.date === currentDate && post.time <= currentTime) {
             sendPost(post);
         }
     });
+}
+
+// Get current time in selected timezone
+function getCurrentTimeInTimezone() {
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat('en-GB', {
+        timeZone: selectedTimezone,
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+    return formatter.format(now);
 }
 
 // ===== Storage =====
