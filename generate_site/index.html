@@ -291,23 +291,47 @@
                 </div>
             </main>
 
-            <!-- Right Panel - Settings -->
-            <aside class="settings-panel" id="settingsPanel">
+            <!-- Right Panel - Layers -->
+            <aside class="layers-panel" id="layersPanel">
                 <div class="panel-header">
-                    <h3 id="settingsTitle">Настройки</h3>
-                    <div class="panel-tabs">
-                        <button class="panel-tab active" data-tab="content">Контент</button>
-                        <button class="panel-tab" data-tab="style">Стили</button>
-                        <button class="panel-tab" data-tab="advanced">Код</button>
-                    </div>
+                    <h3>Слои</h3>
                 </div>
-                <div class="settings-content" id="settingsContent">
-                    <div class="no-selection">
-                        <i class="fas fa-mouse-pointer"></i>
-                        <p>Выберите элемент для редактирования</p>
+                <div class="layers-content" id="layersContent">
+                    <div class="layers-empty">
+                        <i class="fas fa-layer-group"></i>
+                        <p>Нет добавленных блоков</p>
                     </div>
                 </div>
             </aside>
+        </div>
+    </div>
+
+    <!-- Edit Block Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3 id="editModalTitle">Редактировать блок</h3>
+                <button class="modal-close" id="closeEditModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="edit-tabs">
+                    <button class="edit-tab active" data-tab="content">Контент</button>
+                    <button class="edit-tab" data-tab="style">Стили</button>
+                    <button class="edit-tab" data-tab="advanced">Код</button>
+                </div>
+                <div class="edit-content" id="editContent">
+                    <!-- Settings will be rendered here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn danger" id="deleteBlockBtn">
+                    <i class="fas fa-trash"></i> Удалить
+                </button>
+                <button class="btn" id="cancelEditBtn">Отмена</button>
+                <button class="btn primary" id="saveEditBtn">
+                    <i class="fas fa-check"></i> Сохранить
+                </button>
+            </div>
         </div>
     </div>
 
@@ -355,33 +379,6 @@
                     <i class="fas fa-download"></i> Скачать HTML
                 </button>
             </div>
-        </div>
-    </div>
-
-    <!-- Context Menu -->
-    <div class="context-menu" id="contextMenu">
-        <div class="context-item" data-action="edit">
-            <i class="fas fa-edit"></i> Редактировать
-        </div>
-        <div class="context-item" data-action="duplicate">
-            <i class="fas fa-copy"></i> Дублировать
-        </div>
-        <div class="context-item" data-action="moveUp">
-            <i class="fas fa-arrow-up"></i> Вверх
-        </div>
-        <div class="context-item" data-action="moveDown">
-            <i class="fas fa-arrow-down"></i> Вниз
-        </div>
-        <div class="context-divider"></div>
-        <div class="context-item" data-action="copyStyle">
-            <i class="fas fa-paint-brush"></i> Копировать стиль
-        </div>
-        <div class="context-item" data-action="pasteStyle">
-            <i class="fas fa-paste"></i> Вставить стиль
-        </div>
-        <div class="context-divider"></div>
-        <div class="context-item danger" data-action="delete">
-            <i class="fas fa-trash"></i> Удалить
         </div>
     </div>
 
