@@ -75,10 +75,30 @@
                 <button class="modal-close" id="closeProjectModal">&times;</button>
             </div>
             <div class="modal-body">
+                <div class="instruction-box">
+                    <h4>Как добавить бота в канал:</h4>
+                    <ol>
+                        <li>Откройте ваш канал в Telegram</li>
+                        <li>Перейдите в <b>Настройки канала</b> → <b>Администраторы</b></li>
+                        <li>Нажмите <b>Добавить администратора</b></li>
+                        <li>Найдите бота: <code>@PKMarketingPostBot</code></li>
+                        <li>Дайте права на <b>публикацию сообщений</b></li>
+                        <li>После добавления бот отправит сообщение с ID канала</li>
+                    </ol>
+                </div>
+
+                <div class="pending-channels" id="pendingChannels" style="display:none;">
+                    <h4>Обнаруженные каналы:</h4>
+                    <div class="pending-channels-list" id="pendingChannelsList">
+                        <!-- Channels will appear here -->
+                    </div>
+                </div>
+
+                <div class="divider"><span>или введите вручную</span></div>
+
                 <div class="form-group">
                     <label>ID или @username канала:</label>
                     <input type="text" id="projectChatId" placeholder="@mychannel или -1001234567890">
-                    <p class="form-hint">Убедитесь, что бот добавлен в канал как администратор</p>
                 </div>
             </div>
             <div class="modal-footer">
@@ -124,6 +144,7 @@
                             <textarea id="postText" placeholder="Введите текст поста..." rows="5"></textarea>
                             <button class="btn btn-outline btn-generate" id="generateTextBtn">✨ Сгенерировать</button>
                         </div>
+                        <div class="char-counter" id="charCounter">0 / 4096</div>
                     </div>
 
                     <!-- Image -->

@@ -14,6 +14,7 @@ let currentDate = new Date();
 let currentPostButtons = [];
 let editingPostId = null;
 let selectedDate = null;
+let pendingChannelsInterval = null;
 
 // DOM Elements
 const noProjectsSection = document.getElementById('noProjectsSection');
@@ -194,6 +195,11 @@ function setupEventListeners() {
     });
     document.getElementById('confirmGenerateText').addEventListener('click', generateText);
 
+    // Text character counter
+    const postText = document.getElementById('postText');
+    const charCounter = document.getElementById('charCounter');
+    postText.addEventListener('input', updateCharCounter);
+
     // Image Upload
     const imageArea = document.getElementById('postImageArea');
     const imageInput = document.getElementById('postImageInput');
@@ -255,11 +261,94 @@ function setupEventListeners() {
 // ===== Project Modal =====
 function openProjectModal() {
     document.getElementById('projectChatId').value = '';
+    document.getElementById('pendingChannels').style.display = 'none';
     document.getElementById('addProjectModal').style.display = 'flex';
+
+    // Start polling for pending channels
+    checkPendingChannels();
+    pendingChannelsInterval = setInterval(checkPendingChannels, 3000);
 }
 
 function closeProjectModal() {
     document.getElementById('addProjectModal').style.display = 'none';
+
+    // Stop polling
+    if (pendingChannelsInterval) {
+        clearInterval(pendingChannelsInterval);
+        pendingChannelsInterval = null;
+    }
+}
+
+async function checkPendingChannels() {
+    try {
+        const response = await fetch(`${CONFIG.apiUrl}/api/telegram/pending-channels`);
+        const data = await response.json();
+
+        const channels = data.channels || [];
+        const pendingSection = document.getElementById('pendingChannels');
+        const pendingList = document.getElementById('pendingChannelsList');
+
+        // Filter out already added channels
+        const newChannels = channels.filter(ch =>
+            !projects.some(p => p.chatId === ch.id)
+        );
+
+        if (newChannels.length > 0) {
+            pendingSection.style.display = 'block';
+            pendingList.innerHTML = newChannels.map(ch => `
+                <div class="pending-channel-item" data-chat-id="${ch.id}">
+                    <div class="pending-channel-info">
+                        <span class="pending-channel-name">${escapeHtml(ch.title)}</span>
+                        <span class="pending-channel-id">${ch.username ? '@' + ch.username : ch.id}</span>
+                    </div>
+                    <button class="btn btn-primary add-pending-btn" data-channel='${JSON.stringify(ch)}'>Добавить</button>
+                </div>
+            `).join('');
+
+            // Add click handlers
+            pendingList.querySelectorAll('.add-pending-btn').forEach(btn => {
+                btn.addEventListener('click', () => addPendingChannel(JSON.parse(btn.dataset.channel)));
+            });
+        } else {
+            pendingSection.style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Error checking pending channels:', error);
+    }
+}
+
+async function addPendingChannel(channel) {
+    // Check if already added
+    if (projects.some(p => p.chatId === channel.id)) {
+        showToast('Этот канал уже добавлен', true);
+        return;
+    }
+
+    const project = {
+        id: Date.now().toString(),
+        name: channel.title,
+        chatId: channel.id,
+        username: channel.username || null,
+        type: channel.type,
+        createdAt: new Date().toISOString()
+    };
+
+    projects.push(project);
+    saveProjects();
+
+    // Remove from pending on server
+    try {
+        await fetch(`${CONFIG.apiUrl}/api/telegram/pending-channels/${channel.id}`, {
+            method: 'DELETE'
+        });
+    } catch (e) {
+        // Ignore errors
+    }
+
+    closeProjectModal();
+    updateUI();
+    renderCalendar();
+    showToast(`Канал "${channel.title}" добавлен`);
 }
 
 async function saveProject() {
@@ -330,6 +419,7 @@ function openScheduleModal(date) {
     document.getElementById('postText').value = '';
     removeImage();
     renderPostButtons();
+    updateCharCounter();
 
     // Update project dropdown
     updateProjectFilters();
@@ -352,6 +442,16 @@ async function savePost() {
 
     if (!text && !image) {
         showToast('Добавьте текст или изображение', true);
+        return;
+    }
+
+    // Telegram limits: 4096 chars for text, 1024 chars for photo caption
+    if (image && text.length > 1024) {
+        showToast('Текст с изображением не может превышать 1024 символа', true);
+        return;
+    }
+    if (!image && text.length > 4096) {
+        showToast('Текст не может превышать 4096 символов', true);
         return;
     }
 
@@ -411,6 +511,7 @@ function setPostImage(src) {
     placeholder.style.display = 'none';
     removeBtn.style.display = 'flex';
     area.classList.add('has-image');
+    updateCharCounter(); // Update limit to 1024
 }
 
 function removeImage(e) {
@@ -428,6 +529,7 @@ function removeImage(e) {
     removeBtn.style.display = 'none';
     area.classList.remove('has-image');
     input.value = '';
+    updateCharCounter(); // Update limit back to 4096
 }
 
 // ===== Generate Text =====
@@ -655,6 +757,7 @@ function editPost() {
 
     currentPostButtons = post.buttons ? [...post.buttons] : [];
     renderPostButtons();
+    updateCharCounter();
 
     updateProjectFilters();
     document.getElementById('schedulePostModal').style.display = 'flex';
@@ -701,7 +804,7 @@ async function sendPost(post) {
             const formData = new FormData();
             formData.append('chat_id', project.chatId);
             formData.append('caption', post.text || '');
-            formData.append('parse_mode', 'HTML');
+            // Don't use parse_mode for user-entered text to avoid HTML parsing issues
 
             if (replyMarkup) {
                 formData.append('reply_markup', JSON.stringify(replyMarkup));
@@ -726,8 +829,8 @@ async function sendPost(post) {
             // Send text message
             const payload = {
                 chat_id: project.chatId,
-                text: post.text,
-                parse_mode: 'HTML'
+                text: post.text
+                // Don't use parse_mode for user-entered text to avoid HTML parsing issues
             };
 
             if (replyMarkup) {
@@ -826,6 +929,17 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+function updateCharCounter() {
+    const text = document.getElementById('postText').value;
+    const counter = document.getElementById('charCounter');
+    const imagePreview = document.getElementById('postImagePreview');
+    const hasImage = imagePreview && imagePreview.style.display !== 'none';
+    const limit = hasImage ? 1024 : 4096;
+
+    counter.textContent = `${text.length} / ${limit}`;
+    counter.classList.toggle('over-limit', text.length > limit);
 }
 
 // Initialize

@@ -449,6 +449,126 @@ body {
     margin-top: 5px;
 }
 
+/* ===== Instruction Box ===== */
+.instruction-box {
+    background: var(--bg-tertiary);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.instruction-box h4 {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    color: var(--accent);
+}
+
+.instruction-box ol {
+    margin-left: 20px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+}
+
+.instruction-box li {
+    margin-bottom: 8px;
+}
+
+.instruction-box code {
+    background: var(--bg-primary);
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: var(--accent);
+    font-family: monospace;
+}
+
+.instruction-box b {
+    color: var(--text-primary);
+}
+
+/* ===== Divider ===== */
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+.divider span {
+    padding: 0 15px;
+}
+
+/* ===== Pending Channels ===== */
+.pending-channels {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid var(--success);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.pending-channels h4 {
+    font-size: 0.9rem;
+    color: var(--success);
+    margin-bottom: 10px;
+}
+
+.pending-channels-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pending-channel-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-secondary);
+    padding: 12px 15px;
+    border-radius: 8px;
+}
+
+.pending-channel-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.pending-channel-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.pending-channel-id {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-family: monospace;
+}
+
+.pending-channel-item .btn {
+    padding: 6px 16px;
+    font-size: 0.8rem;
+}
+
+.char-counter {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: right;
+    margin-top: 5px;
+}
+
+.char-counter.over-limit {
+    color: var(--error);
+    font-weight: 600;
+}
+
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;

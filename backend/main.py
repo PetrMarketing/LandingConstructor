@@ -2,16 +2,21 @@ import os
 import re
 import httpx
 import json
-from fastapi import FastAPI, HTTPException
+import time
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 VERTEX_ACCESS_TOKEN = os.getenv("VERTEX_ACCESS_TOKEN", "")
 VERTEX_PROJECT_ID = os.getenv("VERTEX_PROJECT_ID", "petya-485408")
 VERTEX_REGION = os.getenv("VERTEX_REGION", "us-central1")
+TELEGRAM_BOT_TOKEN = "8528588924:AAEYggmQxAo-sVZajljhtlsR4T-92fMeE3M"
+
+# Pending channels storage (in-memory, will reset on restart)
+pending_channels: Dict[str, Dict[str, Any]] = {}
 
 app = FastAPI(title="AI Tools API")
 
@@ -268,3 +273,101 @@ async def generate_slide(request: SlideRequest):
                         return {"success": True, "image": f"data:{mime};base64,{b64}"}
 
         raise HTTPException(status_code=400, detail="Не удалось сгенерировать изображение слайда")
+
+# ===== Telegram Bot Webhook =====
+
+@app.post("/api/telegram/webhook")
+async def telegram_webhook(request: Request):
+    """Handle Telegram webhook updates"""
+    try:
+        update = await request.json()
+
+        # Handle my_chat_member update (bot added/removed from chat)
+        if "my_chat_member" in update:
+            chat_member = update["my_chat_member"]
+            chat = chat_member.get("chat", {})
+            new_status = chat_member.get("new_chat_member", {}).get("status")
+
+            # Bot was added as admin
+            if new_status == "administrator":
+                chat_id = str(chat.get("id"))
+                chat_title = chat.get("title", "Без названия")
+                chat_username = chat.get("username")
+                chat_type = chat.get("type")
+
+                # Store pending channel
+                pending_channels[chat_id] = {
+                    "id": chat_id,
+                    "title": chat_title,
+                    "username": chat_username,
+                    "type": chat_type,
+                    "added_at": time.time()
+                }
+
+                # Send confirmation message to the channel
+                message = f"✅ Бот успешно добавлен!\n\n📋 ID канала: `{chat_id}`\n\nТеперь вы можете планировать посты через сервис."
+
+                async with httpx.AsyncClient() as client:
+                    await client.post(
+                        f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+                        json={
+                            "chat_id": chat_id,
+                            "text": message,
+                            "parse_mode": "Markdown"
+                        }
+                    )
+
+            # Bot was removed
+            elif new_status in ["left", "kicked"]:
+                chat_id = str(chat.get("id"))
+                if chat_id in pending_channels:
+                    del pending_channels[chat_id]
+
+        return {"ok": True}
+
+    except Exception as e:
+        print(f"Webhook error: {e}")
+        return {"ok": True}  # Always return ok to Telegram
+
+@app.get("/api/telegram/pending-channels")
+async def get_pending_channels():
+    """Get list of pending channels (channels where bot was recently added)"""
+    # Clean up old entries (older than 10 minutes)
+    current_time = time.time()
+    expired = [k for k, v in pending_channels.items() if current_time - v.get("added_at", 0) > 600]
+    for k in expired:
+        del pending_channels[k]
+
+    return {"channels": list(pending_channels.values())}
+
+@app.delete("/api/telegram/pending-channels/{chat_id}")
+async def remove_pending_channel(chat_id: str):
+    """Remove a channel from pending list (after user adds it)"""
+    if chat_id in pending_channels:
+        del pending_channels[chat_id]
+    return {"ok": True}
+
+@app.post("/api/telegram/setup-webhook")
+async def setup_telegram_webhook():
+    """Setup Telegram webhook (call this once to register)"""
+    webhook_url = "https://ai-tools-backend-d3zr.onrender.com/api/telegram/webhook"
+
+    async with httpx.AsyncClient() as client:
+        # First, delete any existing webhook
+        await client.post(f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/deleteWebhook")
+
+        # Set new webhook
+        response = await client.post(
+            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/setWebhook",
+            json={
+                "url": webhook_url,
+                "allowed_updates": ["my_chat_member", "chat_member"]
+            }
+        )
+
+        result = response.json()
+
+        if result.get("ok"):
+            return {"success": True, "message": "Webhook установлен"}
+        else:
+            raise HTTPException(status_code=400, detail=result.get("description", "Ошибка установки webhook"))
