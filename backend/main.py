@@ -3,11 +3,15 @@ import re
 import httpx
 import json
 import time
+import asyncio
+from datetime import datetime
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
+import pytz
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 VERTEX_ACCESS_TOKEN = os.getenv("VERTEX_ACCESS_TOKEN", "")
@@ -18,7 +22,129 @@ TELEGRAM_BOT_TOKEN = "8528588924:AAEYggmQxAo-sVZajljhtlsR4T-92fMeE3M"
 # Pending channels storage (in-memory, will reset on restart)
 pending_channels: Dict[str, Dict[str, Any]] = {}
 
-app = FastAPI(title="AI Tools API")
+# Scheduled posts storage (in-memory)
+scheduled_posts: Dict[str, Dict[str, Any]] = {}
+
+async def check_scheduled_posts():
+    """Background task to check and send scheduled posts"""
+    while True:
+        try:
+            now = datetime.now(pytz.UTC)
+            posts_to_send = []
+
+            for post_id, post in list(scheduled_posts.items()):
+                if post.get('status') != 'scheduled':
+                    continue
+
+                # Parse scheduled time
+                try:
+                    tz = pytz.timezone(post.get('timezone', 'Europe/Moscow'))
+                    scheduled_dt = tz.localize(datetime.strptime(f"{post['date']} {post['time']}", "%Y-%m-%d %H:%M"))
+                    scheduled_utc = scheduled_dt.astimezone(pytz.UTC)
+
+                    if scheduled_utc <= now:
+                        posts_to_send.append(post_id)
+                except Exception as e:
+                    print(f"Error parsing post {post_id}: {e}")
+
+            # Send posts
+            for post_id in posts_to_send:
+                post = scheduled_posts.get(post_id)
+                if post:
+                    print(f"[Scheduler] Sending post {post_id}")
+                    await send_telegram_post(post)
+
+        except Exception as e:
+            print(f"[Scheduler] Error: {e}")
+
+        await asyncio.sleep(30)  # Check every 30 seconds
+
+
+async def send_telegram_post(post: dict):
+    """Send a scheduled post to Telegram"""
+    try:
+        chat_id = post.get('chatId')
+        text = post.get('text', '')
+        image = post.get('image')
+        buttons = post.get('buttons', [])
+
+        # Build inline keyboard if buttons exist
+        reply_markup = None
+        if buttons:
+            reply_markup = {
+                "inline_keyboard": [[{"text": btn["text"], "url": btn["url"]}] for btn in buttons]
+            }
+
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            if image:
+                # Send photo with caption
+                if image.startswith('data:'):
+                    # Base64 image - need to convert to file
+                    import base64
+                    # Extract base64 data
+                    header, b64data = image.split(',', 1)
+                    image_data = base64.b64decode(b64data)
+
+                    files = {'photo': ('image.jpg', image_data, 'image/jpeg')}
+                    data = {'chat_id': chat_id, 'caption': text}
+                    if reply_markup:
+                        data['reply_markup'] = json.dumps(reply_markup)
+
+                    response = await client.post(
+                        f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto",
+                        data=data,
+                        files=files
+                    )
+                else:
+                    # URL image
+                    payload = {'chat_id': chat_id, 'photo': image, 'caption': text}
+                    if reply_markup:
+                        payload['reply_markup'] = reply_markup
+                    response = await client.post(
+                        f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto",
+                        json=payload
+                    )
+            else:
+                # Send text message
+                payload = {'chat_id': chat_id, 'text': text}
+                if reply_markup:
+                    payload['reply_markup'] = reply_markup
+                response = await client.post(
+                    f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+                    json=payload
+                )
+
+            result = response.json()
+            if result.get('ok'):
+                post['status'] = 'sent'
+                post['sentAt'] = datetime.now(pytz.UTC).isoformat()
+                print(f"[Scheduler] Post {post['id']} sent successfully")
+            else:
+                post['status'] = 'failed'
+                post['error'] = result.get('description', 'Unknown error')
+                print(f"[Scheduler] Post {post['id']} failed: {post['error']}")
+
+    except Exception as e:
+        post['status'] = 'failed'
+        post['error'] = str(e)
+        print(f"[Scheduler] Error sending post: {e}")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    print("[Scheduler] Starting background scheduler...")
+    scheduler_task = asyncio.create_task(check_scheduled_posts())
+    yield
+    # Shutdown
+    scheduler_task.cancel()
+    try:
+        await scheduler_task
+    except asyncio.CancelledError:
+        pass
+
+
+app = FastAPI(title="AI Tools API", lifespan=lifespan)
 
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
@@ -41,6 +167,22 @@ class SlideRequest(BaseModel):
     color2: str = "#10b981"
     user_image: Optional[str] = None
     reference_images: Optional[List[str]] = None  # base64 images
+
+class PostButton(BaseModel):
+    text: str
+    url: str
+
+class ScheduledPostRequest(BaseModel):
+    id: str
+    projectId: str
+    chatId: str
+    date: str  # YYYY-MM-DD
+    time: str  # HH:MM
+    timezone: str = "Europe/Moscow"
+    text: Optional[str] = ""
+    image: Optional[str] = None  # base64 or URL
+    buttons: Optional[List[PostButton]] = []
+    status: str = "scheduled"
 
 @app.get("/")
 async def root():
@@ -271,6 +413,52 @@ async def generate_slide(request: SlideRequest):
                         return {"success": True, "image": f"data:{mime};base64,{b64}"}
 
         raise HTTPException(status_code=400, detail="Не удалось сгенерировать изображение слайда")
+
+# ===== Scheduled Posts API =====
+
+@app.post("/api/posts")
+async def create_or_update_post(post: ScheduledPostRequest):
+    """Create or update a scheduled post"""
+    post_dict = post.dict()
+    post_dict['createdAt'] = post_dict.get('createdAt') or datetime.now(pytz.UTC).isoformat()
+    scheduled_posts[post.id] = post_dict
+    print(f"[Posts] Saved post {post.id} for {post.date} {post.time} ({post.timezone})")
+    return {"success": True, "post": post_dict}
+
+@app.get("/api/posts")
+async def get_posts():
+    """Get all scheduled posts"""
+    return {"posts": list(scheduled_posts.values())}
+
+@app.get("/api/posts/{post_id}")
+async def get_post(post_id: str):
+    """Get a specific post"""
+    post = scheduled_posts.get(post_id)
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+    return {"post": post}
+
+@app.delete("/api/posts/{post_id}")
+async def delete_post(post_id: str):
+    """Delete a scheduled post"""
+    if post_id in scheduled_posts:
+        del scheduled_posts[post_id]
+        print(f"[Posts] Deleted post {post_id}")
+    return {"success": True}
+
+@app.post("/api/posts/{post_id}/send")
+async def send_post_now(post_id: str):
+    """Send a post immediately"""
+    post = scheduled_posts.get(post_id)
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    await send_telegram_post(post)
+
+    if post.get('status') == 'sent':
+        return {"success": True, "message": "Пост отправлен"}
+    else:
+        raise HTTPException(status_code=400, detail=post.get('error', 'Ошибка отправки'))
 
 # ===== Telegram Bot Webhook =====
 

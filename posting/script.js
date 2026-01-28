@@ -25,7 +25,7 @@ const currentMonthEl = document.getElementById('currentMonth');
 const projectFilter = document.getElementById('projectFilter');
 
 // ===== Initialization =====
-function init() {
+async function init() {
     // Initialize timezone selector
     const timezoneSelect = document.getElementById('timezoneSelect');
     if (timezoneSelect) {
@@ -36,10 +36,11 @@ function init() {
     renderCalendar();
     setupEventListeners();
 
-    // Check posts immediately and every 30 seconds
-    console.log(`[Scheduler] Started with timezone: ${selectedTimezone}`);
-    checkScheduledPosts();
-    setInterval(checkScheduledPosts, 30000);
+    // Sync posts with backend
+    await syncPostsWithBackend();
+
+    // Local scheduler as fallback (backend is primary)
+    console.log(`[Scheduler] Frontend ready, backend handles scheduling`);
 }
 
 function updateUI() {
@@ -463,6 +464,12 @@ function closePostModal() {
 
 async function savePost() {
     const projectId = document.getElementById('postProject').value;
+    const project = projects.find(p => p.id === projectId);
+    if (!project) {
+        showToast('Проект не найден', true);
+        return;
+    }
+
     const date = document.getElementById('postDate').value;
     const time = document.getElementById('postTime').value;
     const text = document.getElementById('postText').value.trim();
@@ -487,8 +494,10 @@ async function savePost() {
     const post = {
         id: editingPostId || Date.now().toString(),
         projectId,
+        chatId: project.chatId,
         date,
         time,
+        timezone: selectedTimezone,
         text,
         image,
         buttons: [...currentPostButtons],
@@ -506,10 +515,94 @@ async function savePost() {
         posts.push(post);
     }
 
-    savePosts();
-    closePostModal();
-    renderCalendar();
-    showToast(editingPostId ? 'Пост обновлен' : 'Пост запланирован');
+    // Sync to backend
+    showLoading('Сохранение...');
+    try {
+        await syncPostToBackend(post);
+        savePosts();
+        closePostModal();
+        renderCalendar();
+        showToast(editingPostId ? 'Пост обновлен' : 'Пост запланирован');
+    } catch (error) {
+        showToast('Ошибка сохранения: ' + error.message, true);
+    } finally {
+        hideLoading();
+    }
+}
+
+async function syncPostToBackend(post) {
+    const response = await fetch(`${CONFIG.apiUrl}/api/posts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(post)
+    });
+
+    if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.detail || 'Ошибка сервера');
+    }
+
+    return response.json();
+}
+
+async function deletePostFromBackend(postId) {
+    try {
+        await fetch(`${CONFIG.apiUrl}/api/posts/${postId}`, {
+            method: 'DELETE'
+        });
+    } catch (e) {
+        console.error('Error deleting from backend:', e);
+    }
+}
+
+async function syncPostsWithBackend() {
+    try {
+        console.log('[Sync] Syncing posts with backend...');
+
+        // Get posts from backend
+        const response = await fetch(`${CONFIG.apiUrl}/api/posts`);
+        if (response.ok) {
+            const data = await response.json();
+            const backendPosts = data.posts || [];
+
+            // Create a map of backend posts
+            const backendMap = new Map(backendPosts.map(p => [p.id, p]));
+
+            // Sync local posts that are not on backend yet
+            for (const localPost of posts) {
+                if (!backendMap.has(localPost.id) && localPost.status === 'scheduled') {
+                    // Find project to get chatId
+                    const project = projects.find(p => p.id === localPost.projectId);
+                    if (project) {
+                        localPost.chatId = project.chatId;
+                        localPost.timezone = localPost.timezone || selectedTimezone;
+                        console.log(`[Sync] Uploading local post ${localPost.id}`);
+                        await syncPostToBackend(localPost);
+                    }
+                }
+            }
+
+            // Update local posts with backend status
+            for (const backendPost of backendPosts) {
+                const localIndex = posts.findIndex(p => p.id === backendPost.id);
+                if (localIndex !== -1) {
+                    // Update status from backend
+                    posts[localIndex].status = backendPost.status;
+                    posts[localIndex].sentAt = backendPost.sentAt;
+                    posts[localIndex].error = backendPost.error;
+                } else {
+                    // Add backend post to local (if we don't have it)
+                    posts.push(backendPost);
+                }
+            }
+
+            savePosts();
+            renderCalendar();
+            console.log(`[Sync] Synced ${backendPosts.length} posts from backend`);
+        }
+    } catch (error) {
+        console.error('[Sync] Error syncing with backend:', error);
+    }
 }
 
 // ===== Image Handling =====
@@ -751,10 +844,13 @@ function openViewPostModal(postId) {
     document.getElementById('viewPostModal').style.display = 'flex';
 }
 
-function deletePost() {
+async function deletePost() {
     if (!editingPostId) return;
 
     if (!confirm('Удалить этот пост?')) return;
+
+    // Delete from backend
+    await deletePostFromBackend(editingPostId);
 
     posts = posts.filter(p => p.id !== editingPostId);
     savePosts();
@@ -879,6 +975,8 @@ async function sendPost(post) {
             post.status = 'sent';
             post.sentAt = new Date().toISOString();
             savePosts();
+            // Sync status to backend
+            syncPostToBackend(post).catch(e => console.error('Sync error:', e));
             showToast('Пост отправлен!');
             return true;
         } else {
@@ -889,6 +987,8 @@ async function sendPost(post) {
         post.status = 'failed';
         post.error = error.message;
         savePosts();
+        // Sync status to backend
+        syncPostToBackend(post).catch(e => console.error('Sync error:', e));
         showToast('Ошибка: ' + error.message, true);
         return false;
     } finally {
@@ -896,41 +996,11 @@ async function sendPost(post) {
     }
 }
 
-// ===== Check Scheduled Posts =====
-function checkScheduledPosts() {
-    // Get current time in selected timezone
-    const now = new Date();
-    const tzOptions = { timeZone: selectedTimezone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
-    const formatter = new Intl.DateTimeFormat('en-CA', tzOptions);
-    const parts = formatter.formatToParts(now);
-
-    const year = parts.find(p => p.type === 'year').value;
-    const month = parts.find(p => p.type === 'month').value;
-    const day = parts.find(p => p.type === 'day').value;
-    let hour = parts.find(p => p.type === 'hour').value;
-    const minute = parts.find(p => p.type === 'minute').value;
-
-    // Fix midnight case (some locales return 24 instead of 00)
-    if (hour === '24') hour = '00';
-
-    const currentDate = `${year}-${month}-${day}`;
-    // Convert to minutes for proper comparison
-    const currentMinutes = parseInt(hour) * 60 + parseInt(minute);
-
-    console.log(`[Scheduler] Checking posts at ${currentDate} ${hour}:${minute} (${selectedTimezone})`);
-
-    posts.forEach(post => {
-        if (post.status === 'scheduled' && post.date === currentDate) {
-            const [postHour, postMinute] = post.time.split(':').map(Number);
-            const postMinutes = postHour * 60 + postMinute;
-
-            if (postMinutes <= currentMinutes) {
-                console.log(`[Scheduler] Sending post: ${post.id} scheduled for ${post.time}`);
-                sendPost(post);
-            }
-        }
-    });
-}
+// ===== Periodic Sync =====
+// Backend handles scheduling, frontend just syncs status periodically
+setInterval(async () => {
+    await syncPostsWithBackend();
+}, 60000); // Sync every minute
 
 // Get current time in selected timezone
 function getCurrentTimeInTimezone() {
