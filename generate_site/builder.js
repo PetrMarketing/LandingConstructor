@@ -841,12 +841,28 @@ function renderLayers() {
         });
     });
 
-    // Delete buttons
+    // Layer action buttons
     layersContent.querySelectorAll('.layer-delete').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             const id = btn.closest('.layer-item').dataset.id;
             deleteElement(id);
+        });
+    });
+
+    layersContent.querySelectorAll('.layer-visibility').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = btn.closest('.layer-item').dataset.id;
+            toggleVisibility(id);
+        });
+    });
+
+    layersContent.querySelectorAll('.layer-edit').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = btn.closest('.layer-item').dataset.id;
+            openEditModal(id);
         });
     });
 
@@ -872,8 +888,17 @@ function renderLayerTree(elements, depth = 0) {
                 ${hasChildren ? '<span class="layer-toggle"><i class="fas fa-chevron-down"></i></span>' : '<span class="layer-spacer"></span>'}
                 <i class="fas ${el.icon} layer-icon"></i>
                 <span class="layer-name">${el.label}</span>
-                ${el.hidden ? '<i class="fas fa-eye-slash layer-hidden-icon"></i>' : ''}
-                <button class="layer-delete" title="Удалить"><i class="fas fa-times"></i></button>
+                <div class="layer-actions">
+                    <button class="layer-action layer-visibility" title="${el.hidden ? 'Показать' : 'Скрыть'}">
+                        <i class="fas fa-${el.hidden ? 'eye-slash' : 'eye'}"></i>
+                    </button>
+                    <button class="layer-action layer-edit" title="Редактировать">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="layer-action layer-delete" title="Удалить">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
             ${hasChildren ? '<div class="layer-children">' + renderLayerTree(el.children, depth + 1) + '</div>' : ''}
         `;
@@ -1026,6 +1051,45 @@ function updateEditingElementFromForm() {
         if (activeBtn && group.dataset.style) {
             el.styles[group.dataset.style] = activeBtn.dataset.value;
         }
+        // Handle background type
+        if (group.dataset.custom === 'bgType' && activeBtn?.dataset.value === 'gradient') {
+            // Build gradient from colors
+            const direction = editContent.querySelector('[data-custom="gradientDirection"]')?.value || 'to bottom';
+            const colors = [];
+            for (let i = 1; i <= 10; i++) {
+                const colorInput = editContent.querySelector(`[data-custom="gradientColor${i}"]`);
+                if (colorInput && colorInput.value) {
+                    colors.push(colorInput.value);
+                }
+            }
+            if (colors.length >= 2) {
+                el.styles.background = `linear-gradient(${direction}, ${colors.join(', ')})`;
+                delete el.styles.backgroundColor;
+            }
+        }
+    });
+
+    // Animation
+    el.animation = el.animation || {};
+    editContent.querySelectorAll('[data-anim]').forEach(input => {
+        const prop = input.dataset.anim;
+        const val = input.type === 'range' ? parseFloat(input.value) : input.value;
+        if (val) {
+            el.animation[prop] = val;
+        } else {
+            delete el.animation[prop];
+        }
+    });
+
+    // Action
+    el.action = el.action || {};
+    editContent.querySelectorAll('[data-action]').forEach(input => {
+        const prop = input.dataset.action;
+        if (input.value) {
+            el.action[prop] = input.value;
+        } else {
+            delete el.action[prop];
+        }
     });
 
     // Custom CSS
@@ -1042,6 +1106,10 @@ function renderEditContent(tab) {
         html = renderContentTab(el);
     } else if (tab === 'style') {
         html = renderStyleTab(el);
+    } else if (tab === 'animation') {
+        html = renderAnimationTab(el);
+    } else if (tab === 'action') {
+        html = renderActionTab(el);
     } else if (tab === 'advanced') {
         html = renderAdvancedTab(el);
     }
@@ -1117,12 +1185,10 @@ function setupEditHandlers() {
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     const dataUrl = event.target.result;
-                    // Update the URL input
                     const srcInput = editContent.querySelector('[data-attr="src"]');
                     if (srcInput) {
                         srcInput.value = dataUrl;
                     }
-                    // Update editing element
                     state.editingElement.attrs = state.editingElement.attrs || {};
                     state.editingElement.attrs.src = dataUrl;
                 };
@@ -1130,6 +1196,63 @@ function setupEditHandlers() {
             }
         });
     }
+
+    // Background type toggle
+    const bgTypeGroup = editContent.querySelector('[data-custom="bgType"]');
+    if (bgTypeGroup) {
+        bgTypeGroup.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const isGradient = btn.dataset.value === 'gradient';
+                editContent.querySelector('.bg-color-section').style.display = isGradient ? 'none' : '';
+                editContent.querySelector('.bg-gradient-section').style.display = isGradient ? '' : 'none';
+            });
+        });
+    }
+
+    // Add gradient color button
+    const addColorBtn = editContent.querySelector('#addGradientColor');
+    if (addColorBtn) {
+        addColorBtn.addEventListener('click', () => {
+            const container = editContent.querySelector('#extraGradientColors');
+            const count = container.querySelectorAll('.gradient-color-row').length + 3;
+            const html = `
+                <div class="edit-row gradient-color-row">
+                    <label>Цвет ${count}</label>
+                    <div class="edit-color">
+                        <input type="color" data-custom="gradientColor${count}" value="#10b981">
+                        <input type="text" class="edit-input" data-custom="gradientColor${count}" value="#10b981">
+                    </div>
+                    <button type="button" class="btn-remove-color" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        });
+    }
+
+    // Action type change
+    const actionType = editContent.querySelector('#actionType');
+    if (actionType) {
+        actionType.addEventListener('change', () => {
+            const type = actionType.value;
+            editContent.querySelectorAll('[class*="action-"][class*="-section"]').forEach(s => s.style.display = 'none');
+            if (type) {
+                const section = editContent.querySelector(`.action-${type}-section`);
+                if (section) section.style.display = '';
+            }
+        });
+    }
+
+    // Animation sliders
+    editContent.querySelectorAll('[data-anim]').forEach(input => {
+        if (input.type === 'range') {
+            const display = input.parentElement.querySelector('span');
+            input.addEventListener('input', () => {
+                display.textContent = input.value + 's';
+            });
+        }
+    });
 }
 
 function renderContentTab(el) {
@@ -2403,6 +2526,9 @@ function extractFooterPhone(content) {
 
 function renderStyleTab(el) {
     const s = el.styles || {};
+    const bgType = s.background?.includes('gradient') ? 'gradient' : 'color';
+    const gradientColors = extractGradientColors(s.background);
+
     return `
         <div class="edit-section">
             <h4><i class="fas fa-expand-arrows-alt"></i> Размер</h4>
@@ -2422,6 +2548,49 @@ function renderStyleTab(el) {
             </div>
         </div>
 
+        ${el.isContainer ? `
+        <div class="edit-section">
+            <h4><i class="fas fa-align-center"></i> Расположение контента</h4>
+            <div class="edit-row">
+                <label>Направление</label>
+                <div class="edit-btn-group" data-style="flexDirection">
+                    <button type="button" class="${!s.flexDirection || s.flexDirection === 'row' ? 'active' : ''}" data-value="row">
+                        <i class="fas fa-arrows-alt-h"></i> Горизонтально
+                    </button>
+                    <button type="button" class="${s.flexDirection === 'column' ? 'active' : ''}" data-value="column">
+                        <i class="fas fa-arrows-alt-v"></i> Вертикально
+                    </button>
+                </div>
+            </div>
+            <div class="edit-row">
+                <label>Выравнивание по горизонтали</label>
+                <select class="edit-select" data-style="justifyContent">
+                    <option value="flex-start" ${s.justifyContent === 'flex-start' || !s.justifyContent ? 'selected' : ''}>В начале</option>
+                    <option value="center" ${s.justifyContent === 'center' ? 'selected' : ''}>По центру</option>
+                    <option value="flex-end" ${s.justifyContent === 'flex-end' ? 'selected' : ''}>В конце</option>
+                    <option value="space-between" ${s.justifyContent === 'space-between' ? 'selected' : ''}>Равномерно</option>
+                    <option value="space-around" ${s.justifyContent === 'space-around' ? 'selected' : ''}>С отступами</option>
+                </select>
+            </div>
+            <div class="edit-row">
+                <label>Выравнивание по вертикали</label>
+                <select class="edit-select" data-style="alignItems">
+                    <option value="stretch" ${!s.alignItems || s.alignItems === 'stretch' ? 'selected' : ''}>Растянуть</option>
+                    <option value="flex-start" ${s.alignItems === 'flex-start' ? 'selected' : ''}>Сверху</option>
+                    <option value="center" ${s.alignItems === 'center' ? 'selected' : ''}>По центру</option>
+                    <option value="flex-end" ${s.alignItems === 'flex-end' ? 'selected' : ''}>Снизу</option>
+                </select>
+            </div>
+            <div class="edit-row">
+                <label>Отступ между элементами</label>
+                <div class="edit-range-row">
+                    <input type="range" min="0" max="60" value="${parseInt(s.gap) || 0}" data-style="gap" data-unit="px">
+                    <span>${parseInt(s.gap) || 0}px</span>
+                </div>
+            </div>
+        </div>
+        ` : ''}
+
         <div class="edit-section">
             <h4><i class="fas fa-arrows-alt"></i> Отступы</h4>
             <div class="edit-row">
@@ -2437,15 +2606,71 @@ function renderStyleTab(el) {
         <div class="edit-section">
             <h4><i class="fas fa-fill-drip"></i> Фон</h4>
             <div class="edit-row">
-                <label>Цвет фона</label>
-                <div class="edit-color">
-                    <input type="color" data-style="backgroundColor" value="${s.backgroundColor || '#ffffff'}">
-                    <input type="text" class="edit-input" data-style="backgroundColor" value="${s.backgroundColor || ''}" placeholder="Прозрачный">
+                <label>Тип фона</label>
+                <div class="edit-btn-group" data-custom="bgType">
+                    <button type="button" class="${bgType === 'color' ? 'active' : ''}" data-value="color">
+                        <i class="fas fa-palette"></i> Цвет
+                    </button>
+                    <button type="button" class="${bgType === 'gradient' ? 'active' : ''}" data-value="gradient">
+                        <i class="fas fa-fill"></i> Градиент
+                    </button>
                 </div>
+            </div>
+            <div class="bg-color-section" ${bgType === 'gradient' ? 'style="display:none"' : ''}>
+                <div class="edit-row">
+                    <label>Цвет фона</label>
+                    <div class="edit-color">
+                        <input type="color" data-style="backgroundColor" value="${s.backgroundColor || '#ffffff'}">
+                        <input type="text" class="edit-input" data-style="backgroundColor" value="${s.backgroundColor || ''}" placeholder="Прозрачный">
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gradient-section" ${bgType !== 'gradient' ? 'style="display:none"' : ''}>
+                <div class="edit-row">
+                    <label>Направление градиента</label>
+                    <select class="edit-select" data-custom="gradientDirection">
+                        <option value="to right" ${s.background?.includes('to right') ? 'selected' : ''}>→ Вправо</option>
+                        <option value="to left" ${s.background?.includes('to left') ? 'selected' : ''}>← Влево</option>
+                        <option value="to bottom" ${s.background?.includes('to bottom') || (!s.background?.includes('to ')) ? 'selected' : ''}>↓ Вниз</option>
+                        <option value="to top" ${s.background?.includes('to top') ? 'selected' : ''}>↑ Вверх</option>
+                        <option value="to bottom right" ${s.background?.includes('to bottom right') ? 'selected' : ''}>↘ По диагонали</option>
+                    </select>
+                </div>
+                <div class="edit-row">
+                    <label>Цвет 1</label>
+                    <div class="edit-color">
+                        <input type="color" data-custom="gradientColor1" value="${gradientColors[0] || '#3b82f6'}">
+                        <input type="text" class="edit-input" data-custom="gradientColor1" value="${gradientColors[0] || '#3b82f6'}">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Цвет 2</label>
+                    <div class="edit-color">
+                        <input type="color" data-custom="gradientColor2" value="${gradientColors[1] || '#8b5cf6'}">
+                        <input type="text" class="edit-input" data-custom="gradientColor2" value="${gradientColors[1] || '#8b5cf6'}">
+                    </div>
+                </div>
+                <div id="extraGradientColors">
+                    ${gradientColors.slice(2).map((color, i) => `
+                        <div class="edit-row gradient-color-row">
+                            <label>Цвет ${i + 3}</label>
+                            <div class="edit-color">
+                                <input type="color" data-custom="gradientColor${i + 3}" value="${color}">
+                                <input type="text" class="edit-input" data-custom="gradientColor${i + 3}" value="${color}">
+                            </div>
+                            <button type="button" class="btn-remove-color" onclick="this.parentElement.remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+                <button type="button" class="btn-add-color" id="addGradientColor">
+                    <i class="fas fa-plus"></i> Добавить цвет
+                </button>
             </div>
             <div class="edit-row">
                 <label>Изображение фона (URL)</label>
-                <input type="text" class="edit-input" data-style="backgroundImage" value="${s.backgroundImage || ''}" placeholder="url(https://...)">
+                <input type="text" class="edit-input" data-style="backgroundImage" value="${s.backgroundImage?.startsWith('url') ? s.backgroundImage : ''}" placeholder="url(https://...)">
             </div>
             <div class="edit-row">
                 <label>Размер фона</label>
@@ -2477,6 +2702,146 @@ function renderStyleTab(el) {
                     <option value="0 2px 4px rgba(0,0,0,0.1)" ${s.boxShadow?.includes('2px 4px') ? 'selected' : ''}>Лёгкая</option>
                     <option value="0 4px 6px rgba(0,0,0,0.1)" ${s.boxShadow?.includes('4px 6px') ? 'selected' : ''}>Средняя</option>
                     <option value="0 10px 25px rgba(0,0,0,0.15)" ${s.boxShadow?.includes('10px 25px') ? 'selected' : ''}>Большая</option>
+                </select>
+            </div>
+        </div>
+    `;
+}
+
+function extractGradientColors(background) {
+    if (!background || !background.includes('gradient')) return [];
+    const matches = background.match(/#[0-9A-Fa-f]{6}|#[0-9A-Fa-f]{3}|rgb\([^)]+\)|rgba\([^)]+\)/g);
+    return matches || [];
+}
+
+function renderAnimationTab(el) {
+    const anim = el.animation || {};
+    return `
+        <div class="edit-section">
+            <h4><i class="fas fa-magic"></i> Анимация при появлении</h4>
+            <div class="edit-row">
+                <label>Тип анимации</label>
+                <select class="edit-select" data-anim="type">
+                    <option value="" ${!anim.type ? 'selected' : ''}>Без анимации</option>
+                    <option value="fadeIn" ${anim.type === 'fadeIn' ? 'selected' : ''}>Появление (Fade In)</option>
+                    <option value="fadeInUp" ${anim.type === 'fadeInUp' ? 'selected' : ''}>Появление снизу</option>
+                    <option value="fadeInDown" ${anim.type === 'fadeInDown' ? 'selected' : ''}>Появление сверху</option>
+                    <option value="fadeInLeft" ${anim.type === 'fadeInLeft' ? 'selected' : ''}>Появление слева</option>
+                    <option value="fadeInRight" ${anim.type === 'fadeInRight' ? 'selected' : ''}>Появление справа</option>
+                    <option value="zoomIn" ${anim.type === 'zoomIn' ? 'selected' : ''}>Увеличение (Zoom In)</option>
+                    <option value="bounce" ${anim.type === 'bounce' ? 'selected' : ''}>Прыжок (Bounce)</option>
+                    <option value="pulse" ${anim.type === 'pulse' ? 'selected' : ''}>Пульсация</option>
+                    <option value="shake" ${anim.type === 'shake' ? 'selected' : ''}>Тряска</option>
+                </select>
+            </div>
+            <div class="edit-row">
+                <label>Длительность</label>
+                <div class="edit-range-row">
+                    <input type="range" min="0.1" max="3" step="0.1" value="${anim.duration || 0.5}" data-anim="duration">
+                    <span>${anim.duration || 0.5}s</span>
+                </div>
+            </div>
+            <div class="edit-row">
+                <label>Задержка</label>
+                <div class="edit-range-row">
+                    <input type="range" min="0" max="2" step="0.1" value="${anim.delay || 0}" data-anim="delay">
+                    <span>${anim.delay || 0}s</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="edit-section">
+            <h4><i class="fas fa-redo"></i> Анимация при наведении</h4>
+            <div class="edit-row">
+                <label>Эффект</label>
+                <select class="edit-select" data-anim="hover">
+                    <option value="" ${!anim.hover ? 'selected' : ''}>Без эффекта</option>
+                    <option value="scale" ${anim.hover === 'scale' ? 'selected' : ''}>Увеличение</option>
+                    <option value="lift" ${anim.hover === 'lift' ? 'selected' : ''}>Подъём с тенью</option>
+                    <option value="glow" ${anim.hover === 'glow' ? 'selected' : ''}>Свечение</option>
+                    <option value="rotate" ${anim.hover === 'rotate' ? 'selected' : ''}>Поворот</option>
+                    <option value="shake" ${anim.hover === 'shake' ? 'selected' : ''}>Тряска</option>
+                </select>
+            </div>
+        </div>
+    `;
+}
+
+function renderActionTab(el) {
+    const action = el.action || {};
+    return `
+        <div class="edit-section">
+            <h4><i class="fas fa-mouse-pointer"></i> Действие при клике</h4>
+            <div class="edit-row">
+                <label>Тип действия</label>
+                <select class="edit-select" data-action="type" id="actionType">
+                    <option value="" ${!action.type ? 'selected' : ''}>Нет действия</option>
+                    <option value="link" ${action.type === 'link' ? 'selected' : ''}>Перейти по ссылке</option>
+                    <option value="scroll" ${action.type === 'scroll' ? 'selected' : ''}>Прокрутить к блоку</option>
+                    <option value="modal" ${action.type === 'modal' ? 'selected' : ''}>Открыть модальное окно</option>
+                    <option value="phone" ${action.type === 'phone' ? 'selected' : ''}>Позвонить</option>
+                    <option value="email" ${action.type === 'email' ? 'selected' : ''}>Написать email</option>
+                    <option value="copy" ${action.type === 'copy' ? 'selected' : ''}>Скопировать текст</option>
+                </select>
+            </div>
+
+            <div class="action-link-section" ${action.type !== 'link' ? 'style="display:none"' : ''}>
+                <div class="edit-row">
+                    <label>URL ссылки</label>
+                    <input type="text" class="edit-input" data-action="url" value="${action.url || ''}" placeholder="https://...">
+                </div>
+                <div class="edit-row">
+                    <label>Открывать в</label>
+                    <select class="edit-select" data-action="target">
+                        <option value="_self" ${action.target !== '_blank' ? 'selected' : ''}>Текущем окне</option>
+                        <option value="_blank" ${action.target === '_blank' ? 'selected' : ''}>Новом окне</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="action-scroll-section" ${action.type !== 'scroll' ? 'style="display:none"' : ''}>
+                <div class="edit-row">
+                    <label>ID блока для прокрутки</label>
+                    <input type="text" class="edit-input" data-action="scrollTo" value="${action.scrollTo || ''}" placeholder="#section1">
+                </div>
+            </div>
+
+            <div class="action-phone-section" ${action.type !== 'phone' ? 'style="display:none"' : ''}>
+                <div class="edit-row">
+                    <label>Номер телефона</label>
+                    <input type="text" class="edit-input" data-action="phone" value="${action.phone || ''}" placeholder="+7 999 123-45-67">
+                </div>
+            </div>
+
+            <div class="action-email-section" ${action.type !== 'email' ? 'style="display:none"' : ''}>
+                <div class="edit-row">
+                    <label>Email адрес</label>
+                    <input type="text" class="edit-input" data-action="email" value="${action.email || ''}" placeholder="email@example.com">
+                </div>
+                <div class="edit-row">
+                    <label>Тема письма</label>
+                    <input type="text" class="edit-input" data-action="emailSubject" value="${action.emailSubject || ''}" placeholder="Заявка с сайта">
+                </div>
+            </div>
+
+            <div class="action-copy-section" ${action.type !== 'copy' ? 'style="display:none"' : ''}>
+                <div class="edit-row">
+                    <label>Текст для копирования</label>
+                    <input type="text" class="edit-input" data-action="copyText" value="${action.copyText || ''}" placeholder="Текст...">
+                </div>
+            </div>
+        </div>
+
+        <div class="edit-section">
+            <h4><i class="fas fa-hand-pointer"></i> Курсор</h4>
+            <div class="edit-row">
+                <label>Вид курсора</label>
+                <select class="edit-select" data-style="cursor">
+                    <option value="" ${!el.styles?.cursor ? 'selected' : ''}>По умолчанию</option>
+                    <option value="pointer" ${el.styles?.cursor === 'pointer' ? 'selected' : ''}>Указатель (pointer)</option>
+                    <option value="grab" ${el.styles?.cursor === 'grab' ? 'selected' : ''}>Хват (grab)</option>
+                    <option value="crosshair" ${el.styles?.cursor === 'crosshair' ? 'selected' : ''}>Крестик</option>
+                    <option value="not-allowed" ${el.styles?.cursor === 'not-allowed' ? 'selected' : ''}>Запрещено</option>
                 </select>
             </div>
         </div>

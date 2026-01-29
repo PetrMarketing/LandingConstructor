@@ -1843,3 +1843,159 @@ body {
     cursor: pointer;
     color: var(--text-secondary);
 }
+
+/* ===== Layer Actions ===== */
+.layer-actions {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.layer-item:hover .layer-actions {
+    opacity: 1;
+}
+
+.layer-action {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    padding: 4px 6px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.15s;
+}
+
+.layer-action:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.layer-action.layer-delete:hover {
+    color: var(--danger);
+}
+
+/* ===== Edit Tabs Icons ===== */
+.edit-tab i {
+    margin-right: 6px;
+}
+
+/* ===== Gradient Controls ===== */
+.btn-add-color {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg-primary);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 13px;
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
+    transition: all 0.2s;
+}
+
+.btn-add-color:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.gradient-color-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.gradient-color-row .edit-color {
+    flex: 1;
+}
+
+.btn-remove-color {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.15s;
+}
+
+.btn-remove-color:hover {
+    color: var(--danger);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* ===== Animation Preview ===== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes zoomIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-20px); }
+    60% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* ===== Hover Effects ===== */
+.builder-element[data-hover="scale"]:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s;
+}
+
+.builder-element[data-hover="lift"]:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    transition: all 0.3s;
+}
+
+.builder-element[data-hover="glow"]:hover {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+    transition: box-shadow 0.3s;
+}
+
+.builder-element[data-hover="rotate"]:hover {
+    transform: rotate(5deg);
+    transition: transform 0.3s;
+}
