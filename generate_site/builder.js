@@ -1,5 +1,9 @@
 // ===== Landing Page Builder =====
 
+// Get page ID from URL
+const urlParams = new URLSearchParams(window.location.search);
+const currentPageId = urlParams.get('id');
+
 // State
 const state = {
     elements: [], // Tree structure with children
@@ -9,8 +13,45 @@ const state = {
     clipboardStyle: null,
     history: [],
     historyIndex: -1,
-    viewport: 'desktop'
+    viewport: 'desktop',
+    pageId: currentPageId,
+    pageName: 'Новая страница',
+    draggedLayerId: null // For layer drag & drop
 };
+
+// Load page data
+function loadPageData() {
+    if (!currentPageId) return;
+
+    const pages = JSON.parse(localStorage.getItem('landing_pages') || '[]');
+    const page = pages.find(p => p.id === currentPageId);
+
+    if (page) {
+        state.elements = page.elements || [];
+        state.pageName = page.name || 'Новая страница';
+        renderCanvas();
+        renderLayers();
+        saveHistory();
+    }
+}
+
+// Save page data
+function savePageData() {
+    if (!currentPageId) {
+        // Just save to local storage with default key
+        localStorage.setItem('landing_builder_data', JSON.stringify(state.elements));
+        return;
+    }
+
+    const pages = JSON.parse(localStorage.getItem('landing_pages') || '[]');
+    const pageIndex = pages.findIndex(p => p.id === currentPageId);
+
+    if (pageIndex !== -1) {
+        pages[pageIndex].elements = state.elements;
+        pages[pageIndex].updatedAt = new Date().toISOString();
+        localStorage.setItem('landing_pages', JSON.stringify(pages));
+    }
+}
 
 // DOM Elements
 const canvas = document.getElementById('canvas');
@@ -65,14 +106,14 @@ const blockTemplates = {
         label: 'Заголовок',
         icon: 'fa-heading',
         content: 'Заголовок',
-        defaultStyles: { fontSize: '32px', fontWeight: 'bold', marginBottom: '16px', color: '#1e293b' }
+        defaultStyles: { fontSize: '32px', fontWeight: 'bold', marginBottom: '20px', color: '#1e293b' }
     },
     text: {
         tag: 'p',
         label: 'Текст',
         icon: 'fa-align-left',
         content: 'Здесь будет ваш текст. Кликните, чтобы редактировать.',
-        defaultStyles: { fontSize: '16px', lineHeight: '1.6', color: '#475569' }
+        defaultStyles: { fontSize: '16px', lineHeight: '1.6', color: '#475569', marginBottom: '20px' }
     },
     image: {
         tag: 'img',
@@ -80,7 +121,7 @@ const blockTemplates = {
         icon: 'fa-image',
         content: '',
         attrs: { src: 'https://via.placeholder.com/800x400', alt: 'Изображение' },
-        defaultStyles: { maxWidth: '100%', height: 'auto', borderRadius: '8px' }
+        defaultStyles: { maxWidth: '100%', height: 'auto', borderRadius: '8px', marginBottom: '20px' }
     },
     button: {
         tag: 'a',
@@ -90,7 +131,7 @@ const blockTemplates = {
         attrs: { href: '#' },
         defaultStyles: {
             display: 'inline-block', padding: '12px 24px', backgroundColor: '#3b82f6',
-            color: 'white', textDecoration: 'none', borderRadius: '8px', fontWeight: '500'
+            color: 'white', textDecoration: 'none', borderRadius: '8px', fontWeight: '500', marginBottom: '20px'
         }
     },
     link: {
@@ -99,14 +140,14 @@ const blockTemplates = {
         icon: 'fa-link',
         content: 'Ссылка',
         attrs: { href: '#' },
-        defaultStyles: { color: '#3b82f6', textDecoration: 'underline' }
+        defaultStyles: { color: '#3b82f6', textDecoration: 'underline', marginBottom: '20px', display: 'inline-block' }
     },
     list: {
         tag: 'ul',
         label: 'Список',
         icon: 'fa-list',
         content: '<li>Пункт 1</li><li>Пункт 2</li><li>Пункт 3</li>',
-        defaultStyles: { paddingLeft: '20px', color: '#475569' }
+        defaultStyles: { paddingLeft: '20px', color: '#475569', marginBottom: '20px' }
     },
     divider: {
         tag: 'hr',
@@ -472,6 +513,21 @@ function toggleVisibility(id) {
     }
 }
 
+function toggleUnlock(id) {
+    const element = findElement(id);
+    if (element) {
+        element.unlocked = !element.unlocked;
+        if (!element.unlocked) {
+            // Reset position styles when locking
+            delete element.posX;
+            delete element.posY;
+        }
+        saveHistory();
+        renderCanvas();
+        renderLayers();
+    }
+}
+
 // ===== Render Canvas =====
 function renderElement(element, depth = 0) {
     const el = document.createElement(element.tag === 'img' ? 'div' : element.tag);
@@ -500,6 +556,7 @@ function renderElement(element, depth = 0) {
     const toolbar = document.createElement('div');
     toolbar.className = 'element-toolbar';
     toolbar.innerHTML = `
+        <button class="toolbar-action ${element.unlocked ? 'active' : ''}" data-action="unlock" title="${element.unlocked ? 'Закрепить' : 'Свободное перемещение'}"><i class="fas fa-${element.unlocked ? 'lock-open' : 'lock'}"></i></button>
         <button class="toolbar-action" data-action="moveUp" title="Вверх"><i class="fas fa-arrow-up"></i></button>
         <button class="toolbar-action" data-action="moveDown" title="Вниз"><i class="fas fa-arrow-down"></i></button>
         <button class="toolbar-action" data-action="edit" title="Редактировать"><i class="fas fa-edit"></i></button>
@@ -509,12 +566,56 @@ function renderElement(element, depth = 0) {
     `;
     el.appendChild(toolbar);
 
+    // Free position mode (unlocked)
+    if (element.unlocked) {
+        el.classList.add('unlocked');
+        el.style.position = 'absolute';
+        el.style.left = element.posX || '100px';
+        el.style.top = element.posY || '100px';
+        el.style.zIndex = '100';
+
+        // Make draggable
+        let isDragging = false;
+        let startX, startY, startLeft, startTop;
+
+        el.addEventListener('mousedown', (e) => {
+            if (!element.unlocked || e.target.closest('.element-toolbar')) return;
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            startLeft = parseInt(el.style.left) || 0;
+            startTop = parseInt(el.style.top) || 0;
+            el.style.cursor = 'grabbing';
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            el.style.left = (startLeft + dx) + 'px';
+            el.style.top = (startTop + dy) + 'px';
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                el.style.cursor = '';
+                // Save position
+                element.posX = el.style.left;
+                element.posY = el.style.top;
+                savePageData();
+            }
+        });
+    }
+
     // Toolbar actions
     toolbar.querySelectorAll('.toolbar-action').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             const action = btn.dataset.action;
             switch (action) {
+                case 'unlock': toggleUnlock(element.id); break;
                 case 'moveUp': moveElement(element.id, 'up'); break;
                 case 'moveDown': moveElement(element.id, 'down'); break;
                 case 'edit': openEditModal(element.id); break;
@@ -670,15 +771,82 @@ function renderLayers() {
 
     layersContent.innerHTML = '<div class="layers-tree">' + renderLayerTree(state.elements) + '</div>';
 
-    // Add click handlers
+    // Add click handlers and drag & drop
     layersContent.querySelectorAll('.layer-item').forEach(item => {
+        const id = item.dataset.id;
+
+        // Click to select
         item.addEventListener('click', (e) => {
+            if (e.target.closest('.layer-delete') || e.target.closest('.layer-toggle')) return;
             e.stopPropagation();
-            selectElement(item.dataset.id);
+            selectElement(id);
         });
+
+        // Double click to edit
         item.addEventListener('dblclick', (e) => {
             e.stopPropagation();
-            openEditModal(item.dataset.id);
+            openEditModal(id);
+        });
+
+        // Drag start
+        item.addEventListener('dragstart', (e) => {
+            e.stopPropagation();
+            state.draggedLayerId = id;
+            item.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        });
+
+        // Drag end
+        item.addEventListener('dragend', () => {
+            item.classList.remove('dragging');
+            layersContent.querySelectorAll('.layer-drop-target').forEach(el => {
+                el.classList.remove('layer-drop-target', 'layer-drop-before', 'layer-drop-after');
+            });
+            state.draggedLayerId = null;
+        });
+
+        // Drag over
+        item.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (state.draggedLayerId === id) return;
+
+            const rect = item.getBoundingClientRect();
+            const y = e.clientY - rect.top;
+            const threshold = rect.height / 2;
+
+            item.classList.remove('layer-drop-before', 'layer-drop-after');
+            if (y < threshold) {
+                item.classList.add('layer-drop-before');
+            } else {
+                item.classList.add('layer-drop-after');
+            }
+        });
+
+        // Drag leave
+        item.addEventListener('dragleave', () => {
+            item.classList.remove('layer-drop-before', 'layer-drop-after');
+        });
+
+        // Drop
+        item.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!state.draggedLayerId || state.draggedLayerId === id) return;
+
+            const isBefore = item.classList.contains('layer-drop-before');
+            item.classList.remove('layer-drop-before', 'layer-drop-after');
+
+            moveLayerToPosition(state.draggedLayerId, id, isBefore ? 'before' : 'after');
+        });
+    });
+
+    // Delete buttons
+    layersContent.querySelectorAll('.layer-delete').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = btn.closest('.layer-item').dataset.id;
+            deleteElement(id);
         });
     });
 
@@ -696,15 +864,43 @@ function renderLayerTree(elements, depth = 0) {
         const hasChildren = el.children?.length > 0;
         const isSelected = state.selectedElement?.id === el.id;
         return `
-            <div class="layer-item ${isSelected ? 'selected' : ''} ${el.hidden ? 'is-hidden' : ''}" data-id="${el.id}" style="padding-left:${depth * 16 + 8}px;">
+            <div class="layer-item ${isSelected ? 'selected' : ''} ${el.hidden ? 'is-hidden' : ''}"
+                 data-id="${el.id}"
+                 draggable="true"
+                 style="padding-left:${depth * 16 + 8}px;">
+                <span class="layer-drag-handle"><i class="fas fa-grip-vertical"></i></span>
                 ${hasChildren ? '<span class="layer-toggle"><i class="fas fa-chevron-down"></i></span>' : '<span class="layer-spacer"></span>'}
                 <i class="fas ${el.icon} layer-icon"></i>
                 <span class="layer-name">${el.label}</span>
                 ${el.hidden ? '<i class="fas fa-eye-slash layer-hidden-icon"></i>' : ''}
+                <button class="layer-delete" title="Удалить"><i class="fas fa-times"></i></button>
             </div>
             ${hasChildren ? '<div class="layer-children">' + renderLayerTree(el.children, depth + 1) + '</div>' : ''}
         `;
     }).join('');
+}
+
+function moveLayerToPosition(draggedId, targetId, position) {
+    const draggedElement = findElement(draggedId);
+    if (!draggedElement) return;
+
+    // Remove from current position
+    removeElement(draggedId);
+
+    // Find target and insert
+    const targetParent = findParent(targetId);
+    const targetArray = targetParent ? targetParent.children : state.elements;
+    const targetIndex = targetArray.findIndex(e => e.id === targetId);
+
+    if (targetIndex !== -1) {
+        const insertIndex = position === 'after' ? targetIndex + 1 : targetIndex;
+        targetArray.splice(insertIndex, 0, draggedElement);
+    }
+
+    saveHistory();
+    renderCanvas();
+    renderLayers();
+    selectElement(draggedId);
 }
 
 function highlightLayer(id) {
@@ -911,6 +1107,29 @@ function setupEditHandlers() {
             });
         });
     });
+
+    // Image file upload
+    const imageUpload = editContent.querySelector('#imageUpload');
+    if (imageUpload) {
+        imageUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const dataUrl = event.target.result;
+                    // Update the URL input
+                    const srcInput = editContent.querySelector('[data-attr="src"]');
+                    if (srcInput) {
+                        srcInput.value = dataUrl;
+                    }
+                    // Update editing element
+                    state.editingElement.attrs = state.editingElement.attrs || {};
+                    state.editingElement.attrs.src = dataUrl;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
 }
 
 function renderContentTab(el) {
@@ -1019,7 +1238,16 @@ function renderContentTab(el) {
             <div class="edit-section">
                 <h4><i class="fas fa-image"></i> Изображение</h4>
                 <div class="edit-row">
-                    <label>URL изображения</label>
+                    <label>Загрузить изображение</label>
+                    <div class="upload-row">
+                        <input type="file" id="imageUpload" accept="image/*" class="edit-file-input">
+                        <label for="imageUpload" class="btn-upload">
+                            <i class="fas fa-upload"></i> Выбрать файл
+                        </label>
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Или вставьте URL</label>
                     <input type="text" class="edit-input" data-attr="src" value="${el.attrs?.src || ''}" placeholder="https://...">
                 </div>
                 <div class="edit-row">
@@ -2544,16 +2772,29 @@ document.getElementById('exportBtn').addEventListener('click', () => {
 
 // ===== Save/Load =====
 function saveProject() {
-    localStorage.setItem('builder_project', JSON.stringify(state.elements));
-    alert('Проект сохранён!');
+    if (state.pageId) {
+        // Save to pages storage
+        savePageData();
+        alert('Страница сохранена!');
+    } else {
+        // Legacy save
+        localStorage.setItem('builder_project', JSON.stringify(state.elements));
+        alert('Проект сохранён!');
+    }
 }
 
 function loadProject() {
-    const saved = localStorage.getItem('builder_project');
-    if (saved) {
-        state.elements = JSON.parse(saved);
-        renderCanvas();
-        renderLayers();
+    if (state.pageId) {
+        // Load from pages storage
+        loadPageData();
+    } else {
+        // Legacy load
+        const saved = localStorage.getItem('builder_project');
+        if (saved) {
+            state.elements = JSON.parse(saved);
+            renderCanvas();
+            renderLayers();
+        }
     }
 }
 

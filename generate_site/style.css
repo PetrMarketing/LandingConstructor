@@ -1719,3 +1719,127 @@ body {
 .builder-element.is-container > .element-children {
     min-height: 80px;
 }
+
+/* ===== Layer Drag & Drop ===== */
+.layer-drag-handle {
+    color: var(--text-muted);
+    cursor: grab;
+    padding: 0 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.layer-item:hover .layer-drag-handle {
+    opacity: 1;
+}
+
+.layer-drag-handle:active {
+    cursor: grabbing;
+}
+
+.layer-item.dragging {
+    opacity: 0.5;
+    background: var(--bg-tertiary);
+}
+
+.layer-item.layer-drop-before {
+    border-top: 2px solid var(--accent);
+}
+
+.layer-item.layer-drop-after {
+    border-bottom: 2px solid var(--accent);
+}
+
+/* ===== Layer Delete Button ===== */
+.layer-delete {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    padding: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.2s;
+    margin-left: auto;
+}
+
+.layer-item:hover .layer-delete {
+    opacity: 1;
+}
+
+.layer-delete:hover {
+    color: var(--danger);
+}
+
+/* ===== Unlocked Element (Free Position) ===== */
+.builder-element.unlocked {
+    cursor: grab;
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+    border: 2px solid var(--accent) !important;
+}
+
+.builder-element.unlocked:active {
+    cursor: grabbing;
+}
+
+.toolbar-action.active {
+    background: var(--accent);
+    color: white;
+}
+
+.toolbar-action.active i {
+    color: white;
+}
+
+/* ===== File Upload ===== */
+.upload-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.edit-file-input {
+    display: none;
+}
+
+.btn-upload {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.btn-upload:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+.btn-upload i {
+    font-size: 16px;
+}
+
+/* ===== Checkbox Row ===== */
+.edit-checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+}
+
+.edit-checkbox-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.edit-checkbox-row label {
+    cursor: pointer;
+    color: var(--text-secondary);
+}

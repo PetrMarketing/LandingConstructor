@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои страницы - Конструктор лендингов</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .pages-container {
+            min-height: 100vh;
+            background: var(--bg-primary);
+        }
+        .pages-header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .pages-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .pages-header h1 i {
+            color: var(--accent);
+        }
+        .pages-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+        .pages-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .pages-search {
+            display: flex;
+            gap: 12px;
+        }
+        .pages-search input {
+            padding: 10px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            width: 300px;
+        }
+        .btn-create {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-create:hover {
+            background: var(--accent-hover);
+        }
+        .pages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .page-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .page-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .page-card.new {
+            border: 2px dashed var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+            cursor: pointer;
+        }
+        .page-card.new:hover {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.05);
+        }
+        .page-card.new i {
+            font-size: 48px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        .page-card.new span {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .page-preview {
+            height: 180px;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .page-preview iframe {
+            width: 200%;
+            height: 200%;
+            transform: scale(0.5);
+            transform-origin: top left;
+            pointer-events: none;
+            border: none;
+        }
+        .page-preview-placeholder {
+            color: var(--text-muted);
+            font-size: 48px;
+        }
+        .page-info {
+            padding: 16px;
+        }
+        .page-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .page-title input {
+            flex: 1;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            padding: 4px;
+            border-radius: 4px;
+        }
+        .page-title input:focus {
+            outline: none;
+            background: var(--bg-tertiary);
+        }
+        .page-date {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        .page-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .page-action {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--border);
+            background: none;
+            color: var(--text-secondary);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .page-action:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        .page-action.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        .page-action.primary:hover {
+            background: var(--accent-hover);
+        }
+        .page-action.danger:hover {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: white;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+        .empty-state i {
+            font-size: 64px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+        .empty-state h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        .empty-state p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+        .back-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s;
+        }
+        .back-link:hover {
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="pages-container">
+        <header class="pages-header">
+            <h1>
+                <a href="../" class="back-link"><i class="fas fa-arrow-left"></i></a>
+                <i class="fas fa-file-alt"></i>
+                Мои страницы
+            </h1>
+            <button class="btn-create" onclick="createNewPage()">
+                <i class="fas fa-plus"></i>
+                Создать страницу
+            </button>
+        </header>
+
+        <main class="pages-content">
+            <div class="pages-actions">
+                <div class="pages-search">
+                    <input type="text" id="searchPages" placeholder="Поиск страниц..." oninput="filterPages()">
+                </div>
+            </div>
+
+            <div class="pages-grid" id="pagesGrid">
+                <!-- Pages will be rendered here -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Pages storage
+        const STORAGE_KEY = 'landing_pages';
+
+        function getPages() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+
+        function savePages(pages) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(pages));
+        }
+
+        function createNewPage() {
+            const pages = getPages();
+            const newPage = {
+                id: 'page_' + Date.now(),
+                name: 'Новая страница',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                elements: []
+            };
+            pages.unshift(newPage);
+            savePages(pages);
+
+            // Open editor with new page
+            window.location.href = `index.html?id=${newPage.id}`;
+        }
+
+        function editPage(id) {
+            window.location.href = `index.html?id=${id}`;
+        }
+
+        function duplicatePage(id) {
+            const pages = getPages();
+            const page = pages.find(p => p.id === id);
+            if (page) {
+                const newPage = {
+                    ...JSON.parse(JSON.stringify(page)),
+                    id: 'page_' + Date.now(),
+                    name: page.name + ' (копия)',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                pages.unshift(newPage);
+                savePages(pages);
+                renderPages();
+            }
+        }
+
+        function deletePage(id) {
+            if (confirm('Удалить эту страницу?')) {
+                const pages = getPages().filter(p => p.id !== id);
+                savePages(pages);
+                renderPages();
+            }
+        }
+
+        function renamePage(id, newName) {
+            const pages = getPages();
+            const page = pages.find(p => p.id === id);
+            if (page) {
+                page.name = newName;
+                page.updatedAt = new Date().toISOString();
+                savePages(pages);
+            }
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('ru-RU', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function filterPages() {
+            const query = document.getElementById('searchPages').value.toLowerCase();
+            const cards = document.querySelectorAll('.page-card:not(.new)');
+            cards.forEach(card => {
+                const name = card.querySelector('.page-title input').value.toLowerCase();
+                card.style.display = name.includes(query) ? '' : 'none';
+            });
+        }
+
+        function renderPages() {
+            const pages = getPages();
+            const grid = document.getElementById('pagesGrid');
+
+            if (pages.length === 0) {
+                grid.innerHTML = `
+                    <div class="page-card new" onclick="createNewPage()">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Создать первую страницу</span>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div class="page-card new" onclick="createNewPage()">
+                    <i class="fas fa-plus"></i>
+                    <span>Новая страница</span>
+                </div>
+            `;
+
+            pages.forEach(page => {
+                html += `
+                    <div class="page-card" data-id="${page.id}">
+                        <div class="page-preview">
+                            ${page.elements?.length ?
+                                '<div class="page-preview-placeholder"><i class="fas fa-file-alt"></i></div>' :
+                                '<div class="page-preview-placeholder"><i class="fas fa-file"></i></div>'
+                            }
+                        </div>
+                        <div class="page-info">
+                            <div class="page-title">
+                                <input type="text" value="${page.name}"
+                                    onchange="renamePage('${page.id}', this.value)"
+                                    onclick="event.stopPropagation()">
+                            </div>
+                            <div class="page-date">
+                                Изменено: ${formatDate(page.updatedAt)}
+                            </div>
+                            <div class="page-actions">
+                                <button class="page-action primary" onclick="editPage('${page.id}')">
+                                    <i class="fas fa-edit"></i> Редактировать
+                                </button>
+                                <button class="page-action" onclick="duplicatePage('${page.id}')">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button class="page-action danger" onclick="deletePage('${page.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            grid.innerHTML = html;
+        }
+
+        // Init
+        renderPages();
+    </script>
+</body>
+</html>
