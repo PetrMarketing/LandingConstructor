@@ -78,7 +78,7 @@ const blockTemplates = {
         icon: 'fa-square',
         content: '',
         isContainer: true,
-        defaultStyles: { display: 'flex', flexDirection: 'column', padding: '60px 20px', minHeight: '200px' }
+        defaultStyles: { display: 'flex', flexDirection: 'column', padding: '60px 20px', minHeight: '200px', gap: '20px' }
     },
     container: {
         tag: 'div',
@@ -86,7 +86,7 @@ const blockTemplates = {
         icon: 'fa-box',
         content: '',
         isContainer: true,
-        defaultStyles: { display: 'flex', flexDirection: 'column', maxWidth: '1200px', margin: '0 auto', padding: '20px' }
+        defaultStyles: { display: 'flex', flexDirection: 'column', maxWidth: '1200px', margin: '0 auto', padding: '20px', gap: '20px' }
     },
     row: {
         tag: 'div',
@@ -102,7 +102,7 @@ const blockTemplates = {
         icon: 'fa-grip-lines-vertical',
         content: '',
         isContainer: true,
-        defaultStyles: { display: 'flex', flexDirection: 'column', flex: '1', minWidth: '250px', padding: '10px' }
+        defaultStyles: { display: 'flex', flexDirection: 'column', flex: '1', minWidth: '250px', padding: '10px', gap: '20px' }
     },
 
     // Basic
@@ -654,11 +654,15 @@ function renderElement(element, depth = 0) {
         const childContainer = document.createElement('div');
         childContainer.className = 'element-children';
 
+        const isHorizontal = element.styles?.flexDirection === 'row';
+        const gap = element.styles?.gap || '20px';
+        const childCount = element.children?.length || 0;
+
         // Apply flex properties to children container
         childContainer.style.display = 'flex';
         childContainer.style.flexDirection = element.styles?.flexDirection || 'column';
         childContainer.style.flexWrap = element.styles?.flexWrap || 'wrap';
-        childContainer.style.gap = element.styles?.gap || '0px';
+        childContainer.style.gap = gap;
         childContainer.style.justifyContent = element.styles?.justifyContent || 'flex-start';
         childContainer.style.alignItems = element.styles?.alignItems || 'stretch';
         childContainer.style.flex = '1';
@@ -666,7 +670,18 @@ function renderElement(element, depth = 0) {
 
         if (element.children?.length) {
             element.children.forEach(child => {
-                childContainer.appendChild(renderElement(child, depth + 1));
+                const childEl = renderElement(child, depth + 1);
+
+                // Auto-calculate width for horizontal layout
+                if (isHorizontal && childCount > 0) {
+                    const gapValue = parseInt(gap) || 20;
+                    const totalGap = gapValue * (childCount - 1);
+                    childEl.style.flex = `1 1 calc((100% - ${totalGap}px) / ${childCount})`;
+                    childEl.style.maxWidth = `calc((100% - ${totalGap}px) / ${childCount})`;
+                    childEl.style.boxSizing = 'border-box';
+                }
+
+                childContainer.appendChild(childEl);
             });
         } else {
             // Empty container placeholder
@@ -1067,25 +1082,60 @@ function updateEditingElementFromForm() {
             el.styles[group.dataset.style] = activeBtn.dataset.value;
         }
         // Handle background type
-        if (group.dataset.custom === 'bgType' && activeBtn?.dataset.value === 'gradient') {
-            // Build gradient from colors
-            const direction = editContent.querySelector('[data-custom="gradientDirection"]')?.value || 'to bottom';
-            const colors = [];
-            for (let i = 1; i <= 10; i++) {
-                const colorInput = editContent.querySelector(`[data-custom="gradientColor${i}"]`);
-                if (colorInput && colorInput.value) {
-                    colors.push(colorInput.value);
+        if (group.dataset.custom === 'bgType') {
+            const bgValue = activeBtn?.dataset.value;
+
+            // Clear previous background styles
+            delete el.styles.background;
+            delete el.styles.backdropFilter;
+            delete el.styles.WebkitBackdropFilter;
+
+            if (bgValue === 'gradient') {
+                // Build gradient from colors
+                const direction = editContent.querySelector('[data-custom="gradientDirection"]')?.value || 'to bottom';
+                const colors = [];
+                for (let i = 1; i <= 10; i++) {
+                    const colorInput = editContent.querySelector(`[data-custom="gradientColor${i}"]`);
+                    if (colorInput && colorInput.value) {
+                        colors.push(colorInput.value);
+                    }
                 }
-            }
-            if (colors.length >= 2) {
-                el.styles.background = `linear-gradient(${direction}, ${colors.join(', ')})`;
+                if (colors.length >= 2) {
+                    el.styles.background = `linear-gradient(${direction}, ${colors.join(', ')})`;
+                    delete el.styles.backgroundColor;
+                    delete el.styles.backgroundImage;
+                }
+            } else if (bgValue === 'photo') {
+                // Background image
+                const urlInput = editContent.querySelector('[data-custom="bgImageUrl"]');
+                const repeatInput = editContent.querySelector('[data-custom="bgRepeat"]');
+                if (urlInput && urlInput.value) {
+                    el.styles.backgroundImage = `url(${urlInput.value})`;
+                    el.styles.backgroundRepeat = repeatInput?.checked ? 'repeat' : 'no-repeat';
+                }
                 delete el.styles.backgroundColor;
+                delete el.styles.background;
+            } else if (bgValue === 'blur') {
+                // Backdrop blur
+                const blurAmount = editContent.querySelector('[data-custom="bgBlurAmount"]')?.value || 10;
+                const overlayColor = editContent.querySelector('[data-custom="bgBlurOverlay"]')?.value || 'rgba(255,255,255,0.3)';
+                el.styles.backdropFilter = `blur(${blurAmount}px)`;
+                el.styles.WebkitBackdropFilter = `blur(${blurAmount}px)`;
+                el.styles.backgroundColor = overlayColor;
+                delete el.styles.backgroundImage;
+                delete el.styles.background;
+            } else {
+                // Solid color - remove other background properties
+                delete el.styles.backgroundImage;
+                delete el.styles.background;
             }
         }
 
-        // Handle text color type (gradient or solid)
+        // Handle text color type (gradient, solid, or blur)
         if (group.dataset.custom === 'textColorType') {
-            if (activeBtn?.dataset.value === 'gradient') {
+            const textValue = activeBtn?.dataset.value;
+
+            if (textValue === 'gradient') {
                 // Build text gradient
                 const direction = editContent.querySelector('[data-custom="textGradientDirection"]')?.value || 'to right';
                 const colors = [];
@@ -1103,12 +1153,25 @@ function updateEditingElementFromForm() {
                     el.styles.WebkitTextFillColor = 'transparent';
                     el.styles.color = 'transparent';
                 }
-            } else {
-                // Solid color - remove gradient properties
+                delete el.styles.textShadow;
+            } else if (textValue === 'blur') {
+                // Text with blur/glow effect
+                const blurColor = editContent.querySelector('[data-custom="textBlurColor"]')?.value || '#000000';
+                const blurAmount = editContent.querySelector('[data-custom="textBlurAmount"]')?.value || 4;
+                el.styles.color = blurColor;
+                el.styles.textShadow = `0 0 ${blurAmount}px ${blurColor}`;
+                // Remove gradient properties
                 delete el.styles.backgroundImage;
                 delete el.styles.backgroundClip;
                 delete el.styles.WebkitBackgroundClip;
                 delete el.styles.WebkitTextFillColor;
+            } else {
+                // Solid color - remove gradient and blur properties
+                delete el.styles.backgroundImage;
+                delete el.styles.backgroundClip;
+                delete el.styles.WebkitBackgroundClip;
+                delete el.styles.WebkitTextFillColor;
+                delete el.styles.textShadow;
                 // Keep the color property as set by the color input
             }
         }
@@ -1247,10 +1310,39 @@ function setupEditHandlers() {
     if (bgTypeGroup) {
         bgTypeGroup.querySelectorAll('button').forEach(btn => {
             btn.addEventListener('click', () => {
-                const isGradient = btn.dataset.value === 'gradient';
-                editContent.querySelector('.bg-color-section').style.display = isGradient ? 'none' : '';
-                editContent.querySelector('.bg-gradient-section').style.display = isGradient ? '' : 'none';
+                const type = btn.dataset.value;
+                const colorSection = editContent.querySelector('.bg-color-section');
+                const photoSection = editContent.querySelector('.bg-photo-section');
+                const gradientSection = editContent.querySelector('.bg-gradient-section');
+                const blurSection = editContent.querySelector('.bg-blur-section');
+
+                if (colorSection) colorSection.style.display = type === 'color' ? '' : 'none';
+                if (photoSection) photoSection.style.display = type === 'photo' ? '' : 'none';
+                if (gradientSection) gradientSection.style.display = type === 'gradient' ? '' : 'none';
+                if (blurSection) blurSection.style.display = type === 'blur' ? '' : 'none';
             });
+        });
+    }
+
+    // Background image upload
+    const bgImageUpload = editContent.querySelector('#bgImageUpload');
+    if (bgImageUpload) {
+        bgImageUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const dataUrl = event.target.result;
+                    const urlInput = editContent.querySelector('[data-custom="bgImageUrl"]');
+                    if (urlInput) {
+                        urlInput.value = dataUrl;
+                    }
+                    state.editingElement.styles.backgroundImage = `url(${dataUrl})`;
+                    state.editingElement.styles.backgroundSize = state.editingElement.styles.backgroundSize || 'cover';
+                    state.editingElement.styles.backgroundPosition = state.editingElement.styles.backgroundPosition || 'center';
+                };
+                reader.readAsDataURL(file);
+            }
         });
     }
 
@@ -1281,11 +1373,14 @@ function setupEditHandlers() {
     if (textColorTypeGroup) {
         textColorTypeGroup.querySelectorAll('button').forEach(btn => {
             btn.addEventListener('click', () => {
-                const isGradient = btn.dataset.value === 'gradient';
+                const type = btn.dataset.value;
                 const colorSection = editContent.querySelector('.text-color-section');
                 const gradientSection = editContent.querySelector('.text-gradient-section');
-                if (colorSection) colorSection.style.display = isGradient ? 'none' : '';
-                if (gradientSection) gradientSection.style.display = isGradient ? '' : 'none';
+                const blurSection = editContent.querySelector('.text-blur-section');
+
+                if (colorSection) colorSection.style.display = type === 'color' ? '' : 'none';
+                if (gradientSection) gradientSection.style.display = type === 'gradient' ? '' : 'none';
+                if (blurSection) blurSection.style.display = type === 'blur' ? '' : 'none';
             });
         });
     }
@@ -2607,7 +2702,15 @@ function extractFooterPhone(content) {
 
 function renderStyleTab(el) {
     const s = el.styles || {};
-    const bgType = s.background?.includes('gradient') ? 'gradient' : 'color';
+    // Determine background type
+    let bgType = 'color';
+    if (s.background?.includes('gradient')) {
+        bgType = 'gradient';
+    } else if (s.backgroundImage?.startsWith('url')) {
+        bgType = 'photo';
+    } else if (s.backdropFilter?.includes('blur') || s.WebkitBackdropFilter?.includes('blur')) {
+        bgType = 'blur';
+    }
     const gradientColors = extractGradientColors(s.background);
 
     return `
@@ -2688,22 +2791,66 @@ function renderStyleTab(el) {
             <h4><i class="fas fa-fill-drip"></i> Фон</h4>
             <div class="edit-row">
                 <label>Тип фона</label>
-                <div class="edit-btn-group" data-custom="bgType">
+                <div class="edit-btn-group bg-type-group" data-custom="bgType">
                     <button type="button" class="${bgType === 'color' ? 'active' : ''}" data-value="color">
                         <i class="fas fa-palette"></i> Цвет
+                    </button>
+                    <button type="button" class="${bgType === 'photo' ? 'active' : ''}" data-value="photo">
+                        <i class="fas fa-image"></i> Фото
                     </button>
                     <button type="button" class="${bgType === 'gradient' ? 'active' : ''}" data-value="gradient">
                         <i class="fas fa-fill"></i> Градиент
                     </button>
+                    <button type="button" class="${bgType === 'blur' ? 'active' : ''}" data-value="blur">
+                        <i class="fas fa-tint"></i> Размытие
+                    </button>
                 </div>
             </div>
-            <div class="bg-color-section" ${bgType === 'gradient' ? 'style="display:none"' : ''}>
+            <div class="bg-color-section" ${bgType !== 'color' ? 'style="display:none"' : ''}>
                 <div class="edit-row">
                     <label>Цвет фона</label>
                     <div class="edit-color">
                         <input type="color" data-style="backgroundColor" value="${s.backgroundColor || '#ffffff'}">
                         <input type="text" class="edit-input" data-style="backgroundColor" value="${s.backgroundColor || ''}" placeholder="Прозрачный">
                     </div>
+                </div>
+            </div>
+            <div class="bg-photo-section" ${bgType !== 'photo' ? 'style="display:none"' : ''}>
+                <div class="edit-row">
+                    <label>Загрузить изображение</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="bgImageUpload" accept="image/*" class="file-input">
+                        <label for="bgImageUpload" class="btn file-upload-btn">
+                            <i class="fas fa-upload"></i> Выбрать файл
+                        </label>
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Или URL изображения</label>
+                    <input type="text" class="edit-input" data-custom="bgImageUrl" value="${s.backgroundImage?.match(/url\\(['\"]?([^'\"\\)]+)['\"]?\\)/)?.[1] || ''}" placeholder="https://...">
+                </div>
+                <div class="edit-row">
+                    <label>Размер фона</label>
+                    <select class="edit-select" data-style="backgroundSize">
+                        <option value="">Авто</option>
+                        <option value="cover" ${s.backgroundSize === 'cover' ? 'selected' : ''}>Заполнить (cover)</option>
+                        <option value="contain" ${s.backgroundSize === 'contain' ? 'selected' : ''}>Вместить (contain)</option>
+                    </select>
+                </div>
+                <div class="edit-row">
+                    <label>Позиция фона</label>
+                    <select class="edit-select" data-style="backgroundPosition">
+                        <option value="center" ${!s.backgroundPosition || s.backgroundPosition === 'center' ? 'selected' : ''}>По центру</option>
+                        <option value="top" ${s.backgroundPosition === 'top' ? 'selected' : ''}>Сверху</option>
+                        <option value="bottom" ${s.backgroundPosition === 'bottom' ? 'selected' : ''}>Снизу</option>
+                        <option value="left" ${s.backgroundPosition === 'left' ? 'selected' : ''}>Слева</option>
+                        <option value="right" ${s.backgroundPosition === 'right' ? 'selected' : ''}>Справа</option>
+                    </select>
+                </div>
+                <div class="edit-row">
+                    <label>
+                        <input type="checkbox" data-custom="bgRepeat" ${s.backgroundRepeat === 'repeat' ? 'checked' : ''}> Повторять изображение
+                    </label>
                 </div>
             </div>
             <div class="bg-gradient-section" ${bgType !== 'gradient' ? 'style="display:none"' : ''}>
@@ -2749,17 +2896,21 @@ function renderStyleTab(el) {
                     <i class="fas fa-plus"></i> Добавить цвет
                 </button>
             </div>
-            <div class="edit-row">
-                <label>Изображение фона (URL)</label>
-                <input type="text" class="edit-input" data-style="backgroundImage" value="${s.backgroundImage?.startsWith('url') ? s.backgroundImage : ''}" placeholder="url(https://...)">
-            </div>
-            <div class="edit-row">
-                <label>Размер фона</label>
-                <select class="edit-select" data-style="backgroundSize">
-                    <option value="">Авто</option>
-                    <option value="cover" ${s.backgroundSize === 'cover' ? 'selected' : ''}>Заполнить (cover)</option>
-                    <option value="contain" ${s.backgroundSize === 'contain' ? 'selected' : ''}>Вместить (contain)</option>
-                </select>
+            <div class="bg-blur-section" ${bgType !== 'blur' ? 'style="display:none"' : ''}>
+                <div class="edit-row">
+                    <label>Сила размытия</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="0" max="30" value="${parseInt(s.backdropFilter?.match(/\\d+/)?.[0]) || 10}" data-custom="bgBlurAmount">
+                        <span>${parseInt(s.backdropFilter?.match(/\\d+/)?.[0]) || 10}px</span>
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Затемнение/Осветление</label>
+                    <div class="edit-color">
+                        <input type="color" data-custom="bgBlurOverlay" value="${s.backgroundColor || 'rgba(255,255,255,0.3)'}">
+                        <input type="text" class="edit-input" data-custom="bgBlurOverlay" value="${s.backgroundColor || 'rgba(255,255,255,0.3)'}" placeholder="rgba(255,255,255,0.3)">
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -2804,7 +2955,8 @@ function renderTextColorSection(el) {
     const s = el.styles || {};
     // Check if text has gradient (uses backgroundClip: text trick)
     const hasTextGradient = s.backgroundClip === 'text' || s.WebkitBackgroundClip === 'text';
-    const textColorType = hasTextGradient ? 'gradient' : 'color';
+    const hasTextShadowBlur = s.textShadow?.includes('blur') || (s.textShadow && !s.textShadow.includes('px 0px'));
+    const textColorType = hasTextGradient ? 'gradient' : (hasTextShadowBlur ? 'blur' : 'color');
     const textGradientColors = hasTextGradient ? extractGradientColors(s.background || s.backgroundImage) : [];
 
     return `
@@ -2817,14 +2969,33 @@ function renderTextColorSection(el) {
                 <button type="button" class="${textColorType === 'gradient' ? 'active' : ''}" data-value="gradient">
                     <i class="fas fa-fill"></i> Градиент
                 </button>
+                <button type="button" class="${textColorType === 'blur' ? 'active' : ''}" data-value="blur">
+                    <i class="fas fa-tint"></i> Размытие
+                </button>
             </div>
         </div>
-        <div class="text-color-section" ${textColorType === 'gradient' ? 'style="display:none"' : ''}>
+        <div class="text-color-section" ${textColorType !== 'color' ? 'style="display:none"' : ''}>
             <div class="edit-row">
                 <label>Цвет текста</label>
                 <div class="edit-color">
                     <input type="color" data-style="color" value="${s.color || '#000000'}">
                     <input type="text" class="edit-input" data-style="color" value="${s.color || ''}" placeholder="#000000">
+                </div>
+            </div>
+        </div>
+        <div class="text-blur-section" ${textColorType !== 'blur' ? 'style="display:none"' : ''}>
+            <div class="edit-row">
+                <label>Цвет текста</label>
+                <div class="edit-color">
+                    <input type="color" data-custom="textBlurColor" value="${s.color || '#000000'}">
+                    <input type="text" class="edit-input" data-custom="textBlurColor" value="${s.color || '#000000'}">
+                </div>
+            </div>
+            <div class="edit-row">
+                <label>Сила размытия</label>
+                <div class="edit-range-row">
+                    <input type="range" min="0" max="20" value="${parseInt(s.textShadow?.match(/\\d+px/)?.[0]) || 4}" data-custom="textBlurAmount">
+                    <span>${parseInt(s.textShadow?.match(/\\d+px/)?.[0]) || 4}px</span>
                 </div>
             </div>
         </div>

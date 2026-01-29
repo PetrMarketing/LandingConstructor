@@ -1573,6 +1573,16 @@ body {
     color: white;
 }
 
+/* 4-button groups (like background type) */
+.edit-btn-group.bg-type-group button {
+    padding: 6px 8px;
+    font-size: 12px;
+}
+
+.edit-btn-group.bg-type-group button i {
+    margin-right: 4px;
+}
+
 /* ===== Edit Range Row ===== */
 .edit-range-row {
     display: flex;
