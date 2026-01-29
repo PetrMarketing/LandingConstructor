@@ -73,7 +73,7 @@ const blockTemplates = {
         icon: 'fa-square',
         content: '',
         isContainer: true,
-        defaultStyles: { padding: '60px 20px', minHeight: '200px' }
+        defaultStyles: { display: 'flex', flexDirection: 'column', padding: '60px 20px', minHeight: '200px' }
     },
     container: {
         tag: 'div',
@@ -81,7 +81,7 @@ const blockTemplates = {
         icon: 'fa-box',
         content: '',
         isContainer: true,
-        defaultStyles: { maxWidth: '1200px', margin: '0 auto', padding: '20px' }
+        defaultStyles: { display: 'flex', flexDirection: 'column', maxWidth: '1200px', margin: '0 auto', padding: '20px' }
     },
     row: {
         tag: 'div',
@@ -89,7 +89,7 @@ const blockTemplates = {
         icon: 'fa-columns',
         content: '',
         isContainer: true,
-        defaultStyles: { display: 'flex', flexWrap: 'wrap', gap: '20px' }
+        defaultStyles: { display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '20px' }
     },
     column: {
         tag: 'div',
@@ -97,7 +97,7 @@ const blockTemplates = {
         icon: 'fa-grip-lines-vertical',
         content: '',
         isContainer: true,
-        defaultStyles: { flex: '1', minWidth: '250px', padding: '10px' }
+        defaultStyles: { display: 'flex', flexDirection: 'column', flex: '1', minWidth: '250px', padding: '10px' }
     },
 
     // Basic
