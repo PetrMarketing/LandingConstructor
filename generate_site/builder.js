@@ -2417,6 +2417,60 @@ function renderStyleTab(el) {
         </div>
 
         <div class="edit-section">
+            <h4><i class="fas fa-text-height"></i> Типографика</h4>
+            <div class="edit-row">
+                <label>Размер шрифта</label>
+                <div class="edit-range-row">
+                    <input type="range" min="10" max="72" value="${parseInt(s.fontSize) || 16}" data-style="fontSize" data-unit="px">
+                    <span>${parseInt(s.fontSize) || 16}px</span>
+                </div>
+            </div>
+            <div class="edit-row">
+                <label>Толщина шрифта</label>
+                <select class="edit-select" data-style="fontWeight">
+                    <option value="" ${!s.fontWeight ? 'selected' : ''}>Обычный</option>
+                    <option value="300" ${s.fontWeight === '300' ? 'selected' : ''}>Тонкий (300)</option>
+                    <option value="500" ${s.fontWeight === '500' ? 'selected' : ''}>Средний (500)</option>
+                    <option value="600" ${s.fontWeight === '600' ? 'selected' : ''}>Полужирный (600)</option>
+                    <option value="bold" ${s.fontWeight === 'bold' || s.fontWeight === '700' ? 'selected' : ''}>Жирный (700)</option>
+                    <option value="800" ${s.fontWeight === '800' ? 'selected' : ''}>Очень жирный (800)</option>
+                </select>
+            </div>
+            <div class="edit-row">
+                <label>Выравнивание текста</label>
+                <div class="edit-btn-group" data-style="textAlign">
+                    <button type="button" class="${s.textAlign === 'left' || !s.textAlign ? 'active' : ''}" data-value="left"><i class="fas fa-align-left"></i></button>
+                    <button type="button" class="${s.textAlign === 'center' ? 'active' : ''}" data-value="center"><i class="fas fa-align-center"></i></button>
+                    <button type="button" class="${s.textAlign === 'right' ? 'active' : ''}" data-value="right"><i class="fas fa-align-right"></i></button>
+                    <button type="button" class="${s.textAlign === 'justify' ? 'active' : ''}" data-value="justify"><i class="fas fa-align-justify"></i></button>
+                </div>
+            </div>
+            <div class="edit-row">
+                <label>Межстрочный интервал</label>
+                <div class="edit-range-row">
+                    <input type="range" min="1" max="3" step="0.1" value="${parseFloat(s.lineHeight) || 1.5}" data-style="lineHeight">
+                    <span>${parseFloat(s.lineHeight) || 1.5}</span>
+                </div>
+            </div>
+            <div class="edit-row">
+                <label>Стиль текста</label>
+                <div class="edit-btn-group-multi">
+                    <button type="button" class="${s.fontStyle === 'italic' ? 'active' : ''}" data-style="fontStyle" data-value="italic" title="Курсив"><i class="fas fa-italic"></i></button>
+                    <button type="button" class="${s.textDecoration === 'underline' ? 'active' : ''}" data-style="textDecoration" data-value="underline" title="Подчёркнутый"><i class="fas fa-underline"></i></button>
+                    <button type="button" class="${s.textDecoration === 'line-through' ? 'active' : ''}" data-style="textDecoration" data-value="line-through" title="Зачёркнутый"><i class="fas fa-strikethrough"></i></button>
+                    <button type="button" class="${s.textTransform === 'uppercase' ? 'active' : ''}" data-style="textTransform" data-value="uppercase" title="ЗАГЛАВНЫЕ"><i class="fas fa-font"></i> AA</button>
+                </div>
+            </div>
+            <div class="edit-row">
+                <label>Межбуквенный интервал</label>
+                <div class="edit-range-row">
+                    <input type="range" min="-2" max="10" step="0.5" value="${parseFloat(s.letterSpacing) || 0}" data-style="letterSpacing" data-unit="px">
+                    <span>${parseFloat(s.letterSpacing) || 0}px</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="edit-section">
             <h4><i class="fas fa-fill-drip"></i> Фон</h4>
             <div class="edit-row">
                 <label>Тип фона</label>
@@ -3011,14 +3065,54 @@ document.getElementById('deleteBlockBtn').addEventListener('click', () => {
 });
 
 // ===== Export =====
+function generateElementHTML(el) {
+    let styles = { ...el.styles };
+    let attrs = { ...el.attrs };
+    let wrapperStart = '';
+    let wrapperEnd = '';
+
+    // Animation styles
+    const anim = el.animation || {};
+    if (anim.type) {
+        styles.animation = `${anim.type} ${anim.duration || 0.5}s ease ${anim.delay || 0}s both`;
+    }
+    if (anim.hover) {
+        attrs['data-hover'] = anim.hover;
+    }
+
+    // Action handling
+    const action = el.action || {};
+    if (action.type === 'link' && action.url) {
+        wrapperStart = `<a href="${action.url}" target="${action.target || '_self'}" style="text-decoration:none;color:inherit;display:contents;">`;
+        wrapperEnd = '</a>';
+    } else if (action.type === 'phone' && action.phone) {
+        wrapperStart = `<a href="tel:${action.phone.replace(/[^+\d]/g, '')}" style="text-decoration:none;color:inherit;display:contents;">`;
+        wrapperEnd = '</a>';
+    } else if (action.type === 'email' && action.email) {
+        const subject = action.emailSubject ? `?subject=${encodeURIComponent(action.emailSubject)}` : '';
+        wrapperStart = `<a href="mailto:${action.email}${subject}" style="text-decoration:none;color:inherit;display:contents;">`;
+        wrapperEnd = '</a>';
+    } else if (action.type === 'scroll' && action.scrollTo) {
+        attrs['onclick'] = `document.querySelector('${action.scrollTo}')?.scrollIntoView({behavior:'smooth'})`;
+        styles.cursor = 'pointer';
+    } else if (action.type === 'copy' && action.copyText) {
+        attrs['onclick'] = `navigator.clipboard.writeText('${action.copyText.replace(/'/g, "\\'")}');alert('Скопировано!')`;
+        styles.cursor = 'pointer';
+    } else if (action.type === 'modal') {
+        attrs['onclick'] = `alert('Модальное окно')`;
+        styles.cursor = 'pointer';
+    }
+
+    const styleStr = stylesToString(styles);
+    const attrsStr = Object.entries(attrs).map(([k, v]) => `${k}="${v}"`).join(' ');
+    const childrenHtml = el.children?.length ? generateHTML(el.children) : '';
+    const content = el.content + childrenHtml;
+
+    return `${wrapperStart}<${el.tag}${attrsStr ? ' ' + attrsStr : ''} style="${styleStr}">${content}</${el.tag}>${wrapperEnd}`;
+}
+
 function generateHTML(elements = state.elements) {
-    return elements.map(el => {
-        const styles = stylesToString(el.styles);
-        const attrs = Object.entries(el.attrs || {}).map(([k, v]) => `${k}="${v}"`).join(' ');
-        const childrenHtml = el.children?.length ? generateHTML(el.children) : '';
-        const content = el.content + childrenHtml;
-        return `<${el.tag}${attrs ? ' ' + attrs : ''} style="${styles}">${content}</${el.tag}>`;
-    }).join('\n');
+    return elements.map(el => generateElementHTML(el)).join('\n');
 }
 
 function generateFullHTML() {
@@ -3033,6 +3127,24 @@ function generateFullHTML() {
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
         img { max-width: 100%; height: auto; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-20px); } 60% { transform: translateY(-10px); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); } 20%, 40%, 60%, 80% { transform: translateX(5px); } }
+
+        /* Hover effects */
+        [data-hover="scale"]:hover { transform: scale(1.05); transition: transform 0.3s; }
+        [data-hover="lift"]:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; }
+        [data-hover="glow"]:hover { box-shadow: 0 0 20px currentColor; transition: box-shadow 0.3s; }
+        [data-hover="rotate"]:hover { transform: rotate(5deg); transition: transform 0.3s; }
+        [data-hover="shake"]:hover { animation: shake 0.5s; }
     </style>
 </head>
 <body>
