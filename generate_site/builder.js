@@ -126,7 +126,7 @@ const blockTemplates = {
         icon: 'fa-image',
         content: '',
         attrs: { src: 'https://via.placeholder.com/800x400', alt: 'Изображение' },
-        defaultStyles: { maxWidth: '100%', height: 'auto', borderRadius: '8px', marginBottom: '20px' }
+        defaultStyles: { maxWidth: '100%', width: '100%', height: 'auto', borderRadius: '8px', marginBottom: '20px', boxSizing: 'border-box' }
     },
     button: {
         tag: 'a',
@@ -658,26 +658,37 @@ function renderElement(element, depth = 0) {
         const gap = element.styles?.gap || '20px';
         const childCount = element.children?.length || 0;
 
+        // Check if all children are containers (no gap between containers)
+        const allChildrenAreContainers = element.children?.every(c => c.isContainer) || false;
+        const effectiveGap = allChildrenAreContainers ? '0px' : gap;
+
         // Apply flex properties to children container
         childContainer.style.display = 'flex';
         childContainer.style.flexDirection = element.styles?.flexDirection || 'column';
         childContainer.style.flexWrap = element.styles?.flexWrap || 'wrap';
-        childContainer.style.gap = gap;
+        childContainer.style.gap = effectiveGap;
         childContainer.style.justifyContent = element.styles?.justifyContent || 'flex-start';
         childContainer.style.alignItems = element.styles?.alignItems || 'stretch';
         childContainer.style.flex = '1';
         childContainer.style.minHeight = '50px';
+        childContainer.style.width = '100%';
 
         if (element.children?.length) {
             element.children.forEach(child => {
                 const childEl = renderElement(child, depth + 1);
 
-                // Auto-calculate width for horizontal layout
-                if (isHorizontal && childCount > 0) {
-                    const gapValue = parseInt(gap) || 20;
+                // Auto-calculate width for horizontal layout (only for non-container children)
+                if (isHorizontal && childCount > 0 && !child.isContainer) {
+                    const gapValue = parseInt(effectiveGap) || 0;
                     const totalGap = gapValue * (childCount - 1);
                     childEl.style.flex = `1 1 calc((100% - ${totalGap}px) / ${childCount})`;
                     childEl.style.maxWidth = `calc((100% - ${totalGap}px) / ${childCount})`;
+                    childEl.style.boxSizing = 'border-box';
+                }
+
+                // Container children take full width of parent
+                if (child.isContainer) {
+                    childEl.style.width = '100%';
                     childEl.style.boxSizing = 'border-box';
                 }
 
@@ -1299,6 +1310,12 @@ function setupEditHandlers() {
                     }
                     state.editingElement.attrs = state.editingElement.attrs || {};
                     state.editingElement.attrs.src = dataUrl;
+                    // Ensure image fits within container
+                    state.editingElement.styles = state.editingElement.styles || {};
+                    state.editingElement.styles.maxWidth = '100%';
+                    state.editingElement.styles.width = '100%';
+                    state.editingElement.styles.height = 'auto';
+                    state.editingElement.styles.boxSizing = 'border-box';
                 };
                 reader.readAsDataURL(file);
             }
@@ -1454,31 +1471,6 @@ function renderContentTab(el) {
                     </select>
                 </div>
             </div>
-            <div class="edit-section">
-                <h4><i class="fas fa-palette"></i> Оформление текста</h4>
-                <div class="edit-row">
-                    <label>Размер шрифта</label>
-                    <div class="edit-range-row">
-                        <input type="range" min="12" max="72" value="${parseInt(s.fontSize) || 32}" data-style="fontSize" data-unit="px">
-                        <span>${parseInt(s.fontSize) || 32}px</span>
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Цвет текста</label>
-                    <div class="edit-color">
-                        <input type="color" value="${s.color || '#1e293b'}" data-style="color">
-                        <input type="text" class="edit-input" value="${s.color || '#1e293b'}" data-style="color">
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Выравнивание</label>
-                    <div class="edit-btn-group" data-style="textAlign">
-                        <button type="button" class="${s.textAlign === 'left' || !s.textAlign ? 'active' : ''}" data-value="left"><i class="fas fa-align-left"></i></button>
-                        <button type="button" class="${s.textAlign === 'center' ? 'active' : ''}" data-value="center"><i class="fas fa-align-center"></i></button>
-                        <button type="button" class="${s.textAlign === 'right' ? 'active' : ''}" data-value="right"><i class="fas fa-align-right"></i></button>
-                    </div>
-                </div>
-            </div>
         `,
 
         text: () => `
@@ -1487,47 +1479,6 @@ function renderContentTab(el) {
                 <div class="edit-row">
                     <label>Содержимое</label>
                     <textarea class="edit-textarea" data-prop="content" rows="5">${escapeHtml(el.content)}</textarea>
-                </div>
-            </div>
-            <div class="edit-section">
-                <h4><i class="fas fa-palette"></i> Оформление</h4>
-                <div class="edit-row">
-                    <label>Размер шрифта</label>
-                    <div class="edit-range-row">
-                        <input type="range" min="12" max="32" value="${parseInt(s.fontSize) || 16}" data-style="fontSize" data-unit="px">
-                        <span>${parseInt(s.fontSize) || 16}px</span>
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Цвет текста</label>
-                    <div class="edit-color">
-                        <input type="color" value="${s.color || '#475569'}" data-style="color">
-                        <input type="text" class="edit-input" value="${s.color || '#475569'}" data-style="color">
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Стиль текста</label>
-                    <div class="edit-btn-group-multi">
-                        <button type="button" class="${s.fontWeight === 'bold' ? 'active' : ''}" data-style="fontWeight" data-value="bold" title="Жирный"><i class="fas fa-bold"></i></button>
-                        <button type="button" class="${s.fontStyle === 'italic' ? 'active' : ''}" data-style="fontStyle" data-value="italic" title="Курсив"><i class="fas fa-italic"></i></button>
-                        <button type="button" class="${s.textDecoration === 'underline' ? 'active' : ''}" data-style="textDecoration" data-value="underline" title="Подчёркнутый"><i class="fas fa-underline"></i></button>
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Выравнивание</label>
-                    <div class="edit-btn-group" data-style="textAlign">
-                        <button type="button" class="${s.textAlign === 'left' || !s.textAlign ? 'active' : ''}" data-value="left"><i class="fas fa-align-left"></i></button>
-                        <button type="button" class="${s.textAlign === 'center' ? 'active' : ''}" data-value="center"><i class="fas fa-align-center"></i></button>
-                        <button type="button" class="${s.textAlign === 'right' ? 'active' : ''}" data-value="right"><i class="fas fa-align-right"></i></button>
-                        <button type="button" class="${s.textAlign === 'justify' ? 'active' : ''}" data-value="justify"><i class="fas fa-align-justify"></i></button>
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Межстрочный интервал</label>
-                    <div class="edit-range-row">
-                        <input type="range" min="1" max="3" step="0.1" value="${parseFloat(s.lineHeight) || 1.6}" data-style="lineHeight">
-                        <span>${parseFloat(s.lineHeight) || 1.6}</span>
-                    </div>
                 </div>
             </div>
         `,
@@ -1554,26 +1505,6 @@ function renderContentTab(el) {
                     <input type="text" class="edit-input" data-attr="alt" value="${el.attrs?.alt || ''}" placeholder="Описание изображения">
                 </div>
             </div>
-            <div class="edit-section">
-                <h4><i class="fas fa-expand"></i> Размер</h4>
-                <div class="edit-grid">
-                    <div class="edit-row">
-                        <label>Ширина</label>
-                        <input type="text" class="edit-input" data-style="width" value="${s.width || ''}" placeholder="100% или 400px">
-                    </div>
-                    <div class="edit-row">
-                        <label>Макс. ширина</label>
-                        <input type="text" class="edit-input" data-style="maxWidth" value="${s.maxWidth || '100%'}" placeholder="100%">
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Скругление углов</label>
-                    <div class="edit-range-row">
-                        <input type="range" min="0" max="50" value="${parseInt(s.borderRadius) || 8}" data-style="borderRadius" data-unit="px">
-                        <span>${parseInt(s.borderRadius) || 8}px</span>
-                    </div>
-                </div>
-            </div>
         `,
 
         // ===== КНОПКА =====
@@ -1594,41 +1525,6 @@ function renderContentTab(el) {
                         <option value="">Текущем окне</option>
                         <option value="_blank" ${el.attrs?.target === '_blank' ? 'selected' : ''}>Новом окне</option>
                     </select>
-                </div>
-            </div>
-            <div class="edit-section">
-                <h4><i class="fas fa-palette"></i> Оформление</h4>
-                <div class="edit-row">
-                    <label>Цвет кнопки</label>
-                    <div class="edit-color">
-                        <input type="color" value="${s.backgroundColor || '#3b82f6'}" data-style="backgroundColor">
-                        <input type="text" class="edit-input" value="${s.backgroundColor || '#3b82f6'}" data-style="backgroundColor">
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Цвет текста</label>
-                    <div class="edit-color">
-                        <input type="color" value="${s.color || '#ffffff'}" data-style="color">
-                        <input type="text" class="edit-input" value="${s.color || '#ffffff'}" data-style="color">
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Размер текста</label>
-                    <div class="edit-range-row">
-                        <input type="range" min="12" max="24" value="${parseInt(s.fontSize) || 16}" data-style="fontSize" data-unit="px">
-                        <span>${parseInt(s.fontSize) || 16}px</span>
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Скругление</label>
-                    <div class="edit-range-row">
-                        <input type="range" min="0" max="30" value="${parseInt(s.borderRadius) || 8}" data-style="borderRadius" data-unit="px">
-                        <span>${parseInt(s.borderRadius) || 8}px</span>
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Внутренний отступ</label>
-                    <input type="text" class="edit-input" data-style="padding" value="${s.padding || '12px 24px'}" placeholder="12px 24px">
                 </div>
             </div>
         `,
@@ -1653,23 +1549,6 @@ function renderContentTab(el) {
                     </select>
                 </div>
             </div>
-            <div class="edit-section">
-                <h4><i class="fas fa-palette"></i> Оформление</h4>
-                <div class="edit-row">
-                    <label>Цвет ссылки</label>
-                    <div class="edit-color">
-                        <input type="color" value="${s.color || '#3b82f6'}" data-style="color">
-                        <input type="text" class="edit-input" value="${s.color || '#3b82f6'}" data-style="color">
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Подчёркивание</label>
-                    <select class="edit-select" data-style="textDecoration">
-                        <option value="underline" ${s.textDecoration !== 'none' ? 'selected' : ''}>С подчёркиванием</option>
-                        <option value="none" ${s.textDecoration === 'none' ? 'selected' : ''}>Без подчёркивания</option>
-                    </select>
-                </div>
-            </div>
         `,
 
         // ===== СПИСОК =====
@@ -1688,43 +1567,12 @@ function renderContentTab(el) {
                     </select>
                 </div>
             </div>
-            <div class="edit-section">
-                <h4><i class="fas fa-palette"></i> Оформление</h4>
-                <div class="edit-row">
-                    <label>Цвет текста</label>
-                    <div class="edit-color">
-                        <input type="color" value="${s.color || '#475569'}" data-style="color">
-                        <input type="text" class="edit-input" value="${s.color || '#475569'}" data-style="color">
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Размер шрифта</label>
-                    <div class="edit-range-row">
-                        <input type="range" min="12" max="24" value="${parseInt(s.fontSize) || 16}" data-style="fontSize" data-unit="px">
-                        <span>${parseInt(s.fontSize) || 16}px</span>
-                    </div>
-                </div>
-            </div>
         `,
 
         // ===== РАЗДЕЛИТЕЛЬ =====
         divider: () => `
             <div class="edit-section">
                 <h4><i class="fas fa-minus"></i> Разделитель</h4>
-                <div class="edit-row">
-                    <label>Толщина линии</label>
-                    <div class="edit-range-row">
-                        <input type="range" min="1" max="10" value="${parseInt(s.borderTopWidth) || 1}" data-style="borderTopWidth" data-unit="px">
-                        <span>${parseInt(s.borderTopWidth) || 1}px</span>
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Цвет</label>
-                    <div class="edit-color">
-                        <input type="color" value="${s.borderTopColor || '#e2e8f0'}" data-style="borderTopColor">
-                        <input type="text" class="edit-input" value="${s.borderTopColor || '#e2e8f0'}" data-style="borderTopColor">
-                    </div>
-                </div>
                 <div class="edit-row">
                     <label>Стиль линии</label>
                     <select class="edit-select" data-style="borderTopStyle">
@@ -1733,10 +1581,6 @@ function renderContentTab(el) {
                         <option value="dotted" ${s.borderTopStyle === 'dotted' ? 'selected' : ''}>Точечная</option>
                     </select>
                 </div>
-                <div class="edit-row">
-                    <label>Ширина</label>
-                    <input type="text" class="edit-input" data-style="width" value="${s.width || '100%'}" placeholder="100% или 200px">
-                </div>
             </div>
         `,
 
@@ -1744,13 +1588,7 @@ function renderContentTab(el) {
         spacer: () => `
             <div class="edit-section">
                 <h4><i class="fas fa-arrows-alt-v"></i> Отступ</h4>
-                <div class="edit-row">
-                    <label>Высота отступа</label>
-                    <div class="edit-range-row">
-                        <input type="range" min="10" max="200" value="${parseInt(s.height) || 40}" data-style="height" data-unit="px">
-                        <span>${parseInt(s.height) || 40}px</span>
-                    </div>
-                </div>
+                <p class="edit-hint">Настройте высоту во вкладке "Стиль"</p>
             </div>
         `,
 
@@ -1775,20 +1613,6 @@ function renderContentTab(el) {
                     <input type="text" class="edit-input" data-attr="class" value="${el.attrs?.class || 'fas fa-star'}">
                 </div>
                 <p class="edit-hint">Примеры: fas fa-star, fas fa-heart, fas fa-check, fab fa-telegram</p>
-                <div class="edit-row">
-                    <label>Размер</label>
-                    <div class="edit-range-row">
-                        <input type="range" min="16" max="120" value="${parseInt(s.fontSize) || 48}" data-style="fontSize" data-unit="px">
-                        <span>${parseInt(s.fontSize) || 48}px</span>
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Цвет</label>
-                    <div class="edit-color">
-                        <input type="color" value="${s.color || '#3b82f6'}" data-style="color">
-                        <input type="text" class="edit-input" value="${s.color || '#3b82f6'}" data-style="color">
-                    </div>
-                </div>
             </div>
         `,
 
@@ -1798,63 +1622,13 @@ function renderContentTab(el) {
         row: () => `
             <div class="edit-section">
                 <h4><i class="fas fa-columns"></i> Строка</h4>
-                <p class="edit-hint">Перетащите сюда колонки или другие элементы</p>
-                <div class="edit-row">
-                    <label>Расстояние между элементами</label>
-                    <div class="edit-range-row">
-                        <input type="range" min="0" max="60" value="${parseInt(s.gap) || 20}" data-style="gap" data-unit="px">
-                        <span>${parseInt(s.gap) || 20}px</span>
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Выравнивание по горизонтали</label>
-                    <select class="edit-select" data-style="justifyContent">
-                        <option value="flex-start" ${s.justifyContent === 'flex-start' ? 'selected' : ''}>В начале</option>
-                        <option value="center" ${s.justifyContent === 'center' ? 'selected' : ''}>По центру</option>
-                        <option value="flex-end" ${s.justifyContent === 'flex-end' ? 'selected' : ''}>В конце</option>
-                        <option value="space-between" ${s.justifyContent === 'space-between' ? 'selected' : ''}>Равномерно</option>
-                    </select>
-                </div>
-                <div class="edit-row">
-                    <label>Выравнивание по вертикали</label>
-                    <select class="edit-select" data-style="alignItems">
-                        <option value="stretch" ${!s.alignItems || s.alignItems === 'stretch' ? 'selected' : ''}>Растянуть</option>
-                        <option value="flex-start" ${s.alignItems === 'flex-start' ? 'selected' : ''}>Сверху</option>
-                        <option value="center" ${s.alignItems === 'center' ? 'selected' : ''}>По центру</option>
-                        <option value="flex-end" ${s.alignItems === 'flex-end' ? 'selected' : ''}>Снизу</option>
-                    </select>
-                </div>
+                <p class="edit-hint">Перетащите сюда колонки или другие элементы. Настройки расположения во вкладке "Стиль".</p>
             </div>
         `,
         column: () => `
             <div class="edit-section">
                 <h4><i class="fas fa-grip-lines-vertical"></i> Колонка</h4>
-                <p class="edit-hint">Перетащите сюда текст, изображения и другие элементы</p>
-                <div class="edit-row">
-                    <label>Ширина колонки</label>
-                    <select class="edit-select" data-style="flex">
-                        <option value="1" ${s.flex === '1' || !s.flex ? 'selected' : ''}>Авто (равная)</option>
-                        <option value="0 0 25%" ${s.flex === '0 0 25%' ? 'selected' : ''}>25%</option>
-                        <option value="0 0 33.33%" ${s.flex === '0 0 33.33%' ? 'selected' : ''}>33%</option>
-                        <option value="0 0 50%" ${s.flex === '0 0 50%' ? 'selected' : ''}>50%</option>
-                        <option value="0 0 66.66%" ${s.flex === '0 0 66.66%' ? 'selected' : ''}>66%</option>
-                        <option value="0 0 75%" ${s.flex === '0 0 75%' ? 'selected' : ''}>75%</option>
-                    </select>
-                </div>
-                <div class="edit-row">
-                    <label>Внутренний отступ</label>
-                    <input type="text" class="edit-input" data-style="padding" value="${s.padding || '10px'}" placeholder="10px">
-                </div>
-            </div>
-            <div class="edit-section">
-                <h4><i class="fas fa-fill-drip"></i> Фон</h4>
-                <div class="edit-row">
-                    <label>Цвет фона</label>
-                    <div class="edit-color">
-                        <input type="color" value="${s.backgroundColor || '#ffffff'}" data-style="backgroundColor">
-                        <input type="text" class="edit-input" value="${s.backgroundColor || ''}" data-style="backgroundColor" placeholder="Прозрачный">
-                    </div>
-                </div>
+                <p class="edit-hint">Перетащите сюда текст, изображения и другие элементы. Настройки размера во вкладке "Стиль".</p>
             </div>
         `,
 
@@ -1866,9 +1640,6 @@ function renderContentTab(el) {
                     <label>Изображения (URL, каждое с новой строки)</label>
                     <textarea class="edit-textarea" data-custom="galleryImages" rows="5">${extractGalleryImages(el.content)}</textarea>
                 </div>
-            </div>
-            <div class="edit-section">
-                <h4><i class="fas fa-th"></i> Сетка</h4>
                 <div class="edit-row">
                     <label>Колонок в ряду</label>
                     <select class="edit-select" data-style="gridTemplateColumns">
@@ -1876,13 +1647,6 @@ function renderContentTab(el) {
                         <option value="repeat(3, 1fr)" ${s.gridTemplateColumns?.includes('3') ? 'selected' : ''}>3 колонки</option>
                         <option value="repeat(4, 1fr)" ${s.gridTemplateColumns?.includes('4') ? 'selected' : ''}>4 колонки</option>
                     </select>
-                </div>
-                <div class="edit-row">
-                    <label>Отступ между фото</label>
-                    <div class="edit-range-row">
-                        <input type="range" min="0" max="30" value="${parseInt(s.gap) || 10}" data-style="gap" data-unit="px">
-                        <span>${parseInt(s.gap) || 10}px</span>
-                    </div>
                 </div>
             </div>
         `,
@@ -1925,19 +1689,12 @@ function renderContentTab(el) {
                         <label for="fieldMessage">Сообщение</label>
                     </div>
                 </div>
-            </div>
-            <div class="edit-section">
-                <h4><i class="fas fa-palette"></i> Оформление</h4>
                 <div class="edit-row">
                     <label>Цвет кнопки</label>
                     <div class="edit-color">
                         <input type="color" value="#3b82f6" data-custom="formButtonColor">
                         <input type="text" class="edit-input" value="#3b82f6" data-custom="formButtonColor">
                     </div>
-                </div>
-                <div class="edit-row">
-                    <label>Максимальная ширина</label>
-                    <input type="text" class="edit-input" data-style="maxWidth" value="${s.maxWidth || '400px'}" placeholder="400px">
                 </div>
             </div>
         `,
@@ -2027,23 +1784,6 @@ function renderContentTab(el) {
                     </div>
                 </div>
             </div>
-            <div class="edit-section">
-                <h4><i class="fas fa-palette"></i> Оформление</h4>
-                <div class="edit-row">
-                    <label>Размер цифр</label>
-                    <div class="edit-range-row">
-                        <input type="range" min="24" max="72" value="48" data-custom="timerFontSize">
-                        <span>48px</span>
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Цвет цифр</label>
-                    <div class="edit-color">
-                        <input type="color" value="#1e293b" data-custom="timerColor">
-                        <input type="text" class="edit-input" value="#1e293b">
-                    </div>
-                </div>
-            </div>
         `,
 
         // ===== КОМПОНЕНТЫ =====
@@ -2059,23 +1799,6 @@ function renderContentTab(el) {
                     <textarea class="edit-textarea" data-custom="navItems" rows="4">${extractNavItems(el.content)}</textarea>
                 </div>
                 <p class="edit-hint">Формат: Название или Название|ссылка</p>
-            </div>
-            <div class="edit-section">
-                <h4><i class="fas fa-palette"></i> Оформление</h4>
-                <div class="edit-row">
-                    <label>Цвет фона</label>
-                    <div class="edit-color">
-                        <input type="color" value="${s.backgroundColor || '#ffffff'}" data-style="backgroundColor">
-                        <input type="text" class="edit-input" value="${s.backgroundColor || '#ffffff'}" data-style="backgroundColor">
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Цвет текста</label>
-                    <div class="edit-color">
-                        <input type="color" value="#475569" data-custom="navTextColor">
-                        <input type="text" class="edit-input" value="#475569">
-                    </div>
-                </div>
             </div>
         `,
 
@@ -2098,26 +1821,12 @@ function renderContentTab(el) {
                     <label>Ссылка кнопки</label>
                     <input type="text" class="edit-input" data-custom="heroButtonLink" value="#" placeholder="https://...">
                 </div>
-            </div>
-            <div class="edit-section">
-                <h4><i class="fas fa-palette"></i> Оформление</h4>
-                <div class="edit-row">
-                    <label>Цвет фона</label>
-                    <div class="edit-color">
-                        <input type="color" value="${s.backgroundColor || '#f8fafc'}" data-style="backgroundColor">
-                        <input type="text" class="edit-input" value="${s.backgroundColor || '#f8fafc'}" data-style="backgroundColor">
-                    </div>
-                </div>
                 <div class="edit-row">
                     <label>Цвет кнопки</label>
                     <div class="edit-color">
                         <input type="color" value="#3b82f6" data-custom="heroButtonColor">
                         <input type="text" class="edit-input" value="#3b82f6">
                     </div>
-                </div>
-                <div class="edit-row">
-                    <label>Внутренний отступ</label>
-                    <input type="text" class="edit-input" data-style="padding" value="${s.padding || '100px 20px'}">
                 </div>
             </div>
         `,
@@ -2174,20 +1883,6 @@ function renderContentTab(el) {
                     <input type="text" class="edit-input" data-custom="cardLink" value="#" placeholder="https://...">
                 </div>
             </div>
-            <div class="edit-section">
-                <h4><i class="fas fa-palette"></i> Оформление</h4>
-                <div class="edit-row">
-                    <label>Скругление</label>
-                    <div class="edit-range-row">
-                        <input type="range" min="0" max="24" value="${parseInt(s.borderRadius) || 8}" data-style="borderRadius" data-unit="px">
-                        <span>${parseInt(s.borderRadius) || 8}px</span>
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Максимальная ширина</label>
-                    <input type="text" class="edit-input" data-style="maxWidth" value="${s.maxWidth || '350px'}">
-                </div>
-            </div>
         `,
 
         testimonial: () => `
@@ -2237,9 +1932,6 @@ function renderContentTab(el) {
                     <label>Текст кнопки</label>
                     <input type="text" class="edit-input" data-custom="pricingButton" value="Выбрать">
                 </div>
-            </div>
-            <div class="edit-section">
-                <h4><i class="fas fa-palette"></i> Оформление</h4>
                 <div class="edit-row">
                     <label>Цвет кнопки</label>
                     <div class="edit-color">
@@ -2266,23 +1958,6 @@ function renderContentTab(el) {
                 </div>
                 <p class="edit-hint">Формат: Число, затем Подпись. Разделяйте пары пустой строкой.</p>
             </div>
-            <div class="edit-section">
-                <h4><i class="fas fa-palette"></i> Оформление</h4>
-                <div class="edit-row">
-                    <label>Цвет чисел</label>
-                    <div class="edit-color">
-                        <input type="color" value="#3b82f6" data-custom="counterColor">
-                        <input type="text" class="edit-input" value="#3b82f6">
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Размер чисел</label>
-                    <div class="edit-range-row">
-                        <input type="range" min="24" max="72" value="48" data-custom="counterFontSize">
-                        <span>48px</span>
-                    </div>
-                </div>
-            </div>
         `,
 
         progress: () => `
@@ -2300,9 +1975,6 @@ React
 60">${extractProgressItems(el.content)}</textarea>
                 </div>
                 <p class="edit-hint">Формат: Название, затем процент (0-100). Разделяйте пары пустой строкой.</p>
-            </div>
-            <div class="edit-section">
-                <h4><i class="fas fa-palette"></i> Оформление</h4>
                 <div class="edit-row">
                     <label>Цвет заполнения</label>
                     <div class="edit-color">
@@ -2396,23 +2068,6 @@ React
                     <input type="text" class="edit-input" data-custom="footerPhone" value="${extractFooterPhone(el.content)}">
                 </div>
             </div>
-            <div class="edit-section">
-                <h4><i class="fas fa-palette"></i> Оформление</h4>
-                <div class="edit-row">
-                    <label>Цвет фона</label>
-                    <div class="edit-color">
-                        <input type="color" value="${s.backgroundColor || '#1e293b'}" data-style="backgroundColor">
-                        <input type="text" class="edit-input" value="${s.backgroundColor || '#1e293b'}" data-style="backgroundColor">
-                    </div>
-                </div>
-                <div class="edit-row">
-                    <label>Цвет текста</label>
-                    <div class="edit-color">
-                        <input type="color" value="${s.color || '#ffffff'}" data-style="color">
-                        <input type="text" class="edit-input" value="${s.color || '#ffffff'}" data-style="color">
-                    </div>
-                </div>
-            </div>
         `,
 
         // ===== КОД =====
@@ -2471,36 +2126,10 @@ React
 
 // Настройки для контейнеров
 function renderContainerSettings(el, title, icon) {
-    const s = el.styles || {};
     return `
         <div class="edit-section">
             <h4><i class="fas ${icon}"></i> ${title}</h4>
-            <p class="edit-hint">Перетащите сюда другие блоки: колонки, строки, текст, изображения и т.д.</p>
-        </div>
-        <div class="edit-section">
-            <h4><i class="fas fa-fill-drip"></i> Фон</h4>
-            <div class="edit-row">
-                <label>Цвет фона</label>
-                <div class="edit-color">
-                    <input type="color" value="${s.backgroundColor || '#ffffff'}" data-style="backgroundColor">
-                    <input type="text" class="edit-input" value="${s.backgroundColor || ''}" data-style="backgroundColor" placeholder="Прозрачный">
-                </div>
-            </div>
-            <div class="edit-row">
-                <label>Изображение фона</label>
-                <input type="text" class="edit-input" data-style="backgroundImage" value="${s.backgroundImage || ''}" placeholder="url(https://...)">
-            </div>
-        </div>
-        <div class="edit-section">
-            <h4><i class="fas fa-arrows-alt"></i> Отступы</h4>
-            <div class="edit-row">
-                <label>Внутренний отступ</label>
-                <input type="text" class="edit-input" data-style="padding" value="${s.padding || '60px 20px'}" placeholder="60px 20px">
-            </div>
-            <div class="edit-row">
-                <label>Максимальная ширина</label>
-                <input type="text" class="edit-input" data-style="maxWidth" value="${s.maxWidth || ''}" placeholder="1200px">
-            </div>
+            <p class="edit-hint">Перетащите сюда другие блоки: колонки, строки, текст, изображения и т.д. Все настройки оформления во вкладке "Стиль".</p>
         </div>
     `;
 }
