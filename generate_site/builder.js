@@ -4,6 +4,11 @@
 const urlParams = new URLSearchParams(window.location.search);
 const currentPageId = urlParams.get('id');
 
+// Redirect to pages if no page ID
+if (!currentPageId) {
+    window.location.href = 'pages.html';
+}
+
 // State
 const state = {
     elements: [], // Tree structure with children
@@ -649,6 +654,16 @@ function renderElement(element, depth = 0) {
         const childContainer = document.createElement('div');
         childContainer.className = 'element-children';
 
+        // Apply flex properties to children container
+        childContainer.style.display = 'flex';
+        childContainer.style.flexDirection = element.styles?.flexDirection || 'column';
+        childContainer.style.flexWrap = element.styles?.flexWrap || 'wrap';
+        childContainer.style.gap = element.styles?.gap || '0px';
+        childContainer.style.justifyContent = element.styles?.justifyContent || 'flex-start';
+        childContainer.style.alignItems = element.styles?.alignItems || 'stretch';
+        childContainer.style.flex = '1';
+        childContainer.style.minHeight = '50px';
+
         if (element.children?.length) {
             element.children.forEach(child => {
                 childContainer.appendChild(renderElement(child, depth + 1));
@@ -1067,6 +1082,36 @@ function updateEditingElementFromForm() {
                 delete el.styles.backgroundColor;
             }
         }
+
+        // Handle text color type (gradient or solid)
+        if (group.dataset.custom === 'textColorType') {
+            if (activeBtn?.dataset.value === 'gradient') {
+                // Build text gradient
+                const direction = editContent.querySelector('[data-custom="textGradientDirection"]')?.value || 'to right';
+                const colors = [];
+                for (let i = 1; i <= 10; i++) {
+                    const colorInput = editContent.querySelector(`[data-custom="textGradientColor${i}"]`);
+                    if (colorInput && colorInput.value) {
+                        colors.push(colorInput.value);
+                    }
+                }
+                if (colors.length >= 2) {
+                    // Apply text gradient using background-clip technique
+                    el.styles.backgroundImage = `linear-gradient(${direction}, ${colors.join(', ')})`;
+                    el.styles.backgroundClip = 'text';
+                    el.styles.WebkitBackgroundClip = 'text';
+                    el.styles.WebkitTextFillColor = 'transparent';
+                    el.styles.color = 'transparent';
+                }
+            } else {
+                // Solid color - remove gradient properties
+                delete el.styles.backgroundImage;
+                delete el.styles.backgroundClip;
+                delete el.styles.WebkitBackgroundClip;
+                delete el.styles.WebkitTextFillColor;
+                // Keep the color property as set by the color input
+            }
+        }
     });
 
     // Animation
@@ -1221,6 +1266,42 @@ function setupEditHandlers() {
                     <div class="edit-color">
                         <input type="color" data-custom="gradientColor${count}" value="#10b981">
                         <input type="text" class="edit-input" data-custom="gradientColor${count}" value="#10b981">
+                    </div>
+                    <button type="button" class="btn-remove-color" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        });
+    }
+
+    // Text color type toggle
+    const textColorTypeGroup = editContent.querySelector('[data-custom="textColorType"]');
+    if (textColorTypeGroup) {
+        textColorTypeGroup.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const isGradient = btn.dataset.value === 'gradient';
+                const colorSection = editContent.querySelector('.text-color-section');
+                const gradientSection = editContent.querySelector('.text-gradient-section');
+                if (colorSection) colorSection.style.display = isGradient ? 'none' : '';
+                if (gradientSection) gradientSection.style.display = isGradient ? '' : 'none';
+            });
+        });
+    }
+
+    // Add text gradient color button
+    const addTextColorBtn = editContent.querySelector('#addTextGradientColor');
+    if (addTextColorBtn) {
+        addTextColorBtn.addEventListener('click', () => {
+            const container = editContent.querySelector('#extraTextGradientColors');
+            const count = container.querySelectorAll('.gradient-color-row').length + 3;
+            const html = `
+                <div class="edit-row gradient-color-row">
+                    <label>Цвет ${count}</label>
+                    <div class="edit-color">
+                        <input type="color" data-custom="textGradientColor${count}" value="#10b981">
+                        <input type="text" class="edit-input" data-custom="textGradientColor${count}" value="#10b981">
                     </div>
                     <button type="button" class="btn-remove-color" onclick="this.parentElement.remove()">
                         <i class="fas fa-times"></i>
@@ -2683,6 +2764,11 @@ function renderStyleTab(el) {
         </div>
 
         <div class="edit-section">
+            <h4><i class="fas fa-font"></i> Цвет текста</h4>
+            ${renderTextColorSection(el)}
+        </div>
+
+        <div class="edit-section">
             <h4><i class="fas fa-border-style"></i> Граница и тень</h4>
             <div class="edit-row">
                 <label>Граница</label>
@@ -2712,6 +2798,80 @@ function extractGradientColors(background) {
     if (!background || !background.includes('gradient')) return [];
     const matches = background.match(/#[0-9A-Fa-f]{6}|#[0-9A-Fa-f]{3}|rgb\([^)]+\)|rgba\([^)]+\)/g);
     return matches || [];
+}
+
+function renderTextColorSection(el) {
+    const s = el.styles || {};
+    // Check if text has gradient (uses backgroundClip: text trick)
+    const hasTextGradient = s.backgroundClip === 'text' || s.WebkitBackgroundClip === 'text';
+    const textColorType = hasTextGradient ? 'gradient' : 'color';
+    const textGradientColors = hasTextGradient ? extractGradientColors(s.background || s.backgroundImage) : [];
+
+    return `
+        <div class="edit-row">
+            <label>Тип цвета</label>
+            <div class="edit-btn-group" data-custom="textColorType">
+                <button type="button" class="${textColorType === 'color' ? 'active' : ''}" data-value="color">
+                    <i class="fas fa-palette"></i> Цвет
+                </button>
+                <button type="button" class="${textColorType === 'gradient' ? 'active' : ''}" data-value="gradient">
+                    <i class="fas fa-fill"></i> Градиент
+                </button>
+            </div>
+        </div>
+        <div class="text-color-section" ${textColorType === 'gradient' ? 'style="display:none"' : ''}>
+            <div class="edit-row">
+                <label>Цвет текста</label>
+                <div class="edit-color">
+                    <input type="color" data-style="color" value="${s.color || '#000000'}">
+                    <input type="text" class="edit-input" data-style="color" value="${s.color || ''}" placeholder="#000000">
+                </div>
+            </div>
+        </div>
+        <div class="text-gradient-section" ${textColorType !== 'gradient' ? 'style="display:none"' : ''}>
+            <div class="edit-row">
+                <label>Направление градиента</label>
+                <select class="edit-select" data-custom="textGradientDirection">
+                    <option value="to right" ${s.background?.includes('to right') || s.backgroundImage?.includes('to right') ? 'selected' : ''}>→ Вправо</option>
+                    <option value="to left" ${s.background?.includes('to left') || s.backgroundImage?.includes('to left') ? 'selected' : ''}>← Влево</option>
+                    <option value="to bottom" selected>↓ Вниз</option>
+                    <option value="to top" ${s.background?.includes('to top') || s.backgroundImage?.includes('to top') ? 'selected' : ''}>↑ Вверх</option>
+                    <option value="to bottom right" ${s.background?.includes('to bottom right') || s.backgroundImage?.includes('to bottom right') ? 'selected' : ''}>↘ По диагонали</option>
+                </select>
+            </div>
+            <div class="edit-row">
+                <label>Цвет 1</label>
+                <div class="edit-color">
+                    <input type="color" data-custom="textGradientColor1" value="${textGradientColors[0] || '#3b82f6'}">
+                    <input type="text" class="edit-input" data-custom="textGradientColor1" value="${textGradientColors[0] || '#3b82f6'}">
+                </div>
+            </div>
+            <div class="edit-row">
+                <label>Цвет 2</label>
+                <div class="edit-color">
+                    <input type="color" data-custom="textGradientColor2" value="${textGradientColors[1] || '#8b5cf6'}">
+                    <input type="text" class="edit-input" data-custom="textGradientColor2" value="${textGradientColors[1] || '#8b5cf6'}">
+                </div>
+            </div>
+            <div id="extraTextGradientColors">
+                ${textGradientColors.slice(2).map((color, i) => `
+                    <div class="edit-row gradient-color-row">
+                        <label>Цвет ${i + 3}</label>
+                        <div class="edit-color">
+                            <input type="color" data-custom="textGradientColor${i + 3}" value="${color}">
+                            <input type="text" class="edit-input" data-custom="textGradientColor${i + 3}" value="${color}">
+                        </div>
+                        <button type="button" class="btn-remove-color" onclick="this.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `).join('')}
+            </div>
+            <button type="button" class="btn-add-color" id="addTextGradientColor">
+                <i class="fas fa-plus"></i> Добавить цвет
+            </button>
+        </div>
+    `;
 }
 
 function renderAnimationTab(el) {
