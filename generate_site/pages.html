@@ -622,9 +622,14 @@
                 <div class="template-categories">
                     <button class="template-category active" data-category="all">Все</button>
                     <button class="template-category" data-category="basic">Базовые</button>
-                    <button class="template-category" data-category="landing">Лендинги</button>
-                    <button class="template-category" data-category="portfolio">Портфолио</button>
-                    <button class="template-category" data-category="business">Бизнес</button>
+                    <button class="template-category" data-category="personal">Личный бренд</button>
+                    <button class="template-category" data-category="shop">Магазин</button>
+                    <button class="template-category" data-category="realestate">Недвижимость</button>
+                    <button class="template-category" data-category="restaurant">Рестораны</button>
+                    <button class="template-category" data-category="fitness">Фитнес</button>
+                    <button class="template-category" data-category="education">Образование</button>
+                    <button class="template-category" data-category="services">Услуги</button>
+                    <button class="template-category" data-category="events">Мероприятия</button>
                 </div>
                 <div class="templates-grid" id="templatesGrid">
                     <!-- Templates will be rendered here -->
@@ -645,6 +650,7 @@
 
         // Page Templates
         const pageTemplates = [
+            // === БАЗОВЫЕ ===
             {
                 id: 'blank',
                 name: 'Пустая страница',
@@ -655,7 +661,7 @@
             {
                 id: 'landing-basic',
                 name: 'Базовый лендинг',
-                category: 'landing',
+                category: 'basic',
                 thumbnail: '🚀',
                 elements: [
                     { type: 'navbar' },
@@ -667,7 +673,7 @@
             {
                 id: 'landing-sales',
                 name: 'Продающий лендинг',
-                category: 'landing',
+                category: 'basic',
                 thumbnail: '💰',
                 elements: [
                     { type: 'navbar' },
@@ -679,26 +685,620 @@
                     { type: 'footer' }
                 ]
             },
+
+            // === ЛИЧНЫЙ БРЕНД ===
             {
-                id: 'portfolio',
-                name: 'Портфолио',
-                category: 'portfolio',
-                thumbnail: '🎨',
+                id: 'personal-coach',
+                name: 'Коуч / Консультант',
+                category: 'personal',
+                thumbnail: '🎯',
                 elements: [
-                    { type: 'navbar' },
-                    { type: 'section', children: [{ type: 'heading' }, { type: 'text' }] },
-                    { type: 'section', children: [{ type: 'gallery' }] },
-                    { type: 'section', children: [{ type: 'form' }] },
+                    { type: 'navbar', componentSettings: { logo: 'Ваше Имя', links: 'Обо мне|Услуги|Отзывы|Контакты' } },
+                    { type: 'hero', componentSettings: { title: 'Личный коуч и ментор', subtitle: 'Помогу вам достичь целей и раскрыть потенциал', buttonText: 'Записаться на консультацию', buttonColor: '#8b5cf6' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Чем я могу помочь' },
+                        { type: 'features', componentSettings: { title1: 'Карьерный рост', desc1: 'Стратегия развития и продвижение по карьерной лестнице', title2: 'Личная эффективность', desc2: 'Тайм-менеджмент и продуктивность на максимум', title3: 'Баланс жизни', desc3: 'Гармония между работой и личной жизнью' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#faf5ff' }, children: [
+                        { type: 'heading', content: 'Отзывы клиентов' },
+                        { type: 'testimonial', componentSettings: { text: 'Благодаря работе с коучем я получила повышение и увеличила доход в 2 раза!', author: 'Анна К.', role: 'Маркетолог' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Запишитесь на бесплатную консультацию' },
+                        { type: 'form' }
+                    ]},
                     { type: 'footer' }
                 ]
             },
             {
-                id: 'business-card',
-                name: 'Визитка',
-                category: 'business',
-                thumbnail: '📇',
+                id: 'personal-speaker',
+                name: 'Спикер / Эксперт',
+                category: 'personal',
+                thumbnail: '🎤',
                 elements: [
-                    { type: 'section', children: [{ type: 'heading' }, { type: 'text' }, { type: 'social' }, { type: 'button' }] }
+                    { type: 'navbar', componentSettings: { logo: 'Имя Фамилия', links: 'Выступления|Медиа|Книги|Контакт' } },
+                    { type: 'hero', componentSettings: { title: 'Бизнес-спикер и автор', subtitle: 'Более 500 выступлений, автор 3 бестселлеров', buttonText: 'Пригласить выступить', buttonColor: '#1e293b' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'counter', componentSettings: { num1: '500+', label1: 'Выступлений', num2: '50K+', label2: 'Слушателей', num3: '3', label3: 'Книги', num4: '10', label4: 'Лет опыта' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f8fafc' }, children: [
+                        { type: 'heading', content: 'Темы выступлений' },
+                        { type: 'features', componentSettings: { title1: 'Лидерство', desc1: 'Как вести команду к результату', title2: 'Инновации', desc2: 'Внедрение изменений в бизнес', title3: 'Мотивация', desc3: 'Вдохновляющие истории успеха' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'gallery' }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#1e293b', color: 'white' }, children: [
+                        { type: 'heading', content: 'Пригласить выступить', styles: { color: 'white' } },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'personal-blogger',
+                name: 'Блогер / Инфлюенсер',
+                category: 'personal',
+                thumbnail: '📱',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: '@username', links: 'Обо мне|Сотрудничество|Контакты' } },
+                    { type: 'hero', componentSettings: { title: 'Привет! Я Алиса', subtitle: 'Lifestyle блогер • 500K подписчиков • Амбассадор брендов', buttonText: 'Сотрудничество', buttonColor: '#ec4899' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'counter', componentSettings: { num1: '500K', label1: 'Подписчиков', num2: '10M', label2: 'Охват', num3: '95%', label3: 'Женщины 18-35', num4: '50+', label4: 'Коллабораций' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fdf2f8' }, children: [
+                        { type: 'heading', content: 'Форматы сотрудничества' },
+                        { type: 'features', componentSettings: { title1: 'Stories', desc1: 'Серия из 5-7 сторис с интеграцией', title2: 'Reels', desc2: 'Креативное видео до 60 сек', title3: 'Обзор', desc3: 'Подробный обзор продукта/услуги' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Предложить сотрудничество' },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+
+            // === ИНТЕРНЕТ-МАГАЗИН ===
+            {
+                id: 'shop-fashion',
+                name: 'Магазин одежды',
+                category: 'shop',
+                thumbnail: '👗',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'FASHION STORE', links: 'Каталог|Новинки|Sale|О нас|Контакты' } },
+                    { type: 'hero', componentSettings: { title: 'Новая коллекция 2024', subtitle: 'Стильная одежда для современных людей', buttonText: 'Смотреть каталог', buttonColor: '#1e293b' } },
+                    { type: 'section', styles: { padding: '60px 20px' }, children: [
+                        { type: 'marquee', componentSettings: { text: 'БЕСПЛАТНАЯ ДОСТАВКА ОТ 5000₽ • СКИДКА 10% НА ПЕРВЫЙ ЗАКАЗ • ПРИМЕРКА ПЕРЕД ОПЛАТОЙ', speed: 30 } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Популярные категории' },
+                        { type: 'gallery' }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f8fafc' }, children: [
+                        { type: 'heading', content: 'Почему выбирают нас' },
+                        { type: 'features', componentSettings: { title1: 'Качество', desc1: 'Только натуральные материалы', title2: 'Стиль', desc2: 'Актуальные тренды сезона', title3: 'Сервис', desc3: 'Бесплатный возврат 14 дней' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Отзывы покупателей' },
+                        { type: 'testimonial' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'shop-electronics',
+                name: 'Магазин электроники',
+                category: 'shop',
+                thumbnail: '📱',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'TechStore', links: 'Смартфоны|Ноутбуки|Аксессуары|Доставка' } },
+                    { type: 'hero', componentSettings: { title: 'Техника для жизни', subtitle: 'Официальный дилер Apple, Samsung, Xiaomi', buttonText: 'Перейти в каталог', buttonColor: '#3b82f6' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'features', componentSettings: { title1: 'Гарантия', desc1: 'Официальная гарантия производителя', title2: 'Доставка', desc2: 'По всей России за 1-3 дня', title3: 'Trade-in', desc3: 'Обмен старого устройства на новое' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#eff6ff' }, children: [
+                        { type: 'heading', content: 'Хиты продаж' },
+                        { type: 'gallery' }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'counter', componentSettings: { num1: '10K+', label1: 'Товаров', num2: '50K+', label2: 'Клиентов', num3: '99%', label3: 'Довольных', num4: '24/7', label4: 'Поддержка' } }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'shop-handmade',
+                name: 'Handmade магазин',
+                category: 'shop',
+                thumbnail: '🎨',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'Ручная работа', links: 'Каталог|О мастере|Заказать|Контакты' } },
+                    { type: 'hero', componentSettings: { title: 'Украшения ручной работы', subtitle: 'Каждое изделие уникально, как и вы', buttonText: 'Выбрать подарок', buttonColor: '#d97706' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Популярные изделия' },
+                        { type: 'gallery' }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fffbeb' }, children: [
+                        { type: 'heading', content: 'Почему выбирают нас' },
+                        { type: 'features', componentSettings: { title1: 'Уникальность', desc1: 'Каждое изделие в единственном экземпляре', title2: 'Материалы', desc2: 'Натуральные камни и серебро 925', title3: 'Упаковка', desc3: 'Красивая подарочная коробка' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Заказать индивидуальное изделие' },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+
+            // === НЕДВИЖИМОСТЬ ===
+            {
+                id: 'realestate-agency',
+                name: 'Агентство недвижимости',
+                category: 'realestate',
+                thumbnail: '🏢',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'Метры', links: 'Купить|Снять|Продать|О нас|Контакты' } },
+                    { type: 'hero', componentSettings: { title: 'Найдём вашу идеальную квартиру', subtitle: 'Более 10 000 объектов недвижимости в базе', buttonText: 'Подобрать квартиру', buttonColor: '#059669' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'counter', componentSettings: { num1: '10K+', label1: 'Объектов', num2: '15', label2: 'Лет опыта', num3: '5000+', label3: 'Сделок', num4: '98%', label4: 'Рекомендуют' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f0fdf4' }, children: [
+                        { type: 'heading', content: 'Наши услуги' },
+                        { type: 'features', componentSettings: { title1: 'Покупка', desc1: 'Подбор и сопровождение сделки', title2: 'Продажа', desc2: 'Оценка и маркетинг объекта', title3: 'Аренда', desc3: 'Поиск арендаторов и жильцов' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Популярные объекты' },
+                        { type: 'gallery' }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#059669', color: 'white' }, children: [
+                        { type: 'heading', content: 'Получить консультацию', styles: { color: 'white' } },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'realestate-developer',
+                name: 'Застройщик / ЖК',
+                category: 'realestate',
+                thumbnail: '🏗️',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'ЖК Парковый', links: 'О проекте|Планировки|Ход строительства|Контакты' } },
+                    { type: 'hero', componentSettings: { title: 'ЖК Парковый', subtitle: 'Квартиры бизнес-класса от 8,5 млн ₽', buttonText: 'Выбрать квартиру', buttonColor: '#1e40af' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'features', componentSettings: { title1: 'Сдача Q4 2025', desc1: 'Строительство идёт по графику', title2: 'От 8.5 млн ₽', desc2: 'Квартиры от 35 м²', title3: 'Рассрочка 0%', desc3: 'Без переплат до конца строительства' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#eff6ff' }, children: [
+                        { type: 'heading', content: 'Преимущества комплекса' },
+                        { type: 'features', componentSettings: { title1: 'Парк 5 га', desc1: 'Собственный парк на территории', title2: 'Закрытый двор', desc2: 'Без машин, детские площадки', title3: 'Инфраструктура', desc3: 'Школа, садик, магазины' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Планировки' },
+                        { type: 'gallery' }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)', color: 'white' }, children: [
+                        { type: 'heading', content: 'Забронировать квартиру', styles: { color: 'white' } },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'realestate-interior',
+                name: 'Дизайн интерьера',
+                category: 'realestate',
+                thumbnail: '🛋️',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'Interior Studio', links: 'Портфолио|Услуги|Цены|Контакты' } },
+                    { type: 'hero', componentSettings: { title: 'Создаём интерьеры мечты', subtitle: 'Дизайн-проект под ключ от 2000₽/м²', buttonText: 'Рассчитать стоимость', buttonColor: '#78716c' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Наши работы' },
+                        { type: 'gallery' }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fafaf9' }, children: [
+                        { type: 'heading', content: 'Как мы работаем' },
+                        { type: 'features', componentSettings: { title1: 'Замер', desc1: 'Бесплатный выезд на объект', title2: 'Проект', desc2: '3D визуализация интерьера', title3: 'Реализация', desc3: 'Авторский надзор и комплектация' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Рассчитать стоимость' },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+
+            // === РЕСТОРАНЫ И КАФЕ ===
+            {
+                id: 'restaurant-main',
+                name: 'Ресторан',
+                category: 'restaurant',
+                thumbnail: '🍽️',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'La Maison', links: 'Меню|О нас|Резерв|Контакты' } },
+                    { type: 'hero', componentSettings: { title: 'La Maison', subtitle: 'Французская кухня в сердце Москвы', buttonText: 'Забронировать столик', buttonColor: '#7c2d12' } },
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fef3c7' }, children: [
+                        { type: 'heading', content: 'Наша философия' },
+                        { type: 'text', content: 'Мы верим, что еда — это искусство. Каждое блюдо создаётся из лучших локальных продуктов нашим шеф-поваром с 20-летним опытом.', styles: { textAlign: 'center', maxWidth: '600px', margin: '0 auto' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Наши блюда' },
+                        { type: 'gallery' }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#7c2d12', color: 'white' }, children: [
+                        { type: 'heading', content: 'Забронировать столик', styles: { color: 'white' } },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'restaurant-cafe',
+                name: 'Кофейня',
+                category: 'restaurant',
+                thumbnail: '☕',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'Coffee Lab', links: 'Меню|О зёрнах|Адреса|Франшиза' } },
+                    { type: 'hero', componentSettings: { title: 'Specialty Coffee', subtitle: 'Обжарка каждую неделю, зёрна со всего мира', buttonText: 'Найти ближайшую', buttonColor: '#78350f' } },
+                    { type: 'section', styles: { padding: '60px 20px' }, children: [
+                        { type: 'marquee', componentSettings: { text: 'ЭФИОПИЯ • КЕНИЯ • КОЛУМБИЯ • БРАЗИЛИЯ • ГВАТЕМАЛА • КОСТА-РИКА', speed: 25 } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'features', componentSettings: { title1: 'Свежая обжарка', desc1: 'Обжариваем зёрна каждую неделю', title2: 'Прямые закупки', desc2: 'Работаем напрямую с фермами', title3: 'Авторские напитки', desc3: 'Уникальные рецепты от бариста' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fef3c7' }, children: [
+                        { type: 'heading', content: 'Наше меню' },
+                        { type: 'gallery' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'restaurant-delivery',
+                name: 'Доставка еды',
+                category: 'restaurant',
+                thumbnail: '🍕',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'Pizza Express', links: 'Меню|Акции|Доставка|Контакты' } },
+                    { type: 'hero', componentSettings: { title: 'Пицца за 30 минут', subtitle: 'Горячая доставка или пицца бесплатно!', buttonText: 'Заказать', buttonColor: '#dc2626' } },
+                    { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#fef2f2' }, children: [
+                        { type: 'counter', componentSettings: { num1: '30', label1: 'Минут доставка', num2: '15', label2: 'Видов пиццы', num3: '4.9', label3: 'Рейтинг', num4: '10K+', label4: 'Заказов' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Хиты продаж' },
+                        { type: 'gallery' }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#dc2626', color: 'white' }, children: [
+                        { type: 'heading', content: 'Заказать доставку', styles: { color: 'white' } },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+
+            // === ФИТНЕС ===
+            {
+                id: 'fitness-gym',
+                name: 'Фитнес-клуб',
+                category: 'fitness',
+                thumbnail: '🏋️',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'FitLife', links: 'Залы|Расписание|Цены|Контакты' } },
+                    { type: 'hero', componentSettings: { title: 'Начни менять себя сегодня', subtitle: 'Первая тренировка — бесплатно', buttonText: 'Записаться', buttonColor: '#f97316' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'counter', componentSettings: { num1: '5000', label1: 'м² площадь', num2: '200+', label2: 'Тренажёров', num3: '50', label3: 'Тренеров', num4: '24/7', label4: 'Работаем' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fff7ed' }, children: [
+                        { type: 'heading', content: 'Направления' },
+                        { type: 'features', componentSettings: { title1: 'Тренажёрный зал', desc1: 'Новейшее оборудование Technogym', title2: 'Групповые', desc2: 'Йога, пилатес, CrossFit, танцы', title3: 'Бассейн', desc3: '25 метров, аквааэробика' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Тарифы' },
+                        { type: 'row', children: [
+                            { type: 'pricing', componentSettings: { title: 'Месяц', price: '3 500₽', period: '/месяц', features: 'Тренажёрный зал|Групповые занятия|Раздевалка', buttonText: 'Выбрать' } },
+                            { type: 'pricing', componentSettings: { title: 'Полгода', price: '2 500₽', period: '/месяц', features: 'Всё из "Месяц"|Бассейн|1 персоналка', buttonText: 'Выбрать', highlighted: true } },
+                            { type: 'pricing', componentSettings: { title: 'Год', price: '1 990₽', period: '/месяц', features: 'Всё из "Полгода"|5 персоналок|Заморозка', buttonText: 'Выбрать' } }
+                        ]}
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f97316', color: 'white' }, children: [
+                        { type: 'heading', content: 'Записаться на пробную тренировку', styles: { color: 'white' } },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'fitness-trainer',
+                name: 'Персональный тренер',
+                category: 'fitness',
+                thumbnail: '💪',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'Алексей Фитнес', links: 'Обо мне|Программы|Результаты|Контакт' } },
+                    { type: 'hero', componentSettings: { title: 'Персональный тренер', subtitle: 'Помогу достичь формы мечты за 3 месяца', buttonText: 'Начать трансформацию', buttonColor: '#16a34a' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'counter', componentSettings: { num1: '10', label1: 'Лет опыта', num2: '500+', label2: 'Клиентов', num3: '95%', label3: 'Результат', num4: 'PRO', label4: 'Сертификат' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f0fdf4' }, children: [
+                        { type: 'heading', content: 'Программы' },
+                        { type: 'features', componentSettings: { title1: 'Похудение', desc1: 'Сжигание жира без голодания', title2: 'Набор массы', desc2: 'Построение мышечного корсета', title3: 'Онлайн', desc3: 'Тренировки из любой точки мира' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Результаты клиентов' },
+                        { type: 'gallery' }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#16a34a', color: 'white' }, children: [
+                        { type: 'heading', content: 'Записаться на консультацию', styles: { color: 'white' } },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'fitness-yoga',
+                name: 'Йога студия',
+                category: 'fitness',
+                thumbnail: '🧘',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'Shanti Yoga', links: 'Расписание|Направления|Преподаватели|Контакты' } },
+                    { type: 'hero', componentSettings: { title: 'Найди гармонию', subtitle: 'Йога для тела и души в центре города', buttonText: 'Пробное занятие', buttonColor: '#7c3aed' } },
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#faf5ff' }, children: [
+                        { type: 'heading', content: 'Направления' },
+                        { type: 'features', componentSettings: { title1: 'Хатха-йога', desc1: 'Классическая практика для начинающих', title2: 'Виньяса', desc2: 'Динамичная практика в потоке', title3: 'Медитация', desc3: 'Практики осознанности и дыхания' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Абонементы' },
+                        { type: 'row', children: [
+                            { type: 'pricing', componentSettings: { title: 'Разовое', price: '800₽', period: 'занятие', features: '1 занятие|Коврик|Чай', buttonText: 'Записаться' } },
+                            { type: 'pricing', componentSettings: { title: '8 занятий', price: '4 800₽', period: '/месяц', features: '8 занятий|Любые классы|Заморозка', buttonText: 'Купить', highlighted: true } },
+                            { type: 'pricing', componentSettings: { title: 'Безлимит', price: '6 900₽', period: '/месяц', features: 'Без ограничений|Все классы|Скидка друзьям', buttonText: 'Купить' } }
+                        ]}
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', background: 'linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%)', color: 'white' }, children: [
+                        { type: 'heading', content: 'Записаться на пробное занятие', styles: { color: 'white' } },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+
+            // === ОБРАЗОВАНИЕ ===
+            {
+                id: 'education-course',
+                name: 'Онлайн-курс',
+                category: 'education',
+                thumbnail: '📚',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'WebDev Pro', links: 'Программа|Отзывы|Автор|Записаться' } },
+                    { type: 'hero', componentSettings: { title: 'Стань веб-разработчиком за 6 месяцев', subtitle: 'От нуля до junior с гарантией трудоустройства', buttonText: 'Начать обучение', buttonColor: '#2563eb' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'counter', componentSettings: { num1: '6', label1: 'Месяцев', num2: '150+', label2: 'Уроков', num3: '90%', label3: 'Трудоустройство', num4: '24/7', label4: 'Поддержка' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#eff6ff' }, children: [
+                        { type: 'heading', content: 'Чему вы научитесь' },
+                        { type: 'features', componentSettings: { title1: 'HTML/CSS', desc1: 'Вёрстка современных сайтов', title2: 'JavaScript', desc2: 'Программирование и React', title3: 'Практика', desc3: '10+ реальных проектов в портфолио' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Отзывы выпускников' },
+                        { type: 'testimonial', componentSettings: { text: 'Через 4 месяца после курса получил оффер на 120 000₽. Спасибо команде за поддержку!', author: 'Михаил С.', role: 'Frontend Developer' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#2563eb', color: 'white' }, children: [
+                        { type: 'heading', content: 'Записаться на курс', styles: { color: 'white' } },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'education-school',
+                name: 'Школа / Детский центр',
+                category: 'education',
+                thumbnail: '🎓',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'Умные дети', links: 'Программы|Расписание|Преподаватели|Контакты' } },
+                    { type: 'hero', componentSettings: { title: 'Развивающий центр для детей', subtitle: 'Английский, робототехника, творчество для детей 3-14 лет', buttonText: 'Записаться на пробный урок', buttonColor: '#ea580c' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'features', componentSettings: { title1: 'Английский', desc1: 'Игровая методика для детей от 3 лет', title2: 'Робототехника', desc2: 'LEGO Education, программирование', title3: 'Творчество', desc3: 'Рисование, лепка, музыка' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fff7ed' }, children: [
+                        { type: 'counter', componentSettings: { num1: '500+', label1: 'Учеников', num2: '15', label2: 'Педагогов', num3: '10', label3: 'Лет опыта', num4: '20+', label4: 'Программ' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Отзывы родителей' },
+                        { type: 'testimonial' }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#ea580c', color: 'white' }, children: [
+                        { type: 'heading', content: 'Записаться на пробное занятие', styles: { color: 'white' } },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'education-tutor',
+                name: 'Репетитор',
+                category: 'education',
+                thumbnail: '👨‍🏫',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'Елена Петрова', links: 'Обо мне|Предметы|Отзывы|Записаться' } },
+                    { type: 'hero', componentSettings: { title: 'Репетитор по математике', subtitle: 'Подготовка к ЕГЭ на 90+ баллов', buttonText: 'Записаться на урок', buttonColor: '#0891b2' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'counter', componentSettings: { num1: '15', label1: 'Лет опыта', num2: '200+', label2: 'Учеников', num3: '95', label3: 'Средний балл', num4: '100%', label4: 'Сдали ЕГЭ' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#ecfeff' }, children: [
+                        { type: 'heading', content: 'Форматы занятий' },
+                        { type: 'features', componentSettings: { title1: 'Онлайн', desc1: 'Индивидуально через Zoom/Skype', title2: 'Очно', desc2: 'У репетитора или с выездом', title3: 'Мини-группы', desc3: 'До 4 человек, выгоднее' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Отзывы учеников' },
+                        { type: 'testimonial', componentSettings: { text: 'Благодаря Елене Владимировне сдала ЕГЭ на 96 баллов! Объясняет понятно и интересно.', author: 'Анна К.', role: 'Поступила в МГУ' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#0891b2', color: 'white' }, children: [
+                        { type: 'heading', content: 'Записаться на пробный урок', styles: { color: 'white' } },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+
+            // === УСЛУГИ ===
+            {
+                id: 'services-beauty',
+                name: 'Салон красоты',
+                category: 'services',
+                thumbnail: '💇',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'Beauty Lab', links: 'Услуги|Мастера|Цены|Записаться' } },
+                    { type: 'hero', componentSettings: { title: 'Салон красоты Beauty Lab', subtitle: 'Стрижки, окрашивание, маникюр, косметология', buttonText: 'Записаться онлайн', buttonColor: '#db2777' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'features', componentSettings: { title1: 'Парикмахерская', desc1: 'Стрижки, окрашивание, укладки', title2: 'Ногтевой сервис', desc2: 'Маникюр, педикюр, дизайн', title3: 'Косметология', desc3: 'Уходовые процедуры, чистки' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fdf2f8' }, children: [
+                        { type: 'heading', content: 'Наши работы' },
+                        { type: 'gallery' }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Отзывы клиентов' },
+                        { type: 'testimonial' }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', background: 'linear-gradient(135deg, #db2777 0%, #f472b6 100%)', color: 'white' }, children: [
+                        { type: 'heading', content: 'Записаться на услугу', styles: { color: 'white' } },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'services-cleaning',
+                name: 'Клининг',
+                category: 'services',
+                thumbnail: '🧹',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'CleanHome', links: 'Услуги|Цены|О нас|Заказать' } },
+                    { type: 'hero', componentSettings: { title: 'Профессиональная уборка', subtitle: 'Квартиры, офисы, после ремонта. От 1500₽', buttonText: 'Рассчитать стоимость', buttonColor: '#0d9488' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'counter', componentSettings: { num1: '5000+', label1: 'Уборок', num2: '99%', label2: 'Довольных', num3: '2ч', label3: 'Среднее время', num4: '24/7', label4: 'Работаем' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f0fdfa' }, children: [
+                        { type: 'heading', content: 'Виды уборки' },
+                        { type: 'features', componentSettings: { title1: 'Поддерживающая', desc1: 'Регулярная уборка от 1500₽', title2: 'Генеральная', desc2: 'Глубокая уборка от 3000₽', title3: 'После ремонта', desc3: 'Вывоз мусора от 5000₽' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'row', children: [
+                            { type: 'pricing', componentSettings: { title: '1-комн', price: '1 500₽', period: '', features: 'До 40 м²|2 часа|Все комнаты', buttonText: 'Заказать' } },
+                            { type: 'pricing', componentSettings: { title: '2-комн', price: '2 500₽', period: '', features: 'До 65 м²|3 часа|Все комнаты', buttonText: 'Заказать', highlighted: true } },
+                            { type: 'pricing', componentSettings: { title: '3-комн', price: '3 500₽', period: '', features: 'До 90 м²|4 часа|Все комнаты', buttonText: 'Заказать' } }
+                        ]}
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#0d9488', color: 'white' }, children: [
+                        { type: 'heading', content: 'Заказать уборку', styles: { color: 'white' } },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'services-auto',
+                name: 'Автосервис',
+                category: 'services',
+                thumbnail: '🚗',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'AutoPro', links: 'Услуги|Цены|О нас|Контакты' } },
+                    { type: 'hero', componentSettings: { title: 'Автосервис полного цикла', subtitle: 'Ремонт, ТО, диагностика. Гарантия на все работы', buttonText: 'Записаться на сервис', buttonColor: '#dc2626' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'counter', componentSettings: { num1: '10K+', label1: 'Клиентов', num2: '15', label2: 'Лет опыта', num3: '50+', label3: 'Мастеров', num4: '1 год', label4: 'Гарантия' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fef2f2' }, children: [
+                        { type: 'heading', content: 'Услуги' },
+                        { type: 'features', componentSettings: { title1: 'Диагностика', desc1: 'Компьютерная диагностика всех систем', title2: 'Ремонт', desc2: 'Двигатель, подвеска, электрика', title3: 'ТО', desc3: 'Плановое обслуживание по регламенту' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Отзывы клиентов' },
+                        { type: 'testimonial' }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#dc2626', color: 'white' }, children: [
+                        { type: 'heading', content: 'Записаться на сервис', styles: { color: 'white' } },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+
+            // === МЕРОПРИЯТИЯ ===
+            {
+                id: 'events-conference',
+                name: 'Конференция',
+                category: 'events',
+                thumbnail: '🎪',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'TechConf 2024', links: 'Программа|Спикеры|Билеты|FAQ' } },
+                    { type: 'hero', componentSettings: { title: 'TechConf 2024', subtitle: '15-16 марта • Москва • Главная IT-конференция года', buttonText: 'Купить билет', buttonColor: '#7c3aed' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'counter', componentSettings: { num1: '2', label1: 'Дня', num2: '50+', label2: 'Спикеров', num3: '2000', label3: 'Участников', num4: '4', label4: 'Потока' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#faf5ff' }, children: [
+                        { type: 'heading', content: 'Темы конференции' },
+                        { type: 'features', componentSettings: { title1: 'AI & ML', desc1: 'Искусственный интеллект в продакшене', title2: 'DevOps', desc2: 'Автоматизация и инфраструктура', title3: 'Product', desc3: 'Управление продуктом и метрики' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Билеты' },
+                        { type: 'row', children: [
+                            { type: 'pricing', componentSettings: { title: 'Standard', price: '5 000₽', period: '', features: 'Все доклады|Кофе-брейки|Материалы', buttonText: 'Купить' } },
+                            { type: 'pricing', componentSettings: { title: 'Business', price: '15 000₽', period: '', features: 'Всё из Standard|VIP зона|Нетворкинг|After-party', buttonText: 'Купить', highlighted: true } },
+                            { type: 'pricing', componentSettings: { title: 'Team', price: '40 000₽', period: '/5 билетов', features: 'Всё из Business|Скидка 20%|Корп. стенд', buttonText: 'Купить' } }
+                        ]}
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'events-wedding',
+                name: 'Свадебное агентство',
+                category: 'events',
+                thumbnail: '💒',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'Wedding Day', links: 'Услуги|Портфолио|Отзывы|Контакты' } },
+                    { type: 'hero', componentSettings: { title: 'Свадьба вашей мечты', subtitle: 'Организация свадеб под ключ с 2010 года', buttonText: 'Обсудить свадьбу', buttonColor: '#be185d' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'counter', componentSettings: { num1: '500+', label1: 'Свадеб', num2: '14', label2: 'Лет опыта', num3: '100%', label3: 'Счастливых пар', num4: '50+', label4: 'Площадок' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fdf2f8' }, children: [
+                        { type: 'heading', content: 'Что мы делаем' },
+                        { type: 'features', componentSettings: { title1: 'Полная организация', desc1: 'От концепции до последнего гостя', title2: 'Координация дня', desc2: 'Проведение свадьбы по плану', title3: 'Декор и флористика', desc3: 'Авторское оформление площадки' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Наши свадьбы' },
+                        { type: 'gallery' }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', background: 'linear-gradient(135deg, #be185d 0%, #f472b6 100%)', color: 'white' }, children: [
+                        { type: 'heading', content: 'Обсудить вашу свадьбу', styles: { color: 'white' } },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'events-party',
+                name: 'Организация праздников',
+                category: 'events',
+                thumbnail: '🎉',
+                elements: [
+                    { type: 'navbar', componentSettings: { logo: 'Party Time', links: 'Услуги|Портфолио|Артисты|Заказать' } },
+                    { type: 'hero', componentSettings: { title: 'Праздник под ключ', subtitle: 'Детские праздники, корпоративы, юбилеи', buttonText: 'Заказать праздник', buttonColor: '#eab308' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'features', componentSettings: { title1: 'Детские праздники', desc1: 'Аниматоры, шоу-программы, квесты', title2: 'Корпоративы', desc2: 'Тимбилдинг, банкеты, вечеринки', title3: 'Частные события', desc3: 'Юбилеи, дни рождения, выпускные' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fefce8' }, children: [
+                        { type: 'heading', content: 'Фото с мероприятий' },
+                        { type: 'gallery' }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'heading', content: 'Отзывы клиентов' },
+                        { type: 'testimonial' }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#eab308', color: 'white' }, children: [
+                        { type: 'heading', content: 'Заказать праздник', styles: { color: 'white' } },
+                        { type: 'form' }
+                    ]},
+                    { type: 'footer' }
                 ]
             }
         ];

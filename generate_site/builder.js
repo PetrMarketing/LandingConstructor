@@ -137,126 +137,390 @@ function loadGoogleFont(fontName) {
 
 // ===== Page Templates =====
 const pageTemplates = [
+    // === БАЗОВЫЕ ===
+    { id: 'blank', name: 'Пустая страница', category: 'basic', thumbnail: '📄', elements: [] },
     {
-        id: 'blank',
-        name: 'Пустая страница',
-        category: 'basic',
-        thumbnail: '📄',
-        elements: []
-    },
-    {
-        id: 'landing-basic',
-        name: 'Базовый лендинг',
-        category: 'landing',
-        thumbnail: '🚀',
+        id: 'landing-basic', name: 'Базовый лендинг', category: 'basic', thumbnail: '🚀',
         elements: [
-            {
-                type: 'navbar',
-                styles: { backgroundColor: 'white', padding: '0 20px', borderBottom: '1px solid #e2e8f0' }
-            },
-            {
-                type: 'hero',
-                styles: { padding: '100px 20px', backgroundColor: '#f8fafc' }
-            },
-            {
-                type: 'section',
-                styles: { padding: '80px 20px' },
-                children: [{ type: 'features' }]
-            },
-            {
-                type: 'footer',
-                styles: { backgroundColor: '#1e293b', color: 'white' }
-            }
+            { type: 'navbar' },
+            { type: 'hero' },
+            { type: 'section', children: [{ type: 'features' }] },
+            { type: 'footer' }
         ]
     },
     {
-        id: 'landing-sales',
-        name: 'Продающий лендинг',
-        category: 'landing',
-        thumbnail: '💰',
+        id: 'landing-sales', name: 'Продающий лендинг', category: 'basic', thumbnail: '💰',
         elements: [
-            {
-                type: 'navbar',
-                styles: { backgroundColor: '#1e293b', color: 'white', padding: '0 20px' }
-            },
-            {
-                type: 'hero',
-                styles: { padding: '120px 20px', background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)', color: 'white' }
-            },
-            {
-                type: 'section',
-                styles: { padding: '80px 20px' },
-                children: [{ type: 'features' }]
-            },
-            {
-                type: 'section',
-                styles: { padding: '80px 20px', backgroundColor: '#f8fafc' },
-                children: [{ type: 'testimonial' }, { type: 'testimonial' }]
-            },
-            {
-                type: 'section',
-                styles: { padding: '80px 20px' },
-                children: [
-                    { type: 'heading', content: 'Выберите тариф', styles: { textAlign: 'center', marginBottom: '40px' } },
-                    { type: 'row', children: [{ type: 'pricing' }, { type: 'pricing' }, { type: 'pricing' }] }
-                ]
-            },
-            {
-                type: 'section',
-                styles: { padding: '80px 20px', backgroundColor: '#3b82f6', color: 'white' },
-                children: [{ type: 'form' }]
-            },
-            {
-                type: 'footer',
-                styles: { backgroundColor: '#1e293b', color: 'white' }
-            }
+            { type: 'navbar' },
+            { type: 'hero' },
+            { type: 'section', children: [{ type: 'features' }] },
+            { type: 'section', children: [{ type: 'testimonial' }] },
+            { type: 'section', children: [{ type: 'pricing' }] },
+            { type: 'section', children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+
+    // === ЛИЧНЫЙ БРЕНД ===
+    {
+        id: 'personal-coach', name: 'Коуч / Консультант', category: 'personal', thumbnail: '🎯',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'Ваше Имя', links: 'Обо мне|Услуги|Отзывы|Контакты' } },
+            { type: 'hero', componentSettings: { title: 'Личный коуч и ментор', subtitle: 'Помогу вам достичь целей и раскрыть потенциал', buttonText: 'Записаться на консультацию', buttonColor: '#8b5cf6' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'heading', content: 'Чем я могу помочь' },
+                { type: 'features', componentSettings: { title1: 'Карьерный рост', desc1: 'Стратегия развития карьеры', title2: 'Личная эффективность', desc2: 'Тайм-менеджмент и продуктивность', title3: 'Баланс жизни', desc3: 'Гармония между работой и отдыхом' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#faf5ff' }, children: [
+                { type: 'heading', content: 'Отзывы клиентов' },
+                { type: 'testimonial', componentSettings: { text: 'Благодаря работе с коучем я получила повышение!', author: 'Анна К.', role: 'Маркетолог' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
         ]
     },
     {
-        id: 'portfolio',
-        name: 'Портфолио',
-        category: 'portfolio',
-        thumbnail: '🎨',
+        id: 'personal-speaker', name: 'Спикер / Эксперт', category: 'personal', thumbnail: '🎤',
         elements: [
-            {
-                type: 'navbar',
-                styles: { backgroundColor: 'white', padding: '0 20px', borderBottom: '1px solid #e2e8f0' }
-            },
-            {
-                type: 'section',
-                styles: { padding: '100px 20px', textAlign: 'center' },
-                children: [
-                    { type: 'heading', content: 'Привет, я дизайнер', styles: { fontSize: '48px' } },
-                    { type: 'text', content: 'Создаю красивые и функциональные сайты' }
-                ]
-            },
-            {
-                type: 'section',
-                styles: { padding: '80px 20px' },
-                children: [
-                    { type: 'heading', content: 'Мои работы', styles: { textAlign: 'center', marginBottom: '40px' } },
-                    { type: 'gallery' }
-                ]
-            },
-            {
-                type: 'section',
-                styles: { padding: '80px 20px', backgroundColor: '#f8fafc' },
-                children: [
-                    { type: 'heading', content: 'Связаться со мной', styles: { textAlign: 'center', marginBottom: '40px' } },
-                    { type: 'form' }
-                ]
-            },
-            {
-                type: 'footer',
-                styles: { backgroundColor: '#1e293b', color: 'white' }
-            }
+            { type: 'navbar', componentSettings: { logo: 'Имя Фамилия', links: 'Выступления|Медиа|Книги|Контакт' } },
+            { type: 'hero', componentSettings: { title: 'Бизнес-спикер и автор', subtitle: 'Более 500 выступлений, автор 3 бестселлеров', buttonText: 'Пригласить выступить', buttonColor: '#1e293b' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'counter', componentSettings: { num1: '500+', label1: 'Выступлений', num2: '50K+', label2: 'Слушателей', num3: '3', label3: 'Книги' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Темы выступлений' },
+                { type: 'features', componentSettings: { title1: 'Лидерство', desc1: 'Как вести команду к результату', title2: 'Инновации', desc2: 'Внедрение изменений в бизнес', title3: 'Мотивация', desc3: 'Вдохновляющие истории успеха' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
         ]
     },
     {
-        id: 'business-card',
-        name: 'Визитка',
-        category: 'business',
-        thumbnail: '📇',
+        id: 'personal-blogger', name: 'Блогер / Инфлюенсер', category: 'personal', thumbnail: '📱',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: '@username', links: 'Обо мне|Сотрудничество|Контакты' } },
+            { type: 'hero', componentSettings: { title: 'Привет! Я Алиса', subtitle: 'Lifestyle блогер • 500K подписчиков', buttonText: 'Сотрудничество', buttonColor: '#ec4899' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'counter', componentSettings: { num1: '500K', label1: 'Подписчиков', num2: '10M', label2: 'Охват', num3: '50+', label3: 'Коллабораций' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fdf2f8' }, children: [
+                { type: 'heading', content: 'Форматы сотрудничества' },
+                { type: 'features', componentSettings: { title1: 'Stories', desc1: 'Серия из 5-7 сторис', title2: 'Reels', desc2: 'Креативное видео', title3: 'Обзор', desc3: 'Подробный обзор продукта' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+
+    // === ИНТЕРНЕТ-МАГАЗИН ===
+    {
+        id: 'shop-fashion', name: 'Магазин одежды', category: 'shop', thumbnail: '👗',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'FASHION STORE', links: 'Каталог|Новинки|Sale|Контакты' } },
+            { type: 'hero', componentSettings: { title: 'Новая коллекция 2024', subtitle: 'Стильная одежда для современных людей', buttonText: 'Смотреть каталог', buttonColor: '#1e293b' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'heading', content: 'Почему выбирают нас' },
+                { type: 'features', componentSettings: { title1: 'Качество', desc1: 'Натуральные материалы', title2: 'Стиль', desc2: 'Актуальные тренды', title3: 'Сервис', desc3: 'Бесплатный возврат' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f8fafc' }, children: [{ type: 'testimonial' }] },
+            { type: 'footer' }
+        ]
+    },
+    {
+        id: 'shop-electronics', name: 'Магазин электроники', category: 'shop', thumbnail: '📱',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'TechStore', links: 'Смартфоны|Ноутбуки|Аксессуары|Доставка' } },
+            { type: 'hero', componentSettings: { title: 'Техника для жизни', subtitle: 'Официальный дилер Apple, Samsung, Xiaomi', buttonText: 'Перейти в каталог', buttonColor: '#3b82f6' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title1: 'Гарантия', desc1: 'Официальная гарантия', title2: 'Доставка', desc2: 'По всей России', title3: 'Trade-in', desc3: 'Обмен старого на новое' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#eff6ff' }, children: [
+                { type: 'counter', componentSettings: { num1: '10K+', label1: 'Товаров', num2: '50K+', label2: 'Клиентов', num3: '99%', label3: 'Довольных' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+    {
+        id: 'shop-handmade', name: 'Handmade магазин', category: 'shop', thumbnail: '🎨',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'Ручная работа', links: 'Каталог|О мастере|Заказать|Контакты' } },
+            { type: 'hero', componentSettings: { title: 'Украшения ручной работы', subtitle: 'Каждое изделие уникально, как и вы', buttonText: 'Выбрать подарок', buttonColor: '#d97706' } },
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fffbeb' }, children: [
+                { type: 'features', componentSettings: { title1: 'Уникальность', desc1: 'Каждое изделие единственное', title2: 'Материалы', desc2: 'Натуральные камни и серебро', title3: 'Упаковка', desc3: 'Красивая подарочная коробка' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+
+    // === НЕДВИЖИМОСТЬ ===
+    {
+        id: 'realestate-agency', name: 'Агентство недвижимости', category: 'realestate', thumbnail: '🏢',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'Метры', links: 'Купить|Снять|Продать|Контакты' } },
+            { type: 'hero', componentSettings: { title: 'Найдём вашу идеальную квартиру', subtitle: 'Более 10 000 объектов в базе', buttonText: 'Подобрать квартиру', buttonColor: '#059669' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'counter', componentSettings: { num1: '10K+', label1: 'Объектов', num2: '15', label2: 'Лет опыта', num3: '5000+', label3: 'Сделок' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f0fdf4' }, children: [
+                { type: 'features', componentSettings: { title1: 'Покупка', desc1: 'Подбор и сопровождение сделки', title2: 'Продажа', desc2: 'Оценка и маркетинг объекта', title3: 'Аренда', desc3: 'Поиск арендаторов' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#059669', color: 'white' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+    {
+        id: 'realestate-developer', name: 'Застройщик / ЖК', category: 'realestate', thumbnail: '🏗️',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'ЖК Парковый', links: 'О проекте|Планировки|Контакты' } },
+            { type: 'hero', componentSettings: { title: 'ЖК Парковый', subtitle: 'Квартиры бизнес-класса от 8,5 млн ₽', buttonText: 'Выбрать квартиру', buttonColor: '#1e40af' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title1: 'Сдача Q4 2025', desc1: 'Строительство по графику', title2: 'От 8.5 млн ₽', desc2: 'Квартиры от 35 м²', title3: 'Рассрочка 0%', desc3: 'Без переплат' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#eff6ff' }, children: [
+                { type: 'features', componentSettings: { title1: 'Парк 5 га', desc1: 'Собственный парк на территории', title2: 'Закрытый двор', desc2: 'Без машин, детские площадки', title3: 'Инфраструктура', desc3: 'Школа, садик, магазины' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)', color: 'white' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+
+    // === РЕСТОРАНЫ И КАФЕ ===
+    {
+        id: 'restaurant-main', name: 'Ресторан', category: 'restaurant', thumbnail: '🍽️',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'La Maison', links: 'Меню|О нас|Резерв|Контакты' } },
+            { type: 'hero', componentSettings: { title: 'La Maison', subtitle: 'Французская кухня в сердце города', buttonText: 'Забронировать столик', buttonColor: '#7c2d12' } },
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fef3c7' }, children: [
+                { type: 'text', content: 'Мы верим, что еда — это искусство. Каждое блюдо создаётся из лучших продуктов.', styles: { textAlign: 'center', maxWidth: '600px', margin: '0 auto' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#7c2d12', color: 'white' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+    {
+        id: 'restaurant-cafe', name: 'Кофейня', category: 'restaurant', thumbnail: '☕',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'Coffee Lab', links: 'Меню|О зёрнах|Адреса|Франшиза' } },
+            { type: 'hero', componentSettings: { title: 'Specialty Coffee', subtitle: 'Обжарка каждую неделю, зёрна со всего мира', buttonText: 'Найти ближайшую', buttonColor: '#78350f' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title1: 'Свежая обжарка', desc1: 'Обжариваем каждую неделю', title2: 'Прямые закупки', desc2: 'Работаем с фермами напрямую', title3: 'Авторские напитки', desc3: 'Уникальные рецепты бариста' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+    {
+        id: 'restaurant-delivery', name: 'Доставка еды', category: 'restaurant', thumbnail: '🍕',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'Pizza Express', links: 'Меню|Акции|Доставка|Контакты' } },
+            { type: 'hero', componentSettings: { title: 'Пицца за 30 минут', subtitle: 'Горячая доставка или пицца бесплатно!', buttonText: 'Заказать', buttonColor: '#dc2626' } },
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#fef2f2' }, children: [
+                { type: 'counter', componentSettings: { num1: '30', label1: 'Минут доставка', num2: '15', label2: 'Видов пиццы', num3: '4.9', label3: 'Рейтинг' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#dc2626', color: 'white' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+
+    // === ФИТНЕС ===
+    {
+        id: 'fitness-gym', name: 'Фитнес-клуб', category: 'fitness', thumbnail: '🏋️',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'FitLife', links: 'Залы|Расписание|Цены|Контакты' } },
+            { type: 'hero', componentSettings: { title: 'Начни менять себя сегодня', subtitle: 'Первая тренировка — бесплатно', buttonText: 'Записаться', buttonColor: '#f97316' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'counter', componentSettings: { num1: '5000', label1: 'м² площадь', num2: '200+', label2: 'Тренажёров', num3: '50', label3: 'Тренеров' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fff7ed' }, children: [
+                { type: 'features', componentSettings: { title1: 'Тренажёрный зал', desc1: 'Новейшее оборудование', title2: 'Групповые', desc2: 'Йога, пилатес, CrossFit', title3: 'Бассейн', desc3: '25 метров, аквааэробика' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f97316', color: 'white' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+    {
+        id: 'fitness-trainer', name: 'Персональный тренер', category: 'fitness', thumbnail: '💪',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'Алексей Фитнес', links: 'Обо мне|Программы|Результаты|Контакт' } },
+            { type: 'hero', componentSettings: { title: 'Персональный тренер', subtitle: 'Помогу достичь формы мечты за 3 месяца', buttonText: 'Начать трансформацию', buttonColor: '#16a34a' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'counter', componentSettings: { num1: '10', label1: 'Лет опыта', num2: '500+', label2: 'Клиентов', num3: '95%', label3: 'Результат' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f0fdf4' }, children: [
+                { type: 'features', componentSettings: { title1: 'Похудение', desc1: 'Сжигание жира без голодания', title2: 'Набор массы', desc2: 'Построение мышц', title3: 'Онлайн', desc3: 'Тренировки из любой точки мира' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#16a34a', color: 'white' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+    {
+        id: 'fitness-yoga', name: 'Йога студия', category: 'fitness', thumbnail: '🧘',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'Shanti Yoga', links: 'Расписание|Направления|Преподаватели|Контакты' } },
+            { type: 'hero', componentSettings: { title: 'Найди гармонию', subtitle: 'Йога для тела и души в центре города', buttonText: 'Пробное занятие', buttonColor: '#7c3aed' } },
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#faf5ff' }, children: [
+                { type: 'features', componentSettings: { title1: 'Хатха-йога', desc1: 'Классическая практика', title2: 'Виньяса', desc2: 'Динамичная практика', title3: 'Медитация', desc3: 'Практики осознанности' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', background: 'linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%)', color: 'white' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+
+    // === ОБРАЗОВАНИЕ ===
+    {
+        id: 'education-course', name: 'Онлайн-курс', category: 'education', thumbnail: '📚',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'WebDev Pro', links: 'Программа|Отзывы|Автор|Записаться' } },
+            { type: 'hero', componentSettings: { title: 'Стань веб-разработчиком за 6 месяцев', subtitle: 'От нуля до junior с гарантией трудоустройства', buttonText: 'Начать обучение', buttonColor: '#2563eb' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'counter', componentSettings: { num1: '6', label1: 'Месяцев', num2: '150+', label2: 'Уроков', num3: '90%', label3: 'Трудоустройство' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#eff6ff' }, children: [
+                { type: 'features', componentSettings: { title1: 'HTML/CSS', desc1: 'Вёрстка современных сайтов', title2: 'JavaScript', desc2: 'Программирование и React', title3: 'Практика', desc3: '10+ проектов в портфолио' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'testimonial', componentSettings: { text: 'Через 4 месяца получил оффер на 120 000₽!', author: 'Михаил С.', role: 'Frontend Developer' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#2563eb', color: 'white' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+    {
+        id: 'education-school', name: 'Школа / Детский центр', category: 'education', thumbnail: '🎓',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'Умные дети', links: 'Программы|Расписание|Преподаватели|Контакты' } },
+            { type: 'hero', componentSettings: { title: 'Развивающий центр для детей', subtitle: 'Английский, робототехника, творчество для детей 3-14 лет', buttonText: 'Записаться на пробный урок', buttonColor: '#ea580c' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title1: 'Английский', desc1: 'Игровая методика для детей', title2: 'Робототехника', desc2: 'LEGO Education, программирование', title3: 'Творчество', desc3: 'Рисование, лепка, музыка' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fff7ed' }, children: [
+                { type: 'counter', componentSettings: { num1: '500+', label1: 'Учеников', num2: '15', label2: 'Педагогов', num3: '10', label3: 'Лет опыта' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#ea580c', color: 'white' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+    {
+        id: 'education-tutor', name: 'Репетитор', category: 'education', thumbnail: '👨‍🏫',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'Елена Петрова', links: 'Обо мне|Предметы|Отзывы|Записаться' } },
+            { type: 'hero', componentSettings: { title: 'Репетитор по математике', subtitle: 'Подготовка к ЕГЭ на 90+ баллов', buttonText: 'Записаться на урок', buttonColor: '#0891b2' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'counter', componentSettings: { num1: '15', label1: 'Лет опыта', num2: '200+', label2: 'Учеников', num3: '95', label3: 'Средний балл' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#ecfeff' }, children: [
+                { type: 'features', componentSettings: { title1: 'Онлайн', desc1: 'Индивидуально через Zoom', title2: 'Очно', desc2: 'У репетитора или с выездом', title3: 'Мини-группы', desc3: 'До 4 человек, выгоднее' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'testimonial', componentSettings: { text: 'Благодаря Елене сдала ЕГЭ на 96 баллов!', author: 'Анна К.', role: 'Поступила в МГУ' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#0891b2', color: 'white' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+
+    // === УСЛУГИ ===
+    {
+        id: 'services-beauty', name: 'Салон красоты', category: 'services', thumbnail: '💇',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'Beauty Lab', links: 'Услуги|Мастера|Цены|Записаться' } },
+            { type: 'hero', componentSettings: { title: 'Салон красоты Beauty Lab', subtitle: 'Стрижки, окрашивание, маникюр, косметология', buttonText: 'Записаться онлайн', buttonColor: '#db2777' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title1: 'Парикмахерская', desc1: 'Стрижки, окрашивание, укладки', title2: 'Ногтевой сервис', desc2: 'Маникюр, педикюр, дизайн', title3: 'Косметология', desc3: 'Уходовые процедуры' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fdf2f8' }, children: [{ type: 'testimonial' }] },
+            { type: 'section', styles: { padding: '80px 20px', background: 'linear-gradient(135deg, #db2777 0%, #f472b6 100%)', color: 'white' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+    {
+        id: 'services-cleaning', name: 'Клининг', category: 'services', thumbnail: '🧹',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'CleanHome', links: 'Услуги|Цены|О нас|Заказать' } },
+            { type: 'hero', componentSettings: { title: 'Профессиональная уборка', subtitle: 'Квартиры, офисы, после ремонта. От 1500₽', buttonText: 'Рассчитать стоимость', buttonColor: '#0d9488' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'counter', componentSettings: { num1: '5000+', label1: 'Уборок', num2: '99%', label2: 'Довольных', num3: '2ч', label3: 'Среднее время' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f0fdfa' }, children: [
+                { type: 'features', componentSettings: { title1: 'Поддерживающая', desc1: 'Регулярная уборка от 1500₽', title2: 'Генеральная', desc2: 'Глубокая уборка от 3000₽', title3: 'После ремонта', desc3: 'Вывоз мусора от 5000₽' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#0d9488', color: 'white' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+    {
+        id: 'services-auto', name: 'Автосервис', category: 'services', thumbnail: '🚗',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'AutoPro', links: 'Услуги|Цены|О нас|Контакты' } },
+            { type: 'hero', componentSettings: { title: 'Автосервис полного цикла', subtitle: 'Ремонт, ТО, диагностика. Гарантия на все работы', buttonText: 'Записаться на сервис', buttonColor: '#dc2626' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'counter', componentSettings: { num1: '10K+', label1: 'Клиентов', num2: '15', label2: 'Лет опыта', num3: '1 год', label3: 'Гарантия' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fef2f2' }, children: [
+                { type: 'features', componentSettings: { title1: 'Диагностика', desc1: 'Компьютерная диагностика', title2: 'Ремонт', desc2: 'Двигатель, подвеска, электрика', title3: 'ТО', desc3: 'Плановое обслуживание' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px' }, children: [{ type: 'testimonial' }] },
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#dc2626', color: 'white' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+
+    // === МЕРОПРИЯТИЯ ===
+    {
+        id: 'events-conference', name: 'Конференция', category: 'events', thumbnail: '🎪',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'TechConf 2024', links: 'Программа|Спикеры|Билеты|FAQ' } },
+            { type: 'hero', componentSettings: { title: 'TechConf 2024', subtitle: '15-16 марта • Москва • Главная IT-конференция года', buttonText: 'Купить билет', buttonColor: '#7c3aed' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'counter', componentSettings: { num1: '2', label1: 'Дня', num2: '50+', label2: 'Спикеров', num3: '2000', label3: 'Участников' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#faf5ff' }, children: [
+                { type: 'features', componentSettings: { title1: 'AI & ML', desc1: 'Искусственный интеллект', title2: 'DevOps', desc2: 'Автоматизация и инфраструктура', title3: 'Product', desc3: 'Управление продуктом' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+    {
+        id: 'events-wedding', name: 'Свадебное агентство', category: 'events', thumbnail: '💒',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'Wedding Day', links: 'Услуги|Портфолио|Отзывы|Контакты' } },
+            { type: 'hero', componentSettings: { title: 'Свадьба вашей мечты', subtitle: 'Организация свадеб под ключ с 2010 года', buttonText: 'Обсудить свадьбу', buttonColor: '#be185d' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'counter', componentSettings: { num1: '500+', label1: 'Свадеб', num2: '14', label2: 'Лет опыта', num3: '100%', label3: 'Счастливых пар' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fdf2f8' }, children: [
+                { type: 'features', componentSettings: { title1: 'Полная организация', desc1: 'От концепции до последнего гостя', title2: 'Координация дня', desc2: 'Проведение свадьбы по плану', title3: 'Декор и флористика', desc3: 'Авторское оформление' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', background: 'linear-gradient(135deg, #be185d 0%, #f472b6 100%)', color: 'white' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+    {
+        id: 'events-party', name: 'Организация праздников', category: 'events', thumbnail: '🎉',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'Party Time', links: 'Услуги|Портфолио|Артисты|Заказать' } },
+            { type: 'hero', componentSettings: { title: 'Праздник под ключ', subtitle: 'Детские праздники, корпоративы, юбилеи', buttonText: 'Заказать праздник', buttonColor: '#eab308' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title1: 'Детские праздники', desc1: 'Аниматоры, шоу-программы', title2: 'Корпоративы', desc2: 'Тимбилдинг, банкеты', title3: 'Частные события', desc3: 'Юбилеи, дни рождения' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fefce8' }, children: [{ type: 'testimonial' }] },
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#eab308', color: 'white' }, children: [{ type: 'form' }] },
+            { type: 'footer' }
+        ]
+    },
+
+    // Legacy templates for compatibility
+    {
+        id: 'portfolio', name: 'Портфолио', category: 'personal', thumbnail: '🎨',
+        elements: [
+            { type: 'navbar' },
+            { type: 'hero', componentSettings: { title: 'Дизайнер-фрилансер', subtitle: 'Создаю визуальные истории для брендов', buttonText: 'Смотреть работы', buttonColor: '#6366f1' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [{ type: 'features' }] },
+            { type: 'footer' }
+        ]
+    },
+    {
+        id: 'business-card', name: 'Визитка', category: 'basic', thumbnail: '📇',
         elements: [
             {
                 type: 'section',
@@ -523,43 +787,91 @@ const blockTemplates = {
         tag: 'section',
         label: 'Hero',
         icon: 'fa-flag',
-        content: `<div style="text-align:center;max-width:800px;margin:0 auto;"><h1 style="font-size:48px;font-weight:bold;margin-bottom:20px;color:#1e293b;">Заголовок Hero секции</h1><p style="font-size:20px;color:#475569;margin-bottom:30px;">Подзаголовок с описанием вашего продукта или услуги</p><a href="#" style="display:inline-block;padding:16px 32px;background:#3b82f6;color:white;text-decoration:none;border-radius:8px;font-weight:500;">Начать</a></div>`,
-        defaultStyles: { padding: '100px 20px', backgroundColor: '#f8fafc' }
+        content: '',
+        defaultStyles: { padding: '100px 20px', backgroundColor: '#f8fafc' },
+        componentSettings: {
+            title: 'Заголовок Hero секции',
+            subtitle: 'Подзаголовок с описанием вашего продукта или услуги',
+            buttonText: 'Начать',
+            buttonUrl: '#',
+            buttonColor: '#3b82f6',
+            alignment: 'center'
+        }
     },
     features: {
         tag: 'div',
         label: 'Преимущества',
         icon: 'fa-th-large',
-        content: `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:30px;"><div style="text-align:center;padding:20px;"><div style="font-size:48px;margin-bottom:16px;">🚀</div><h3 style="font-size:20px;margin-bottom:8px;">Быстро</h3><p style="color:#64748b;">Описание преимущества</p></div><div style="text-align:center;padding:20px;"><div style="font-size:48px;margin-bottom:16px;">💡</div><h3 style="font-size:20px;margin-bottom:8px;">Удобно</h3><p style="color:#64748b;">Описание преимущества</p></div><div style="text-align:center;padding:20px;"><div style="font-size:48px;margin-bottom:16px;">✨</div><h3 style="font-size:20px;margin-bottom:8px;">Качественно</h3><p style="color:#64748b;">Описание преимущества</p></div></div>`,
-        defaultStyles: { padding: '40px 20px' }
+        content: '',
+        defaultStyles: { padding: '40px 20px' },
+        componentSettings: {
+            columns: 3,
+            items: [
+                { icon: '🚀', title: 'Быстро', description: 'Описание преимущества' },
+                { icon: '💡', title: 'Удобно', description: 'Описание преимущества' },
+                { icon: '✨', title: 'Качественно', description: 'Описание преимущества' }
+            ]
+        }
     },
     card: {
         tag: 'div',
         label: 'Карточка',
         icon: 'fa-id-card',
-        content: `<img src="https://via.placeholder.com/400x200" style="width:100%;border-radius:8px 8px 0 0;"><div style="padding:20px;"><h3 style="font-size:20px;margin-bottom:8px;">Заголовок карточки</h3><p style="color:#64748b;margin-bottom:16px;">Описание карточки</p><a href="#" style="color:#3b82f6;">Подробнее →</a></div>`,
-        defaultStyles: { backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', overflow: 'hidden', maxWidth: '350px' }
+        content: '',
+        defaultStyles: { backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', overflow: 'hidden', maxWidth: '350px' },
+        componentSettings: {
+            image: 'https://via.placeholder.com/400x200',
+            title: 'Заголовок карточки',
+            description: 'Описание карточки',
+            linkText: 'Подробнее →',
+            linkUrl: '#'
+        }
     },
     testimonial: {
         tag: 'div',
         label: 'Отзыв',
         icon: 'fa-quote-left',
-        content: `<div style="padding:24px;background:#f8fafc;border-radius:8px;"><p style="font-size:18px;font-style:italic;margin-bottom:16px;">"Отличный продукт! Рекомендую всем."</p><div style="display:flex;align-items:center;gap:12px;"><img src="https://via.placeholder.com/48" style="width:48px;height:48px;border-radius:50%;"><div><div style="font-weight:600;">Имя Фамилия</div><div style="color:#64748b;font-size:14px;">Должность</div></div></div></div>`,
-        defaultStyles: {}
+        content: '',
+        defaultStyles: {},
+        componentSettings: {
+            quote: 'Отличный продукт! Рекомендую всем.',
+            authorName: 'Имя Фамилия',
+            authorRole: 'Должность',
+            authorPhoto: 'https://via.placeholder.com/48'
+        }
     },
     pricing: {
         tag: 'div',
         label: 'Цена',
         icon: 'fa-tag',
-        content: `<div style="text-align:center;padding:32px;background:white;border-radius:12px;box-shadow:0 4px 6px rgba(0,0,0,0.1);"><h3 style="font-size:24px;margin-bottom:8px;">Базовый</h3><div style="font-size:48px;font-weight:bold;margin:16px 0;">$29<span style="font-size:16px;color:#64748b;">/мес</span></div><ul style="list-style:none;padding:0;margin-bottom:24px;color:#64748b;"><li style="padding:8px 0;">✓ Функция 1</li><li style="padding:8px 0;">✓ Функция 2</li><li style="padding:8px 0;">✓ Функция 3</li></ul><a href="#" style="display:block;padding:12px;background:#3b82f6;color:white;text-decoration:none;border-radius:6px;">Выбрать</a></div>`,
-        defaultStyles: { maxWidth: '300px' }
+        content: '',
+        defaultStyles: { maxWidth: '300px' },
+        componentSettings: {
+            planName: 'Базовый',
+            price: '29',
+            currency: '$',
+            period: '/мес',
+            features: ['Функция 1', 'Функция 2', 'Функция 3'],
+            buttonText: 'Выбрать',
+            buttonUrl: '#',
+            buttonColor: '#3b82f6',
+            highlighted: false
+        }
     },
     counter: {
         tag: 'div',
         label: 'Счётчик',
         icon: 'fa-sort-numeric-up',
-        content: `<div style="display:flex;justify-content:space-around;text-align:center;"><div><div style="font-size:48px;font-weight:bold;color:#3b82f6;">500+</div><div style="color:#64748b;">Клиентов</div></div><div><div style="font-size:48px;font-weight:bold;color:#3b82f6;">10</div><div style="color:#64748b;">Лет опыта</div></div><div><div style="font-size:48px;font-weight:bold;color:#3b82f6;">99%</div><div style="color:#64748b;">Довольных</div></div></div>`,
-        defaultStyles: { padding: '40px 20px' }
+        content: '',
+        defaultStyles: { padding: '40px 20px' },
+        componentSettings: {
+            items: [
+                { value: '500+', label: 'Клиентов' },
+                { value: '10', label: 'Лет опыта' },
+                { value: '99%', label: 'Довольных' }
+            ],
+            color: '#3b82f6'
+        }
     },
     progress: {
         tag: 'div',
@@ -845,17 +1157,20 @@ const blockTemplates = {
         tag: 'section',
         label: 'Параллакс секция',
         icon: 'fa-layer-group',
-        content: `<div style="text-align:center;color:white;padding:100px 20px;position:relative;z-index:1;">
-            <h2 style="font-size:42px;font-weight:bold;margin-bottom:20px;text-shadow:2px 2px 4px rgba(0,0,0,0.3);">Параллакс заголовок</h2>
-            <p style="font-size:20px;max-width:600px;margin:0 auto 30px;text-shadow:1px 1px 2px rgba(0,0,0,0.3);">Красивый эффект параллакса при скролле страницы</p>
-            <a href="#" style="display:inline-block;padding:14px 32px;background:white;color:#1e293b;text-decoration:none;border-radius:8px;font-weight:600;">Подробнее</a>
-        </div>`,
+        content: '',
         defaultStyles: {
             backgroundImage: 'url(https://via.placeholder.com/1920x800/1e293b/1e293b)',
             backgroundAttachment: 'fixed',
             backgroundPosition: 'center',
             backgroundSize: 'cover',
             position: 'relative'
+        },
+        componentSettings: {
+            title: 'Параллакс заголовок',
+            subtitle: 'Красивый эффект параллакса при скролле страницы',
+            buttonText: 'Подробнее',
+            buttonUrl: '#',
+            overlayColor: 'rgba(0,0,0,0.4)'
         }
     },
 
@@ -864,25 +1179,17 @@ const blockTemplates = {
         tag: 'div',
         label: 'Бегущая строка',
         icon: 'fa-text-width',
-        content: `<div class="marquee-container" style="overflow:hidden;white-space:nowrap;">
-            <div class="marquee-content" style="display:inline-block;animation:marquee 20s linear infinite;">
-                <span style="padding:0 50px;">🔥 Специальное предложение</span>
-                <span style="padding:0 50px;">⭐ Скидка 20% на все услуги</span>
-                <span style="padding:0 50px;">📞 Звоните: +7 (999) 123-45-67</span>
-                <span style="padding:0 50px;">🔥 Специальное предложение</span>
-                <span style="padding:0 50px;">⭐ Скидка 20% на все услуги</span>
-                <span style="padding:0 50px;">📞 Звоните: +7 (999) 123-45-67</span>
-            </div>
-        </div>
-        <style>
-            @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        </style>`,
+        content: '',
         defaultStyles: {
             backgroundColor: '#3b82f6',
             color: 'white',
             padding: '12px 0',
             fontSize: '16px',
             fontWeight: '500'
+        },
+        componentSettings: {
+            items: ['🔥 Специальное предложение', '⭐ Скидка 20% на все услуги', '📞 Звоните: +7 (999) 123-45-67'],
+            speed: 20
         }
     }
 };
@@ -973,7 +1280,168 @@ function createElement(type) {
         element.formSettings = JSON.parse(JSON.stringify(template.formSettings));
     }
 
+    // Add componentSettings for configurable components
+    if (template.componentSettings) {
+        element.componentSettings = JSON.parse(JSON.stringify(template.componentSettings));
+        // Generate initial content from settings
+        element.content = generateComponentContent(type, element.componentSettings);
+    }
+
     return element;
+}
+
+// Generate HTML content from component settings
+function generateComponentContent(type, settings) {
+    switch (type) {
+        case 'hero':
+            const alignment = settings.alignment || 'center';
+            return `<div style="text-align:${alignment};max-width:800px;margin:0 auto;">
+                <h1 style="font-size:48px;font-weight:bold;margin-bottom:20px;color:#1e293b;">${settings.title || ''}</h1>
+                <p style="font-size:20px;color:#475569;margin-bottom:30px;">${settings.subtitle || ''}</p>
+                <a href="${settings.buttonUrl || '#'}" style="display:inline-block;padding:16px 32px;background:${settings.buttonColor || '#3b82f6'};color:white;text-decoration:none;border-radius:8px;font-weight:500;">${settings.buttonText || 'Начать'}</a>
+            </div>`;
+
+        case 'features':
+            // Support both new format (items array) and legacy format (title1, desc1, etc.)
+            let featuresItems = settings.items;
+            if (!featuresItems || !Array.isArray(featuresItems)) {
+                // Convert legacy format to items array
+                featuresItems = [];
+                for (let i = 1; i <= 4; i++) {
+                    if (settings[`title${i}`]) {
+                        featuresItems.push({
+                            icon: settings[`icon${i}`] || ['🚀', '💡', '✨', '🎯'][i-1],
+                            title: settings[`title${i}`],
+                            description: settings[`desc${i}`] || ''
+                        });
+                    }
+                }
+                if (featuresItems.length === 0) {
+                    featuresItems = [
+                        { icon: '🚀', title: 'Быстро', description: 'Описание преимущества' },
+                        { icon: '💡', title: 'Удобно', description: 'Описание преимущества' },
+                        { icon: '✨', title: 'Качественно', description: 'Описание преимущества' }
+                    ];
+                }
+            }
+            const cols = settings.columns || 3;
+            const featuresHtml = featuresItems.map(item => `
+                <div style="text-align:center;padding:20px;">
+                    <div style="font-size:48px;margin-bottom:16px;">${item.icon || ''}</div>
+                    <h3 style="font-size:20px;margin-bottom:8px;">${item.title || ''}</h3>
+                    <p style="color:#64748b;">${item.description || ''}</p>
+                </div>
+            `).join('');
+            return `<div style="display:grid;grid-template-columns:repeat(${cols},1fr);gap:30px;">${featuresHtml}</div>`;
+
+        case 'testimonial':
+            // Support both new format and legacy format
+            const quote = settings.quote || settings.text || 'Отзыв клиента';
+            const authorName = settings.authorName || settings.author || 'Имя Фамилия';
+            const authorRole = settings.authorRole || settings.role || 'Должность';
+            const authorPhoto = settings.authorPhoto || 'https://via.placeholder.com/48';
+            return `<div style="padding:24px;background:#f8fafc;border-radius:8px;">
+                <p style="font-size:18px;font-style:italic;margin-bottom:16px;">"${quote}"</p>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <img src="${authorPhoto}" style="width:48px;height:48px;border-radius:50%;">
+                    <div>
+                        <div style="font-weight:600;">${authorName}</div>
+                        <div style="color:#64748b;font-size:14px;">${authorRole}</div>
+                    </div>
+                </div>
+            </div>`;
+
+        case 'pricing':
+            // Support both new format (features array) and legacy format (features string)
+            let pricingFeatures = settings.features;
+            if (typeof pricingFeatures === 'string') {
+                pricingFeatures = pricingFeatures.split('|').filter(f => f.trim());
+            }
+            if (!pricingFeatures || !Array.isArray(pricingFeatures)) {
+                pricingFeatures = ['Функция 1', 'Функция 2', 'Функция 3'];
+            }
+            const featuresListHtml = pricingFeatures.map(f => `<li style="padding:8px 0;">✓ ${f}</li>`).join('');
+            const planName = settings.planName || settings.title || 'Базовый';
+            const price = settings.price || '29';
+            const currency = settings.currency || '';
+            const period = settings.period || '/мес';
+            const buttonColor = settings.buttonColor || '#3b82f6';
+            const bgColor = settings.highlighted ? buttonColor : 'white';
+            const textColor = settings.highlighted ? 'white' : '#1e293b';
+            return `<div style="text-align:center;padding:32px;background:${bgColor};border-radius:12px;box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+                <h3 style="font-size:24px;margin-bottom:8px;color:${textColor};">${planName}</h3>
+                <div style="font-size:48px;font-weight:bold;margin:16px 0;color:${textColor};">${currency}${price}<span style="font-size:16px;color:${settings.highlighted ? 'rgba(255,255,255,0.8)' : '#64748b'};">${period}</span></div>
+                <ul style="list-style:none;padding:0;margin-bottom:24px;color:${settings.highlighted ? 'rgba(255,255,255,0.9)' : '#64748b'};">${featuresListHtml}</ul>
+                <a href="${settings.buttonUrl || '#'}" style="display:block;padding:12px;background:${settings.highlighted ? 'white' : buttonColor};color:${settings.highlighted ? buttonColor : 'white'};text-decoration:none;border-radius:6px;">${settings.buttonText || 'Выбрать'}</a>
+            </div>`;
+
+        case 'counter':
+            // Support both new format (items array) and legacy format (num1, label1, etc.)
+            let counterItems = settings.items;
+            if (!counterItems || !Array.isArray(counterItems)) {
+                counterItems = [];
+                for (let i = 1; i <= 4; i++) {
+                    if (settings[`num${i}`] || settings[`label${i}`]) {
+                        counterItems.push({
+                            value: settings[`num${i}`] || '0',
+                            label: settings[`label${i}`] || ''
+                        });
+                    }
+                }
+                if (counterItems.length === 0) {
+                    counterItems = [
+                        { value: '500+', label: 'Клиентов' },
+                        { value: '10', label: 'Лет опыта' },
+                        { value: '99%', label: 'Довольных' }
+                    ];
+                }
+            }
+            const counterColor = settings.color || '#3b82f6';
+            const countersHtml = counterItems.map(item => `
+                <div>
+                    <div style="font-size:48px;font-weight:bold;color:${counterColor};">${item.value}</div>
+                    <div style="color:#64748b;">${item.label}</div>
+                </div>
+            `).join('');
+            return `<div style="display:flex;justify-content:space-around;text-align:center;flex-wrap:wrap;gap:30px;">${countersHtml}</div>`;
+
+        case 'card':
+            return `<img src="${settings.image || 'https://via.placeholder.com/400x200'}" style="width:100%;border-radius:8px 8px 0 0;">
+                <div style="padding:20px;">
+                    <h3 style="font-size:20px;margin-bottom:8px;">${settings.title || 'Заголовок'}</h3>
+                    <p style="color:#64748b;margin-bottom:16px;">${settings.description || 'Описание'}</p>
+                    <a href="${settings.linkUrl || '#'}" style="color:#3b82f6;">${settings.linkText || 'Подробнее →'}</a>
+                </div>`;
+
+        case 'parallaxSection':
+            return `<div style="text-align:center;color:white;padding:100px 20px;position:relative;z-index:1;">
+                <h2 style="font-size:42px;font-weight:bold;margin-bottom:20px;text-shadow:2px 2px 4px rgba(0,0,0,0.3);">${settings.title || 'Заголовок'}</h2>
+                <p style="font-size:20px;max-width:600px;margin:0 auto 30px;text-shadow:1px 1px 2px rgba(0,0,0,0.3);">${settings.subtitle || 'Подзаголовок'}</p>
+                <a href="${settings.buttonUrl || '#'}" style="display:inline-block;padding:14px 32px;background:white;color:#1e293b;text-decoration:none;border-radius:8px;font-weight:600;">${settings.buttonText || 'Подробнее'}</a>
+            </div>`;
+
+        case 'marquee':
+            // Support both new format (items array) and legacy format (text string)
+            let marqueeItemsArray = settings.items;
+            if (!marqueeItemsArray || !Array.isArray(marqueeItemsArray)) {
+                if (settings.text) {
+                    marqueeItemsArray = [settings.text];
+                } else {
+                    marqueeItemsArray = ['🔥 Специальное предложение', '⭐ Скидка 20%', '📞 Звоните сейчас'];
+                }
+            }
+            const marqueeItems = marqueeItemsArray.map(item => `<span style="padding:0 50px;">${item}</span>`).join('');
+            const speed = settings.speed || 20;
+            return `<div class="marquee-container" style="overflow:hidden;white-space:nowrap;">
+                <div class="marquee-content" style="display:inline-block;animation:marquee ${speed}s linear infinite;">
+                    ${marqueeItems}${marqueeItems}
+                </div>
+            </div>
+            <style>@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }</style>`;
+
+        default:
+            return '';
+    }
 }
 
 // Get styles based on current viewport
@@ -2485,6 +2953,57 @@ function setupEditHandlers() {
             }
         });
     }
+
+    // Component settings handler
+    editContent.querySelectorAll('[data-component]').forEach(input => {
+        const updateComponentSetting = () => {
+            const el = state.editingElement;
+            if (!el.componentSettings) el.componentSettings = {};
+
+            const key = input.dataset.component;
+            let value = input.type === 'checkbox' ? input.checked : input.value;
+
+            // Handle special cases for parsing complex data
+            if (key === 'featuresText' && el.type === 'pricing') {
+                // Pricing features - simple list
+                el.componentSettings.features = value.split('\n').filter(l => l.trim());
+            } else if (key === 'featuresText' && el.type === 'features') {
+                // Parse features text into items array
+                const blocks = value.split('\n\n').filter(b => b.trim());
+                el.componentSettings.items = blocks.map(block => {
+                    const lines = block.split('\n').filter(l => l.trim());
+                    return {
+                        icon: lines[0] || '',
+                        title: lines[1] || '',
+                        description: lines[2] || ''
+                    };
+                });
+            } else if (key === 'counterText') {
+                // Parse counter items
+                const blocks = value.split('\n\n').filter(b => b.trim());
+                el.componentSettings.items = blocks.map(block => {
+                    const lines = block.split('\n').filter(l => l.trim());
+                    return {
+                        value: lines[0] || '',
+                        label: lines[1] || ''
+                    };
+                });
+            } else if (key === 'marqueeText') {
+                el.componentSettings.items = value.split('\n').filter(l => l.trim());
+            } else if (key === 'columns' || key === 'speed') {
+                el.componentSettings[key] = parseInt(value) || 0;
+            } else {
+                el.componentSettings[key] = value;
+            }
+
+            // Regenerate content from settings
+            el.content = generateComponentContent(el.type, el.componentSettings);
+            renderCanvas();
+        };
+
+        input.addEventListener('input', updateComponentSetting);
+        input.addEventListener('change', updateComponentSetting);
+    });
 }
 
 function renderContentTab(el) {
@@ -2861,47 +3380,60 @@ function renderContentTab(el) {
             </div>
         `,
 
-        hero: () => `
+        hero: () => {
+            const cs = el.componentSettings || { title: '', subtitle: '', buttonText: '', buttonUrl: '#', buttonColor: '#3b82f6', alignment: 'center' };
+            return `
             <div class="edit-section">
                 <h4><i class="fas fa-flag"></i> Hero секция</h4>
                 <div class="edit-row">
                     <label>Заголовок</label>
-                    <input type="text" class="edit-input" data-custom="heroTitle" value="${extractHeroTitle(el.content)}">
+                    <input type="text" class="edit-input" data-component="title" value="${escapeHtml(cs.title)}">
                 </div>
                 <div class="edit-row">
                     <label>Подзаголовок</label>
-                    <textarea class="edit-textarea" data-custom="heroSubtitle" rows="2">${extractHeroSubtitle(el.content)}</textarea>
+                    <textarea class="edit-textarea" data-component="subtitle" rows="2">${escapeHtml(cs.subtitle)}</textarea>
                 </div>
                 <div class="edit-row">
                     <label>Текст кнопки</label>
-                    <input type="text" class="edit-input" data-custom="heroButton" value="${extractHeroButton(el.content)}">
+                    <input type="text" class="edit-input" data-component="buttonText" value="${escapeHtml(cs.buttonText)}">
                 </div>
                 <div class="edit-row">
                     <label>Ссылка кнопки</label>
-                    <input type="text" class="edit-input" data-custom="heroButtonLink" value="#" placeholder="https://...">
+                    <input type="text" class="edit-input" data-component="buttonUrl" value="${cs.buttonUrl}" placeholder="https://...">
                 </div>
                 <div class="edit-row">
                     <label>Цвет кнопки</label>
                     <div class="edit-color">
-                        <input type="color" value="#3b82f6" data-custom="heroButtonColor">
-                        <input type="text" class="edit-input" value="#3b82f6">
+                        <input type="color" value="${cs.buttonColor}" data-component="buttonColor">
+                        <input type="text" class="edit-input" data-component="buttonColor" value="${cs.buttonColor}">
                     </div>
                 </div>
+                <div class="edit-row">
+                    <label>Выравнивание</label>
+                    <select class="edit-select" data-component="alignment">
+                        <option value="left" ${cs.alignment === 'left' ? 'selected' : ''}>Слева</option>
+                        <option value="center" ${cs.alignment === 'center' ? 'selected' : ''}>По центру</option>
+                        <option value="right" ${cs.alignment === 'right' ? 'selected' : ''}>Справа</option>
+                    </select>
+                </div>
             </div>
-        `,
+        `},
 
-        features: () => `
+        features: () => {
+            const cs = el.componentSettings || { columns: 3, items: [] };
+            const itemsText = (cs.items || []).map(i => `${i.icon}\n${i.title}\n${i.description}`).join('\n\n');
+            return `
             <div class="edit-section">
                 <h4><i class="fas fa-th-large"></i> Преимущества</h4>
                 <div class="edit-row">
                     <label>Преимущества</label>
-                    <textarea class="edit-textarea" data-custom="featuresItems" rows="10" placeholder="🚀
+                    <textarea class="edit-textarea" data-component="featuresText" rows="10" placeholder="🚀
 Быстро
 Описание преимущества
 
 💡
 Удобно
-Описание преимущества">${extractFeaturesItems(el.content)}</textarea>
+Описание преимущества">${itemsText}</textarea>
                 </div>
                 <p class="edit-hint">Формат: Иконка/эмодзи, Заголовок, Описание. Разделяйте блоки пустой строкой.</p>
             </div>
@@ -2909,115 +3441,140 @@ function renderContentTab(el) {
                 <h4><i class="fas fa-th"></i> Сетка</h4>
                 <div class="edit-row">
                     <label>Колонок</label>
-                    <select class="edit-select" data-custom="featuresCols">
-                        <option value="2">2 колонки</option>
-                        <option value="3" selected>3 колонки</option>
-                        <option value="4">4 колонки</option>
+                    <select class="edit-select" data-component="columns">
+                        <option value="2" ${cs.columns == 2 ? 'selected' : ''}>2 колонки</option>
+                        <option value="3" ${cs.columns == 3 ? 'selected' : ''}>3 колонки</option>
+                        <option value="4" ${cs.columns == 4 ? 'selected' : ''}>4 колонки</option>
                     </select>
                 </div>
             </div>
-        `,
+        `},
 
-        card: () => `
+        card: () => {
+            const cs = el.componentSettings || { image: '', title: '', description: '', linkText: 'Подробнее →', linkUrl: '#' };
+            return `
             <div class="edit-section">
                 <h4><i class="fas fa-id-card"></i> Карточка</h4>
                 <div class="edit-row">
                     <label>URL изображения</label>
-                    <input type="text" class="edit-input" data-custom="cardImage" value="${extractCardImage(el.content)}">
+                    <input type="text" class="edit-input" data-component="image" value="${cs.image}">
                 </div>
                 <div class="edit-row">
                     <label>Заголовок</label>
-                    <input type="text" class="edit-input" data-custom="cardTitle" value="${extractCardTitle(el.content)}">
+                    <input type="text" class="edit-input" data-component="title" value="${escapeHtml(cs.title)}">
                 </div>
                 <div class="edit-row">
                     <label>Описание</label>
-                    <textarea class="edit-textarea" data-custom="cardDescription" rows="3">${extractCardDescription(el.content)}</textarea>
+                    <textarea class="edit-textarea" data-component="description" rows="3">${escapeHtml(cs.description)}</textarea>
                 </div>
                 <div class="edit-row">
                     <label>Текст ссылки</label>
-                    <input type="text" class="edit-input" data-custom="cardLinkText" value="Подробнее →">
+                    <input type="text" class="edit-input" data-component="linkText" value="${escapeHtml(cs.linkText)}">
                 </div>
                 <div class="edit-row">
                     <label>URL ссылки</label>
-                    <input type="text" class="edit-input" data-custom="cardLink" value="#" placeholder="https://...">
+                    <input type="text" class="edit-input" data-component="linkUrl" value="${cs.linkUrl}" placeholder="https://...">
                 </div>
             </div>
-        `,
+        `},
 
-        testimonial: () => `
+        testimonial: () => {
+            const cs = el.componentSettings || { quote: '', authorName: '', authorRole: '', authorPhoto: '' };
+            return `
             <div class="edit-section">
                 <h4><i class="fas fa-quote-left"></i> Отзыв</h4>
                 <div class="edit-row">
                     <label>Текст отзыва</label>
-                    <textarea class="edit-textarea" data-custom="testimonialText" rows="3">${extractTestimonialText(el.content)}</textarea>
+                    <textarea class="edit-textarea" data-component="quote" rows="3">${escapeHtml(cs.quote)}</textarea>
                 </div>
                 <div class="edit-row">
                     <label>Имя автора</label>
-                    <input type="text" class="edit-input" data-custom="testimonialName" value="${extractTestimonialName(el.content)}">
+                    <input type="text" class="edit-input" data-component="authorName" value="${escapeHtml(cs.authorName)}">
                 </div>
                 <div class="edit-row">
                     <label>Должность / компания</label>
-                    <input type="text" class="edit-input" data-custom="testimonialRole" value="${extractTestimonialRole(el.content)}">
+                    <input type="text" class="edit-input" data-component="authorRole" value="${escapeHtml(cs.authorRole)}">
                 </div>
                 <div class="edit-row">
                     <label>Фото (URL)</label>
-                    <input type="text" class="edit-input" data-custom="testimonialPhoto" value="${extractTestimonialPhoto(el.content)}">
+                    <input type="text" class="edit-input" data-component="authorPhoto" value="${cs.authorPhoto}">
                 </div>
             </div>
-        `,
+        `},
 
-        pricing: () => `
+        pricing: () => {
+            const cs = el.componentSettings || { planName: '', price: '', currency: '$', period: '/мес', features: [], buttonText: 'Выбрать', buttonUrl: '#', buttonColor: '#3b82f6', highlighted: false };
+            return `
             <div class="edit-section">
                 <h4><i class="fas fa-tag"></i> Тариф</h4>
                 <div class="edit-row">
                     <label>Название тарифа</label>
-                    <input type="text" class="edit-input" data-custom="pricingName" value="${extractPricingName(el.content)}">
+                    <input type="text" class="edit-input" data-component="planName" value="${escapeHtml(cs.planName)}">
                 </div>
                 <div class="edit-grid">
                     <div class="edit-row">
+                        <label>Валюта</label>
+                        <input type="text" class="edit-input" data-component="currency" value="${cs.currency}" style="width:60px;">
+                    </div>
+                    <div class="edit-row">
                         <label>Цена</label>
-                        <input type="text" class="edit-input" data-custom="pricingPrice" value="${extractPricingPrice(el.content)}">
+                        <input type="text" class="edit-input" data-component="price" value="${cs.price}">
                     </div>
                     <div class="edit-row">
                         <label>Период</label>
-                        <input type="text" class="edit-input" data-custom="pricingPeriod" value="/мес" placeholder="/мес, /год">
+                        <input type="text" class="edit-input" data-component="period" value="${cs.period}" placeholder="/мес, /год">
                     </div>
                 </div>
                 <div class="edit-row">
                     <label>Преимущества (каждое с новой строки)</label>
-                    <textarea class="edit-textarea" data-custom="pricingFeatures" rows="4">${extractPricingFeatures(el.content)}</textarea>
+                    <textarea class="edit-textarea" data-component="featuresText" rows="4">${(cs.features || []).join('\n')}</textarea>
                 </div>
                 <div class="edit-row">
                     <label>Текст кнопки</label>
-                    <input type="text" class="edit-input" data-custom="pricingButton" value="Выбрать">
+                    <input type="text" class="edit-input" data-component="buttonText" value="${escapeHtml(cs.buttonText)}">
                 </div>
                 <div class="edit-row">
                     <label>Цвет кнопки</label>
                     <div class="edit-color">
-                        <input type="color" value="#3b82f6" data-custom="pricingButtonColor">
-                        <input type="text" class="edit-input" value="#3b82f6">
+                        <input type="color" value="${cs.buttonColor}" data-component="buttonColor">
+                        <input type="text" class="edit-input" value="${cs.buttonColor}" data-component="buttonColor">
                     </div>
                 </div>
+                <div class="edit-row">
+                    <label>
+                        <input type="checkbox" data-component="highlighted" ${cs.highlighted ? 'checked' : ''}> Выделенный тариф
+                    </label>
+                </div>
             </div>
-        `,
+        `},
 
-        counter: () => `
+        counter: () => {
+            const cs = el.componentSettings || { items: [], color: '#3b82f6' };
+            const itemsText = (cs.items || []).map(i => `${i.value}\n${i.label}`).join('\n\n');
+            return `
             <div class="edit-section">
                 <h4><i class="fas fa-sort-numeric-up"></i> Счётчики</h4>
                 <div class="edit-row">
                     <label>Счётчики</label>
-                    <textarea class="edit-textarea" data-custom="counterItems" rows="6" placeholder="500+
+                    <textarea class="edit-textarea" data-component="counterText" rows="6" placeholder="500+
 Клиентов
 
 10
 Лет опыта
 
 99%
-Довольных">${extractCounterItems(el.content)}</textarea>
+Довольных">${itemsText}</textarea>
                 </div>
                 <p class="edit-hint">Формат: Число, затем Подпись. Разделяйте пары пустой строкой.</p>
+                <div class="edit-row">
+                    <label>Цвет чисел</label>
+                    <div class="edit-color">
+                        <input type="color" value="${cs.color}" data-component="color">
+                        <input type="text" class="edit-input" value="${cs.color}" data-component="color">
+                    </div>
+                </div>
             </div>
-        `,
+        `},
 
         progress: () => `
             <div class="edit-section">
@@ -3163,7 +3720,54 @@ React
                 </div>
                 <p class="edit-hint">Код виджета от стороннего сервиса (чат, формы, аналитика и т.д.)</p>
             </div>
-        `
+        `,
+
+        parallaxSection: () => {
+            const cs = el.componentSettings || { title: '', subtitle: '', buttonText: '', buttonUrl: '#', overlayColor: 'rgba(0,0,0,0.4)' };
+            return `
+            <div class="edit-section">
+                <h4><i class="fas fa-layer-group"></i> Параллакс секция</h4>
+                <div class="edit-row">
+                    <label>Заголовок</label>
+                    <input type="text" class="edit-input" data-component="title" value="${escapeHtml(cs.title)}">
+                </div>
+                <div class="edit-row">
+                    <label>Подзаголовок</label>
+                    <textarea class="edit-textarea" data-component="subtitle" rows="2">${escapeHtml(cs.subtitle)}</textarea>
+                </div>
+                <div class="edit-row">
+                    <label>Текст кнопки</label>
+                    <input type="text" class="edit-input" data-component="buttonText" value="${escapeHtml(cs.buttonText)}">
+                </div>
+                <div class="edit-row">
+                    <label>Ссылка кнопки</label>
+                    <input type="text" class="edit-input" data-component="buttonUrl" value="${cs.buttonUrl}">
+                </div>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-image"></i> Фоновое изображение</h4>
+                <p class="edit-hint">Настройте фоновое изображение во вкладке "Стиль" → Фон → Фото</p>
+            </div>
+        `},
+
+        marquee: () => {
+            const cs = el.componentSettings || { items: [], speed: 20 };
+            return `
+            <div class="edit-section">
+                <h4><i class="fas fa-text-width"></i> Бегущая строка</h4>
+                <div class="edit-row">
+                    <label>Текст (каждый элемент с новой строки)</label>
+                    <textarea class="edit-textarea" data-component="marqueeText" rows="4">${(cs.items || []).join('\n')}</textarea>
+                </div>
+                <div class="edit-row">
+                    <label>Скорость (секунд на цикл)</label>
+                    <div class="edit-range-row">
+                        <input type="range" min="5" max="60" value="${cs.speed || 20}" data-component="speed">
+                        <span>${cs.speed || 20}s</span>
+                    </div>
+                </div>
+            </div>
+        `}
     };
 
     // Если есть специфичные настройки для типа - используем их
@@ -4930,6 +5534,16 @@ function applyPageTemplate(templateId) {
             // Override content if provided
             if (tpl.content) {
                 el.content = tpl.content;
+            }
+
+            // Apply componentSettings from template
+            if (tpl.componentSettings) {
+                // Merge template settings with defaults
+                el.componentSettings = { ...el.componentSettings, ...tpl.componentSettings };
+                // Regenerate content based on new settings
+                if (typeof generateComponentContent === 'function') {
+                    el.content = generateComponentContent(tpl.type, el.componentSettings);
+                }
             }
 
             // Create children
