@@ -1273,15 +1273,11 @@ function renderElement(element, depth = 0) {
         const gap = element.styles?.gap || '20px';
         const childCount = element.children?.length || 0;
 
-        // Check if all children are containers (no gap between containers)
-        const allChildrenAreContainers = element.children?.every(c => c.isContainer) || false;
-        const effectiveGap = allChildrenAreContainers ? '0px' : gap;
-
         // Apply flex properties to children container
         childContainer.style.display = 'flex';
         childContainer.style.flexDirection = element.styles?.flexDirection || 'column';
-        childContainer.style.flexWrap = element.styles?.flexWrap || 'wrap';
-        childContainer.style.gap = effectiveGap;
+        childContainer.style.flexWrap = element.styles?.flexWrap || 'nowrap';
+        childContainer.style.gap = gap;
         childContainer.style.justifyContent = element.styles?.justifyContent || 'flex-start';
         childContainer.style.alignItems = element.styles?.alignItems || 'stretch';
         childContainer.style.flex = '1';
@@ -1292,17 +1288,16 @@ function renderElement(element, depth = 0) {
             element.children.forEach(child => {
                 const childEl = renderElement(child, depth + 1);
 
-                // Auto-calculate width for horizontal layout (only for non-container children)
-                if (isHorizontal && childCount > 0 && !child.isContainer) {
-                    const gapValue = parseInt(effectiveGap) || 0;
+                // Auto-calculate width for horizontal layout
+                if (isHorizontal && childCount > 0) {
+                    const gapValue = parseInt(gap) || 0;
                     const totalGap = gapValue * (childCount - 1);
-                    childEl.style.flex = `1 1 calc((100% - ${totalGap}px) / ${childCount})`;
-                    childEl.style.maxWidth = `calc((100% - ${totalGap}px) / ${childCount})`;
+                    // All children (including containers) get equal flex
+                    childEl.style.flex = '1 1 0';
+                    childEl.style.minWidth = '0';
                     childEl.style.boxSizing = 'border-box';
-                }
-
-                // Container children take full width of parent
-                if (child.isContainer) {
+                } else if (child.isContainer) {
+                    // Vertical layout - containers take full width
                     childEl.style.width = '100%';
                     childEl.style.boxSizing = 'border-box';
                 }
@@ -3185,6 +3180,7 @@ function renderStyleTab(el) {
             </div>
         </div>
 
+        ${!el.isContainer ? `
         <div class="edit-section">
             <h4><i class="fas fa-text-height"></i> Типографика</h4>
             <div class="edit-row">
@@ -3245,6 +3241,7 @@ function renderStyleTab(el) {
                 </div>
             </div>
         </div>
+        ` : ''}
 
         <div class="edit-section">
             <h4><i class="fas fa-fill-drip"></i> Фон</h4>
@@ -3951,11 +3948,13 @@ function generateElementHTML(el) {
 
     const styleStr = stylesToString(styles);
 
-    // Add id for responsive CSS targeting
-    const hasResponsiveStyles = (el.tabletStyles && Object.keys(el.tabletStyles).length > 0) ||
-                                (el.mobileStyles && Object.keys(el.mobileStyles).length > 0);
-    if (hasResponsiveStyles) {
-        attrs['id'] = el.id;
+    // Always add id for auto-responsive CSS targeting
+    attrs['id'] = el.id;
+
+    // Add class based on element type for responsive targeting
+    const typeClass = el.type || '';
+    if (typeClass) {
+        attrs['class'] = (attrs['class'] || '') + ' ' + typeClass;
     }
 
     const attrsStr = Object.entries(attrs).map(([k, v]) => `${k}="${v}"`).join(' ');
@@ -4062,19 +4061,41 @@ ${hasForm ? generateFormScript() : ''}
 function generateResponsiveCSS() {
     let tabletCSS = '';
     let mobileCSS = '';
+    let autoTabletCSS = '';
+    let autoMobileCSS = '';
 
     function collectResponsiveStyles(elements) {
         for (const el of elements) {
-            // Tablet styles
+            // User-defined tablet styles
             if (el.tabletStyles && Object.keys(el.tabletStyles).length > 0) {
                 const styleStr = stylesToString(el.tabletStyles);
                 tabletCSS += `        #${el.id} { ${styleStr} }\n`;
             }
 
-            // Mobile styles
+            // User-defined mobile styles
             if (el.mobileStyles && Object.keys(el.mobileStyles).length > 0) {
                 const styleStr = stylesToString(el.mobileStyles);
                 mobileCSS += `        #${el.id} { ${styleStr} }\n`;
+            }
+
+            // Auto-responsive: horizontal containers switch to vertical on mobile
+            if (el.isContainer && el.styles?.flexDirection === 'row') {
+                autoMobileCSS += `        #${el.id} > .element-children, #${el.id} { flex-direction: column !important; }\n`;
+            }
+
+            // Auto-responsive: reduce large font sizes on mobile
+            const fontSize = parseInt(el.styles?.fontSize);
+            if (fontSize && fontSize > 32) {
+                const tabletSize = Math.max(24, Math.round(fontSize * 0.75));
+                const mobileSize = Math.max(20, Math.round(fontSize * 0.6));
+                autoTabletCSS += `        #${el.id} { font-size: ${tabletSize}px !important; }\n`;
+                autoMobileCSS += `        #${el.id} { font-size: ${mobileSize}px !important; }\n`;
+            }
+
+            // Auto-responsive: reduce large padding on mobile
+            const padding = parseInt(el.styles?.padding);
+            if (padding && padding > 40) {
+                autoMobileCSS += `        #${el.id} { padding: ${Math.round(padding * 0.5)}px !important; }\n`;
             }
 
             // Process children
@@ -4086,13 +4107,28 @@ function generateResponsiveCSS() {
 
     collectResponsiveStyles(state.elements);
 
+    // Combine auto and user styles (user styles take priority)
     let css = '';
-    if (tabletCSS) {
-        css += `        @media (max-width: 1024px) {\n${tabletCSS}        }\n`;
-    }
-    if (mobileCSS) {
-        css += `        @media (max-width: 640px) {\n${mobileCSS}        }\n`;
-    }
+
+    // Base responsive styles
+    css += `        /* Auto-responsive base styles */
+        @media (max-width: 1024px) {
+            .hero h1, h1 { font-size: 36px !important; }
+            .hero p { font-size: 18px !important; }
+${autoTabletCSS}${tabletCSS}        }
+        @media (max-width: 640px) {
+            .hero h1, h1 { font-size: 28px !important; }
+            h2 { font-size: 24px !important; }
+            h3 { font-size: 20px !important; }
+            .hero p { font-size: 16px !important; }
+            section { padding: 40px 15px !important; }
+            .container { padding: 15px !important; }
+            nav { padding: 10px !important; }
+            .row { flex-direction: column !important; }
+            .column { min-width: 100% !important; flex: 1 1 100% !important; }
+            .features > div { grid-template-columns: 1fr !important; }
+${autoMobileCSS}${mobileCSS}        }
+`;
 
     return css;
 }
