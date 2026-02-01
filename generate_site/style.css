@@ -1982,6 +1982,12 @@ body {
     border-bottom: 2px solid var(--accent);
 }
 
+.layer-item.layer-drop-inside {
+    background: rgba(59, 130, 246, 0.15);
+    border: 2px dashed var(--accent);
+    border-radius: var(--radius);
+}
+
 /* ===== Layer Delete Button ===== */
 .layer-delete {
     background: none;

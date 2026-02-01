@@ -1693,21 +1693,35 @@ function renderLayers() {
             e.stopPropagation();
             if (state.draggedLayerId === id) return;
 
+            const element = findElement(id);
             const rect = item.getBoundingClientRect();
             const y = e.clientY - rect.top;
-            const threshold = rect.height / 2;
+            const height = rect.height;
 
-            item.classList.remove('layer-drop-before', 'layer-drop-after');
-            if (y < threshold) {
-                item.classList.add('layer-drop-before');
+            item.classList.remove('layer-drop-before', 'layer-drop-after', 'layer-drop-inside');
+
+            // For containers: top 25% = before, middle 50% = inside, bottom 25% = after
+            if (element?.isContainer) {
+                if (y < height * 0.25) {
+                    item.classList.add('layer-drop-before');
+                } else if (y > height * 0.75) {
+                    item.classList.add('layer-drop-after');
+                } else {
+                    item.classList.add('layer-drop-inside');
+                }
             } else {
-                item.classList.add('layer-drop-after');
+                // For non-containers: top 50% = before, bottom 50% = after
+                if (y < height / 2) {
+                    item.classList.add('layer-drop-before');
+                } else {
+                    item.classList.add('layer-drop-after');
+                }
             }
         });
 
         // Drag leave
         item.addEventListener('dragleave', () => {
-            item.classList.remove('layer-drop-before', 'layer-drop-after');
+            item.classList.remove('layer-drop-before', 'layer-drop-after', 'layer-drop-inside');
         });
 
         // Drop
@@ -1716,10 +1730,16 @@ function renderLayers() {
             e.stopPropagation();
             if (!state.draggedLayerId || state.draggedLayerId === id) return;
 
-            const isBefore = item.classList.contains('layer-drop-before');
-            item.classList.remove('layer-drop-before', 'layer-drop-after');
+            let position = 'after';
+            if (item.classList.contains('layer-drop-before')) {
+                position = 'before';
+            } else if (item.classList.contains('layer-drop-inside')) {
+                position = 'inside';
+            }
 
-            moveLayerToPosition(state.draggedLayerId, id, isBefore ? 'before' : 'after');
+            item.classList.remove('layer-drop-before', 'layer-drop-after', 'layer-drop-inside');
+
+            moveLayerToPosition(state.draggedLayerId, id, position);
         });
     });
 
@@ -1789,25 +1809,47 @@ function renderLayerTree(elements, depth = 0) {
 
 function moveLayerToPosition(draggedId, targetId, position) {
     const draggedElement = findElement(draggedId);
-    if (!draggedElement) return;
+    const targetElement = findElement(targetId);
+    if (!draggedElement || !targetElement) return;
+
+    // Prevent dropping element into itself or its children
+    if (isDescendant(targetId, draggedId)) return;
 
     // Remove from current position
     removeElement(draggedId);
 
-    // Find target and insert
-    const targetParent = findParent(targetId);
-    const targetArray = targetParent ? targetParent.children : state.elements;
-    const targetIndex = targetArray.findIndex(e => e.id === targetId);
+    if (position === 'inside' && targetElement.isContainer) {
+        // Insert inside container at the end
+        targetElement.children = targetElement.children || [];
+        targetElement.children.push(draggedElement);
+    } else {
+        // Find target and insert before/after
+        const targetParent = findParent(targetId);
+        const targetArray = targetParent ? targetParent.children : state.elements;
+        const targetIndex = targetArray.findIndex(e => e.id === targetId);
 
-    if (targetIndex !== -1) {
-        const insertIndex = position === 'after' ? targetIndex + 1 : targetIndex;
-        targetArray.splice(insertIndex, 0, draggedElement);
+        if (targetIndex !== -1) {
+            const insertIndex = position === 'after' ? targetIndex + 1 : targetIndex;
+            targetArray.splice(insertIndex, 0, draggedElement);
+        }
     }
 
     saveHistory();
     renderCanvas();
     renderLayers();
     selectElement(draggedId);
+}
+
+// Check if childId is a descendant of parentId
+function isDescendant(childId, parentId) {
+    const parent = findElement(parentId);
+    if (!parent || !parent.children) return false;
+
+    for (const child of parent.children) {
+        if (child.id === childId) return true;
+        if (isDescendant(childId, child.id)) return true;
+    }
+    return false;
 }
 
 function highlightLayer(id) {
