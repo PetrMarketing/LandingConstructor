@@ -644,9 +644,93 @@
         </div>
     </div>
 
+    <!-- Color Scheme Modal -->
+    <div class="modal-overlay" id="colorSchemeModal">
+        <div class="template-modal" style="max-width: 700px;">
+            <div class="template-modal-header">
+                <h2><i class="fas fa-palette"></i> Выберите цветовую схему</h2>
+                <button class="template-modal-close" onclick="closeColorSchemeModal()">&times;</button>
+            </div>
+            <div class="template-modal-body">
+                <div class="color-schemes-grid" id="colorSchemesGrid">
+                    <!-- Color schemes will be rendered here -->
+                </div>
+            </div>
+            <div class="template-modal-footer">
+                <button class="btn btn-cancel" onclick="backToTemplates()">
+                    <i class="fas fa-arrow-left"></i> Назад
+                </button>
+                <button class="btn btn-primary" onclick="confirmCreatePage()" id="confirmCreateBtn">
+                    <i class="fas fa-check"></i> Создать страницу
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .color-schemes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 16px;
+            padding: 20px 0;
+        }
+        .color-scheme-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .color-scheme-card:hover {
+            border-color: #94a3b8;
+            transform: translateY(-2px);
+        }
+        .color-scheme-card.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        .color-scheme-preview {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 12px;
+            justify-content: center;
+        }
+        .color-scheme-preview div {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .color-scheme-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+        }
+    </style>
+
     <script>
         // Pages storage
         const STORAGE_KEY = 'landing_pages';
+
+        // Color Schemes
+        const colorSchemes = [
+            { id: 'blue', name: 'Синий', primary: '#3b82f6', secondary: '#1e40af', accent: '#60a5fa', bg: '#eff6ff' },
+            { id: 'green', name: 'Зелёный', primary: '#10b981', secondary: '#047857', accent: '#34d399', bg: '#ecfdf5' },
+            { id: 'purple', name: 'Фиолетовый', primary: '#8b5cf6', secondary: '#6d28d9', accent: '#a78bfa', bg: '#f5f3ff' },
+            { id: 'orange', name: 'Оранжевый', primary: '#f97316', secondary: '#ea580c', accent: '#fb923c', bg: '#fff7ed' },
+            { id: 'pink', name: 'Розовый', primary: '#ec4899', secondary: '#db2777', accent: '#f472b6', bg: '#fdf2f8' },
+            { id: 'teal', name: 'Бирюзовый', primary: '#14b8a6', secondary: '#0d9488', accent: '#2dd4bf', bg: '#f0fdfa' },
+            { id: 'red', name: 'Красный', primary: '#ef4444', secondary: '#dc2626', accent: '#f87171', bg: '#fef2f2' },
+            { id: 'amber', name: 'Янтарный', primary: '#f59e0b', secondary: '#d97706', accent: '#fbbf24', bg: '#fffbeb' },
+            { id: 'indigo', name: 'Индиго', primary: '#6366f1', secondary: '#4f46e5', accent: '#818cf8', bg: '#eef2ff' },
+            { id: 'slate', name: 'Графит', primary: '#475569', secondary: '#334155', accent: '#64748b', bg: '#f8fafc' },
+            { id: 'emerald', name: 'Изумруд', primary: '#059669', secondary: '#047857', accent: '#10b981', bg: '#ecfdf5' },
+            { id: 'rose', name: 'Роза', primary: '#f43f5e', secondary: '#e11d48', accent: '#fb7185', bg: '#fff1f2' }
+        ];
+
+        let selectedColorScheme = colorSchemes[0];
 
         // Page Templates
         const pageTemplates = [
@@ -665,23 +749,49 @@
                 thumbnail: '🚀',
                 elements: [
                     { type: 'navbar' },
-                    { type: 'hero' },
-                    { type: 'section', children: [{ type: 'features' }] },
+                    { type: 'hero', componentSettings: { title: 'Заголовок вашего предложения', subtitle: 'Подзаголовок с описанием ценности для клиента', buttonText: 'Получить консультацию', buttonColor: '#3b82f6' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'checklist', componentSettings: { title: 'Это для вас, если вы:', items: ['Хотите решить свою проблему быстро и эффективно', 'Ищете проверенное решение от экспертов', 'Готовы инвестировать в своё развитие'] } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f8fafc' }, children: [
+                        { type: 'benefitsList', componentSettings: { title: 'На консультации мы:', items: [{ title: 'Проанализируем вашу ситуацию', description: 'Разберём текущее положение дел и определим точки роста' }, { title: 'Подберём оптимальное решение', description: 'Предложим несколько вариантов под ваши цели и бюджет' }, { title: 'Составим план действий', description: 'Дадим пошаговую инструкцию для достижения результата' }] } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'leadForm', componentSettings: { title: 'Запишитесь на бесплатную консультацию', subtitle: 'Мы свяжемся с вами в течение 24 часов', fields: [{ type: 'text', name: 'name', label: 'Ваше имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'email', name: 'email', label: 'Email', required: true }], buttonText: 'Отправить заявку', buttonColor: '#3b82f6' } }
+                    ]},
+                    { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#fef3c7' }, children: [
+                        { type: 'giftBlock', componentSettings: { title: 'Ваш подарок за заявку', subtitle: 'Бесплатно при записи', description: 'Получите доступ к эксклюзивным материалам', items: ['Чек-лист для самопроверки', 'Видеоурок от эксперта', 'Шаблоны документов'], buttonText: 'Получить подарок', buttonColor: '#f59e0b' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'guarantee', componentSettings: { title: 'Не откладывайте своё развитие', description: 'Консультация бесплатна. Мы поможем найти оптимальное решение.', buttonText: 'Записаться', buttonColor: '#3b82f6', guaranteeText: 'Ваши данные конфиденциальны. Свяжемся в течение 24 часов.' } }
+                    ]},
                     { type: 'footer' }
                 ]
             },
+            // === КОСМЕТОЛОГИЯ ===
             {
-                id: 'landing-sales',
-                name: 'Продающий лендинг',
-                category: 'basic',
-                thumbnail: '💰',
+                id: 'cosmetology',
+                name: 'Косметология / Обучение',
+                category: 'education',
+                thumbnail: '💉',
                 elements: [
-                    { type: 'navbar' },
-                    { type: 'hero' },
-                    { type: 'section', children: [{ type: 'features' }] },
-                    { type: 'section', children: [{ type: 'testimonial' }] },
-                    { type: 'section', children: [{ type: 'pricing' }] },
-                    { type: 'section', children: [{ type: 'form' }] },
+                    { type: 'navbar', componentSettings: { logo: 'Учебный центр', links: 'Курсы|Спикеры|Отзывы|Контакты' } },
+                    { type: 'hero', componentSettings: { title: 'Персональный план развития для косметолога', subtitle: 'Бесплатная консультация от менеджера учебного центра. За 30 минут разберем ваши цели и построим пошаговый план обучения.', buttonText: 'ПОЛУЧИТЬ КОНСУЛЬТАЦИЮ И ПОДАРОК', buttonColor: '#8b5cf6' } },
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'checklist', componentSettings: { title: 'Это для вас, если вы:', iconColor: '#8b5cf6', items: ['Практикующий косметолог и хотите добавить новую методику (ботулинотерапию, контурную пластику, нитевой лифтинг)', 'Начинающий специалист и хотите выбрать правильный курс для старта карьеры', 'Хотите повысить доход, освоив процедуры премиум-сегмента', 'Запутались в курсах и ищете оптимальную последовательность обучения', 'Имеете опыт некачественного обучения и хотите выбрать курс с практикой'] } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#faf5ff' }, children: [
+                        { type: 'benefitsList', componentSettings: { title: 'На консультации мы поможем:', accentColor: '#8b5cf6', items: [{ title: 'Проанализируем ваш уровень и цели', description: 'Разберём текущий опыт и карьерные планы' }, { title: 'Подберем 2-3 оптимальных курса', description: 'Из расписания на 2026 год — от контурной пластики до мезотерапии' }, { title: 'Объясним разницу в программах', description: 'Расскажем о спикерах и особенностях каждого курса' }, { title: 'Рассчитаем выгоду', description: 'Сравним стоимость обучения и потенциальный доход' }] } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'leadForm', componentSettings: { title: 'Заполните форму для записи на консультацию', subtitle: 'Получите подарок — доступ к курсу «Нитевая имплантология»', fields: [{ type: 'text', name: 'name', label: 'Ваше имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'email', name: 'email', label: 'Email (для подарка)', required: true }, { type: 'select', name: 'experience', label: 'Ваш статус', options: ['Начинающий (менее 1 года)', 'Практикующий (1-3 года)', 'Опытный (более 3 лет)', 'Врач, осваивающий косметологию'] }, { type: 'select', name: 'interest', label: 'Интересующее направление', options: ['Контурная пластика', 'Ботулинотерапия', 'Биоревитализация/Мезотерапия', 'Нитевой лифтинг', 'Нужна помощь в выборе'] }], buttonText: 'ОТПРАВИТЬ И ПОЛУЧИТЬ ПОДАРОК', buttonColor: '#8b5cf6' } }
+                    ]},
+                    { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#fef3c7' }, children: [
+                        { type: 'giftBlock', componentSettings: { title: 'Ваш подарок за запись', subtitle: 'Сразу после отправки формы', description: 'Доступ к курсу «Нитевая имплантология: от теории к практике»', items: ['Основы работы с нитями для лифтинга', 'Обзор современных методик', 'Первый шаг к высокооплачиваемой процедуре'], buttonText: 'Получить курс', buttonColor: '#f59e0b' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'guarantee', componentSettings: { title: 'Не откладывай профессиональное развитие', description: 'Консультация бесплатна, а программа обучения станет инвестицией в будущее.', buttonText: 'ВЫБРАТЬ ОБУЧЕНИЕ С ПОДАРКОМ', buttonColor: '#8b5cf6', guaranteeText: 'Ваши данные конфиденциальны. Свяжемся в течение 24 часов.' } }
+                    ]},
                     { type: 'footer' }
                 ]
             },
@@ -694,18 +804,21 @@
                 thumbnail: '🎯',
                 elements: [
                     { type: 'navbar', componentSettings: { logo: 'Ваше Имя', links: 'Обо мне|Услуги|Отзывы|Контакты' } },
-                    { type: 'hero', componentSettings: { title: 'Личный коуч и ментор', subtitle: 'Помогу вам достичь целей и раскрыть потенциал', buttonText: 'Записаться на консультацию', buttonColor: '#8b5cf6' } },
+                    { type: 'hero', componentSettings: { title: 'Персональный коучинг для достижения целей', subtitle: 'Бесплатная диагностическая сессия. За 45 минут определим ваши блоки и составим план развития.', buttonText: 'ЗАПИСАТЬСЯ НА СЕССИЮ', buttonColor: '#8b5cf6' } },
                     { type: 'section', styles: { padding: '80px 20px' }, children: [
-                        { type: 'heading', content: 'Чем я могу помочь' },
-                        { type: 'features', componentSettings: { title1: 'Карьерный рост', desc1: 'Стратегия развития и продвижение по карьерной лестнице', title2: 'Личная эффективность', desc2: 'Тайм-менеджмент и продуктивность на максимум', title3: 'Баланс жизни', desc3: 'Гармония между работой и личной жизнью' } }
+                        { type: 'checklist', componentSettings: { title: 'Это для вас, если вы:', iconColor: '#8b5cf6', items: ['Чувствуете, что застряли на месте', 'Хотите повысить доход', 'Испытываете выгорание', 'Откладываете важные решения', 'Ищете баланс между работой и семьёй'] } }
                     ]},
                     { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#faf5ff' }, children: [
-                        { type: 'heading', content: 'Отзывы клиентов' },
-                        { type: 'testimonial', componentSettings: { text: 'Благодаря работе с коучем я получила повышение и увеличила доход в 2 раза!', author: 'Анна К.', role: 'Маркетолог' } }
+                        { type: 'benefitsList', componentSettings: { title: 'На сессии мы:', accentColor: '#8b5cf6', items: [{ title: 'Проведём диагностику', description: 'Выявим блоки и ограничивающие убеждения' }, { title: 'Определим цели', description: 'Сформулируем измеримые цели на 3-6-12 месяцев' }, { title: 'Составим план', description: 'Пошаговая стратегия достижения результата' }] } }
                     ]},
                     { type: 'section', styles: { padding: '80px 20px' }, children: [
-                        { type: 'heading', content: 'Запишитесь на бесплатную консультацию' },
-                        { type: 'form' }
+                        { type: 'leadForm', componentSettings: { title: 'Запишитесь на бесплатную сессию', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'select', name: 'goal', label: 'Главная цель', options: ['Карьерный рост', 'Увеличение дохода', 'Баланс жизни', 'Преодоление выгорания'] }], buttonText: 'ЗАПИСАТЬСЯ', buttonColor: '#8b5cf6' } }
+                    ]},
+                    { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#fef3c7' }, children: [
+                        { type: 'giftBlock', componentSettings: { title: 'Подарок за заявку', description: 'Мини-курс «5 шагов к ясности целей»', items: ['Видеоуроки по целеполаганию', 'Рабочая тетрадь', 'Медитация для фокусировки'], buttonText: 'Получить', buttonColor: '#f59e0b' } }
+                    ]},
+                    { type: 'section', styles: { padding: '80px 20px' }, children: [
+                        { type: 'guarantee', componentSettings: { title: 'Начни менять жизнь сегодня', description: 'Сессия бесплатна и ни к чему не обязывает.', buttonText: 'ЗАПИСАТЬСЯ БЕСПЛАТНО', buttonColor: '#8b5cf6', guaranteeText: 'Свяжусь лично в течение 24 часов.' } }
                     ]},
                     { type: 'footer' }
                 ]
@@ -1374,7 +1487,13 @@
             button: { tag: 'a', label: 'Кнопка', icon: 'fa-mouse-pointer', defaultStyles: { display: 'inline-block', padding: '12px 24px', backgroundColor: '#3b82f6', color: 'white', textDecoration: 'none', borderRadius: '8px' } },
             row: { tag: 'div', label: 'Строка', icon: 'fa-columns', isContainer: true, defaultStyles: { display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center' } },
             gallery: { tag: 'div', label: 'Галерея', icon: 'fa-images', defaultStyles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } },
-            social: { tag: 'div', label: 'Соцсети', icon: 'fa-share-alt', defaultStyles: {} }
+            social: { tag: 'div', label: 'Соцсети', icon: 'fa-share-alt', defaultStyles: {} },
+            // New landing page blocks
+            checklist: { tag: 'div', label: 'Чек-лист', icon: 'fa-check-circle', defaultStyles: { padding: '40px 20px' }, componentSettings: { title: 'Это для вас, если:', items: ['Пункт 1', 'Пункт 2', 'Пункт 3'], iconColor: '#10b981' } },
+            benefitsList: { tag: 'div', label: 'Список выгод', icon: 'fa-list-ol', defaultStyles: { padding: '40px 20px' }, componentSettings: { title: 'Что вы получите:', items: [{ title: 'Выгода 1', description: 'Описание' }], accentColor: '#3b82f6' } },
+            giftBlock: { tag: 'div', label: 'Подарок', icon: 'fa-gift', defaultStyles: { padding: '60px 20px', backgroundColor: '#fef3c7', borderRadius: '16px' }, componentSettings: { title: 'Ваш подарок', subtitle: '', description: '', items: ['Бонус 1', 'Бонус 2'], buttonText: 'Получить', buttonColor: '#f59e0b' } },
+            guarantee: { tag: 'div', label: 'Гарантия + CTA', icon: 'fa-shield-alt', defaultStyles: { padding: '60px 20px', textAlign: 'center' }, componentSettings: { title: 'Не откладывайте', description: '', buttonText: 'Записаться', buttonColor: '#3b82f6', guaranteeText: '' } },
+            leadForm: { tag: 'form', label: 'Форма заявки', icon: 'fa-clipboard-list', defaultStyles: { maxWidth: '500px', margin: '0 auto', padding: '40px', backgroundColor: 'white', borderRadius: '16px', boxShadow: '0 10px 40px rgba(0,0,0,0.1)' }, componentSettings: { title: 'Оставьте заявку', subtitle: '', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }], buttonText: 'Отправить', buttonColor: '#3b82f6' } }
         };
 
         // Generate content from componentSettings
@@ -1420,6 +1539,29 @@
                     return `<img src="https://via.placeholder.com/400x300" style="width:100%;border-radius:8px;"><img src="https://via.placeholder.com/400x300" style="width:100%;border-radius:8px;"><img src="https://via.placeholder.com/400x300" style="width:100%;border-radius:8px;">`;
                 case 'social':
                     return `<div style="display:flex;gap:16px;justify-content:center;"><a href="#" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#1877f2;color:white;border-radius:50%;text-decoration:none;"><i class="fab fa-facebook-f"></i></a><a href="#" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#e4405f;color:white;border-radius:50%;text-decoration:none;"><i class="fab fa-instagram"></i></a><a href="#" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#0088cc;color:white;border-radius:50%;text-decoration:none;"><i class="fab fa-telegram-plane"></i></a></div>`;
+                case 'checklist':
+                    const checklistItems = settings.items || ['Пункт 1', 'Пункт 2', 'Пункт 3'];
+                    const iconColor = settings.iconColor || '#10b981';
+                    return `<div style="max-width:700px;margin:0 auto;"><h3 style="font-size:28px;font-weight:bold;margin-bottom:32px;color:#1e293b;">${settings.title || 'Это для вас, если:'}</h3>${checklistItems.map(item => `<div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;"><div style="flex-shrink:0;width:28px;height:28px;border-radius:50%;background:${iconColor};display:flex;align-items:center;justify-content:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div><p style="font-size:17px;line-height:1.6;color:#374151;margin:0;">${item}</p></div>`).join('')}</div>`;
+                case 'benefitsList':
+                    const benefitsItems = settings.items || [{ title: 'Выгода 1', description: 'Описание' }];
+                    const accentColor = settings.accentColor || '#3b82f6';
+                    return `<div style="max-width:700px;margin:0 auto;"><h3 style="font-size:28px;font-weight:bold;margin-bottom:32px;color:#1e293b;">${settings.title || 'Что вы получите:'}</h3>${benefitsItems.map((item, i) => `<div style="display:flex;gap:20px;margin-bottom:28px;"><div style="flex-shrink:0;width:48px;height:48px;border-radius:12px;background:${accentColor};color:white;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;">${i + 1}</div><div><h4 style="font-size:18px;font-weight:600;margin-bottom:6px;color:#1e293b;">${item.title || ''}</h4><p style="font-size:15px;color:#64748b;margin:0;line-height:1.5;">${item.description || ''}</p></div></div>`).join('')}</div>`;
+                case 'giftBlock':
+                    const giftItems = settings.items || ['Бонус 1', 'Бонус 2', 'Бонус 3'];
+                    return `<div style="max-width:600px;margin:0 auto;text-align:center;"><div style="font-size:64px;margin-bottom:20px;">🎁</div><h3 style="font-size:28px;font-weight:bold;margin-bottom:12px;color:#92400e;">${settings.title || 'Ваш подарок'}</h3><p style="font-size:16px;color:#b45309;margin-bottom:8px;">${settings.subtitle || ''}</p><p style="font-size:18px;color:#78350f;margin-bottom:24px;line-height:1.6;">${settings.description || ''}</p><div style="text-align:left;display:inline-block;margin-bottom:24px;">${giftItems.map(item => `<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><span style="color:#f59e0b;font-size:20px;">🎁</span><span style="font-size:16px;color:#92400e;">${item}</span></div>`).join('')}</div><div><a href="#form" style="display:inline-block;padding:16px 40px;background:${settings.buttonColor || '#f59e0b'};color:white;text-decoration:none;border-radius:8px;font-weight:600;font-size:18px;">${settings.buttonText || 'Получить подарок'}</a></div></div>`;
+                case 'guarantee':
+                    return `<div style="max-width:700px;margin:0 auto;text-align:center;"><h3 style="font-size:32px;font-weight:bold;margin-bottom:20px;color:#1e293b;">${settings.title || 'Не откладывайте'}</h3><p style="font-size:18px;color:#64748b;margin-bottom:32px;line-height:1.6;">${settings.description || ''}</p><a href="#form" style="display:inline-block;padding:18px 48px;background:${settings.buttonColor || '#3b82f6'};color:white;text-decoration:none;border-radius:8px;font-weight:600;font-size:18px;box-shadow:0 4px 14px rgba(59,130,246,0.4);">${settings.buttonText || 'Записаться'}</a><p style="font-size:14px;color:#9ca3af;margin-top:20px;">${settings.guaranteeText || ''}</p></div>`;
+                case 'leadForm':
+                    const formFields = settings.fields || [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }];
+                    const formFieldsHtml = formFields.map(field => {
+                        if (field.type === 'select') {
+                            const options = (field.options || []).map(opt => `<option value="${opt}">${opt}</option>`).join('');
+                            return `<div style="margin-bottom:16px;"><label style="display:block;font-size:14px;font-weight:500;margin-bottom:6px;color:#374151;">${field.label || ''}</label><select name="${field.name}" ${field.required ? 'required' : ''} style="width:100%;padding:14px 16px;border:1px solid #d1d5db;border-radius:8px;font-size:16px;background:white;"><option value="">Выберите...</option>${options}</select></div>`;
+                        }
+                        return `<div style="margin-bottom:16px;"><label style="display:block;font-size:14px;font-weight:500;margin-bottom:6px;color:#374151;">${field.label || ''}</label><input type="${field.type || 'text'}" name="${field.name}" placeholder="${field.placeholder || ''}" ${field.required ? 'required' : ''} style="width:100%;padding:14px 16px;border:1px solid #d1d5db;border-radius:8px;font-size:16px;"></div>`;
+                    }).join('');
+                    return `<div id="form"><h3 style="font-size:24px;font-weight:bold;margin-bottom:8px;text-align:center;color:#1e293b;">${settings.title || 'Оставьте заявку'}</h3><p style="font-size:15px;color:#6b7280;margin-bottom:24px;text-align:center;">${settings.subtitle || ''}</p>${formFieldsHtml}<button type="submit" style="width:100%;padding:16px;background:${settings.buttonColor || '#3b82f6'};color:white;border:none;border-radius:8px;font-size:17px;font-weight:600;cursor:pointer;margin-top:8px;">${settings.buttonText || 'Отправить'}</button><p style="font-size:12px;color:#9ca3af;text-align:center;margin-top:16px;">${settings.privacyText || ''}</p></div>`;
                 default:
                     return '';
             }
@@ -1472,9 +1614,83 @@
 
         function createPageWithTemplate() {
             if (!selectedTemplateId) return;
+            // Show color scheme selection
+            document.getElementById('templateModal').classList.remove('active');
+            renderColorSchemes();
+            document.getElementById('colorSchemeModal').classList.add('active');
+        }
+
+        function renderColorSchemes() {
+            const grid = document.getElementById('colorSchemesGrid');
+            grid.innerHTML = colorSchemes.map(scheme => `
+                <div class="color-scheme-card ${selectedColorScheme.id === scheme.id ? 'selected' : ''}"
+                     onclick="selectColorScheme('${scheme.id}')">
+                    <div class="color-scheme-preview">
+                        <div style="background: ${scheme.primary}"></div>
+                        <div style="background: ${scheme.secondary}"></div>
+                        <div style="background: ${scheme.accent}"></div>
+                        <div style="background: ${scheme.bg}"></div>
+                    </div>
+                    <div class="color-scheme-name">${scheme.name}</div>
+                </div>
+            `).join('');
+        }
+
+        function selectColorScheme(id) {
+            selectedColorScheme = colorSchemes.find(s => s.id === id) || colorSchemes[0];
+            document.querySelectorAll('.color-scheme-card').forEach(card => card.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
+
+        function closeColorSchemeModal() {
+            document.getElementById('colorSchemeModal').classList.remove('active');
+            selectedTemplateId = null;
+            selectedColorScheme = colorSchemes[0];
+        }
+
+        function backToTemplates() {
+            document.getElementById('colorSchemeModal').classList.remove('active');
+            document.getElementById('templateModal').classList.add('active');
+        }
+
+        function applyColorScheme(elements, scheme) {
+            return elements.map(el => {
+                const newEl = { ...el };
+                // Apply colors to buttons
+                if (newEl.componentSettings?.buttonColor) {
+                    newEl.componentSettings = { ...newEl.componentSettings, buttonColor: scheme.primary };
+                }
+                if (newEl.componentSettings?.accentColor) {
+                    newEl.componentSettings = { ...newEl.componentSettings, accentColor: scheme.primary };
+                }
+                if (newEl.componentSettings?.iconColor) {
+                    newEl.componentSettings = { ...newEl.componentSettings, iconColor: scheme.primary };
+                }
+                if (newEl.componentSettings?.color) {
+                    newEl.componentSettings = { ...newEl.componentSettings, color: scheme.primary };
+                }
+                // Apply bg color to sections with colored background
+                if (newEl.styles?.backgroundColor && newEl.styles.backgroundColor !== 'white' && newEl.styles.backgroundColor !== '#f8fafc' && newEl.styles.backgroundColor !== '#fef3c7') {
+                    if (newEl.styles.backgroundColor.startsWith('#') && newEl.styles.backgroundColor !== '#1e293b') {
+                        newEl.styles = { ...newEl.styles, backgroundColor: scheme.bg };
+                    }
+                }
+                // Recurse into children
+                if (newEl.children) {
+                    newEl.children = applyColorScheme(newEl.children, scheme);
+                }
+                return newEl;
+            });
+        }
+
+        function confirmCreatePage() {
+            if (!selectedTemplateId) return;
 
             const template = pageTemplates.find(t => t.id === selectedTemplateId);
-            const elements = createElementsFromTemplate(template);
+            let elements = createElementsFromTemplate(template);
+
+            // Apply selected color scheme
+            elements = applyColorScheme(elements, selectedColorScheme);
 
             const pages = getPages();
             const newPage = {
@@ -1496,8 +1712,8 @@
             pages.unshift(newPage);
             savePages(pages);
 
-            closeTemplateModal();
-            // Open editor with new page (template already applied)
+            closeColorSchemeModal();
+            // Open editor with new page
             window.location.href = `index.html?id=${newPage.id}`;
         }
 
