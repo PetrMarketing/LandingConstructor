@@ -221,6 +221,327 @@
         .back-link:hover {
             color: var(--accent);
         }
+
+        /* Tabs */
+        .pages-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+        }
+        .pages-tab {
+            padding: 10px 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .pages-tab:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        .pages-tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        .pages-tab .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+        .pages-tab.active .badge {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Submissions */
+        .submissions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .submissions-filters {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .submissions-filters select,
+        .submissions-filters input {
+            padding: 8px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        .submissions-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-secondary {
+            padding: 8px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+        .btn-danger {
+            padding: 8px 16px;
+            background: var(--danger);
+            border: none;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-danger:hover {
+            opacity: 0.9;
+        }
+
+        /* Table */
+        .submissions-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+        .submissions-table th,
+        .submissions-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .submissions-table th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        .submissions-table tr:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+        .submissions-table td {
+            font-size: 14px;
+        }
+        .submission-data {
+            max-width: 300px;
+        }
+        .submission-data-item {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .submission-data-item strong {
+            color: var(--text-secondary);
+            min-width: 60px;
+        }
+        .submission-actions button {
+            padding: 6px 10px;
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .submission-actions button:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        .submission-actions button.delete:hover {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: white;
+        }
+        .submissions-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        .submissions-empty i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: block;
+        }
+        .page-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Template Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .template-modal {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .template-modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .template-modal-header h2 {
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .template-modal-header h2 i {
+            color: var(--accent);
+        }
+        .template-modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .template-modal-close:hover {
+            color: var(--text-primary);
+        }
+        .template-modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .template-categories {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .template-category {
+            padding: 8px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .template-category:hover {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+        .template-category.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .template-card {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .template-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        .template-card.selected {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.1);
+        }
+        .template-card-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .template-card-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .template-modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        .template-modal-footer .btn {
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .template-modal-footer .btn-cancel {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+        .template-modal-footer .btn-cancel:hover {
+            background: var(--border);
+        }
+        .template-modal-footer .btn-primary {
+            background: var(--accent);
+            border: none;
+            color: white;
+        }
+        .template-modal-footer .btn-primary:hover {
+            background: var(--accent-hover);
+        }
     </style>
 </head>
 <body>
@@ -238,21 +559,151 @@
         </header>
 
         <main class="pages-content">
-            <div class="pages-actions">
-                <div class="pages-search">
-                    <input type="text" id="searchPages" placeholder="Поиск страниц..." oninput="filterPages()">
+            <!-- Tabs -->
+            <div class="pages-tabs">
+                <button class="pages-tab active" onclick="switchTab('pages')">
+                    <i class="fas fa-file-alt"></i>
+                    Страницы
+                </button>
+                <button class="pages-tab" onclick="switchTab('submissions')" id="submissionsTab">
+                    <i class="fas fa-inbox"></i>
+                    Заявки
+                    <span class="badge" id="submissionsBadge">0</span>
+                </button>
+            </div>
+
+            <!-- Pages Tab -->
+            <div class="tab-content active" id="pagesTab">
+                <div class="pages-actions">
+                    <div class="pages-search">
+                        <input type="text" id="searchPages" placeholder="Поиск страниц..." oninput="filterPages()">
+                    </div>
+                </div>
+
+                <div class="pages-grid" id="pagesGrid">
+                    <!-- Pages will be rendered here -->
                 </div>
             </div>
 
-            <div class="pages-grid" id="pagesGrid">
-                <!-- Pages will be rendered here -->
+            <!-- Submissions Tab -->
+            <div class="tab-content" id="submissionsTabContent">
+                <div class="submissions-header">
+                    <div class="submissions-filters">
+                        <select id="filterPage" onchange="filterSubmissions()">
+                            <option value="">Все страницы</option>
+                        </select>
+                        <input type="text" id="searchSubmissions" placeholder="Поиск..." oninput="filterSubmissions()">
+                    </div>
+                    <div class="submissions-actions">
+                        <button class="btn-secondary" onclick="exportSubmissionsCSV()">
+                            <i class="fas fa-download"></i> Экспорт CSV
+                        </button>
+                        <button class="btn-secondary" onclick="refreshSubmissions()">
+                            <i class="fas fa-sync-alt"></i> Обновить
+                        </button>
+                    </div>
+                </div>
+
+                <div id="submissionsContent">
+                    <!-- Submissions table will be rendered here -->
+                </div>
             </div>
         </main>
+    </div>
+
+    <!-- Template Selection Modal -->
+    <div class="modal-overlay" id="templateModal">
+        <div class="template-modal">
+            <div class="template-modal-header">
+                <h2><i class="fas fa-magic"></i> Выберите шаблон</h2>
+                <button class="template-modal-close" onclick="closeTemplateModal()">&times;</button>
+            </div>
+            <div class="template-modal-body">
+                <div class="template-categories">
+                    <button class="template-category active" data-category="all">Все</button>
+                    <button class="template-category" data-category="basic">Базовые</button>
+                    <button class="template-category" data-category="landing">Лендинги</button>
+                    <button class="template-category" data-category="portfolio">Портфолио</button>
+                    <button class="template-category" data-category="business">Бизнес</button>
+                </div>
+                <div class="templates-grid" id="templatesGrid">
+                    <!-- Templates will be rendered here -->
+                </div>
+            </div>
+            <div class="template-modal-footer">
+                <button class="btn btn-cancel" onclick="closeTemplateModal()">Отмена</button>
+                <button class="btn btn-primary" onclick="createPageWithTemplate()" id="createPageBtn" disabled>
+                    <i class="fas fa-plus"></i> Создать страницу
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
         // Pages storage
         const STORAGE_KEY = 'landing_pages';
+
+        // Page Templates
+        const pageTemplates = [
+            {
+                id: 'blank',
+                name: 'Пустая страница',
+                category: 'basic',
+                thumbnail: '📄',
+                elements: []
+            },
+            {
+                id: 'landing-basic',
+                name: 'Базовый лендинг',
+                category: 'landing',
+                thumbnail: '🚀',
+                elements: [
+                    { type: 'navbar' },
+                    { type: 'hero' },
+                    { type: 'section', children: [{ type: 'features' }] },
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'landing-sales',
+                name: 'Продающий лендинг',
+                category: 'landing',
+                thumbnail: '💰',
+                elements: [
+                    { type: 'navbar' },
+                    { type: 'hero' },
+                    { type: 'section', children: [{ type: 'features' }] },
+                    { type: 'section', children: [{ type: 'testimonial' }] },
+                    { type: 'section', children: [{ type: 'pricing' }] },
+                    { type: 'section', children: [{ type: 'form' }] },
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'portfolio',
+                name: 'Портфолио',
+                category: 'portfolio',
+                thumbnail: '🎨',
+                elements: [
+                    { type: 'navbar' },
+                    { type: 'section', children: [{ type: 'heading' }, { type: 'text' }] },
+                    { type: 'section', children: [{ type: 'gallery' }] },
+                    { type: 'section', children: [{ type: 'form' }] },
+                    { type: 'footer' }
+                ]
+            },
+            {
+                id: 'business-card',
+                name: 'Визитка',
+                category: 'business',
+                thumbnail: '📇',
+                elements: [
+                    { type: 'section', children: [{ type: 'heading' }, { type: 'text' }, { type: 'social' }, { type: 'button' }] }
+                ]
+            }
+        ];
+
+        let selectedTemplateId = null;
 
         function getPages() {
             const data = localStorage.getItem(STORAGE_KEY);
@@ -264,20 +715,73 @@
         }
 
         function createNewPage() {
+            // Show template selection modal
+            selectedTemplateId = 'blank';
+            renderTemplates();
+            document.getElementById('templateModal').classList.add('active');
+            document.getElementById('createPageBtn').disabled = false;
+        }
+
+        function closeTemplateModal() {
+            document.getElementById('templateModal').classList.remove('active');
+            selectedTemplateId = null;
+        }
+
+        function renderTemplates(category = 'all') {
+            const grid = document.getElementById('templatesGrid');
+            let filtered = pageTemplates;
+
+            if (category !== 'all') {
+                filtered = pageTemplates.filter(t => t.category === category);
+            }
+
+            grid.innerHTML = filtered.map(template => `
+                <div class="template-card ${selectedTemplateId === template.id ? 'selected' : ''}"
+                     onclick="selectTemplate('${template.id}')">
+                    <div class="template-card-icon">${template.thumbnail}</div>
+                    <div class="template-card-name">${template.name}</div>
+                </div>
+            `).join('');
+        }
+
+        function selectTemplate(id) {
+            selectedTemplateId = id;
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            document.getElementById('createPageBtn').disabled = false;
+        }
+
+        function createPageWithTemplate() {
+            if (!selectedTemplateId) return;
+
+            const template = pageTemplates.find(t => t.id === selectedTemplateId);
             const pages = getPages();
             const newPage = {
                 id: 'page_' + Date.now(),
-                name: 'Новая страница',
+                name: template ? template.name : 'Новая страница',
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
-                elements: []
+                elements: [],
+                templateId: selectedTemplateId
             };
             pages.unshift(newPage);
             savePages(pages);
 
-            // Open editor with new page
-            window.location.href = `index.html?id=${newPage.id}`;
+            closeTemplateModal();
+            // Open editor with new page and template
+            window.location.href = `index.html?id=${newPage.id}&template=${selectedTemplateId}`;
         }
+
+        // Category filter
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('template-category')) {
+                document.querySelectorAll('.template-category').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                renderTemplates(e.target.dataset.category);
+            }
+        });
 
         function editPage(id) {
             window.location.href = `index.html?id=${id}`;
@@ -396,8 +900,232 @@
             grid.innerHTML = html;
         }
 
+        // ===== Tabs =====
+        function switchTab(tab) {
+            document.querySelectorAll('.pages-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            if (tab === 'pages') {
+                document.querySelector('.pages-tab:first-child').classList.add('active');
+                document.getElementById('pagesTab').classList.add('active');
+            } else if (tab === 'submissions') {
+                document.getElementById('submissionsTab').classList.add('active');
+                document.getElementById('submissionsTabContent').classList.add('active');
+                loadSubmissions();
+            }
+        }
+
+        // ===== Submissions =====
+        const BACKEND_URL = 'https://ai-tools-backend-d3zr.onrender.com';
+        let allSubmissions = [];
+
+        async function loadSubmissions() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/submissions`);
+                const data = await response.json();
+                allSubmissions = data.submissions || [];
+                updateSubmissionsBadge();
+                updatePageFilter();
+                renderSubmissions();
+            } catch (error) {
+                console.error('Error loading submissions:', error);
+                document.getElementById('submissionsContent').innerHTML = `
+                    <div class="submissions-empty">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Не удалось загрузить заявки</p>
+                        <button class="btn-secondary" onclick="loadSubmissions()" style="margin-top:16px;">
+                            <i class="fas fa-sync-alt"></i> Попробовать снова
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function refreshSubmissions() {
+            loadSubmissions();
+        }
+
+        function updateSubmissionsBadge() {
+            document.getElementById('submissionsBadge').textContent = allSubmissions.length;
+        }
+
+        function updatePageFilter() {
+            const pages = getPages();
+            const select = document.getElementById('filterPage');
+            const pageIds = [...new Set(allSubmissions.map(s => s.pageId))];
+
+            select.innerHTML = '<option value="">Все страницы</option>';
+            pageIds.forEach(pageId => {
+                const page = pages.find(p => p.id === pageId);
+                const name = page ? page.name : pageId;
+                select.innerHTML += `<option value="${pageId}">${name}</option>`;
+            });
+        }
+
+        function filterSubmissions() {
+            renderSubmissions();
+        }
+
+        function renderSubmissions() {
+            const filterPageId = document.getElementById('filterPage').value;
+            const searchQuery = document.getElementById('searchSubmissions').value.toLowerCase();
+
+            let filtered = allSubmissions;
+
+            if (filterPageId) {
+                filtered = filtered.filter(s => s.pageId === filterPageId);
+            }
+
+            if (searchQuery) {
+                filtered = filtered.filter(s => {
+                    const dataStr = JSON.stringify(s.formData).toLowerCase();
+                    return dataStr.includes(searchQuery);
+                });
+            }
+
+            if (filtered.length === 0) {
+                document.getElementById('submissionsContent').innerHTML = `
+                    <div class="submissions-empty">
+                        <i class="fas fa-inbox"></i>
+                        <p>${allSubmissions.length === 0 ? 'Пока нет заявок' : 'Нет заявок по выбранным фильтрам'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const pages = getPages();
+            let html = `
+                <table class="submissions-table">
+                    <thead>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Страница</th>
+                            <th>Данные</th>
+                            <th>IP</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            filtered.forEach(sub => {
+                const page = pages.find(p => p.id === sub.pageId);
+                const pageName = page ? page.name : sub.pageId;
+                const date = new Date(sub.submittedAt);
+                const dateStr = date.toLocaleDateString('ru-RU', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                let dataHtml = '<div class="submission-data">';
+                for (const [key, value] of Object.entries(sub.formData || {})) {
+                    dataHtml += `<div class="submission-data-item"><strong>${key}:</strong> ${escapeHtmlChars(value)}</div>`;
+                }
+                dataHtml += '</div>';
+
+                html += `
+                    <tr>
+                        <td>${dateStr}</td>
+                        <td><span class="page-badge">${escapeHtmlChars(pageName)}</span></td>
+                        <td>${dataHtml}</td>
+                        <td>${sub.ip || '-'}</td>
+                        <td class="submission-actions">
+                            <button onclick="copySubmission('${sub.id}')" title="Копировать">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="delete" onclick="deleteSubmission('${sub.id}')" title="Удалить">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            document.getElementById('submissionsContent').innerHTML = html;
+        }
+
+        function escapeHtmlChars(str) {
+            if (typeof str !== 'string') return str;
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        async function deleteSubmission(id) {
+            if (!confirm('Удалить эту заявку?')) return;
+
+            try {
+                await fetch(`${BACKEND_URL}/api/submissions/${id}`, { method: 'DELETE' });
+                allSubmissions = allSubmissions.filter(s => s.id !== id);
+                updateSubmissionsBadge();
+                renderSubmissions();
+            } catch (error) {
+                alert('Ошибка при удалении заявки');
+            }
+        }
+
+        function copySubmission(id) {
+            const sub = allSubmissions.find(s => s.id === id);
+            if (!sub) return;
+
+            let text = '';
+            for (const [key, value] of Object.entries(sub.formData || {})) {
+                text += `${key}: ${value}\n`;
+            }
+            text += `\nДата: ${new Date(sub.submittedAt).toLocaleString('ru-RU')}`;
+
+            navigator.clipboard.writeText(text);
+            alert('Данные скопированы!');
+        }
+
+        function exportSubmissionsCSV() {
+            if (allSubmissions.length === 0) {
+                alert('Нет заявок для экспорта');
+                return;
+            }
+
+            const pages = getPages();
+
+            // Collect all unique field names
+            const allFields = new Set();
+            allSubmissions.forEach(sub => {
+                Object.keys(sub.formData || {}).forEach(key => allFields.add(key));
+            });
+            const fields = Array.from(allFields);
+
+            // Create CSV
+            let csv = 'Дата,Страница,IP,' + fields.join(',') + '\n';
+
+            allSubmissions.forEach(sub => {
+                const page = pages.find(p => p.id === sub.pageId);
+                const pageName = page ? page.name : sub.pageId;
+                const date = new Date(sub.submittedAt).toLocaleString('ru-RU');
+
+                const row = [
+                    `"${date}"`,
+                    `"${pageName}"`,
+                    `"${sub.ip || ''}"`,
+                    ...fields.map(f => `"${(sub.formData?.[f] || '').replace(/"/g, '""')}"`)
+                ];
+                csv += row.join(',') + '\n';
+            });
+
+            // Download
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `submissions_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
         // Init
         renderPages();
+        // Load submissions count on init
+        loadSubmissions();
     </script>
 </body>
 </html>

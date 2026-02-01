@@ -6,6 +6,8 @@
     <title>Конструктор лендингов</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 </head>
 <body>
     <div class="builder-container">
@@ -37,6 +39,9 @@
                 <button class="toolbar-btn" id="redoBtn" title="Повторить">
                     <i class="fas fa-redo"></i>
                 </button>
+                <button class="toolbar-btn" id="seoBtn" title="SEO настройки">
+                    <i class="fas fa-search"></i>
+                </button>
                 <button class="toolbar-btn" id="previewBtn" title="Предпросмотр">
                     <i class="fas fa-eye"></i>
                 </button>
@@ -47,9 +52,26 @@
                     <i class="fas fa-save"></i>
                     <span>Сохранить</span>
                 </button>
-                <button class="toolbar-btn success" id="exportBtn">
-                    <i class="fas fa-download"></i>
-                    <span>Экспорт</span>
+                <div class="export-dropdown">
+                    <button class="toolbar-btn success" id="exportBtn">
+                        <i class="fas fa-download"></i>
+                        <span>Экспорт</span>
+                        <i class="fas fa-chevron-down" style="margin-left:5px;font-size:10px;"></i>
+                    </button>
+                    <div class="export-dropdown-menu" id="exportDropdownMenu">
+                        <button class="export-option" id="exportHtmlBtn">
+                            <i class="fas fa-file-code"></i>
+                            <span>HTML файл</span>
+                        </button>
+                        <button class="export-option" id="exportZipBtn">
+                            <i class="fas fa-file-archive"></i>
+                            <span>ZIP архив</span>
+                        </button>
+                    </div>
+                </div>
+                <button class="toolbar-btn" id="publishBtn" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>Опубликовать</span>
                 </button>
             </div>
         </header>
@@ -249,6 +271,53 @@
                         </div>
                     </div>
 
+                    <!-- Advanced Components -->
+                    <div class="block-category">
+                        <div class="category-header" data-category="advanced">
+                            <i class="fas fa-rocket"></i>
+                            <span>Расширенные</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="category-blocks">
+                            <div class="block-item" draggable="true" data-type="stickyNavbar">
+                                <i class="fas fa-thumbtack"></i>
+                                <span>Sticky меню</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="burgerMenu">
+                                <i class="fas fa-bars"></i>
+                                <span>Бургер меню</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="slider">
+                                <i class="fas fa-images"></i>
+                                <span>Слайдер</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="cookieConsent">
+                                <i class="fas fa-cookie-bite"></i>
+                                <span>Cookie баннер</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="backToTop">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Наверх</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="fab">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>FAB кнопка</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="animatedCounter">
+                                <i class="fas fa-sort-numeric-up-alt"></i>
+                                <span>Анимированный счётчик</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="parallaxSection">
+                                <i class="fas fa-layer-group"></i>
+                                <span>Параллакс</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="marquee">
+                                <i class="fas fa-text-width"></i>
+                                <span>Бегущая строка</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Code -->
                     <div class="block-category">
                         <div class="category-header" data-category="code">
@@ -379,6 +448,188 @@
                 </button>
                 <button class="btn primary" id="downloadCode">
                     <i class="fas fa-download"></i> Скачать HTML
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEO Modal -->
+    <div class="modal" id="seoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-search" style="color: var(--accent); margin-right: 8px;"></i> SEO настройки</h3>
+                <button class="modal-close" id="closeSeoModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="edit-section">
+                    <h4><i class="fas fa-heading"></i> Основное</h4>
+                    <div class="edit-row">
+                        <label>Заголовок страницы (Title)</label>
+                        <input type="text" class="edit-input" id="seoTitle" placeholder="Название страницы">
+                        <p class="edit-hint">Отображается во вкладке браузера и поисковых системах</p>
+                    </div>
+                    <div class="edit-row">
+                        <label>Описание (Meta Description)</label>
+                        <textarea class="edit-textarea" id="seoDescription" rows="3" placeholder="Краткое описание страницы для поисковых систем"></textarea>
+                        <p class="edit-hint">Рекомендуемая длина: 150-160 символов</p>
+                    </div>
+                    <div class="edit-row">
+                        <label>Ключевые слова</label>
+                        <input type="text" class="edit-input" id="seoKeywords" placeholder="ключевое1, ключевое2, ключевое3">
+                    </div>
+                </div>
+
+                <div class="edit-section">
+                    <h4><i class="fab fa-facebook"></i> Open Graph (соцсети)</h4>
+                    <div class="edit-row">
+                        <label>OG Заголовок</label>
+                        <input type="text" class="edit-input" id="seoOgTitle" placeholder="Заголовок для соцсетей">
+                    </div>
+                    <div class="edit-row">
+                        <label>OG Описание</label>
+                        <textarea class="edit-textarea" id="seoOgDescription" rows="2" placeholder="Описание для соцсетей"></textarea>
+                    </div>
+                    <div class="edit-row">
+                        <label>OG Изображение</label>
+                        <div class="upload-row">
+                            <input type="file" id="seoOgImageUpload" accept="image/*" class="edit-file-input">
+                            <label for="seoOgImageUpload" class="btn-upload">
+                                <i class="fas fa-upload"></i> Загрузить
+                            </label>
+                        </div>
+                        <input type="text" class="edit-input" id="seoOgImage" placeholder="Или вставьте URL изображения" style="margin-top: 8px;">
+                        <p class="edit-hint">Рекомендуемый размер: 1200x630px</p>
+                    </div>
+                </div>
+
+                <div class="edit-section">
+                    <h4><i class="fas fa-globe"></i> Favicon</h4>
+                    <div class="edit-row">
+                        <label>Иконка сайта</label>
+                        <div class="upload-row">
+                            <input type="file" id="seoFaviconUpload" accept="image/*" class="edit-file-input">
+                            <label for="seoFaviconUpload" class="btn-upload">
+                                <i class="fas fa-upload"></i> Загрузить
+                            </label>
+                            <img id="faviconPreview" src="" alt="" style="width:32px;height:32px;display:none;margin-left:12px;border-radius:4px;">
+                        </div>
+                        <p class="edit-hint">Рекомендуемый размер: 32x32px или 64x64px</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="cancelSeoBtn">Отмена</button>
+                <button class="btn primary" id="saveSeoBtn">
+                    <i class="fas fa-check"></i> Сохранить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Publish Modal -->
+    <div class="modal" id="publishModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-cloud-upload-alt" style="color: #8b5cf6; margin-right: 8px;"></i> Опубликовать сайт</h3>
+                <button class="modal-close" id="closePublishModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">Выберите платформу для публикации вашего сайта:</p>
+
+                <div class="publish-options">
+                    <!-- Netlify Drop -->
+                    <div class="publish-option" id="publishNetlify">
+                        <div class="publish-option-header">
+                            <div class="publish-icon" style="background: linear-gradient(135deg, #00C7B7, #00AD9F);">
+                                <i class="fas fa-cloud"></i>
+                            </div>
+                            <div class="publish-info">
+                                <h4>Netlify Drop</h4>
+                                <p>Бесплатный хостинг, мгновенная публикация</p>
+                            </div>
+                            <i class="fas fa-external-link-alt" style="color: var(--text-secondary);"></i>
+                        </div>
+                        <div class="publish-steps">
+                            <ol>
+                                <li>Скачайте сайт как ZIP архив</li>
+                                <li>Перейдите на <a href="https://app.netlify.com/drop" target="_blank">app.netlify.com/drop</a></li>
+                                <li>Перетащите ZIP файл в область загрузки</li>
+                                <li>Готово! Получите ссылку на сайт</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Vercel -->
+                    <div class="publish-option" id="publishVercel">
+                        <div class="publish-option-header">
+                            <div class="publish-icon" style="background: #000;">
+                                <i class="fas fa-triangle" style="transform: rotate(180deg);"></i>
+                            </div>
+                            <div class="publish-info">
+                                <h4>Vercel</h4>
+                                <p>Быстрый хостинг от создателей Next.js</p>
+                            </div>
+                            <i class="fas fa-external-link-alt" style="color: var(--text-secondary);"></i>
+                        </div>
+                        <div class="publish-steps">
+                            <ol>
+                                <li>Скачайте сайт как ZIP и распакуйте</li>
+                                <li>Создайте репозиторий на GitHub</li>
+                                <li>Загрузите файлы в репозиторий</li>
+                                <li>Подключите репозиторий к <a href="https://vercel.com" target="_blank">Vercel</a></li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- GitHub Pages -->
+                    <div class="publish-option" id="publishGithub">
+                        <div class="publish-option-header">
+                            <div class="publish-icon" style="background: #24292e;">
+                                <i class="fab fa-github"></i>
+                            </div>
+                            <div class="publish-info">
+                                <h4>GitHub Pages</h4>
+                                <p>Бесплатный хостинг для статических сайтов</p>
+                            </div>
+                            <i class="fas fa-external-link-alt" style="color: var(--text-secondary);"></i>
+                        </div>
+                        <div class="publish-steps">
+                            <ol>
+                                <li>Создайте репозиторий на GitHub</li>
+                                <li>Загрузите index.html и assets</li>
+                                <li>Settings → Pages → Source: main branch</li>
+                                <li>Сайт доступен по адресу username.github.io/repo</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Custom hosting -->
+                    <div class="publish-option" id="publishCustom">
+                        <div class="publish-option-header">
+                            <div class="publish-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                                <i class="fas fa-server"></i>
+                            </div>
+                            <div class="publish-info">
+                                <h4>Свой хостинг</h4>
+                                <p>FTP/SFTP загрузка на любой хостинг</p>
+                            </div>
+                            <i class="fas fa-external-link-alt" style="color: var(--text-secondary);"></i>
+                        </div>
+                        <div class="publish-steps">
+                            <ol>
+                                <li>Скачайте сайт как ZIP архив</li>
+                                <li>Распакуйте архив</li>
+                                <li>Загрузите файлы через FTP-клиент (FileZilla)</li>
+                                <li>Укажите index.html как главную страницу</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="cancelPublishBtn">Закрыть</button>
+                <button class="btn primary" id="downloadForPublish">
+                    <i class="fas fa-download"></i> Скачать ZIP
                 </button>
             </div>
         </div>

@@ -21,7 +21,16 @@ const state = {
     viewport: 'desktop',
     pageId: currentPageId,
     pageName: 'Новая страница',
-    draggedLayerId: null // For layer drag & drop
+    draggedLayerId: null, // For layer drag & drop
+    meta: { // SEO meta data
+        title: '',
+        description: '',
+        keywords: '',
+        ogTitle: '',
+        ogDescription: '',
+        ogImage: '',
+        favicon: ''
+    }
 };
 
 // Load page data
@@ -34,6 +43,15 @@ function loadPageData() {
     if (page) {
         state.elements = page.elements || [];
         state.pageName = page.name || 'Новая страница';
+        state.meta = page.meta || {
+            title: page.name || '',
+            description: '',
+            keywords: '',
+            ogTitle: '',
+            ogDescription: '',
+            ogImage: '',
+            favicon: ''
+        };
         renderCanvas();
         renderLayers();
         saveHistory();
@@ -53,6 +71,7 @@ function savePageData() {
 
     if (pageIndex !== -1) {
         pages[pageIndex].elements = state.elements;
+        pages[pageIndex].meta = state.meta;
         pages[pageIndex].updatedAt = new Date().toISOString();
         localStorage.setItem('landing_pages', JSON.stringify(pages));
     }
@@ -68,6 +87,252 @@ const editModalTitle = document.getElementById('editModalTitle');
 
 // Container types that can have children
 const containerTypes = ['section', 'container', 'row', 'column', 'div'];
+
+// ===== Google Fonts =====
+const googleFonts = [
+    { name: 'Inter', weights: [300, 400, 500, 600, 700] },
+    { name: 'Roboto', weights: [300, 400, 500, 700] },
+    { name: 'Open Sans', weights: [300, 400, 600, 700] },
+    { name: 'Montserrat', weights: [300, 400, 500, 600, 700] },
+    { name: 'Nunito', weights: [300, 400, 600, 700] },
+    { name: 'Lato', weights: [300, 400, 700] },
+    { name: 'Poppins', weights: [300, 400, 500, 600, 700] },
+    { name: 'Raleway', weights: [300, 400, 500, 600, 700] },
+    { name: 'Ubuntu', weights: [300, 400, 500, 700] },
+    { name: 'Rubik', weights: [300, 400, 500, 600, 700] },
+    { name: 'Work Sans', weights: [300, 400, 500, 600, 700] },
+    { name: 'Nunito Sans', weights: [300, 400, 600, 700] },
+    { name: 'Fira Sans', weights: [300, 400, 500, 600, 700] },
+    { name: 'PT Sans', weights: [400, 700] },
+    { name: 'Oswald', weights: [300, 400, 500, 600, 700] },
+    { name: 'Playfair Display', weights: [400, 500, 600, 700] },
+    { name: 'Merriweather', weights: [300, 400, 700] },
+    { name: 'Source Sans Pro', weights: [300, 400, 600, 700] },
+    { name: 'Mulish', weights: [300, 400, 500, 600, 700] },
+    { name: 'Quicksand', weights: [300, 400, 500, 600, 700] },
+    { name: 'Comfortaa', weights: [300, 400, 500, 600, 700] },
+    { name: 'Exo 2', weights: [300, 400, 500, 600, 700] },
+    { name: 'Jost', weights: [300, 400, 500, 600, 700] },
+    { name: 'Manrope', weights: [300, 400, 500, 600, 700] },
+    { name: 'Space Grotesk', weights: [300, 400, 500, 600, 700] }
+];
+
+// Track loaded fonts
+const loadedFonts = new Set();
+
+// Load Google Font dynamically
+function loadGoogleFont(fontName) {
+    if (!fontName || loadedFonts.has(fontName)) return;
+
+    const font = googleFonts.find(f => f.name === fontName);
+    if (!font) return;
+
+    const weights = font.weights.join(';');
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}:wght@${weights}&display=swap`;
+    document.head.appendChild(link);
+    loadedFonts.add(fontName);
+}
+
+// ===== Page Templates =====
+const pageTemplates = [
+    {
+        id: 'blank',
+        name: 'Пустая страница',
+        category: 'basic',
+        thumbnail: '📄',
+        elements: []
+    },
+    {
+        id: 'landing-basic',
+        name: 'Базовый лендинг',
+        category: 'landing',
+        thumbnail: '🚀',
+        elements: [
+            {
+                type: 'navbar',
+                styles: { backgroundColor: 'white', padding: '0 20px', borderBottom: '1px solid #e2e8f0' }
+            },
+            {
+                type: 'hero',
+                styles: { padding: '100px 20px', backgroundColor: '#f8fafc' }
+            },
+            {
+                type: 'section',
+                styles: { padding: '80px 20px' },
+                children: [{ type: 'features' }]
+            },
+            {
+                type: 'footer',
+                styles: { backgroundColor: '#1e293b', color: 'white' }
+            }
+        ]
+    },
+    {
+        id: 'landing-sales',
+        name: 'Продающий лендинг',
+        category: 'landing',
+        thumbnail: '💰',
+        elements: [
+            {
+                type: 'navbar',
+                styles: { backgroundColor: '#1e293b', color: 'white', padding: '0 20px' }
+            },
+            {
+                type: 'hero',
+                styles: { padding: '120px 20px', background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)', color: 'white' }
+            },
+            {
+                type: 'section',
+                styles: { padding: '80px 20px' },
+                children: [{ type: 'features' }]
+            },
+            {
+                type: 'section',
+                styles: { padding: '80px 20px', backgroundColor: '#f8fafc' },
+                children: [{ type: 'testimonial' }, { type: 'testimonial' }]
+            },
+            {
+                type: 'section',
+                styles: { padding: '80px 20px' },
+                children: [
+                    { type: 'heading', content: 'Выберите тариф', styles: { textAlign: 'center', marginBottom: '40px' } },
+                    { type: 'row', children: [{ type: 'pricing' }, { type: 'pricing' }, { type: 'pricing' }] }
+                ]
+            },
+            {
+                type: 'section',
+                styles: { padding: '80px 20px', backgroundColor: '#3b82f6', color: 'white' },
+                children: [{ type: 'form' }]
+            },
+            {
+                type: 'footer',
+                styles: { backgroundColor: '#1e293b', color: 'white' }
+            }
+        ]
+    },
+    {
+        id: 'portfolio',
+        name: 'Портфолио',
+        category: 'portfolio',
+        thumbnail: '🎨',
+        elements: [
+            {
+                type: 'navbar',
+                styles: { backgroundColor: 'white', padding: '0 20px', borderBottom: '1px solid #e2e8f0' }
+            },
+            {
+                type: 'section',
+                styles: { padding: '100px 20px', textAlign: 'center' },
+                children: [
+                    { type: 'heading', content: 'Привет, я дизайнер', styles: { fontSize: '48px' } },
+                    { type: 'text', content: 'Создаю красивые и функциональные сайты' }
+                ]
+            },
+            {
+                type: 'section',
+                styles: { padding: '80px 20px' },
+                children: [
+                    { type: 'heading', content: 'Мои работы', styles: { textAlign: 'center', marginBottom: '40px' } },
+                    { type: 'gallery' }
+                ]
+            },
+            {
+                type: 'section',
+                styles: { padding: '80px 20px', backgroundColor: '#f8fafc' },
+                children: [
+                    { type: 'heading', content: 'Связаться со мной', styles: { textAlign: 'center', marginBottom: '40px' } },
+                    { type: 'form' }
+                ]
+            },
+            {
+                type: 'footer',
+                styles: { backgroundColor: '#1e293b', color: 'white' }
+            }
+        ]
+    },
+    {
+        id: 'business-card',
+        name: 'Визитка',
+        category: 'business',
+        thumbnail: '📇',
+        elements: [
+            {
+                type: 'section',
+                styles: { padding: '100px 20px', textAlign: 'center', minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' },
+                children: [
+                    { type: 'heading', content: 'Иван Иванов', styles: { fontSize: '48px' } },
+                    { type: 'text', content: 'Веб-разработчик', styles: { fontSize: '24px', color: '#64748b' } },
+                    { type: 'social' },
+                    { type: 'button', content: 'Связаться', styles: { marginTop: '20px' } }
+                ]
+            }
+        ]
+    }
+];
+
+// ===== Color Schemes =====
+const colorSchemes = [
+    { name: 'Modern Blue', primary: '#3b82f6', secondary: '#1e40af', accent: '#60a5fa', bg: '#f8fafc', text: '#1e293b' },
+    { name: 'Forest Green', primary: '#10b981', secondary: '#047857', accent: '#34d399', bg: '#f0fdf4', text: '#064e3b' },
+    { name: 'Royal Purple', primary: '#8b5cf6', secondary: '#6d28d9', accent: '#a78bfa', bg: '#faf5ff', text: '#4c1d95' },
+    { name: 'Sunset Orange', primary: '#f97316', secondary: '#ea580c', accent: '#fb923c', bg: '#fff7ed', text: '#9a3412' },
+    { name: 'Rose Pink', primary: '#f43f5e', secondary: '#e11d48', accent: '#fb7185', bg: '#fff1f2', text: '#881337' },
+    { name: 'Ocean Teal', primary: '#14b8a6', secondary: '#0d9488', accent: '#2dd4bf', bg: '#f0fdfa', text: '#134e4a' },
+    { name: 'Midnight', primary: '#6366f1', secondary: '#4f46e5', accent: '#818cf8', bg: '#eef2ff', text: '#312e81' },
+    { name: 'Coral', primary: '#ff6b6b', secondary: '#ee5a5a', accent: '#ff8787', bg: '#fff5f5', text: '#c92a2a' },
+    { name: 'Emerald', primary: '#059669', secondary: '#047857', accent: '#10b981', bg: '#ecfdf5', text: '#065f46' },
+    { name: 'Amber', primary: '#f59e0b', secondary: '#d97706', accent: '#fbbf24', bg: '#fffbeb', text: '#92400e' },
+    { name: 'Sky', primary: '#0ea5e9', secondary: '#0284c7', accent: '#38bdf8', bg: '#f0f9ff', text: '#075985' },
+    { name: 'Slate', primary: '#64748b', secondary: '#475569', accent: '#94a3b8', bg: '#f8fafc', text: '#1e293b' }
+];
+
+// ===== Button Presets =====
+const buttonPresets = {
+    'button-primary': {
+        label: 'Основная',
+        styles: { display: 'inline-block', padding: '12px 24px', backgroundColor: '#3b82f6', color: 'white', textDecoration: 'none', borderRadius: '8px', fontWeight: '500' }
+    },
+    'button-secondary': {
+        label: 'Вторичная',
+        styles: { display: 'inline-block', padding: '12px 24px', backgroundColor: '#e2e8f0', color: '#1e293b', textDecoration: 'none', borderRadius: '8px', fontWeight: '500' }
+    },
+    'button-outline': {
+        label: 'Контурная',
+        styles: { display: 'inline-block', padding: '10px 22px', backgroundColor: 'transparent', color: '#3b82f6', textDecoration: 'none', borderRadius: '8px', fontWeight: '500', border: '2px solid #3b82f6' }
+    },
+    'button-ghost': {
+        label: 'Прозрачная',
+        styles: { display: 'inline-block', padding: '12px 24px', backgroundColor: 'transparent', color: '#3b82f6', textDecoration: 'none', borderRadius: '8px', fontWeight: '500' }
+    },
+    'button-rounded': {
+        label: 'Округлая',
+        styles: { display: 'inline-block', padding: '12px 32px', backgroundColor: '#3b82f6', color: 'white', textDecoration: 'none', borderRadius: '50px', fontWeight: '500' }
+    },
+    'button-gradient': {
+        label: 'Градиент',
+        styles: { display: 'inline-block', padding: '12px 24px', background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)', color: 'white', textDecoration: 'none', borderRadius: '8px', fontWeight: '500' }
+    }
+};
+
+// Collect all fonts used in elements
+function collectUsedFonts(elements = state.elements) {
+    const fonts = new Set();
+    function traverse(els) {
+        for (const el of els) {
+            if (el.styles?.fontFamily) {
+                const fontName = el.styles.fontFamily.replace(/['"]/g, '').split(',')[0].trim();
+                if (googleFonts.find(f => f.name === fontName)) {
+                    fonts.add(fontName);
+                }
+            }
+            if (el.children?.length) traverse(el.children);
+        }
+    }
+    traverse(elements);
+    return Array.from(fonts);
+}
 
 // ===== Block Templates =====
 const blockTemplates = {
@@ -205,8 +470,17 @@ const blockTemplates = {
         tag: 'form',
         label: 'Форма',
         icon: 'fa-envelope',
-        content: `<input type="text" placeholder="Ваше имя" style="width:100%;padding:12px;margin-bottom:10px;border:1px solid #e2e8f0;border-radius:6px;"><input type="email" placeholder="Email" style="width:100%;padding:12px;margin-bottom:10px;border:1px solid #e2e8f0;border-radius:6px;"><button type="submit" style="width:100%;padding:12px;background:#3b82f6;color:white;border:none;border-radius:6px;cursor:pointer;">Отправить</button>`,
-        defaultStyles: { maxWidth: '400px' }
+        content: `<input type="text" name="name" placeholder="Ваше имя" required style="width:100%;padding:12px;margin-bottom:10px;border:1px solid #e2e8f0;border-radius:6px;"><input type="email" name="email" placeholder="Email" required style="width:100%;padding:12px;margin-bottom:10px;border:1px solid #e2e8f0;border-radius:6px;"><button type="submit" style="width:100%;padding:12px;background:#3b82f6;color:white;border:none;border-radius:6px;cursor:pointer;">Отправить</button>`,
+        defaultStyles: { maxWidth: '400px' },
+        formSettings: {
+            fields: { name: true, email: true, phone: false, message: false },
+            buttonText: 'Отправить',
+            buttonColor: '#3b82f6',
+            successMessage: 'Спасибо! Ваша заявка отправлена.',
+            webhook: '',
+            notifyEmail: '',
+            saveToBackend: true
+        }
     },
     accordion: {
         tag: 'div',
@@ -351,6 +625,265 @@ const blockTemplates = {
         icon: 'fa-plug',
         content: '<div style="padding:20px;background:#fef3c7;border:1px dashed #f59e0b;text-align:center;color:#92400e;">Вставьте код виджета</div>',
         defaultStyles: {}
+    },
+
+    // ===== New Components (Stage 7) =====
+
+    // Sticky Header - навигация с фиксацией при скролле
+    stickyNavbar: {
+        tag: 'nav',
+        label: 'Sticky навигация',
+        icon: 'fa-thumbtack',
+        content: `<div style="display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 20px;">
+            <a href="#" style="font-size:24px;font-weight:bold;color:#1e293b;text-decoration:none;">Logo</a>
+            <div style="display:flex;gap:24px;align-items:center;">
+                <a href="#" style="color:#475569;text-decoration:none;font-weight:500;">Главная</a>
+                <a href="#" style="color:#475569;text-decoration:none;font-weight:500;">О нас</a>
+                <a href="#" style="color:#475569;text-decoration:none;font-weight:500;">Услуги</a>
+                <a href="#" style="color:#475569;text-decoration:none;font-weight:500;">Контакты</a>
+                <a href="#" style="padding:10px 20px;background:#3b82f6;color:white;text-decoration:none;border-radius:6px;font-weight:500;">Заказать</a>
+            </div>
+        </div>`,
+        defaultStyles: {
+            position: 'sticky',
+            top: '0',
+            zIndex: '1000',
+            backgroundColor: 'white',
+            padding: '16px 0',
+            borderBottom: '1px solid #e2e8f0',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+        }
+    },
+
+    // Burger Menu - мобильное меню с анимацией
+    burgerMenu: {
+        tag: 'div',
+        label: 'Бургер меню',
+        icon: 'fa-bars',
+        content: `<input type="checkbox" id="burger-toggle" style="display:none;">
+            <label for="burger-toggle" class="burger-btn" style="display:flex;flex-direction:column;gap:5px;cursor:pointer;padding:10px;z-index:1001;position:relative;">
+                <span style="display:block;width:25px;height:3px;background:#1e293b;border-radius:2px;transition:all 0.3s;"></span>
+                <span style="display:block;width:25px;height:3px;background:#1e293b;border-radius:2px;transition:all 0.3s;"></span>
+                <span style="display:block;width:25px;height:3px;background:#1e293b;border-radius:2px;transition:all 0.3s;"></span>
+            </label>
+            <nav class="burger-nav" style="position:fixed;top:0;right:-300px;width:300px;height:100vh;background:white;box-shadow:-2px 0 10px rgba(0,0,0,0.1);transition:right 0.3s;z-index:1000;padding:80px 30px 30px;">
+                <a href="#" style="display:block;padding:15px 0;color:#1e293b;text-decoration:none;font-size:18px;border-bottom:1px solid #e2e8f0;">Главная</a>
+                <a href="#" style="display:block;padding:15px 0;color:#1e293b;text-decoration:none;font-size:18px;border-bottom:1px solid #e2e8f0;">О нас</a>
+                <a href="#" style="display:block;padding:15px 0;color:#1e293b;text-decoration:none;font-size:18px;border-bottom:1px solid #e2e8f0;">Услуги</a>
+                <a href="#" style="display:block;padding:15px 0;color:#1e293b;text-decoration:none;font-size:18px;border-bottom:1px solid #e2e8f0;">Контакты</a>
+            </nav>
+            <style>
+                #burger-toggle:checked ~ .burger-nav { right: 0 !important; }
+                #burger-toggle:checked ~ .burger-btn span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+                #burger-toggle:checked ~ .burger-btn span:nth-child(2) { opacity: 0; }
+                #burger-toggle:checked ~ .burger-btn span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+            </style>`,
+        defaultStyles: {
+            display: 'none'
+        },
+        mobileStyles: {
+            display: 'block'
+        }
+    },
+
+    // Slider с стрелками
+    slider: {
+        tag: 'div',
+        label: 'Слайдер',
+        icon: 'fa-images',
+        content: `<div class="slider-container" style="position:relative;overflow:hidden;border-radius:12px;">
+            <div class="slider-track" style="display:flex;transition:transform 0.5s ease;">
+                <div class="slide" style="min-width:100%;"><img src="https://via.placeholder.com/1200x500/3b82f6/ffffff?text=Слайд+1" style="width:100%;height:400px;object-fit:cover;"></div>
+                <div class="slide" style="min-width:100%;"><img src="https://via.placeholder.com/1200x500/10b981/ffffff?text=Слайд+2" style="width:100%;height:400px;object-fit:cover;"></div>
+                <div class="slide" style="min-width:100%;"><img src="https://via.placeholder.com/1200x500/f59e0b/ffffff?text=Слайд+3" style="width:100%;height:400px;object-fit:cover;"></div>
+            </div>
+            <button class="slider-prev" onclick="this.parentElement.querySelector('.slider-track').style.transform='translateX(-'+(Math.max(0,(parseInt(this.parentElement.querySelector('.slider-track').style.transform.replace(/[^0-9-]/g,'')||0)-100)))+'%)';" style="position:absolute;left:15px;top:50%;transform:translateY(-50%);width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,0.9);border:none;cursor:pointer;font-size:20px;box-shadow:0 2px 10px rgba(0,0,0,0.15);">❮</button>
+            <button class="slider-next" onclick="this.parentElement.querySelector('.slider-track').style.transform='translateX(-'+(Math.min(200,(parseInt(this.parentElement.querySelector('.slider-track').style.transform.replace(/[^0-9-]/g,'')||0)+100)))+'%)';" style="position:absolute;right:15px;top:50%;transform:translateY(-50%);width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,0.9);border:none;cursor:pointer;font-size:20px;box-shadow:0 2px 10px rgba(0,0,0,0.15);">❯</button>
+            <div class="slider-dots" style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:10px;">
+                <span style="width:12px;height:12px;border-radius:50%;background:white;cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></span>
+                <span style="width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.5);cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></span>
+                <span style="width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.5);cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></span>
+            </div>
+        </div>`,
+        defaultStyles: {
+            maxWidth: '1200px',
+            margin: '0 auto',
+            padding: '20px'
+        }
+    },
+
+    // Cookie Consent Banner
+    cookieConsent: {
+        tag: 'div',
+        label: 'Cookie баннер',
+        icon: 'fa-cookie-bite',
+        content: `<div class="cookie-banner" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;max-width:1200px;margin:0 auto;padding:0 20px;">
+            <div style="flex:1;min-width:300px;">
+                <p style="margin:0;color:#1e293b;font-size:14px;">
+                    <strong>🍪 Мы используем cookies</strong><br>
+                    <span style="color:#64748b;">Продолжая использовать сайт, вы соглашаетесь с <a href="#" style="color:#3b82f6;">политикой конфиденциальности</a>.</span>
+                </p>
+            </div>
+            <div style="display:flex;gap:10px;">
+                <button onclick="this.closest('.cookie-banner').parentElement.style.display='none';localStorage.setItem('cookies-accepted','true');" style="padding:10px 24px;background:#3b82f6;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:500;">Принять</button>
+                <button onclick="this.closest('.cookie-banner').parentElement.style.display='none';" style="padding:10px 24px;background:#e2e8f0;color:#475569;border:none;border-radius:6px;cursor:pointer;font-weight:500;">Отклонить</button>
+            </div>
+        </div>
+        <script>if(localStorage.getItem('cookies-accepted')){document.currentScript.parentElement.style.display='none';}</script>`,
+        defaultStyles: {
+            position: 'fixed',
+            bottom: '0',
+            left: '0',
+            right: '0',
+            backgroundColor: 'white',
+            padding: '20px 0',
+            boxShadow: '0 -4px 20px rgba(0,0,0,0.1)',
+            zIndex: '9999',
+            borderTop: '1px solid #e2e8f0'
+        }
+    },
+
+    // Back to Top Button
+    backToTop: {
+        tag: 'div',
+        label: 'Наверх',
+        icon: 'fa-arrow-up',
+        content: `<button onclick="window.scrollTo({top:0,behavior:'smooth'})" style="width:50px;height:50px;border-radius:50%;background:#3b82f6;color:white;border:none;cursor:pointer;font-size:20px;box-shadow:0 4px 15px rgba(59,130,246,0.4);transition:all 0.3s;">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        <style>
+            .back-to-top:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(59,130,246,0.5); }
+        </style>`,
+        defaultStyles: {
+            position: 'fixed',
+            bottom: '30px',
+            right: '30px',
+            zIndex: '999'
+        }
+    },
+
+    // Floating Action Button
+    fab: {
+        tag: 'div',
+        label: 'FAB кнопка',
+        icon: 'fa-plus-circle',
+        content: `<div class="fab-container">
+            <button class="fab-main" onclick="this.parentElement.classList.toggle('open')" style="width:60px;height:60px;border-radius:50%;background:#3b82f6;color:white;border:none;cursor:pointer;font-size:24px;box-shadow:0 4px 15px rgba(59,130,246,0.4);transition:all 0.3s;z-index:2;position:relative;">
+                <i class="fas fa-plus" style="transition:transform 0.3s;"></i>
+            </button>
+            <div class="fab-actions" style="position:absolute;bottom:70px;right:5px;display:flex;flex-direction:column;gap:10px;opacity:0;transform:translateY(20px);transition:all 0.3s;pointer-events:none;">
+                <a href="tel:+79991234567" style="width:45px;height:45px;border-radius:50%;background:#10b981;color:white;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.2);"><i class="fas fa-phone"></i></a>
+                <a href="mailto:info@example.com" style="width:45px;height:45px;border-radius:50%;background:#f59e0b;color:white;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.2);"><i class="fas fa-envelope"></i></a>
+                <a href="#" style="width:45px;height:45px;border-radius:50%;background:#8b5cf6;color:white;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,0.2);"><i class="fas fa-comment"></i></a>
+            </div>
+        </div>
+        <style>
+            .fab-container.open .fab-main i { transform: rotate(45deg); }
+            .fab-container.open .fab-actions { opacity: 1; transform: translateY(0); pointer-events: all; }
+        </style>`,
+        defaultStyles: {
+            position: 'fixed',
+            bottom: '30px',
+            right: '30px',
+            zIndex: '999'
+        }
+    },
+
+    // Animated Counter
+    animatedCounter: {
+        tag: 'div',
+        label: 'Анимированный счётчик',
+        icon: 'fa-sort-numeric-up-alt',
+        content: `<div style="display:flex;justify-content:space-around;flex-wrap:wrap;gap:30px;text-align:center;">
+            <div class="counter-item">
+                <div class="counter-value" data-target="500" style="font-size:48px;font-weight:bold;color:#3b82f6;">0</div>
+                <div style="color:#64748b;font-size:16px;margin-top:8px;">Клиентов</div>
+            </div>
+            <div class="counter-item">
+                <div class="counter-value" data-target="150" style="font-size:48px;font-weight:bold;color:#3b82f6;">0</div>
+                <div style="color:#64748b;font-size:16px;margin-top:8px;">Проектов</div>
+            </div>
+            <div class="counter-item">
+                <div class="counter-value" data-target="10" style="font-size:48px;font-weight:bold;color:#3b82f6;">0</div>
+                <div style="color:#64748b;font-size:16px;margin-top:8px;">Лет опыта</div>
+            </div>
+            <div class="counter-item">
+                <div class="counter-value" data-target="99" style="font-size:48px;font-weight:bold;color:#3b82f6;">0</div>
+                <div style="color:#64748b;font-size:16px;margin-top:8px;">% Довольных</div>
+            </div>
+        </div>
+        <script>
+        (function(){
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.querySelectorAll('.counter-value').forEach(counter => {
+                            const target = parseInt(counter.dataset.target);
+                            const duration = 2000;
+                            const step = target / (duration / 16);
+                            let current = 0;
+                            const timer = setInterval(() => {
+                                current += step;
+                                if (current >= target) { current = target; clearInterval(timer); }
+                                counter.textContent = Math.round(current) + (counter.dataset.suffix || '');
+                            }, 16);
+                        });
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            document.querySelectorAll('.counter-item').forEach(el => observer.observe(el.parentElement));
+        })();
+        </script>`,
+        defaultStyles: {
+            padding: '40px 20px'
+        }
+    },
+
+    // Parallax Section
+    parallaxSection: {
+        tag: 'section',
+        label: 'Параллакс секция',
+        icon: 'fa-layer-group',
+        content: `<div style="text-align:center;color:white;padding:100px 20px;position:relative;z-index:1;">
+            <h2 style="font-size:42px;font-weight:bold;margin-bottom:20px;text-shadow:2px 2px 4px rgba(0,0,0,0.3);">Параллакс заголовок</h2>
+            <p style="font-size:20px;max-width:600px;margin:0 auto 30px;text-shadow:1px 1px 2px rgba(0,0,0,0.3);">Красивый эффект параллакса при скролле страницы</p>
+            <a href="#" style="display:inline-block;padding:14px 32px;background:white;color:#1e293b;text-decoration:none;border-radius:8px;font-weight:600;">Подробнее</a>
+        </div>`,
+        defaultStyles: {
+            backgroundImage: 'url(https://via.placeholder.com/1920x800/1e293b/1e293b)',
+            backgroundAttachment: 'fixed',
+            backgroundPosition: 'center',
+            backgroundSize: 'cover',
+            position: 'relative'
+        }
+    },
+
+    // Marquee / Ticker
+    marquee: {
+        tag: 'div',
+        label: 'Бегущая строка',
+        icon: 'fa-text-width',
+        content: `<div class="marquee-container" style="overflow:hidden;white-space:nowrap;">
+            <div class="marquee-content" style="display:inline-block;animation:marquee 20s linear infinite;">
+                <span style="padding:0 50px;">🔥 Специальное предложение</span>
+                <span style="padding:0 50px;">⭐ Скидка 20% на все услуги</span>
+                <span style="padding:0 50px;">📞 Звоните: +7 (999) 123-45-67</span>
+                <span style="padding:0 50px;">🔥 Специальное предложение</span>
+                <span style="padding:0 50px;">⭐ Скидка 20% на все услуги</span>
+                <span style="padding:0 50px;">📞 Звоните: +7 (999) 123-45-67</span>
+            </div>
+        </div>
+        <style>
+            @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        </style>`,
+        defaultStyles: {
+            backgroundColor: '#3b82f6',
+            color: 'white',
+            padding: '12px 0',
+            fontSize: '16px',
+            fontWeight: '500'
+        }
     }
 };
 
@@ -419,7 +952,7 @@ function createElement(type) {
     const template = blockTemplates[type];
     if (!template) return null;
 
-    return {
+    const element = {
         id: generateId(),
         type,
         tag: template.tag,
@@ -428,10 +961,92 @@ function createElement(type) {
         content: template.content,
         attrs: { ...template.attrs },
         styles: { ...template.defaultStyles },
+        tabletStyles: {}, // Tablet overrides (max-width: 1024px)
+        mobileStyles: {}, // Mobile overrides (max-width: 640px)
         isContainer: template.isContainer || false,
         children: [],
         hidden: false
     };
+
+    // Add formSettings for form elements
+    if (template.formSettings) {
+        element.formSettings = JSON.parse(JSON.stringify(template.formSettings));
+    }
+
+    return element;
+}
+
+// Get styles based on current viewport
+function getStylesForViewport(element) {
+    const base = { ...element.styles };
+    if (state.viewport === 'tablet') {
+        return { ...base, ...element.tabletStyles };
+    } else if (state.viewport === 'mobile') {
+        return { ...base, ...element.tabletStyles, ...element.mobileStyles };
+    }
+    return base;
+}
+
+// ===== Image Optimization =====
+// Compress image on client side
+function compressImage(file, maxWidth = 1920, quality = 0.8) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                // Calculate new dimensions
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+
+                // Create canvas and compress
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Convert to compressed base64
+                const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                resolve(compressedDataUrl);
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+// Save style to correct viewport object
+function setStyleForCurrentViewport(element, styleName, value) {
+    if (state.viewport === 'tablet') {
+        element.tabletStyles = element.tabletStyles || {};
+        if (value) {
+            element.tabletStyles[styleName] = value;
+        } else {
+            delete element.tabletStyles[styleName];
+        }
+    } else if (state.viewport === 'mobile') {
+        element.mobileStyles = element.mobileStyles || {};
+        if (value) {
+            element.mobileStyles[styleName] = value;
+        } else {
+            delete element.mobileStyles[styleName];
+        }
+    } else {
+        if (value) {
+            element.styles[styleName] = value;
+        } else {
+            delete element.styles[styleName];
+        }
+    }
 }
 
 function addElement(element, parentId = null) {
@@ -542,7 +1157,7 @@ function renderElement(element, depth = 0) {
     el.setAttribute('data-depth', depth);
 
     if (element.tag === 'img') {
-        el.innerHTML = `<img src="${element.attrs?.src || ''}" alt="${element.attrs?.alt || ''}" style="max-width:100%;height:auto;">`;
+        el.innerHTML = `<img src="${element.attrs?.src || ''}" alt="${element.attrs?.alt || ''}" style="max-width:100%;height:auto;" loading="lazy">`;
     } else {
         el.innerHTML = element.content;
     }
@@ -1038,14 +1653,34 @@ function updateEditingElementFromForm() {
         el.attrs[input.dataset.attr] = input.value;
     });
 
-    // Styles
+    // Styles - save to current viewport
     editContent.querySelectorAll('[data-style]').forEach(input => {
         const val = input.value;
         const unit = input.dataset.unit || '';
-        if (val) {
-            el.styles[input.dataset.style] = val.includes(unit) || !unit ? val : val + unit;
+        const styleName = input.dataset.style;
+        const finalValue = val ? (val.includes(unit) || !unit ? val : val + unit) : '';
+
+        // Always save to base styles for desktop, or to responsive styles for tablet/mobile
+        if (state.viewport === 'tablet') {
+            el.tabletStyles = el.tabletStyles || {};
+            if (finalValue) {
+                el.tabletStyles[styleName] = finalValue;
+            } else {
+                delete el.tabletStyles[styleName];
+            }
+        } else if (state.viewport === 'mobile') {
+            el.mobileStyles = el.mobileStyles || {};
+            if (finalValue) {
+                el.mobileStyles[styleName] = finalValue;
+            } else {
+                delete el.mobileStyles[styleName];
+            }
         } else {
-            delete el.styles[input.dataset.style];
+            if (finalValue) {
+                el.styles[styleName] = finalValue;
+            } else {
+                delete el.styles[styleName];
+            }
         }
     });
 
@@ -1295,29 +1930,39 @@ function setupEditHandlers() {
         });
     });
 
-    // Image file upload
+    // Image file upload with compression
     const imageUpload = editContent.querySelector('#imageUpload');
     if (imageUpload) {
-        imageUpload.addEventListener('change', (e) => {
+        imageUpload.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const dataUrl = event.target.result;
+                try {
+                    // Compress image before storing
+                    const compressedDataUrl = await compressImage(file, 1920, 0.8);
                     const srcInput = editContent.querySelector('[data-attr="src"]');
                     if (srcInput) {
-                        srcInput.value = dataUrl;
+                        srcInput.value = compressedDataUrl;
                     }
                     state.editingElement.attrs = state.editingElement.attrs || {};
-                    state.editingElement.attrs.src = dataUrl;
+                    state.editingElement.attrs.src = compressedDataUrl;
                     // Ensure image fits within container
                     state.editingElement.styles = state.editingElement.styles || {};
                     state.editingElement.styles.maxWidth = '100%';
                     state.editingElement.styles.width = '100%';
                     state.editingElement.styles.height = 'auto';
                     state.editingElement.styles.boxSizing = 'border-box';
-                };
-                reader.readAsDataURL(file);
+                } catch (err) {
+                    // Fallback to original file if compression fails
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const dataUrl = event.target.result;
+                        const srcInput = editContent.querySelector('[data-attr="src"]');
+                        if (srcInput) srcInput.value = dataUrl;
+                        state.editingElement.attrs = state.editingElement.attrs || {};
+                        state.editingElement.attrs.src = dataUrl;
+                    };
+                    reader.readAsDataURL(file);
+                }
             }
         });
     }
@@ -1437,6 +2082,82 @@ function setupEditHandlers() {
         });
     }
 
+    // Form settings handlers
+    if (state.editingElement?.type === 'form') {
+        state.editingElement.formSettings = state.editingElement.formSettings || {
+            fields: { name: true, email: true, phone: false, message: false },
+            buttonText: 'Отправить',
+            buttonColor: '#3b82f6',
+            successMessage: 'Спасибо! Ваша заявка отправлена.',
+            webhook: '',
+            notifyEmail: '',
+            saveToBackend: true
+        };
+
+        // Field checkboxes
+        ['Name', 'Email', 'Phone', 'Message'].forEach(field => {
+            const checkbox = editContent.querySelector(`[data-custom="formField${field}"]`);
+            if (checkbox) {
+                checkbox.addEventListener('change', () => {
+                    state.editingElement.formSettings.fields[field.toLowerCase()] = checkbox.checked;
+                    updateFormContent();
+                });
+            }
+        });
+
+        // Button text
+        const buttonTextInput = editContent.querySelector('[data-custom="formButtonText"]');
+        if (buttonTextInput) {
+            buttonTextInput.addEventListener('input', () => {
+                state.editingElement.formSettings.buttonText = buttonTextInput.value;
+                updateFormContent();
+            });
+        }
+
+        // Button color
+        const buttonColorInputs = editContent.querySelectorAll('[data-custom="formButtonColor"]');
+        buttonColorInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                state.editingElement.formSettings.buttonColor = input.value;
+                // Sync color inputs
+                buttonColorInputs.forEach(inp => inp.value = input.value);
+                updateFormContent();
+            });
+        });
+
+        // Success message
+        const successInput = editContent.querySelector('[data-custom="formSuccessMessage"]');
+        if (successInput) {
+            successInput.addEventListener('input', () => {
+                state.editingElement.formSettings.successMessage = successInput.value;
+            });
+        }
+
+        // Webhook URL
+        const webhookInput = editContent.querySelector('[data-custom="formWebhook"]');
+        if (webhookInput) {
+            webhookInput.addEventListener('input', () => {
+                state.editingElement.formSettings.webhook = webhookInput.value;
+            });
+        }
+
+        // Notify email
+        const notifyInput = editContent.querySelector('[data-custom="formNotifyEmail"]');
+        if (notifyInput) {
+            notifyInput.addEventListener('input', () => {
+                state.editingElement.formSettings.notifyEmail = notifyInput.value;
+            });
+        }
+
+        // Save to backend checkbox
+        const saveToBackendCheckbox = editContent.querySelector('[data-custom="formSaveToBackend"]');
+        if (saveToBackendCheckbox) {
+            saveToBackendCheckbox.addEventListener('change', () => {
+                state.editingElement.formSettings.saveToBackend = saveToBackendCheckbox.checked;
+            });
+        }
+    }
+
     // Animation sliders
     editContent.querySelectorAll('[data-anim]').forEach(input => {
         if (input.type === 'range') {
@@ -1446,6 +2167,20 @@ function setupEditHandlers() {
             });
         }
     });
+
+    // Font family select - load font on change
+    const fontSelect = editContent.querySelector('#fontFamilySelect');
+    if (fontSelect) {
+        // Load fonts for preview in select options
+        googleFonts.forEach(f => loadGoogleFont(f.name));
+
+        fontSelect.addEventListener('change', () => {
+            const fontName = fontSelect.value.replace(/['"]/g, '').split(',')[0].trim();
+            if (fontName) {
+                loadGoogleFont(fontName);
+            }
+        });
+    }
 }
 
 function renderContentTab(el) {
@@ -1673,28 +2408,48 @@ function renderContentTab(el) {
                 <div class="edit-row">
                     <label>Поля формы</label>
                     <div class="edit-checkbox-row">
-                        <input type="checkbox" id="fieldName" checked disabled>
+                        <input type="checkbox" id="fieldName" data-custom="formFieldName" ${el.formSettings?.fields?.name !== false ? 'checked' : ''}>
                         <label for="fieldName">Имя</label>
                     </div>
                     <div class="edit-checkbox-row">
-                        <input type="checkbox" id="fieldEmail" checked disabled>
+                        <input type="checkbox" id="fieldEmail" data-custom="formFieldEmail" ${el.formSettings?.fields?.email !== false ? 'checked' : ''}>
                         <label for="fieldEmail">Email</label>
                     </div>
                     <div class="edit-checkbox-row">
-                        <input type="checkbox" id="fieldPhone" data-custom="formPhone" ${el.content.includes('phone') ? 'checked' : ''}>
+                        <input type="checkbox" id="fieldPhone" data-custom="formFieldPhone" ${el.formSettings?.fields?.phone ? 'checked' : ''}>
                         <label for="fieldPhone">Телефон</label>
                     </div>
                     <div class="edit-checkbox-row">
-                        <input type="checkbox" id="fieldMessage" data-custom="formMessage" ${el.content.includes('textarea') ? 'checked' : ''}>
+                        <input type="checkbox" id="fieldMessage" data-custom="formFieldMessage" ${el.formSettings?.fields?.message ? 'checked' : ''}>
                         <label for="fieldMessage">Сообщение</label>
                     </div>
                 </div>
                 <div class="edit-row">
                     <label>Цвет кнопки</label>
                     <div class="edit-color">
-                        <input type="color" value="#3b82f6" data-custom="formButtonColor">
-                        <input type="text" class="edit-input" value="#3b82f6" data-custom="formButtonColor">
+                        <input type="color" value="${el.formSettings?.buttonColor || '#3b82f6'}" data-custom="formButtonColor">
+                        <input type="text" class="edit-input" value="${el.formSettings?.buttonColor || '#3b82f6'}" data-custom="formButtonColor">
                     </div>
+                </div>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-cog"></i> Настройки отправки</h4>
+                <div class="edit-row">
+                    <label>Сообщение после отправки</label>
+                    <input type="text" class="edit-input" data-custom="formSuccessMessage" value="${el.formSettings?.successMessage || 'Спасибо! Ваша заявка отправлена.'}" placeholder="Спасибо! Ваша заявка отправлена.">
+                </div>
+                <div class="edit-row">
+                    <label>Webhook URL (опционально)</label>
+                    <input type="text" class="edit-input" data-custom="formWebhook" value="${el.formSettings?.webhook || ''}" placeholder="https://...">
+                    <p class="edit-hint">Заявки будут отправляться на этот URL</p>
+                </div>
+                <div class="edit-row">
+                    <label>Email для уведомлений (опционально)</label>
+                    <input type="text" class="edit-input" data-custom="formNotifyEmail" value="${el.formSettings?.notifyEmail || ''}" placeholder="email@example.com">
+                </div>
+                <div class="edit-checkbox-row">
+                    <input type="checkbox" id="saveToBackend" data-custom="formSaveToBackend" ${el.formSettings?.saveToBackend !== false ? 'checked' : ''}>
+                    <label for="saveToBackend">Сохранять заявки в системе</label>
                 </div>
             </div>
         `,
@@ -2330,7 +3085,20 @@ function extractFooterPhone(content) {
 }
 
 function renderStyleTab(el) {
-    const s = el.styles || {};
+    // Get styles for current viewport
+    const s = getStylesForViewport(el);
+
+    // Show viewport indicator if editing responsive styles
+    const viewportIndicator = state.viewport !== 'desktop' ? `
+        <div class="edit-section" style="background: rgba(59, 130, 246, 0.1); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 8px; color: var(--accent);">
+                <i class="fas fa-${state.viewport === 'tablet' ? 'tablet-alt' : 'mobile-alt'}"></i>
+                <span>Редактирование стилей для <strong>${state.viewport === 'tablet' ? 'планшета' : 'мобильного'}</strong></span>
+            </div>
+            <p class="edit-hint" style="margin-top: 8px;">Изменения применятся только для ${state.viewport === 'tablet' ? 'экранов ≤1024px' : 'экранов ≤640px'}</p>
+        </div>
+    ` : '';
+
     // Determine background type
     let bgType = 'color';
     if (s.background?.includes('gradient')) {
@@ -2343,6 +3111,7 @@ function renderStyleTab(el) {
     const gradientColors = extractGradientColors(s.background);
 
     return `
+        ${viewportIndicator}
         <div class="edit-section">
             <h4><i class="fas fa-expand-arrows-alt"></i> Размер</h4>
             <div class="edit-grid">
@@ -2419,6 +3188,13 @@ function renderStyleTab(el) {
         <div class="edit-section">
             <h4><i class="fas fa-text-height"></i> Типографика</h4>
             <div class="edit-row">
+                <label>Шрифт</label>
+                <select class="edit-select font-select" data-style="fontFamily" id="fontFamilySelect">
+                    <option value="" ${!s.fontFamily ? 'selected' : ''}>По умолчанию (Inter)</option>
+                    ${googleFonts.map(f => `<option value="'${f.name}', sans-serif" ${s.fontFamily?.includes(f.name) ? 'selected' : ''} style="font-family:'${f.name}',sans-serif">${f.name}</option>`).join('')}
+                </select>
+            </div>
+            <div class="edit-row">
                 <label>Размер шрифта</label>
                 <div class="edit-range-row">
                     <input type="range" min="10" max="72" value="${parseInt(s.fontSize) || 16}" data-style="fontSize" data-unit="px">
@@ -2428,11 +3204,11 @@ function renderStyleTab(el) {
             <div class="edit-row">
                 <label>Толщина шрифта</label>
                 <select class="edit-select" data-style="fontWeight">
-                    <option value="" ${!s.fontWeight ? 'selected' : ''}>Обычный</option>
+                    <option value="" ${!s.fontWeight ? 'selected' : ''}>Обычный (400)</option>
                     <option value="300" ${s.fontWeight === '300' ? 'selected' : ''}>Тонкий (300)</option>
                     <option value="500" ${s.fontWeight === '500' ? 'selected' : ''}>Средний (500)</option>
                     <option value="600" ${s.fontWeight === '600' ? 'selected' : ''}>Полужирный (600)</option>
-                    <option value="bold" ${s.fontWeight === 'bold' || s.fontWeight === '700' ? 'selected' : ''}>Жирный (700)</option>
+                    <option value="700" ${s.fontWeight === 'bold' || s.fontWeight === '700' ? 'selected' : ''}>Жирный (700)</option>
                     <option value="800" ${s.fontWeight === '800' ? 'selected' : ''}>Очень жирный (800)</option>
                 </select>
             </div>
@@ -2596,6 +3372,37 @@ function renderStyleTab(el) {
                 </div>
             </div>
         </div>
+
+        ${el.isContainer ? `
+        <div class="edit-section">
+            <h4><i class="fas fa-video"></i> Фоновое видео</h4>
+            <div class="edit-row">
+                <label>URL видео (YouTube, Vimeo или MP4)</label>
+                <input type="text" class="edit-input" data-custom="bgVideoUrl" value="${el.bgVideo?.url || ''}" placeholder="https://www.youtube.com/watch?v=...">
+            </div>
+            <div class="edit-row">
+                <div class="edit-checkbox-row">
+                    <input type="checkbox" id="bgVideoAutoplay" data-custom="bgVideoAutoplay" ${el.bgVideo?.autoplay !== false ? 'checked' : ''}>
+                    <label for="bgVideoAutoplay">Автовоспроизведение</label>
+                </div>
+                <div class="edit-checkbox-row">
+                    <input type="checkbox" id="bgVideoLoop" data-custom="bgVideoLoop" ${el.bgVideo?.loop !== false ? 'checked' : ''}>
+                    <label for="bgVideoLoop">Повтор</label>
+                </div>
+                <div class="edit-checkbox-row">
+                    <input type="checkbox" id="bgVideoMuted" data-custom="bgVideoMuted" ${el.bgVideo?.muted !== false ? 'checked' : ''}>
+                    <label for="bgVideoMuted">Без звука</label>
+                </div>
+            </div>
+            <div class="edit-row">
+                <label>Затемнение видео</label>
+                <div class="edit-range-row">
+                    <input type="range" min="0" max="80" value="${el.bgVideo?.overlay || 0}" data-custom="bgVideoOverlay">
+                    <span>${el.bgVideo?.overlay || 0}%</span>
+                </div>
+            </div>
+        </div>
+        ` : ''}
 
         <div class="edit-section">
             <h4><i class="fas fa-font"></i> Цвет текста</h4>
@@ -2896,6 +3703,35 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+// Update form content based on settings
+function updateFormContent() {
+    const el = state.editingElement;
+    if (!el || el.type !== 'form' || !el.formSettings) return;
+
+    const fields = el.formSettings.fields;
+    const buttonText = el.formSettings.buttonText || 'Отправить';
+    const buttonColor = el.formSettings.buttonColor || '#3b82f6';
+
+    let content = '';
+
+    if (fields.name) {
+        content += `<input type="text" name="name" placeholder="Ваше имя" required style="width:100%;padding:12px;margin-bottom:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:14px;">`;
+    }
+    if (fields.email) {
+        content += `<input type="email" name="email" placeholder="Email" required style="width:100%;padding:12px;margin-bottom:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:14px;">`;
+    }
+    if (fields.phone) {
+        content += `<input type="tel" name="phone" placeholder="Телефон" style="width:100%;padding:12px;margin-bottom:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:14px;">`;
+    }
+    if (fields.message) {
+        content += `<textarea name="message" placeholder="Сообщение" rows="4" style="width:100%;padding:12px;margin-bottom:10px;border:1px solid #e2e8f0;border-radius:6px;font-size:14px;resize:vertical;"></textarea>`;
+    }
+
+    content += `<button type="submit" style="width:100%;padding:12px;background:${buttonColor};color:white;border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:500;">${buttonText}</button>`;
+
+    el.content = content;
+}
+
 // ===== Drag and Drop =====
 let draggedBlockType = null;
 let dropTargetId = null;
@@ -3080,6 +3916,16 @@ function generateElementHTML(el) {
         attrs['data-hover'] = anim.hover;
     }
 
+    // Form handling
+    if (el.type === 'form' && el.formSettings) {
+        const fs = el.formSettings;
+        attrs['data-form-id'] = el.id;
+        attrs['data-page-id'] = state.pageId || 'unknown';
+        attrs['data-success-message'] = fs.successMessage || 'Спасибо! Ваша заявка отправлена.';
+        if (fs.webhook) attrs['data-webhook'] = fs.webhook;
+        if (fs.saveToBackend !== false) attrs['data-save-backend'] = 'true';
+    }
+
     // Action handling
     const action = el.action || {};
     if (action.type === 'link' && action.url) {
@@ -3104,6 +3950,14 @@ function generateElementHTML(el) {
     }
 
     const styleStr = stylesToString(styles);
+
+    // Add id for responsive CSS targeting
+    const hasResponsiveStyles = (el.tabletStyles && Object.keys(el.tabletStyles).length > 0) ||
+                                (el.mobileStyles && Object.keys(el.mobileStyles).length > 0);
+    if (hasResponsiveStyles) {
+        attrs['id'] = el.id;
+    }
+
     const attrsStr = Object.entries(attrs).map(([k, v]) => `${k}="${v}"`).join(' ');
     const childrenHtml = el.children?.length ? generateHTML(el.children) : '';
     const content = el.content + childrenHtml;
@@ -3116,17 +3970,57 @@ function generateHTML(elements = state.elements) {
 }
 
 function generateFullHTML() {
+    // Check if page has forms
+    const hasForm = checkForForms(state.elements);
+
+    // Collect used Google Fonts
+    const usedFonts = collectUsedFonts();
+    const fontLinks = usedFonts.map(fontName => {
+        const font = googleFonts.find(f => f.name === fontName);
+        const weights = font ? font.weights.join(';') : '400;700';
+        return `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}:wght@${weights}&display=swap">`;
+    }).join('\n    ');
+
+    // Generate meta tags
+    const meta = state.meta || {};
+    const pageTitle = meta.title || state.pageName || 'Лендинг';
+
+    let metaTags = '';
+    if (meta.description) {
+        metaTags += `\n    <meta name="description" content="${escapeHtml(meta.description)}">`;
+    }
+    if (meta.keywords) {
+        metaTags += `\n    <meta name="keywords" content="${escapeHtml(meta.keywords)}">`;
+    }
+    // Open Graph tags
+    metaTags += `\n    <meta property="og:title" content="${escapeHtml(meta.ogTitle || pageTitle)}">`;
+    if (meta.ogDescription || meta.description) {
+        metaTags += `\n    <meta property="og:description" content="${escapeHtml(meta.ogDescription || meta.description)}">`;
+    }
+    if (meta.ogImage) {
+        metaTags += `\n    <meta property="og:image" content="${meta.ogImage}">`;
+    }
+    metaTags += `\n    <meta property="og:type" content="website">`;
+
+    // Favicon
+    let faviconTag = '';
+    if (meta.favicon) {
+        faviconTag = `\n    <link rel="icon" href="${meta.favicon}">`;
+    }
+
     return `<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Лендинг</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>${escapeHtml(pageTitle)}</title>${metaTags}${faviconTag}
+    ${fontLinks ? fontLinks + '\n    ' : ''}<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
         img { max-width: 100%; height: auto; }
+        img[loading="lazy"] { opacity: 1; transition: opacity 0.3s; }
+        img.loading { opacity: 0; }
 
         /* Animations */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -3145,12 +4039,130 @@ function generateFullHTML() {
         [data-hover="glow"]:hover { box-shadow: 0 0 20px currentColor; transition: box-shadow 0.3s; }
         [data-hover="rotate"]:hover { transform: rotate(5deg); transition: transform 0.3s; }
         [data-hover="shake"]:hover { animation: shake 0.5s; }
+
+        /* Form styles */
+        form input:focus, form textarea:focus { outline: none; border-color: #3b82f6 !important; }
+        form button:hover { opacity: 0.9; }
+        form button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .form-success { padding: 16px; background: #10b981; color: white; border-radius: 8px; text-align: center; }
+        .form-error { padding: 16px; background: #ef4444; color: white; border-radius: 8px; text-align: center; }
+
+        /* Responsive styles */
+${generateResponsiveCSS()}
     </style>
 </head>
 <body>
 ${generateHTML()}
+${hasForm ? generateFormScript() : ''}
 </body>
 </html>`;
+}
+
+// Generate responsive CSS with media queries
+function generateResponsiveCSS() {
+    let tabletCSS = '';
+    let mobileCSS = '';
+
+    function collectResponsiveStyles(elements) {
+        for (const el of elements) {
+            // Tablet styles
+            if (el.tabletStyles && Object.keys(el.tabletStyles).length > 0) {
+                const styleStr = stylesToString(el.tabletStyles);
+                tabletCSS += `        #${el.id} { ${styleStr} }\n`;
+            }
+
+            // Mobile styles
+            if (el.mobileStyles && Object.keys(el.mobileStyles).length > 0) {
+                const styleStr = stylesToString(el.mobileStyles);
+                mobileCSS += `        #${el.id} { ${styleStr} }\n`;
+            }
+
+            // Process children
+            if (el.children?.length) {
+                collectResponsiveStyles(el.children);
+            }
+        }
+    }
+
+    collectResponsiveStyles(state.elements);
+
+    let css = '';
+    if (tabletCSS) {
+        css += `        @media (max-width: 1024px) {\n${tabletCSS}        }\n`;
+    }
+    if (mobileCSS) {
+        css += `        @media (max-width: 640px) {\n${mobileCSS}        }\n`;
+    }
+
+    return css;
+}
+
+// Check if elements tree contains forms
+function checkForForms(elements) {
+    for (const el of elements) {
+        if (el.type === 'form') return true;
+        if (el.children?.length && checkForForms(el.children)) return true;
+    }
+    return false;
+}
+
+// Generate form handling script
+function generateFormScript() {
+    return `
+<script>
+document.querySelectorAll('form[data-form-id]').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = form.querySelector('button[type="submit"]');
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Отправка...';
+
+        try {
+            const formData = Object.fromEntries(new FormData(form));
+            const pageId = form.dataset.pageId;
+            const successMessage = form.dataset.successMessage || 'Спасибо! Ваша заявка отправлена.';
+            const webhook = form.dataset.webhook;
+            const saveBackend = form.dataset.saveBackend === 'true';
+
+            // Send to webhook if specified
+            if (webhook) {
+                try {
+                    await fetch(webhook, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ pageId, formData, submittedAt: new Date().toISOString() })
+                    });
+                } catch (err) {
+                    console.log('Webhook error:', err);
+                }
+            }
+
+            // Save to backend if enabled
+            if (saveBackend) {
+                try {
+                    await fetch('https://ai-tools-backend-d3zr.onrender.com/api/submissions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ pageId, formData, submittedAt: new Date().toISOString() })
+                    });
+                } catch (err) {
+                    console.log('Backend save error:', err);
+                }
+            }
+
+            // Show success message
+            form.innerHTML = '<div class="form-success">' + successMessage + '</div>';
+
+        } catch (error) {
+            btn.disabled = false;
+            btn.textContent = originalText;
+            form.insertAdjacentHTML('beforeend', '<div class="form-error" style="margin-top:10px;">Ошибка отправки. Попробуйте ещё раз.</div>');
+            setTimeout(() => form.querySelector('.form-error')?.remove(), 5000);
+        }
+    });
+});
+</script>`;
 }
 
 // Preview
@@ -3203,9 +4215,164 @@ document.getElementById('downloadCode').addEventListener('click', () => {
     URL.revokeObjectURL(url);
 });
 
-document.getElementById('exportBtn').addEventListener('click', () => {
-    document.getElementById('codeBtn').click();
+// ===== Export Dropdown =====
+const exportBtn = document.getElementById('exportBtn');
+const exportDropdownMenu = document.getElementById('exportDropdownMenu');
+
+exportBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    exportDropdownMenu.classList.toggle('show');
 });
+
+document.addEventListener('click', () => {
+    exportDropdownMenu.classList.remove('show');
+});
+
+// Export as HTML
+document.getElementById('exportHtmlBtn').addEventListener('click', () => {
+    const blob = new Blob([generateFullHTML()], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = (state.meta?.title || 'landing') + '.html';
+    a.click();
+    URL.revokeObjectURL(url);
+    exportDropdownMenu.classList.remove('show');
+});
+
+// Export as ZIP
+document.getElementById('exportZipBtn').addEventListener('click', async () => {
+    exportDropdownMenu.classList.remove('show');
+    await exportAsZip();
+});
+
+// ZIP Export Function
+async function exportAsZip() {
+    if (typeof JSZip === 'undefined') {
+        alert('Ошибка: JSZip не загружен');
+        return;
+    }
+
+    const zip = new JSZip();
+    const images = zip.folder('images');
+    const imageMap = new Map(); // base64 -> filename
+    let imageCounter = 1;
+
+    // Extract images from elements
+    function extractImages(elements) {
+        elements.forEach(el => {
+            // Check for img src
+            if (el.tag === 'img' && el.attrs?.src) {
+                const src = el.attrs.src;
+                if (src.startsWith('data:image/')) {
+                    if (!imageMap.has(src)) {
+                        const ext = src.match(/data:image\/(\w+)/)?.[1] || 'png';
+                        const filename = `image_${imageCounter++}.${ext}`;
+                        imageMap.set(src, filename);
+
+                        // Convert base64 to binary
+                        const base64Data = src.split(',')[1];
+                        images.file(filename, base64Data, { base64: true });
+                    }
+                }
+            }
+
+            // Check content for inline images
+            if (el.content) {
+                const imgMatches = el.content.matchAll(/src="(data:image\/[^"]+)"/g);
+                for (const match of imgMatches) {
+                    const src = match[1];
+                    if (!imageMap.has(src)) {
+                        const ext = src.match(/data:image\/(\w+)/)?.[1] || 'png';
+                        const filename = `image_${imageCounter++}.${ext}`;
+                        imageMap.set(src, filename);
+
+                        const base64Data = src.split(',')[1];
+                        images.file(filename, base64Data, { base64: true });
+                    }
+                }
+            }
+
+            // Check background images in styles
+            const bgImage = el.styles?.backgroundImage;
+            if (bgImage && bgImage.includes('data:image/')) {
+                const match = bgImage.match(/url\(["']?(data:image\/[^"')]+)["']?\)/);
+                if (match && !imageMap.has(match[1])) {
+                    const src = match[1];
+                    const ext = src.match(/data:image\/(\w+)/)?.[1] || 'png';
+                    const filename = `image_${imageCounter++}.${ext}`;
+                    imageMap.set(src, filename);
+
+                    const base64Data = src.split(',')[1];
+                    images.file(filename, base64Data, { base64: true });
+                }
+            }
+
+            // Check meta images
+            if (state.meta?.ogImage?.startsWith('data:image/')) {
+                const src = state.meta.ogImage;
+                if (!imageMap.has(src)) {
+                    const ext = src.match(/data:image\/(\w+)/)?.[1] || 'png';
+                    const filename = `og-image.${ext}`;
+                    imageMap.set(src, filename);
+
+                    const base64Data = src.split(',')[1];
+                    images.file(filename, base64Data, { base64: true });
+                }
+            }
+
+            if (state.meta?.favicon?.startsWith('data:image/')) {
+                const src = state.meta.favicon;
+                if (!imageMap.has(src)) {
+                    const ext = src.match(/data:image\/(\w+)/)?.[1] || 'ico';
+                    const filename = `favicon.${ext === 'x-icon' ? 'ico' : ext}`;
+                    imageMap.set(src, filename);
+
+                    const base64Data = src.split(',')[1];
+                    zip.file(filename, base64Data, { base64: true });
+                }
+            }
+
+            if (el.children?.length) {
+                extractImages(el.children);
+            }
+        });
+    }
+
+    // Extract all images
+    extractImages(state.elements);
+
+    // Generate HTML with replaced image paths
+    let html = generateFullHTML();
+
+    // Replace base64 images with file paths
+    imageMap.forEach((filename, base64) => {
+        if (filename.startsWith('favicon') || filename.startsWith('og-image')) {
+            html = html.split(base64).join(filename);
+        } else {
+            html = html.split(base64).join('images/' + filename);
+        }
+    });
+
+    // Add HTML file
+    zip.file('index.html', html);
+
+    // Generate and download ZIP
+    try {
+        const content = await zip.generateAsync({
+            type: 'blob',
+            compression: 'DEFLATE',
+            compressionOptions: { level: 9 }
+        });
+
+        const siteName = state.meta?.title || 'landing-page';
+        const safeName = siteName.replace(/[^a-zA-Zа-яА-Я0-9]/g, '_').toLowerCase();
+        saveAs(content, `${safeName}.zip`);
+    } catch (err) {
+        console.error('ZIP export error:', err);
+        alert('Ошибка при создании архива: ' + err.message);
+    }
+}
 
 // ===== Save/Load =====
 function saveProject() {
@@ -3246,13 +4413,162 @@ document.getElementById('blockSearch').addEventListener('input', (e) => {
     });
 });
 
-// ===== Init =====
-loadProject();
-saveHistory();
-renderLayers();
+// Apply page template
+function applyPageTemplate(templateId) {
+    const template = pageTemplates.find(t => t.id === templateId);
+    if (!template || !template.elements) return;
+
+    // Create elements from template
+    const createElementsFromTemplate = (templateElements) => {
+        return templateElements.map(tpl => {
+            const el = createElement(tpl.type);
+            if (!el) return null;
+
+            // Override styles if provided
+            if (tpl.styles) {
+                el.styles = { ...el.styles, ...tpl.styles };
+            }
+
+            // Override content if provided
+            if (tpl.content) {
+                el.content = tpl.content;
+            }
+
+            // Create children
+            if (tpl.children) {
+                el.children = createElementsFromTemplate(tpl.children).filter(Boolean);
+            }
+
+            return el;
+        }).filter(Boolean);
+    };
+
+    state.elements = createElementsFromTemplate(template.elements);
+    savePageData();
+    renderCanvas();
+    renderLayers();
+    saveHistory();
+
+    // Remove template param from URL
+    const newUrl = window.location.pathname + '?id=' + currentPageId;
+    window.history.replaceState({}, '', newUrl);
+}
 
 canvas.addEventListener('click', (e) => {
     if (e.target === canvas || e.target === canvasEmpty) {
         selectElement(null);
     }
 });
+
+// ===== SEO Modal =====
+const seoModal = document.getElementById('seoModal');
+
+document.getElementById('seoBtn').addEventListener('click', () => {
+    // Populate form with current meta data
+    document.getElementById('seoTitle').value = state.meta.title || state.pageName || '';
+    document.getElementById('seoDescription').value = state.meta.description || '';
+    document.getElementById('seoKeywords').value = state.meta.keywords || '';
+    document.getElementById('seoOgTitle').value = state.meta.ogTitle || '';
+    document.getElementById('seoOgDescription').value = state.meta.ogDescription || '';
+    document.getElementById('seoOgImage').value = state.meta.ogImage || '';
+
+    // Show favicon preview if exists
+    const faviconPreview = document.getElementById('faviconPreview');
+    if (state.meta.favicon) {
+        faviconPreview.src = state.meta.favicon;
+        faviconPreview.style.display = 'block';
+    } else {
+        faviconPreview.style.display = 'none';
+    }
+
+    seoModal.classList.add('active');
+});
+
+document.getElementById('closeSeoModal').addEventListener('click', () => {
+    seoModal.classList.remove('active');
+});
+
+document.getElementById('cancelSeoBtn').addEventListener('click', () => {
+    seoModal.classList.remove('active');
+});
+
+document.getElementById('saveSeoBtn').addEventListener('click', () => {
+    state.meta.title = document.getElementById('seoTitle').value;
+    state.meta.description = document.getElementById('seoDescription').value;
+    state.meta.keywords = document.getElementById('seoKeywords').value;
+    state.meta.ogTitle = document.getElementById('seoOgTitle').value;
+    state.meta.ogDescription = document.getElementById('seoOgDescription').value;
+    state.meta.ogImage = document.getElementById('seoOgImage').value;
+
+    savePageData();
+    seoModal.classList.remove('active');
+    alert('SEO настройки сохранены!');
+});
+
+// OG Image upload
+document.getElementById('seoOgImageUpload').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            document.getElementById('seoOgImage').value = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Favicon upload
+document.getElementById('seoFaviconUpload').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            state.meta.favicon = event.target.result;
+            const preview = document.getElementById('faviconPreview');
+            preview.src = event.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// ===== Publish Modal Handlers =====
+const publishModal = document.getElementById('publishModal');
+
+document.getElementById('publishBtn').addEventListener('click', () => {
+    publishModal.classList.add('active');
+});
+
+document.getElementById('closePublishModal').addEventListener('click', () => {
+    publishModal.classList.remove('active');
+});
+
+document.getElementById('cancelPublishBtn').addEventListener('click', () => {
+    publishModal.classList.remove('active');
+});
+
+// Toggle publish option details
+document.querySelectorAll('.publish-option-header').forEach(header => {
+    header.addEventListener('click', () => {
+        const option = header.closest('.publish-option');
+        option.classList.toggle('expanded');
+    });
+});
+
+// Download ZIP from publish modal
+document.getElementById('downloadForPublish').addEventListener('click', async () => {
+    publishModal.classList.remove('active');
+    await exportAsZip();
+});
+
+// ===== Init =====
+loadProject();
+
+// Check for template parameter after loading
+const templateParam = urlParams.get('template');
+if (templateParam && state.elements.length === 0) {
+    applyPageTemplate(templateParam);
+}
+
+saveHistory();
+renderLayers();

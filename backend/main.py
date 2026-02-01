@@ -515,6 +515,82 @@ async def telegram_webhook(request: Request):
         print(f"Webhook error: {e}")
         return {"ok": True}  # Always return ok to Telegram
 
+# ===== Form Submissions API =====
+
+# In-memory storage for form submissions
+form_submissions: Dict[str, List[dict]] = {}
+
+class FormSubmissionRequest(BaseModel):
+    pageId: str
+    formData: dict
+    submittedAt: Optional[str] = None
+
+@app.post("/api/submissions")
+async def create_submission(request: Request, submission: FormSubmissionRequest):
+    """Create a new form submission"""
+    submission_id = f"sub_{int(time.time() * 1000)}"
+
+    # Get client IP
+    client_ip = request.client.host if request.client else "unknown"
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        client_ip = forwarded.split(",")[0].strip()
+
+    submission_data = {
+        "id": submission_id,
+        "pageId": submission.pageId,
+        "formData": submission.formData,
+        "submittedAt": submission.submittedAt or datetime.now(pytz.UTC).isoformat(),
+        "ip": client_ip
+    }
+
+    # Store by pageId
+    if submission.pageId not in form_submissions:
+        form_submissions[submission.pageId] = []
+    form_submissions[submission.pageId].append(submission_data)
+
+    print(f"[Submissions] New submission {submission_id} for page {submission.pageId}")
+    return {"success": True, "submission": submission_data}
+
+@app.get("/api/submissions")
+async def get_all_submissions():
+    """Get all form submissions"""
+    all_submissions = []
+    for page_id, submissions in form_submissions.items():
+        all_submissions.extend(submissions)
+    # Sort by date, newest first
+    all_submissions.sort(key=lambda x: x.get("submittedAt", ""), reverse=True)
+    return {"submissions": all_submissions}
+
+@app.get("/api/submissions/page/{page_id}")
+async def get_page_submissions(page_id: str):
+    """Get submissions for a specific page"""
+    submissions = form_submissions.get(page_id, [])
+    # Sort by date, newest first
+    submissions.sort(key=lambda x: x.get("submittedAt", ""), reverse=True)
+    return {"submissions": submissions}
+
+@app.delete("/api/submissions/{submission_id}")
+async def delete_submission(submission_id: str):
+    """Delete a form submission"""
+    for page_id, submissions in form_submissions.items():
+        for i, sub in enumerate(submissions):
+            if sub.get("id") == submission_id:
+                form_submissions[page_id].pop(i)
+                print(f"[Submissions] Deleted submission {submission_id}")
+                return {"success": True}
+    raise HTTPException(status_code=404, detail="Submission not found")
+
+@app.delete("/api/submissions/page/{page_id}")
+async def delete_page_submissions(page_id: str):
+    """Delete all submissions for a page"""
+    if page_id in form_submissions:
+        count = len(form_submissions[page_id])
+        form_submissions[page_id] = []
+        print(f"[Submissions] Deleted {count} submissions for page {page_id}")
+    return {"success": True}
+
+
 @app.get("/api/telegram/pending-channels")
 async def get_pending_channels():
     """Get list of pending channels (channels where bot was recently added)"""
