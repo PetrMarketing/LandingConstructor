@@ -193,6 +193,99 @@ body {
     width: 16px;
 }
 
+/* ===== Layout Presets ===== */
+.layout-presets {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.layout-preset-btn {
+    width: 44px;
+    height: 32px;
+    border: 1px solid var(--border);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius);
+    cursor: pointer;
+    padding: 4px;
+    transition: all 0.2s;
+}
+
+.layout-preset-btn:hover {
+    border-color: var(--accent);
+    background: var(--bg-secondary);
+}
+
+.layout-preset-btn.active {
+    border-color: var(--accent);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.preset-icon {
+    display: flex;
+    gap: 2px;
+    height: 100%;
+}
+
+.preset-icon .col {
+    flex: 1;
+    background: var(--accent);
+    border-radius: 2px;
+    opacity: 0.6;
+}
+
+.layout-preset-btn:hover .preset-icon .col,
+.layout-preset-btn.active .preset-icon .col {
+    opacity: 1;
+}
+
+/* Visual Guides Toggle */
+.visual-guides-active .builder-element.is-container {
+    outline: 1px dashed rgba(59, 130, 246, 0.4) !important;
+}
+
+.visual-guides-active .builder-element.is-container > .element-children > .builder-element {
+    outline: 1px dashed rgba(16, 185, 129, 0.4) !important;
+}
+
+/* Container Templates */
+.container-templates {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.container-template-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.container-template-btn:hover {
+    border-color: var(--accent);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.container-template-btn i {
+    width: 20px;
+    color: var(--accent);
+}
+
+/* Active toolbar button */
+.toolbar-btn.active {
+    background: var(--accent) !important;
+    color: white !important;
+}
+
 /* ===== Left Panel - Blocks ===== */
 .blocks-panel {
     width: var(--panel-width);

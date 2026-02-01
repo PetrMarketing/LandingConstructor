@@ -987,6 +987,237 @@ function getStylesForViewport(element) {
     return base;
 }
 
+// Apply layout preset to container
+function applyLayoutPreset(container, preset) {
+    if (!container || !container.isContainer) return;
+
+    // Set horizontal direction for column presets
+    container.styles.display = 'flex';
+    container.styles.flexDirection = 'row';
+    container.styles.flexWrap = 'nowrap';
+
+    // Parse preset (e.g., "1-2" means 1:2 ratio)
+    const parts = preset.split('-').map(Number);
+    const totalParts = parts.reduce((a, b) => a + b, 0);
+
+    // Remove existing children or update their flex values
+    if (container.children && container.children.length > 0) {
+        // Update existing children flex values
+        container.children.forEach((child, index) => {
+            if (index < parts.length) {
+                child.styles = child.styles || {};
+                child.styles.flex = `${parts[index]} 1 0`;
+                child.styles.minWidth = '0';
+            }
+        });
+
+        // Add more columns if needed
+        while (container.children.length < parts.length) {
+            const newCol = createElement('column');
+            newCol.styles.flex = `${parts[container.children.length]} 1 0`;
+            newCol.styles.minWidth = '0';
+            container.children.push(newCol);
+        }
+    } else {
+        // Create new columns with specified ratios
+        container.children = [];
+        parts.forEach((part, index) => {
+            const col = createElement('column');
+            col.styles.flex = `${part} 1 0`;
+            col.styles.minWidth = '0';
+            container.children.push(col);
+        });
+    }
+}
+
+// Apply container template
+function applyContainerTemplate(container, template) {
+    if (!container || !container.isContainer) return;
+
+    // Clear existing children
+    container.children = [];
+
+    switch (template) {
+        case 'hero':
+            // Hero section with centered content
+            container.styles = {
+                ...container.styles,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                padding: '80px 20px',
+                minHeight: '80vh',
+                gap: '20px'
+            };
+            const heroHeading = createElement('heading');
+            heroHeading.tag = 'h1';
+            heroHeading.content = 'Заголовок вашего сайта';
+            heroHeading.styles = { fontSize: '48px', fontWeight: 'bold', marginBottom: '10px' };
+
+            const heroText = createElement('text');
+            heroText.content = 'Краткое описание вашего продукта или услуги. Добавьте убедительный текст.';
+            heroText.styles = { fontSize: '20px', maxWidth: '600px', marginBottom: '20px' };
+
+            const heroBtn = createElement('button');
+            heroBtn.content = 'Начать';
+            heroBtn.styles = { ...heroBtn.styles, padding: '16px 32px', fontSize: '18px' };
+
+            container.children = [heroHeading, heroText, heroBtn];
+            break;
+
+        case 'features':
+            // 3 columns with features
+            container.styles = {
+                ...container.styles,
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '30px',
+                padding: '40px 20px'
+            };
+            for (let i = 0; i < 3; i++) {
+                const col = createElement('column');
+                col.styles = { flex: '1 1 0', minWidth: '0', textAlign: 'center', padding: '20px' };
+
+                const icon = createElement('icon');
+                icon.styles = { fontSize: '48px', marginBottom: '16px' };
+
+                const heading = createElement('heading');
+                heading.tag = 'h3';
+                heading.content = `Преимущество ${i + 1}`;
+                heading.styles = { fontSize: '20px', marginBottom: '10px' };
+
+                const text = createElement('text');
+                text.content = 'Описание преимущества';
+                text.styles = { fontSize: '14px', color: '#64748b' };
+
+                col.children = [icon, heading, text];
+                container.children.push(col);
+            }
+            break;
+
+        case 'two-cols':
+            // Text + Image
+            container.styles = {
+                ...container.styles,
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '40px',
+                alignItems: 'center',
+                padding: '60px 20px'
+            };
+            const textCol = createElement('column');
+            textCol.styles = { flex: '1 1 0', minWidth: '0' };
+
+            const textHeading = createElement('heading');
+            textHeading.content = 'Заголовок секции';
+            textHeading.styles = { fontSize: '36px', marginBottom: '20px' };
+
+            const textPara = createElement('text');
+            textPara.content = 'Добавьте описательный текст, который объясняет ваш продукт или услугу. Расскажите о преимуществах и особенностях.';
+            textPara.styles = { fontSize: '16px', lineHeight: '1.8', marginBottom: '20px' };
+
+            const textBtn = createElement('button');
+            textBtn.content = 'Подробнее';
+
+            textCol.children = [textHeading, textPara, textBtn];
+
+            const imgCol = createElement('column');
+            imgCol.styles = { flex: '1 1 0', minWidth: '0' };
+
+            const img = createElement('image');
+            img.attrs = { src: 'https://via.placeholder.com/600x400', alt: 'Изображение' };
+            img.styles = { width: '100%', borderRadius: '12px' };
+
+            imgCol.children = [img];
+
+            container.children = [textCol, imgCol];
+            break;
+
+        case 'pricing':
+            // 3 pricing cards
+            container.styles = {
+                ...container.styles,
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '20px',
+                justifyContent: 'center',
+                padding: '40px 20px'
+            };
+            const plans = ['Базовый', 'Стандарт', 'Премиум'];
+            const prices = ['990', '1990', '4990'];
+            plans.forEach((plan, i) => {
+                const card = createElement('column');
+                card.styles = {
+                    flex: '1 1 0',
+                    minWidth: '0',
+                    maxWidth: '320px',
+                    textAlign: 'center',
+                    padding: '30px',
+                    backgroundColor: i === 1 ? '#3b82f6' : 'white',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+                };
+
+                const planName = createElement('heading');
+                planName.tag = 'h3';
+                planName.content = plan;
+                planName.styles = { fontSize: '20px', marginBottom: '16px', color: i === 1 ? 'white' : '#1e293b' };
+
+                const price = createElement('heading');
+                price.content = `${prices[i]} ₽`;
+                price.styles = { fontSize: '42px', fontWeight: 'bold', marginBottom: '24px', color: i === 1 ? 'white' : '#1e293b' };
+
+                const features = createElement('list');
+                features.content = '<li>Функция 1</li><li>Функция 2</li><li>Функция 3</li>';
+                features.styles = { textAlign: 'left', marginBottom: '24px', color: i === 1 ? 'rgba(255,255,255,0.9)' : '#64748b' };
+
+                const btn = createElement('button');
+                btn.content = 'Выбрать';
+                btn.styles = {
+                    ...btn.styles,
+                    width: '100%',
+                    backgroundColor: i === 1 ? 'white' : '#3b82f6',
+                    color: i === 1 ? '#3b82f6' : 'white'
+                };
+
+                card.children = [planName, price, features, btn];
+                container.children.push(card);
+            });
+            break;
+
+        case 'cta':
+            // Call to action block
+            container.styles = {
+                ...container.styles,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                padding: '60px 20px',
+                backgroundColor: '#3b82f6',
+                borderRadius: '16px',
+                gap: '20px'
+            };
+            const ctaHeading = createElement('heading');
+            ctaHeading.content = 'Готовы начать?';
+            ctaHeading.styles = { fontSize: '36px', color: 'white', marginBottom: '10px' };
+
+            const ctaText = createElement('text');
+            ctaText.content = 'Присоединяйтесь к тысячам довольных клиентов';
+            ctaText.styles = { fontSize: '18px', color: 'rgba(255,255,255,0.9)', marginBottom: '20px' };
+
+            const ctaBtn = createElement('button');
+            ctaBtn.content = 'Связаться с нами';
+            ctaBtn.styles = { ...ctaBtn.styles, backgroundColor: 'white', color: '#3b82f6', padding: '16px 32px', fontSize: '18px' };
+
+            container.children = [ctaHeading, ctaText, ctaBtn];
+            break;
+    }
+}
+
 // ===== Image Optimization =====
 // Compress image on client side
 function compressImage(file, maxWidth = 1920, quality = 0.8) {
@@ -1922,6 +2153,42 @@ function setupEditHandlers() {
                     delete state.editingElement.styles[style];
                 }
             });
+        });
+    });
+
+    // Layout presets handler
+    const layoutPresets = editContent.querySelector('.layout-presets');
+    if (layoutPresets) {
+        layoutPresets.querySelectorAll('.layout-preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const preset = btn.dataset.preset;
+                applyLayoutPreset(state.editingElement, preset);
+                layoutPresets.querySelectorAll('.layout-preset-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderCanvas();
+                renderLayers();
+                saveHistory();
+            });
+        });
+    }
+
+    // Child min-width handler
+    const childMinWidthInput = editContent.querySelector('[data-custom="childMinWidth"]');
+    if (childMinWidthInput) {
+        childMinWidthInput.addEventListener('change', (e) => {
+            state.editingElement.childMinWidth = e.target.value;
+            renderCanvas();
+        });
+    }
+
+    // Container templates handler
+    editContent.querySelectorAll('.container-template-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const template = btn.dataset.template;
+            applyContainerTemplate(state.editingElement, template);
+            renderCanvas();
+            renderLayers();
+            saveHistory();
         });
     });
 
@@ -2881,6 +3148,32 @@ function renderContainerSettings(el, title, icon) {
             <h4><i class="fas ${icon}"></i> ${title}</h4>
             <p class="edit-hint">Перетащите сюда другие блоки: колонки, строки, текст, изображения и т.д. Все настройки оформления во вкладке "Стиль".</p>
         </div>
+
+        <div class="edit-section">
+            <h4><i class="fas fa-magic"></i> Быстрые шаблоны</h4>
+            <div class="container-templates">
+                <button type="button" class="container-template-btn" data-template="hero">
+                    <i class="fas fa-flag"></i>
+                    <span>Hero секция</span>
+                </button>
+                <button type="button" class="container-template-btn" data-template="features">
+                    <i class="fas fa-th-large"></i>
+                    <span>3 колонки</span>
+                </button>
+                <button type="button" class="container-template-btn" data-template="two-cols">
+                    <i class="fas fa-columns"></i>
+                    <span>Текст + Фото</span>
+                </button>
+                <button type="button" class="container-template-btn" data-template="pricing">
+                    <i class="fas fa-tags"></i>
+                    <span>Карточки цен</span>
+                </button>
+                <button type="button" class="container-template-btn" data-template="cta">
+                    <i class="fas fa-bullhorn"></i>
+                    <span>CTA блок</span>
+                </button>
+            </div>
+        </div>
     `;
 }
 
@@ -3127,43 +3420,170 @@ function renderStyleTab(el) {
 
         ${el.isContainer ? `
         <div class="edit-section">
+            <h4><i class="fas fa-th-large"></i> Быстрые макеты</h4>
+            <div class="edit-row">
+                <div class="layout-presets" data-custom="layoutPreset">
+                    <button type="button" class="layout-preset-btn" data-preset="1" title="1 колонка">
+                        <div class="preset-icon"><div class="col"></div></div>
+                    </button>
+                    <button type="button" class="layout-preset-btn" data-preset="1-1" title="2 равные колонки">
+                        <div class="preset-icon"><div class="col"></div><div class="col"></div></div>
+                    </button>
+                    <button type="button" class="layout-preset-btn" data-preset="1-1-1" title="3 равные колонки">
+                        <div class="preset-icon"><div class="col"></div><div class="col"></div><div class="col"></div></div>
+                    </button>
+                    <button type="button" class="layout-preset-btn" data-preset="1-2" title="1:2">
+                        <div class="preset-icon"><div class="col" style="flex:1"></div><div class="col" style="flex:2"></div></div>
+                    </button>
+                    <button type="button" class="layout-preset-btn" data-preset="2-1" title="2:1">
+                        <div class="preset-icon"><div class="col" style="flex:2"></div><div class="col" style="flex:1"></div></div>
+                    </button>
+                    <button type="button" class="layout-preset-btn" data-preset="1-3" title="Sidebar + Content">
+                        <div class="preset-icon"><div class="col" style="flex:1"></div><div class="col" style="flex:3"></div></div>
+                    </button>
+                    <button type="button" class="layout-preset-btn" data-preset="1-1-1-1" title="4 колонки">
+                        <div class="preset-icon"><div class="col"></div><div class="col"></div><div class="col"></div><div class="col"></div></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="edit-section">
             <h4><i class="fas fa-align-center"></i> Расположение контента</h4>
             <div class="edit-row">
-                <label>Направление</label>
-                <div class="edit-btn-group" data-style="flexDirection">
-                    <button type="button" class="${!s.flexDirection || s.flexDirection === 'row' ? 'active' : ''}" data-value="row">
-                        <i class="fas fa-arrows-alt-h"></i> Горизонтально
+                <label>Тип раскладки</label>
+                <div class="edit-btn-group" data-style="display">
+                    <button type="button" class="${!s.display || s.display === 'flex' ? 'active' : ''}" data-value="flex">
+                        <i class="fas fa-grip-lines"></i> Flex
                     </button>
-                    <button type="button" class="${s.flexDirection === 'column' ? 'active' : ''}" data-value="column">
-                        <i class="fas fa-arrows-alt-v"></i> Вертикально
+                    <button type="button" class="${s.display === 'grid' ? 'active' : ''}" data-value="grid">
+                        <i class="fas fa-th"></i> Grid
                     </button>
                 </div>
             </div>
             <div class="edit-row">
-                <label>Выравнивание по горизонтали</label>
+                <label>Направление</label>
+                <div class="edit-btn-group" data-style="flexDirection">
+                    <button type="button" class="${!s.flexDirection || s.flexDirection === 'row' ? 'active' : ''}" data-value="row">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button type="button" class="${s.flexDirection === 'row-reverse' ? 'active' : ''}" data-value="row-reverse">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button type="button" class="${s.flexDirection === 'column' ? 'active' : ''}" data-value="column">
+                        <i class="fas fa-arrow-down"></i>
+                    </button>
+                    <button type="button" class="${s.flexDirection === 'column-reverse' ? 'active' : ''}" data-value="column-reverse">
+                        <i class="fas fa-arrow-up"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="edit-row">
+                <label>Перенос элементов</label>
+                <div class="edit-btn-group" data-style="flexWrap">
+                    <button type="button" class="${!s.flexWrap || s.flexWrap === 'nowrap' ? 'active' : ''}" data-value="nowrap">
+                        Без переноса
+                    </button>
+                    <button type="button" class="${s.flexWrap === 'wrap' ? 'active' : ''}" data-value="wrap">
+                        Переносить
+                    </button>
+                </div>
+            </div>
+            <div class="edit-row">
+                <label>По горизонтали</label>
                 <select class="edit-select" data-style="justifyContent">
                     <option value="flex-start" ${s.justifyContent === 'flex-start' || !s.justifyContent ? 'selected' : ''}>В начале</option>
                     <option value="center" ${s.justifyContent === 'center' ? 'selected' : ''}>По центру</option>
                     <option value="flex-end" ${s.justifyContent === 'flex-end' ? 'selected' : ''}>В конце</option>
                     <option value="space-between" ${s.justifyContent === 'space-between' ? 'selected' : ''}>Равномерно</option>
                     <option value="space-around" ${s.justifyContent === 'space-around' ? 'selected' : ''}>С отступами</option>
+                    <option value="space-evenly" ${s.justifyContent === 'space-evenly' ? 'selected' : ''}>Равные промежутки</option>
                 </select>
             </div>
             <div class="edit-row">
-                <label>Выравнивание по вертикали</label>
+                <label>По вертикали</label>
                 <select class="edit-select" data-style="alignItems">
                     <option value="stretch" ${!s.alignItems || s.alignItems === 'stretch' ? 'selected' : ''}>Растянуть</option>
                     <option value="flex-start" ${s.alignItems === 'flex-start' ? 'selected' : ''}>Сверху</option>
                     <option value="center" ${s.alignItems === 'center' ? 'selected' : ''}>По центру</option>
                     <option value="flex-end" ${s.alignItems === 'flex-end' ? 'selected' : ''}>Снизу</option>
+                    <option value="baseline" ${s.alignItems === 'baseline' ? 'selected' : ''}>По базовой линии</option>
                 </select>
             </div>
             <div class="edit-row">
                 <label>Отступ между элементами</label>
                 <div class="edit-range-row">
-                    <input type="range" min="0" max="60" value="${parseInt(s.gap) || 0}" data-style="gap" data-unit="px">
+                    <input type="range" min="0" max="80" value="${parseInt(s.gap) || 0}" data-style="gap" data-unit="px">
                     <span>${parseInt(s.gap) || 0}px</span>
                 </div>
+            </div>
+        </div>
+
+        <div class="edit-section">
+            <h4><i class="fas fa-th"></i> Grid настройки</h4>
+            <div class="edit-row">
+                <label>Колонки</label>
+                <select class="edit-select" data-style="gridTemplateColumns">
+                    <option value="" ${!s.gridTemplateColumns ? 'selected' : ''}>Авто</option>
+                    <option value="repeat(2, 1fr)" ${s.gridTemplateColumns === 'repeat(2, 1fr)' ? 'selected' : ''}>2 колонки</option>
+                    <option value="repeat(3, 1fr)" ${s.gridTemplateColumns === 'repeat(3, 1fr)' ? 'selected' : ''}>3 колонки</option>
+                    <option value="repeat(4, 1fr)" ${s.gridTemplateColumns === 'repeat(4, 1fr)' ? 'selected' : ''}>4 колонки</option>
+                    <option value="repeat(auto-fit, minmax(250px, 1fr))" ${s.gridTemplateColumns?.includes('auto-fit') ? 'selected' : ''}>Авто-адаптив (250px мин)</option>
+                    <option value="repeat(auto-fit, minmax(300px, 1fr))" ${s.gridTemplateColumns?.includes('300px') ? 'selected' : ''}>Авто-адаптив (300px мин)</option>
+                </select>
+            </div>
+            <div class="edit-row">
+                <label>Минимальная ширина элемента</label>
+                <input type="text" class="edit-input" data-custom="childMinWidth" value="${el.childMinWidth || ''}" placeholder="250px">
+            </div>
+        </div>
+
+        <div class="edit-section">
+            <h4><i class="fas fa-arrows-alt-v"></i> Высота секции</h4>
+            <div class="edit-row">
+                <label>Высота</label>
+                <select class="edit-select" data-style="minHeight">
+                    <option value="" ${!s.minHeight ? 'selected' : ''}>Авто</option>
+                    <option value="100vh" ${s.minHeight === '100vh' ? 'selected' : ''}>Полный экран (100vh)</option>
+                    <option value="80vh" ${s.minHeight === '80vh' ? 'selected' : ''}>80% экрана</option>
+                    <option value="50vh" ${s.minHeight === '50vh' ? 'selected' : ''}>Половина экрана (50vh)</option>
+                    <option value="400px" ${s.minHeight === '400px' ? 'selected' : ''}>400px</option>
+                    <option value="600px" ${s.minHeight === '600px' ? 'selected' : ''}>600px</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="edit-section">
+            <h4><i class="fas fa-thumbtack"></i> Позиционирование</h4>
+            <div class="edit-row">
+                <label>Позиция</label>
+                <select class="edit-select" data-style="position">
+                    <option value="" ${!s.position || s.position === 'relative' ? 'selected' : ''}>Обычная</option>
+                    <option value="sticky" ${s.position === 'sticky' ? 'selected' : ''}>Липкая (sticky)</option>
+                    <option value="fixed" ${s.position === 'fixed' ? 'selected' : ''}>Фиксированная</option>
+                    <option value="absolute" ${s.position === 'absolute' ? 'selected' : ''}>Абсолютная</option>
+                </select>
+            </div>
+            <div class="edit-row" ${!s.position || (s.position !== 'sticky' && s.position !== 'fixed') ? 'style="display:none"' : ''}>
+                <label>Отступ сверху</label>
+                <input type="text" class="edit-input" data-style="top" value="${s.top || ''}" placeholder="0">
+            </div>
+            <div class="edit-row">
+                <label>Z-index (слой)</label>
+                <input type="text" class="edit-input" data-style="zIndex" value="${s.zIndex || ''}" placeholder="auto">
+            </div>
+        </div>
+
+        <div class="edit-section">
+            <h4><i class="fas fa-eye-slash"></i> Overflow (переполнение)</h4>
+            <div class="edit-row">
+                <label>Поведение</label>
+                <select class="edit-select" data-style="overflow">
+                    <option value="" ${!s.overflow ? 'selected' : ''}>Видимое</option>
+                    <option value="hidden" ${s.overflow === 'hidden' ? 'selected' : ''}>Скрыть</option>
+                    <option value="auto" ${s.overflow === 'auto' ? 'selected' : ''}>Авто (скролл при необходимости)</option>
+                    <option value="scroll" ${s.overflow === 'scroll' ? 'selected' : ''}>Всегда скролл</option>
+                </select>
             </div>
         </div>
         ` : ''}
@@ -4494,6 +4914,14 @@ canvas.addEventListener('click', (e) => {
     if (e.target === canvas || e.target === canvasEmpty) {
         selectElement(null);
     }
+});
+
+// ===== Visual Guides Toggle =====
+let visualGuidesActive = false;
+document.getElementById('guidesBtn').addEventListener('click', function() {
+    visualGuidesActive = !visualGuidesActive;
+    this.classList.toggle('active', visualGuidesActive);
+    document.getElementById('canvas').classList.toggle('visual-guides-active', visualGuidesActive);
 });
 
 // ===== SEO Modal =====
