@@ -552,10 +552,16 @@
                 <i class="fas fa-file-alt"></i>
                 Мои страницы
             </h1>
-            <button class="btn-create" onclick="createNewPage()">
-                <i class="fas fa-plus"></i>
-                Создать страницу
-            </button>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn-create" onclick="openImportModal()" style="background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border);">
+                    <i class="fas fa-file-import"></i>
+                    Импорт HTML
+                </button>
+                <button class="btn-create" onclick="createNewPage()">
+                    <i class="fas fa-plus"></i>
+                    Создать страницу
+                </button>
+            </div>
         </header>
 
         <main class="pages-content">
@@ -666,6 +672,288 @@
             </div>
         </div>
     </div>
+
+    <!-- Import HTML Modal -->
+    <div class="modal-overlay" id="importHtmlModal">
+        <div class="template-modal" style="max-width: 900px;">
+            <div class="template-modal-header">
+                <h2><i class="fas fa-file-import"></i> Импорт HTML</h2>
+                <button class="template-modal-close" onclick="closeImportModal()">&times;</button>
+            </div>
+            <div class="template-modal-body">
+                <div class="import-tabs">
+                    <button class="import-tab active" data-tab="paste" onclick="switchImportTab('paste')">
+                        <i class="fas fa-paste"></i> Вставить код
+                    </button>
+                    <button class="import-tab" data-tab="file" onclick="switchImportTab('file')">
+                        <i class="fas fa-upload"></i> Загрузить файл
+                    </button>
+                    <button class="import-tab" data-tab="url" onclick="switchImportTab('url')">
+                        <i class="fas fa-link"></i> Загрузить по URL
+                    </button>
+                </div>
+
+                <div class="import-tab-content active" id="importTabPaste">
+                    <p class="import-hint">Вставьте HTML код вашего сайта. Мы попробуем распознать структуру и преобразовать её в элементы редактора.</p>
+                    <textarea id="importHtmlCode" placeholder="<!DOCTYPE html>
+<html>
+<head>
+    <title>Мой сайт</title>
+</head>
+<body>
+    <header>...</header>
+    <main>...</main>
+    <footer>...</footer>
+</body>
+</html>"></textarea>
+                </div>
+
+                <div class="import-tab-content" id="importTabFile">
+                    <div class="import-dropzone" id="importDropzone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Перетащите HTML файл сюда</p>
+                        <span>или</span>
+                        <label class="import-file-btn">
+                            <input type="file" accept=".html,.htm" onchange="handleFileSelect(event)" hidden>
+                            Выбрать файл
+                        </label>
+                    </div>
+                    <div id="importFileName" class="import-file-name"></div>
+                </div>
+
+                <div class="import-tab-content" id="importTabUrl">
+                    <p class="import-hint">Введите URL страницы для импорта. Обратите внимание: не все сайты разрешают загрузку.</p>
+                    <div class="import-url-input">
+                        <input type="url" id="importUrl" placeholder="https://example.com/page.html">
+                        <button onclick="fetchUrlContent()" class="btn-fetch">
+                            <i class="fas fa-download"></i> Загрузить
+                        </button>
+                    </div>
+                    <div id="importUrlStatus" class="import-url-status"></div>
+                </div>
+
+                <div class="import-preview" id="importPreview" style="display: none;">
+                    <h4><i class="fas fa-eye"></i> Предпросмотр распознанных элементов</h4>
+                    <div class="import-preview-list" id="importPreviewList"></div>
+                </div>
+            </div>
+            <div class="template-modal-footer">
+                <button class="btn btn-cancel" onclick="closeImportModal()">Отмена</button>
+                <button class="btn btn-secondary" onclick="previewImport()" id="previewImportBtn">
+                    <i class="fas fa-eye"></i> Предпросмотр
+                </button>
+                <button class="btn btn-primary" onclick="confirmImport()" id="confirmImportBtn" disabled>
+                    <i class="fas fa-check"></i> Импортировать
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Import Modal Styles */
+        .import-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+        }
+        .import-tab {
+            padding: 10px 20px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .import-tab:hover {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+        .import-tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        .import-tab-content {
+            display: none;
+        }
+        .import-tab-content.active {
+            display: block;
+        }
+        .import-hint {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        #importHtmlCode {
+            width: 100%;
+            height: 300px;
+            padding: 16px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            resize: vertical;
+        }
+        #importHtmlCode:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .import-dropzone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-md);
+            padding: 60px 40px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .import-dropzone.dragover {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.05);
+        }
+        .import-dropzone i {
+            font-size: 48px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+        .import-dropzone p {
+            font-size: 16px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .import-dropzone span {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        .import-file-btn {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 10px 24px;
+            background: var(--accent);
+            color: white;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .import-file-btn:hover {
+            background: var(--accent-hover);
+        }
+        .import-file-name {
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-sm);
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+        .import-file-name.active {
+            display: flex;
+        }
+        .import-file-name i {
+            color: var(--success);
+        }
+        .import-url-input {
+            display: flex;
+            gap: 12px;
+        }
+        .import-url-input input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        .import-url-input input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .btn-fetch {
+            padding: 12px 24px;
+            background: var(--accent);
+            border: none;
+            color: white;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-fetch:hover {
+            background: var(--accent-hover);
+        }
+        .import-url-status {
+            margin-top: 12px;
+            font-size: 14px;
+        }
+        .import-url-status.error {
+            color: var(--danger);
+        }
+        .import-url-status.success {
+            color: var(--success);
+        }
+        .import-preview {
+            margin-top: 24px;
+            padding: 16px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+        }
+        .import-preview h4 {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .import-preview-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .import-preview-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+        .import-preview-item i {
+            color: var(--accent);
+            width: 20px;
+            text-align: center;
+        }
+        .import-preview-item .type {
+            background: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .import-preview-item .content {
+            flex: 1;
+            color: var(--text-secondary);
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
 
     <style>
         .color-schemes-grid {
@@ -2063,6 +2351,405 @@
             a.download = `submissions_${new Date().toISOString().slice(0,10)}.csv`;
             a.click();
             URL.revokeObjectURL(url);
+        }
+
+        // ===== HTML Import =====
+        let importedHtml = '';
+        let parsedElements = [];
+
+        function openImportModal() {
+            document.getElementById('importHtmlModal').classList.add('active');
+            // Reset state
+            importedHtml = '';
+            parsedElements = [];
+            document.getElementById('importHtmlCode').value = '';
+            document.getElementById('importUrl').value = '';
+            document.getElementById('importFileName').classList.remove('active');
+            document.getElementById('importPreview').style.display = 'none';
+            document.getElementById('confirmImportBtn').disabled = true;
+            switchImportTab('paste');
+        }
+
+        function closeImportModal() {
+            document.getElementById('importHtmlModal').classList.remove('active');
+        }
+
+        function switchImportTab(tab) {
+            document.querySelectorAll('.import-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.import-tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.import-tab[data-tab="${tab}"]`).classList.add('active');
+            document.getElementById('importTab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                importedHtml = e.target.result;
+                document.getElementById('importFileName').innerHTML = `<i class="fas fa-file-code"></i> ${file.name}`;
+                document.getElementById('importFileName').classList.add('active');
+                // Auto preview
+                previewImport();
+            };
+            reader.readAsText(file);
+        }
+
+        // Drag and drop
+        const dropzone = document.getElementById('importDropzone');
+        if (dropzone) {
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.classList.add('dragover');
+            });
+            dropzone.addEventListener('dragleave', () => {
+                dropzone.classList.remove('dragover');
+            });
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file && (file.name.endsWith('.html') || file.name.endsWith('.htm'))) {
+                    const reader = new FileReader();
+                    reader.onload = function(ev) {
+                        importedHtml = ev.target.result;
+                        document.getElementById('importFileName').innerHTML = `<i class="fas fa-file-code"></i> ${file.name}`;
+                        document.getElementById('importFileName').classList.add('active');
+                        previewImport();
+                    };
+                    reader.readAsText(file);
+                }
+            });
+        }
+
+        async function fetchUrlContent() {
+            const url = document.getElementById('importUrl').value.trim();
+            if (!url) {
+                document.getElementById('importUrlStatus').innerHTML = '<span class="error">Введите URL</span>';
+                return;
+            }
+
+            document.getElementById('importUrlStatus').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Загрузка...';
+
+            try {
+                // Use a CORS proxy (for demo purposes)
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+                const response = await fetch(proxyUrl);
+                const data = await response.json();
+
+                if (data.contents) {
+                    importedHtml = data.contents;
+                    document.getElementById('importUrlStatus').innerHTML = '<span class="success"><i class="fas fa-check"></i> Загружено успешно</span>';
+                    previewImport();
+                } else {
+                    throw new Error('No content');
+                }
+            } catch (error) {
+                document.getElementById('importUrlStatus').innerHTML = '<span class="error"><i class="fas fa-times"></i> Не удалось загрузить. Попробуйте скопировать HTML вручную.</span>';
+            }
+        }
+
+        function previewImport() {
+            // Get HTML from active tab
+            const pasteTab = document.querySelector('.import-tab[data-tab="paste"]');
+            if (pasteTab.classList.contains('active')) {
+                importedHtml = document.getElementById('importHtmlCode').value;
+            }
+
+            if (!importedHtml.trim()) {
+                alert('Введите или загрузите HTML код');
+                return;
+            }
+
+            // Parse HTML
+            parsedElements = parseHtmlToElements(importedHtml);
+
+            // Show preview
+            const previewDiv = document.getElementById('importPreview');
+            const listDiv = document.getElementById('importPreviewList');
+
+            if (parsedElements.length === 0) {
+                listDiv.innerHTML = '<div class="import-preview-item"><i class="fas fa-exclamation-triangle"></i> Не удалось распознать элементы</div>';
+            } else {
+                listDiv.innerHTML = parsedElements.map((el, i) => `
+                    <div class="import-preview-item">
+                        <i class="fas ${getElementIcon(el.type)}"></i>
+                        <span class="type">${el.type}</span>
+                        <span class="content">${getElementPreview(el)}</span>
+                    </div>
+                `).join('');
+            }
+
+            previewDiv.style.display = 'block';
+            document.getElementById('confirmImportBtn').disabled = parsedElements.length === 0;
+        }
+
+        function getElementIcon(type) {
+            const icons = {
+                navbar: 'fa-bars',
+                hero: 'fa-star',
+                section: 'fa-square',
+                heading: 'fa-heading',
+                text: 'fa-paragraph',
+                image: 'fa-image',
+                button: 'fa-mouse-pointer',
+                form: 'fa-wpforms',
+                features: 'fa-th',
+                gallery: 'fa-images',
+                footer: 'fa-minus',
+                video: 'fa-video',
+                counter: 'fa-sort-numeric-up',
+                testimonial: 'fa-quote-right',
+                faq: 'fa-question-circle',
+                pricing: 'fa-tag'
+            };
+            return icons[type] || 'fa-cube';
+        }
+
+        function getElementPreview(el) {
+            if (el.content) return escapeHtmlChars(el.content.substring(0, 60)) + (el.content.length > 60 ? '...' : '');
+            if (el.componentSettings?.title) return escapeHtmlChars(el.componentSettings.title);
+            if (el.children?.length) return `${el.children.length} вложенных элементов`;
+            return '-';
+        }
+
+        function parseHtmlToElements(html) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const elements = [];
+
+            // Extract title for page meta
+            const title = doc.querySelector('title')?.textContent || 'Импортированная страница';
+
+            // Process body content
+            const body = doc.body;
+            if (!body) return elements;
+
+            // Find main sections
+            const processNode = (node, depth = 0) => {
+                if (node.nodeType !== 1) return null; // Element nodes only
+
+                const tag = node.tagName.toLowerCase();
+                const classes = node.className || '';
+                const text = node.textContent?.trim() || '';
+
+                // Skip script, style, meta tags
+                if (['script', 'style', 'meta', 'link', 'noscript'].includes(tag)) return null;
+
+                // Detect element type based on tag/class
+                let element = null;
+
+                // Navigation
+                if (tag === 'nav' || tag === 'header' || classes.includes('navbar') || classes.includes('nav') || classes.includes('header')) {
+                    const logo = node.querySelector('.logo, .brand, [class*="logo"]')?.textContent?.trim() ||
+                                 node.querySelector('a')?.textContent?.trim() || 'Logo';
+                    const links = Array.from(node.querySelectorAll('a')).slice(0, 5).map(a => a.textContent.trim()).filter(Boolean).join('|');
+                    element = {
+                        type: 'navbar',
+                        componentSettings: { logo, links }
+                    };
+                }
+                // Hero section
+                else if (classes.includes('hero') || classes.includes('banner') || classes.includes('jumbotron') ||
+                         (tag === 'section' && depth === 0 && node.querySelector('h1'))) {
+                    const h1 = node.querySelector('h1')?.textContent?.trim() || '';
+                    const subtitle = node.querySelector('p, .subtitle, .lead')?.textContent?.trim() || '';
+                    const btn = node.querySelector('a, button')?.textContent?.trim() || 'Узнать больше';
+                    if (h1) {
+                        element = {
+                            type: 'hero',
+                            componentSettings: {
+                                title: h1,
+                                subtitle: subtitle,
+                                buttonText: btn,
+                                buttonColor: '#3b82f6'
+                            }
+                        };
+                    }
+                }
+                // Footer
+                else if (tag === 'footer' || classes.includes('footer')) {
+                    element = { type: 'footer' };
+                }
+                // Form
+                else if (tag === 'form') {
+                    const fields = Array.from(node.querySelectorAll('input, textarea, select')).map(input => ({
+                        type: input.type || 'text',
+                        name: input.name || input.id || 'field',
+                        label: input.placeholder || input.name || 'Поле',
+                        required: input.required
+                    }));
+                    const btnText = node.querySelector('button, input[type="submit"]')?.textContent?.trim() || 'Отправить';
+                    element = {
+                        type: 'form',
+                        componentSettings: {
+                            fields,
+                            buttonText: btnText
+                        }
+                    };
+                }
+                // Images/Gallery
+                else if (tag === 'img') {
+                    element = {
+                        type: 'image',
+                        content: node.src || '',
+                        styles: {
+                            maxWidth: '100%'
+                        }
+                    };
+                }
+                // Video
+                else if (tag === 'video' || tag === 'iframe' && (node.src?.includes('youtube') || node.src?.includes('vimeo'))) {
+                    element = {
+                        type: 'video',
+                        componentSettings: {
+                            url: node.src || '',
+                            autoplay: false
+                        }
+                    };
+                }
+                // Headings
+                else if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tag)) {
+                    element = {
+                        type: 'heading',
+                        content: text.substring(0, 200),
+                        styles: {
+                            fontSize: tag === 'h1' ? '48px' : tag === 'h2' ? '36px' : tag === 'h3' ? '28px' : '24px',
+                            textAlign: 'center'
+                        }
+                    };
+                }
+                // Paragraphs
+                else if (tag === 'p' && text.length > 20) {
+                    element = {
+                        type: 'text',
+                        content: text.substring(0, 500),
+                        styles: {
+                            textAlign: 'center',
+                            maxWidth: '800px',
+                            margin: '0 auto'
+                        }
+                    };
+                }
+                // Buttons
+                else if ((tag === 'button' || tag === 'a') && classes.includes('btn') || classes.includes('button')) {
+                    element = {
+                        type: 'button',
+                        content: text || 'Кнопка',
+                        styles: {
+                            padding: '16px 32px',
+                            backgroundColor: '#3b82f6',
+                            color: 'white',
+                            borderRadius: '8px'
+                        }
+                    };
+                }
+                // Section containers
+                else if (tag === 'section' || tag === 'div' && (classes.includes('section') || classes.includes('container') || classes.includes('block'))) {
+                    const children = [];
+                    for (const child of node.children) {
+                        const childEl = processNode(child, depth + 1);
+                        if (childEl) children.push(childEl);
+                    }
+                    if (children.length > 0) {
+                        element = {
+                            type: 'section',
+                            styles: { padding: '60px 20px' },
+                            children
+                        };
+                    }
+                }
+                // List items (could be features)
+                else if (tag === 'ul' || tag === 'ol') {
+                    const items = Array.from(node.querySelectorAll('li')).slice(0, 6).map(li => li.textContent.trim());
+                    if (items.length >= 3) {
+                        element = {
+                            type: 'features',
+                            componentSettings: {
+                                title1: items[0] || 'Особенность 1',
+                                desc1: '',
+                                title2: items[1] || 'Особенность 2',
+                                desc2: '',
+                                title3: items[2] || 'Особенность 3',
+                                desc3: ''
+                            }
+                        };
+                    }
+                }
+
+                return element;
+            };
+
+            // Process top-level children
+            for (const child of body.children) {
+                const el = processNode(child);
+                if (el) elements.push(el);
+            }
+
+            // If no structure found, try to create basic sections
+            if (elements.length === 0) {
+                // Look for any headings and paragraphs
+                const headings = body.querySelectorAll('h1, h2, h3');
+                const paragraphs = body.querySelectorAll('p');
+
+                headings.forEach(h => {
+                    elements.push({
+                        type: 'heading',
+                        content: h.textContent.trim().substring(0, 200),
+                        styles: { textAlign: 'center' }
+                    });
+                });
+
+                paragraphs.forEach(p => {
+                    if (p.textContent.trim().length > 30) {
+                        elements.push({
+                            type: 'text',
+                            content: p.textContent.trim().substring(0, 500),
+                            styles: { textAlign: 'center' }
+                        });
+                    }
+                });
+            }
+
+            return elements;
+        }
+
+        function confirmImport() {
+            if (parsedElements.length === 0) {
+                alert('Нет элементов для импорта');
+                return;
+            }
+
+            // Create new page with imported elements
+            const pages = getPages();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(importedHtml, 'text/html');
+            const title = doc.querySelector('title')?.textContent || 'Импортированная страница';
+
+            const newPage = {
+                id: 'page_' + Date.now(),
+                name: title,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                elements: parsedElements,
+                meta: {
+                    title: title,
+                    description: doc.querySelector('meta[name="description"]')?.content || '',
+                    keywords: doc.querySelector('meta[name="keywords"]')?.content || '',
+                    ogTitle: doc.querySelector('meta[property="og:title"]')?.content || '',
+                    ogDescription: doc.querySelector('meta[property="og:description"]')?.content || '',
+                    ogImage: doc.querySelector('meta[property="og:image"]')?.content || '',
+                    favicon: ''
+                }
+            };
+
+            pages.unshift(newPage);
+            savePages(pages);
+
+            closeImportModal();
+            // Open editor
+            window.location.href = `index.html?id=${newPage.id}`;
         }
 
         // Init
