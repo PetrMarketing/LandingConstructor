@@ -1,0 +1,4485 @@
+<!DOCTYPE html>
+<!-- saved from url=(0117)https://pavelpresnyakov.ru/kmp?scan=1360311a-29d3-46e0-bc41-c839ca00b365&scan_id=33e9aa16-da5c-4070-ac5b-17de4297e255 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/tag_phono.js" type="text/javascript" charset="utf-8" async=""></script>
+    
+<script type="text/javascript" async="" id="tmr-code" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/code.js"></script><script async="" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/tag.js"></script><script>
+	
+	window.accountUserId = 273774499;
+	window.requestIp = "91.135.220.14";
+	window.isSublogined = false;
+	window.accountId = 539771;
+	window.gcSessionId = 8866006831;
+	window.controllerId = "page";
+	window.actionId = "0";
+    window.nowTime = new Date(2026, 1, 02, 00, 59, 51);
+    window.dateOffset = 3;
+	window.userInfo = {"isAdmin":true,"isInAccount":true,"isTeacher":true};
+	window.currencyLabels = {"RUB":"RUB","USD":"USD","EUR":"EUR","GBP":"GBP","BYR":"BYR","BYN":"BYN","KZT":"KZT","UAH":"UAH","AUD":"AUD","DKK":"DKK","CHF":"CHF","SEK":"SEK","ZAR":"ZAR","AMD":"AMD","RON":"RON","BRL":"BRL","ILS":"ILS","MYR":"MYR","SGD":"SGD","KGS":"KGS","CAD":"CAD","MXN":"MXN","JPY":"JPY","UZS":"UZS","PLN":"PLN","AZN":"AZN","AED":"AED","TRY":"TRY","INR":"INR","RSD":"RSD","CZK":"CZK","MNT":"MNT","NZD":"NZD","BGN":"BGN","IDR":"IDR","CNY":"CNY","GEL":"GEL","COP":"COP","ARS":"ARS","PEN":"PEN","CLP":"CLP","VND":"VND","PHP":"PHP","DOP":"DOP","KRW":"KRW","TWD":"TWD","MDL":"MDL","TJS":"TJS","NOK":"NOK","NGN":"NGN","HKD":"HKD","POINTS":""};
+window.accountSafeUserName = "\u041f\u0430\u0432\u0435\u043b \u041f\u0440\u0435\u0441\u043d\u044f\u043a\u043e\u0432";
+window.accountUserThumbnail = "<img loading='lazy' width='50' class='user-profile-image ' src='\/\/fs-thb03.getcourse.ru\/fileservice\/file\/thumbnail\/h\/AB.672635cb5b9f519de5ba868bde78f23f.jpg\/s\/50x50\/a\/539771\/sc\/131'>";
+window.language = "ru";
+window.csrfToken = "B41ONyc5QBy2SgdAWmDLBaxbI2Z-VPvRWAEE-claTtNewQNxdm91JNcYaAYFNI5X6DxiUAg9zadsSGipvjQB4w==";
+window.requestTime = 1769983191;
+window.requestSimpleSign = "0b9d93e291ab69360e8494072a46eab6";
+window.gcUniqId = "301462700697fccd7eb1d01.34173958.1769983191.963";
+window.mailingVisibility = 0;
+window.isSupportChatEnabled = false;
+window.disableCaptchaForConfirmPhone = true;
+window.allowRevealPassword = false;
+window.isDisabledConvertIndexToSimple = false;
+window.params_52 = 0;
+window.gcsObjectId = 4391358;
+window.isSessionLocalStorageEnabled = true;
+window.isWhatsappIconEnabled = false;
+window.file_upload_blocking = false;
+window.storage_usage_percent = 98;
+window.used_storage_size = 1037898966610;
+window.max_storage_size = 1060000000000;
+window.fileserviceThumbnailHost = "fs-thb01.getcourse.ru";
+window.fileserviceMainHost = "fs23.getcourse.ru";
+window.fileserviceUploadHost = "fs16.getcourse.ru";
+window.fileserviceTusFeatureEnabled = true;
+window.iCanSelectGridOffset = true;
+window.webinarUsePlayer15 = true;
+window.isEnabledSecureUpload = 1;
+window.webinarWebsocketHosts = ["ws07.getcourse.ru","stream01.gcfiles.net"];
+window.webinarWebsocketPath = "\/ws3\/webinar";
+window.webSocketHost = "ws04.getcourse.ru";
+window.fdsrevEnabled12 = true;
+window.isDisabledFacebook = true;
+window.metaIsAnExtremismOrganizationText = "\u041a\u043e\u043c\u043f\u0430\u043d\u0438\u044f Meta \u043f\u0440\u0438\u0437\u043d\u0430\u043d\u0430 \u044d\u043a\u0441\u0442\u0440\u0435\u043c\u0438\u0441\u0442\u043a\u043e\u0439 \u0432 \u0420\u0424.";
+window.isTestingV2 = false;
+window.testingV2VersionCheck = false;
+window.isDisabledVK = false;
+window.autoGenerateSubtitlesSectionEnabled = true;
+window.internalDomains = ["pavelpresnyakov.ru","boogie.getcourse.ru"];
+window.vhApiHost = "player02.getcourse.ru";
+window.vhsRegion = "ru";
+window.videoLinkFeatureUsed = 0;
+window.helpdeskEnabledFeature = false;
+window.helpdeskTalksEnabledFeature = false;
+window.enabledTariffsPage = true;
+window.relatedUsersOnActiveBlock = true;
+window.UShort = "WzI3Mzc3NDQ5OV0.1QzWnpjfj2Y4kWefIWlt-kIhY91ldhqhn_byAh8L1Rw";
+window.ULong = "WzI3Mzc3NDQ5OSwiXHUwNDFmXHUwNDMwXHUwNDMyXHUwNDM1XHUwNDNiIiwiXHUwNDFmXHUwNDQwXHUwNDM1XHUwNDQxXHUwNDNkXHUwNDRmXHUwNDNhXHUwNDNlXHUwNDMyIiwiYWRtaW4iLDEsImh0dHBzOi8vZnMuZ2V0Y291cnNlLnJ1L2ZpbGVzZXJ2aWNlL2ZpbGUvZG93bmxvYWQvYS81Mzk3NzEvc2MvMTMxL2gvQUIuNjcyNjM1Y2I1YjlmNTE5ZGU1YmE4NjhiZGU3OGYyM2YuanBnIiwicHJvdjAyQG1haWwucnUiLCIrNzk2MDY1MjA4MzkiXQ.t14b82ebfMaoBJ3CtDbjT6LhSUQLRuGBcKksHb-CEW8";
+window.gcRedesign = {"isLessonRedesignEnabled":false};
+window.attachContactToUserUpdateFeature = false;
+window.enableRuleCopyToClipboardFeature = true;
+window.selectFieldsValidationFeature = true;
+</script>
+
+<script type="text/javascript">
+
+		
+	window.userInfo = {"isAdmin":true,"isManager":true,"isInAccount":true,"isTeacher":true,"canCms":true,"canEditHelp":false,"isHumanDesign":"0"};
+
+</script>
+
+
+		
+	<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/glyphicons.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/reveal-password.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/superlite-block-a2d69dc8cba2fb583968843c1c3ecc59.css" rel="stylesheet" async="async">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/open-sans-cyr-swap.css" rel="stylesheet" async="async">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/roboto-cyr-swap.css" rel="stylesheet" async="async">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/index.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/als-granate-new.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/button.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/jquery-ui.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/bootstrap.min.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/jquery.toast.min.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/jquery.emojiarea.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/emoji.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/all.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/v5-font-face.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/v4-font-face.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/v4-shims.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/old.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/blueimp-gallery.min.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/blueimp-gallery-indicator.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/bootstrap-modal.min.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/blocks-modal.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/bootstrap-table.min.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/modal.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/menu.css" rel="stylesheet">
+<link href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/notice.css" rel="stylesheet">
+<style>.custom-menu .gc-account-leftbar, .custom-menu .gc-account-leftbar .gc-account-user-menu, .custom-menu .gc-account-leftbar .toggle-link { background-color: #1a1b1a } 
+.custom-menu .gc-account-leftbar .gc-account-user-menu li a { background-color: #1a1b1a } 
+.custom-menu .gc-account-leftbar .gc-account-user-menu li.active a, .custom-menu .gc-account-leftbar .gc-account-user-menu li.selected a { background-color: #F0F0F0 } 
+.custom-menu .gc-account-leftbar .gc-account-user-menu li:not(.active):not(.selected) a:hover { background-color: #a8ff01 } 
+.custom-menu .gc-account-leftbar .gc-account-user-submenu-bar, .custom-menu .gc-account-leftbar .gc-account-user-submenu-bar-notifications_button_small .notification-group.notification-status-viewed { background-color: #1a1b1a } 
+.custom-menu .gc-account-user-submenu-bar .gc-account-user-submenu li a:hover { background-color: #a8ff01 } 
+.custom-menu .gc-account-leftbar .gc-account-user-menu li .notify-count, .custom-menu .gc-account-leftbar .gc-account-user-submenu li .notify-count { background-color: #D2322D } 
+.custom-menu .gc-account-leftbar .menu-item-label { color: #FFFFFF } 
+.custom-menu .gc-account-leftbar li.active .menu-item-label, .custom-menu .gc-account-leftbar li.selected .menu-item-label { color: #2C3E50 } 
+.custom-menu .gc-account-user-submenu-bar .gc-account-user-submenu a, .custom-menu .gc-account-leftbar .gc-account-user-submenu-bar-notifications_button_small .notification-group.notification-status-viewed, .custom-menu .gc-account-leftbar .gc-account-user-submenu-bar-notifications_button_small .notification-group .date { color: #F0F0F0 } 
+.custom-menu .gc-account-user-submenu-bar h3 { color: #F0F0F0 } 
+.custom-menu .gc-account-leftbar .menu-item-label { display: block } 
+</style>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/jquery.min.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/global-function.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/reveal-password.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/JsTrans.min.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/dictionary-gen-4d4fbb1adec1b3ba066604e5fe2f8e089196ea4b.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/jquery-ui.min.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/dictionary-gen-d127efc502cb3ffca2d7db37fe28e2e336d801bc.js"></script>
+<script>window.globalCheckboxEnabled=false
+window.persodataConfirm=false
+window.globalCheckboxForPaidOnly=false
+window.globalCheckboxText="\u042f \u0441\u043e\u0433\u043b\u0430\u0441\u0435\u043d \u043d\u0430&nbsp;\u043e\u0431\u0440\u0430\u0431\u043e\u0442\u043a\u0443 \u043c\u043e\u0438\u0445 \u043f\u0435\u0440\u0441\u043e\u043d\u0430\u043b\u044c\u043d\u044b\u0445 \u0434\u0430\u043d\u043d\u044b\u0445 \u0432&nbsp;\u0441\u043e\u043e\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0438\u0438&nbsp;\u0441&nbsp;<a href=\"\/cms\/system\/legal\" target=\"_blank\">\u0423\u0441\u043b\u043e\u0432\u0438\u044f\u043c\u0438<\/a>"
+window.pdpCheckboxEnabled=false
+window.pdpConfirmedByDefault=false
+window.pdpCheckboxText="\u042f \u0441\u043e\u0433\u043b\u0430\u0441\u0435\u043d \u043d\u0430 \u043e\u0431\u0440\u0430\u0431\u043e\u0442\u043a\u0443 \u043c\u043e\u0438\u0445 \u043f\u0435\u0440\u0441\u043e\u043d\u0430\u043b\u044c\u043d\u044b\u0445 \u0434\u0430\u043d\u043d\u044b\u0445. \u0421&nbsp;<a href=\"\/privacypolicy\" target=\"_blank\">\u041f\u043e\u043b\u0438\u0442\u0438\u043a\u043e\u0439 \u043e\u0431\u0440\u0430\u0431\u043e\u0442\u043a\u0438 \u043f\u0435\u0440\u0441\u043e\u043d\u0430\u043b\u044c\u043d\u044b\u0445 \u0434\u0430\u043d\u043d\u044b\u0445<\/a>&nbsp;\u043e\u0437\u043d\u0430\u043a\u043e\u043c\u043b\u0435\u043d."
+window.checkboxMailingEnabled=false
+window.checkboxMailingChecked=false
+window.checkboxMailingForPaidOnly=false
+window.checkboxMailingText="\u0414\u0430\u044e \u0441\u043e\u0433\u043b\u0430\u0441\u0438\u0435 \u043d\u0430 \u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u0435 \u0438\u043d\u0444\u043e\u0440\u043c\u0430\u0446\u0438\u043e\u043d\u043d\u044b\u0445 \u0438 \u043c\u0430\u0440\u043a\u0435\u0442\u0438\u043d\u0433\u043e\u0432\u044b\u0445 \u0440\u0430\u0441\u0441\u044b\u043b\u043e\u043a (\u0432\u044b \u0432 \u043b\u044e\u0431\u043e\u0439 \u043c\u043e\u043c\u0435\u043d\u0442 \u043c\u043e\u0436\u0435\u0442\u0435 \u043e\u0442\u043a\u0430\u0437\u0430\u0442\u044c\u0441\u044f \u043e\u0442 \u043f\u043e\u043b\u0443\u0447\u0435\u043d\u0438\u044f \u043f\u0438\u0441\u0435\u043c \u0432 \u043b\u0438\u0447\u043d\u043e\u043c \u043a\u0430\u0431\u0438\u043d\u0435\u0442\u0435)"
+window.isMailingCheckboxRequired=false
+window.isMailingCheckboxRequiredForNotPaid=false
+window.isLegalReworkFeatureEnabled=true</script>    	<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+   m[i].l=1*new Date();
+   for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+   k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+   ym(103197287, "init", {
+        clickmap:true,
+        trackLinks:true,
+        accurateTrackBounce:true
+   });
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/103197287" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+<!-- Top.Mail.Ru counter -->
+<script type="text/javascript">
+var _tmr = window._tmr || (window._tmr = []);
+_tmr.push({id: "3665981", type: "pageView", start: (new Date()).getTime()});
+(function (d, w, id) {
+  if (d.getElementById(id)) return;
+  var ts = d.createElement("script"); ts.type = "text/javascript"; ts.async = true; ts.id = id;
+  ts.src = "https://top-fwz1.mail.ru/js/code.js";
+  var f = function () {var s = d.getElementsByTagName("script")[0]; s.parentNode.insertBefore(ts, s);};
+  if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
+})(document, window, "tmr-code");
+</script>
+<noscript><div><img src="https://top-fwz1.mail.ru/counter?id=3665981;js=na" style="position:absolute;left:-9999px;" alt="Top.Mail.Ru" /></div></noscript>
+<!-- /Top.Mail.Ru counter -->	    <title></title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta property="og:title" content="">
+	<meta name="description" property="og:description" content="">
+
+	
+	    <meta property="og:url" content="https://pavelpresnyakov.ru/kmp?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}">
+    <meta property="fb:app_id" content="1437814016454992">
+
+		
+	
+	
+	<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/plugin.js" async="" crossorigin="use-credentials"></script>
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+   m[i].l=1*new Date();
+   for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+   k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+   ym(89498823, "init", {
+        clickmap:true,
+        trackLinks:true,
+        accurateTrackBounce:true,
+        webvisor:true
+   });
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/89498823" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->						<script>window.qualitySchoolHash='c0a271bc0ecb776a094786474322cb82'</script>
+			<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/qr-hidden-banner.js"></script>
+		  <script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/script" async="true"></script><script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/fzn.js" crossorigin="use-credentials" async=""></script><script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/FontMetrics.min.js"></script></head>
+		<body class="gc-user-logined show-oferta page-page-0">
+	
+        	  					<div id="gcAccountUserMenu" class="custom-menu">
+			<div class="gc-page-nav-items-menu lt-page-edit-link"><a class="item page-edit-link" href="https://pavelpresnyakov.ru/pl/cms/page/editor?id=4391358&amp;rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}">Редактировать страницу</a><a class="item create-link-link" href="https://pavelpresnyakov.ru/pl/cms/link/create?url=https%3A%2F%2Fpavelpresnyakov.ru%2Fkmp&amp;object_type=Page&amp;object_id=4391358&amp;rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}">Создать ссылку</a><a class="toggler-item">Действия</a></div><div class="gc-account-leftbar"><a href="javascript:void(0)" class="toggle-link without-icon"><img src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/bars.svg" width="35"></a><div class="gc-account-user-submenu-bar" style="display: none;"></div><ul class="gc-account-user-menu"><li class="menu-item menu-item-profile"><a href="javascript:void(0)" title="Профиль"><img class="menu-item-icon" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/131"><span class="notify-count" style="display: none;"></span></a></li><li class="menu-item menu-item-search"><a href="javascript:void(0)" title="Поиск" class="with-label"><img class="menu-item-icon" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/search.png"><span class="notify-count with-label" style="display: none;"></span><span class="menu-item-label">Поиск</span></a></li><li class="menu-item menu-item-notifications_button_small"><a href="javascript:void(0)" title=""><img class="menu-item-icon" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/notifications_button_small.png" style="display: none;"><span class="notify-count" style="display: block;">60478</span></a></li><li class="menu-item menu-item-cms active"><a href="javascript:void(0)" title="Сайт" class="with-label"><img class="menu-item-icon" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/cms_active.png"><span class="notify-count with-label" style="display: none;"></span><span class="menu-item-label">Сайт</span></a></li><li class="menu-item menu-item-teach"><a href="javascript:void(0)" title="Обучение" class="with-label"><img class="menu-item-icon" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/teach.png"><span class="notify-count with-label" style="display: block;">22</span><span class="menu-item-label">Обучение</span></a></li><li class="menu-item menu-item-user"><a href="javascript:void(0)" title="Ученики" class="with-label"><img class="menu-item-icon" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/user.png"><span class="notify-count with-label" style="display: none;"></span><span class="menu-item-label">Ученики</span></a></li><li class="menu-item menu-item-tasks"><a href="javascript:void(0)" title="CRM" class="with-label"><img class="menu-item-icon" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/tasks.png"><span class="notify-count with-label" style="display: none;"></span><span class="menu-item-label">CRM</span></a></li><li class="menu-item menu-item-notifications"><a href="javascript:void(0)" title="Сообщения" class="with-label"><img class="menu-item-icon" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/notifications.png"><span class="notify-count with-label" style="display: block;">40842</span><span class="menu-item-label">Сообщения</span></a></li><li class="menu-item menu-item-sales"><a href="javascript:void(0)" title="Продажи" class="with-label"><img class="menu-item-icon" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/sales.png"><span class="notify-count with-label" style="display: none;"></span><span class="menu-item-label">Продажи</span></a></li><li class="menu-item menu-item-chatium"><a href="javascript:void(0)" title="Apps" class="with-label"><img class="menu-item-icon" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/chatium.png"><span class="notify-count with-label" style="display: none;"></span><span class="menu-item-label">Apps</span></a></li></ul><a class="zk_left_menu" href="https://getcourse.ru/qualityreestr~c0a271bc0ecb776a094786474322cb82?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" target="_blank"></a></div><a class="zk_left_menu_mobile" href="https://getcourse.ru/qualityreestr~c0a271bc0ecb776a094786474322cb82?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" target="_blank"></a></div>
+		          <script>
+						          window.gcAccountUserMenu = {"customClass":"custom-menu","items":[{"id":"profile","label":"\u041f\u0440\u043e\u0444\u0438\u043b\u044c","hideLabel":true,"iconUrl":"\/\/fs-thb03.getcourse.ru\/fileservice\/file\/thumbnail\/h\/AB.672635cb5b9f519de5ba868bde78f23f.jpg\/s\/70x70\/a\/539771\/sc\/131","subIconHtml":null,"activeIconUrl":"\/\/fs-thb03.getcourse.ru\/fileservice\/file\/thumbnail\/h\/AB.672635cb5b9f519de5ba868bde78f23f.jpg\/s\/70x70\/a\/539771\/sc\/131","subitems":[{"id":"profile","label":"\u041f\u0440\u043e\u0444\u0438\u043b\u044c","hideLabel":false,"iconUrl":"\/public\/img\/service\/profile.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/profile_active.png","subitems":[],"url":"\/user\/my\/profile","params":{},"target":null},{"id":"notifications","label":"\u0423\u0432\u0435\u0434\u043e\u043c\u043b\u0435\u043d\u0438\u044f","hideLabel":false,"iconUrl":"\/public\/img\/service\/notifications.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/notifications_active.png","subitems":[],"url":"\/pl\/notifications\/settings\/my","params":{},"target":null},{"id":"change_password","label":"\u0421\u043c\u0435\u043d\u0438\u0442\u044c \u043f\u0430\u0440\u043e\u043b\u044c","hideLabel":false,"iconUrl":"\/public\/img\/service\/change_password.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/change_password_active.png","subitems":[],"url":"\/user\/my\/changePassword","params":{},"target":null},{"id":"logout","label":"\u0412\u044b\u0439\u0442\u0438","hideLabel":false,"iconUrl":"\/public\/img\/service\/logout.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/logout_active.png","subitems":[],"url":"\/user\/my\/logout","params":{},"target":null},{"id":"paymentsSettings","label":"\u041f\u0440\u0438\u0451\u043c \u043f\u043b\u0430\u0442\u0435\u0436\u0435\u0439","hideLabel":false,"iconUrl":"\/public\/img\/service\/paymentsSettings.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/paymentsSettings_active.png","subitems":[],"url":"\/saas\/account\/paymentsSettings","params":{"hasDelimiter":true},"target":null},{"id":"accountSettings","label":"\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438 \u0430\u043a\u043a\u0430\u0443\u043d\u0442\u0430","hideLabel":false,"iconUrl":"\/public\/img\/service\/accountSettings.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/accountSettings_active.png","subitems":[],"url":"\/pl\/saas\/account\/show","params":{},"target":null},{"id":"fileserviceAccountStat","label":"\u0424\u0430\u0439\u043b\u043e\u0432\u043e\u0435 \u0445\u0440\u0430\u043d\u0438\u043b\u0438\u0449\u0435","hideLabel":false,"iconUrl":"\/public\/img\/service\/fileserviceAccountStat.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/fileserviceAccountStat_active.png","subitems":[],"url":"\/pl\/fileindex\/file\/index","params":{"show":true},"target":null},{"id":"myAccounts","label":"\u041c\u043e\u0438 \u0430\u043a\u043a\u0430\u0443\u043d\u0442\u044b","hideLabel":false,"iconUrl":"\/public\/img\/service\/myAccounts.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/myAccounts_active.png","subitems":[],"url":"\/pl\/help\/launcher","params":{},"target":null},{"id":"help","label":"\u041f\u043e\u043c\u043e\u0449\u044c","hideLabel":false,"iconUrl":"\/public\/img\/service\/help.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/help_active.png","subitems":[],"url":"https:\/\/getcourse.ru\/help","params":{},"target":"_blank"},{"id":"support","label":"\u0422\u0435\u0445 \u043f\u043e\u0434\u0434\u0435\u0440\u0436\u043a\u0430","hideLabel":false,"iconUrl":"\/public\/img\/service\/support.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/support_active.png","subitems":[],"url":"\/pl\/notifications\/support","params":{},"target":"_blank"},{"id":"gus-profile","label":"\u041f\u043e\u043c\u043e\u0433\u0438\u0442\u0435 \u043d\u0430\u043c \u0441\u0442\u0430\u0442\u044c \u043b\u0443\u0447\u0448\u0435: \u043e\u0446\u0435\u043d\u0438\u0442\u0435 \u0443\u0434\u043e\u0431\u0441\u0442\u0432\u043e \u0438\u043d\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430","hideLabel":false,"iconUrl":"\/public\/img\/service\/gus-profile.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/gus-profile_active.png","subitems":[],"url":"\/pl\/csi\/survey\/general-usability-survey?section=profile&returnUrl=%2Fkmp%3Frel_scan%3D33e9aa16-da5c-4070-ac5b-17de4297e255%257C%7B%7D","params":{"hasDelimiter":true},"target":"_blank"}],"url":null,"params":{"worksheetClass":null},"target":null},{"id":"search","label":"\u041f\u043e\u0438\u0441\u043a","hideLabel":false,"iconUrl":"\/public\/img\/service\/search.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/search_active.png","subitems":[{"id":"search","label":"\u041f\u043e\u0438\u0441\u043a","hideLabel":false,"iconUrl":"\/public\/img\/service\/search.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/search_active.png","subitems":[],"url":"\/pl\/search\/search-lesson","params":{},"target":null}],"url":"\/pl\/search\/search-lesson","params":{},"target":null},{"id":"notifications_button_small","label":"","hideLabel":true,"iconUrl":"\/public\/img\/service\/notifications_button_small.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/notifications_button_small_active.png","subitems":[],"url":null,"params":{},"target":null},{"id":"cms","label":"\u0421\u0430\u0439\u0442","hideLabel":false,"iconUrl":"\/public\/img\/service\/cms.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/cms_active.png","subitems":[{"id":"pages","label":"\u0421\u0442\u0440\u0430\u043d\u0438\u0446\u044b","hideLabel":false,"iconUrl":"\/public\/img\/service\/pages.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/pages_active.png","subitems":[],"url":"\/pl\/cms\/page","params":{},"target":null},{"id":"xdgets","label":"\u0412\u0438\u0434\u0436\u0435\u0442\u044b","hideLabel":false,"iconUrl":"\/public\/img\/service\/xdgets.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/xdgets_active.png","subitems":[],"url":"\/cms\/control\/xdget","params":{"show":true},"target":null},{"id":"webinar","label":"\u0412\u0435\u0431\u0438\u043d\u0430\u0440\u044b","hideLabel":false,"iconUrl":"\/public\/img\/service\/webinar.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/webinar_active.png","subitems":[],"url":"\/pl\/webinar\/control\/index","params":{},"target":null},{"id":"stat","label":"\u0422\u0440\u0430\u0444\u0438\u043a","hideLabel":false,"iconUrl":"\/public\/img\/service\/stat.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/stat_active.png","subitems":[],"url":"\/pl\/metrika\/traffic","params":{},"target":null},{"id":"gus-site","label":"\u041f\u043e\u043c\u043e\u0433\u0438\u0442\u0435 \u043d\u0430\u043c \u0441\u0442\u0430\u0442\u044c \u043b\u0443\u0447\u0448\u0435: \u043e\u0446\u0435\u043d\u0438\u0442\u0435 \u0443\u0434\u043e\u0431\u0441\u0442\u0432\u043e \u0438\u043d\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430","hideLabel":false,"iconUrl":"\/public\/img\/service\/gus-site.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/gus-site_active.png","subitems":[],"url":"\/pl\/csi\/survey\/general-usability-survey?section=site&returnUrl=%2Fkmp%3Frel_scan%3D33e9aa16-da5c-4070-ac5b-17de4297e255%257C%7B%7D","params":{"hasDelimiter":true},"target":"_blank"}],"url":null,"params":{},"target":null},{"id":"teach","label":"\u041e\u0431\u0443\u0447\u0435\u043d\u0438\u0435","hideLabel":false,"iconUrl":"\/public\/img\/service\/teach.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/teach_active.png","subitems":[{"id":"trainings","label":"\u0422\u0440\u0435\u043d\u0438\u043d\u0433\u0438","hideLabel":false,"iconUrl":"\/public\/img\/service\/trainings.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/trainings_active.png","subitems":[],"url":"\/teach\/control\/stream","params":{},"target":null},{"id":"schedule","label":"\u0420\u0430\u0441\u043f\u0438\u0441\u0430\u043d\u0438\u0435","hideLabel":false,"iconUrl":"\/public\/img\/service\/schedule.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/schedule_active.png","subitems":[],"url":"\/pl\/teach\/control\/schedule","params":{},"target":null},{"id":"answers","label":"\u041b\u0435\u043d\u0442\u0430 \u043e\u0442\u0432\u0435\u0442\u043e\u0432","hideLabel":false,"iconUrl":"\/public\/img\/service\/answers.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/answers_active.png","subitems":[],"url":"\/teach\/control\/answers\/unanswered","params":{},"target":null},{"id":"questionary","label":"\u0422\u0435\u0441\u0442\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u044f","hideLabel":false,"iconUrl":"\/public\/img\/service\/questionary.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/questionary_active.png","subitems":[],"url":"\/pl\/teach\/questionary","params":{},"target":null},{"id":"diploma","label":"\u0414\u0438\u043f\u043b\u043e\u043c\u044b","hideLabel":false,"iconUrl":"\/public\/img\/service\/diploma.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/diploma_active.png","subitems":[],"url":"\/pl\/teach\/control\/diploma","params":{},"target":null},{"id":"goal","label":"\u0426\u0435\u043b\u0438","hideLabel":false,"iconUrl":"\/public\/img\/service\/goal.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/goal_active.png","subitems":[],"url":"\/pl\/teach\/goal","params":{},"target":null},{"id":"feedbacks","label":"\u041a\u043e\u043d\u0442\u0440\u043e\u043b\u044c \u043a\u0430\u0447\u0435\u0441\u0442\u0432\u0430","hideLabel":false,"iconUrl":"\/public\/img\/service\/feedbacks.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/feedbacks_active.png","subitems":[],"url":"\/teach\/control\/stat\/userTrainingFeedback","params":{},"target":null},{"id":"gus-teach","label":"\u041f\u043e\u043c\u043e\u0433\u0438\u0442\u0435 \u043d\u0430\u043c \u0441\u0442\u0430\u0442\u044c \u043b\u0443\u0447\u0448\u0435: \u043e\u0446\u0435\u043d\u0438\u0442\u0435 \u0443\u0434\u043e\u0431\u0441\u0442\u0432\u043e \u0438\u043d\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430","hideLabel":false,"iconUrl":"\/public\/img\/service\/gus-teach.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/gus-teach_active.png","subitems":[],"url":"\/pl\/csi\/survey\/general-usability-survey?section=teach&returnUrl=%2Fkmp%3Frel_scan%3D33e9aa16-da5c-4070-ac5b-17de4297e255%257C%7B%7D","params":{"hasDelimiter":true},"target":"_blank"}],"url":null,"params":{},"target":null},{"id":"user","label":"\u0423\u0447\u0435\u043d\u0438\u043a\u0438","hideLabel":false,"iconUrl":"\/public\/img\/service\/user.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/user_active.png","subitems":[{"id":"user","label":"\u041f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0438","hideLabel":false,"iconUrl":"\/public\/img\/service\/user.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/user_active.png","subitems":[],"url":"\/pl\/user\/user\/index","params":{},"target":null},{"id":"contacts","label":"\u0417\u0432\u043e\u043d\u043a\u0438 \u0438 \u0432\u0441\u0442\u0440\u0435\u0447\u0438","hideLabel":false,"iconUrl":"\/public\/img\/service\/contacts.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/contacts_active.png","subitems":[],"url":"\/pl\/user\/contact\/index","params":{},"target":null},{"id":"survey","label":"\u0410\u043d\u043a\u0435\u0442\u044b","hideLabel":false,"iconUrl":"\/public\/img\/service\/survey.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/survey_active.png","subitems":[],"url":"\/user\/control\/survey\/index","params":{},"target":null},{"id":"funnel","label":"\u0414\u0430\u0448\u0431\u043e\u0440\u0434\u044b","hideLabel":false,"iconUrl":"\/public\/img\/service\/funnel.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/funnel_active.png","subitems":[],"url":"\/pl\/logic\/funnel","params":{},"target":null},{"id":"chatiumFunnelModule","label":"\u0412\u043e\u0440\u043e\u043d\u043a\u0438","hideLabel":false,"iconUrl":"\/public\/img\/service\/chatiumFunnelModule.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/chatiumFunnelModule_active.png","subitems":[],"url":"\/chtm\/app\/explorer\/builder?skipPage=1","params":{},"target":null},{"id":"statistic","label":"\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043a\u0430","hideLabel":false,"iconUrl":"\/public\/img\/service\/statistic.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/statistic_active.png","subitems":[],"url":"\/user\/control\/user\/statistic","params":{"show":true},"target":null},{"id":"settings","label":"\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438","hideLabel":false,"iconUrl":"\/public\/img\/service\/settings.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/settings_active.png","subitems":[],"url":"\/pl\/user\/settings","params":{},"target":null},{"id":"invite","label":"\u041f\u0440\u0438\u0433\u043b\u0430\u0441\u0438\u0442\u044c \u0441\u043f\u0435\u0446\u0438\u0430\u043b\u0438\u0441\u0442\u0430","hideLabel":false,"iconUrl":"\/public\/img\/service\/invite.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/invite_active.png","subitems":[],"url":"\/pl\/assistant\/invite\/index","params":{},"target":null},{"id":"gluing","label":"\u0421\u043a\u043b\u0435\u0439\u043a\u0430 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0435\u0439","hideLabel":false,"iconUrl":"\/public\/img\/service\/gluing.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/gluing_active.png","subitems":[],"url":"\/pl\/gluing\/migration\/index","params":{},"target":null},{"id":"gus-user","label":"\u041f\u043e\u043c\u043e\u0433\u0438\u0442\u0435 \u043d\u0430\u043c \u0441\u0442\u0430\u0442\u044c \u043b\u0443\u0447\u0448\u0435: \u043e\u0446\u0435\u043d\u0438\u0442\u0435 \u0443\u0434\u043e\u0431\u0441\u0442\u0432\u043e \u0438\u043d\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430","hideLabel":false,"iconUrl":"\/public\/img\/service\/gus-user.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/gus-user_active.png","subitems":[],"url":"\/pl\/csi\/survey\/general-usability-survey?section=user&returnUrl=%2Fkmp%3Frel_scan%3D33e9aa16-da5c-4070-ac5b-17de4297e255%257C%7B%7D","params":{"hasDelimiter":true},"target":"_blank"}],"url":"\/user\/control\/user","params":{},"target":null},{"id":"tasks","label":"CRM","hideLabel":false,"iconUrl":"\/public\/img\/service\/tasks.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/tasks_active.png","subitems":[{"id":"all_tasks","label":"\u0414\u043e\u0441\u043a\u0430 \u0437\u0430\u043a\u0430\u0437\u043e\u0432","hideLabel":false,"iconUrl":"\/public\/img\/service\/all_tasks.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/all_tasks_active.png","subitems":[],"url":"\/pl\/tasks\/task\/kanban\/deals","params":{},"target":null},{"id":"all_tasks","label":"\u0414\u043e\u0441\u043a\u0430 \u0437\u0430\u0434\u0430\u0447","hideLabel":false,"iconUrl":"\/public\/img\/service\/all_tasks.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/all_tasks_active.png","subitems":[],"url":"\/pl\/tasks\/task\/kanban\/tasks\/kanban","params":{},"target":null},{"id":"all_tasks","label":"\u0421\u043f\u0438\u0441\u043e\u043a \u0437\u0430\u0434\u0430\u0447","hideLabel":false,"iconUrl":"\/public\/img\/service\/all_tasks.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/all_tasks_active.png","subitems":[],"url":"\/pl\/tasks\/task\/kanban\/tasks\/list","params":{},"target":null},{"id":"processes","label":"\u041f\u0440\u043e\u0446\u0435\u0441\u0441\u044b","hideLabel":false,"iconUrl":"\/public\/img\/service\/processes.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/processes_active.png","subitems":[],"url":"\/pl\/tasks\/mission\/index","params":{},"target":null},{"id":"chatiumFunnelModule","label":"\u0412\u043e\u0440\u043e\u043d\u043a\u0438","hideLabel":false,"iconUrl":"\/public\/img\/service\/chatiumFunnelModule.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/chatiumFunnelModule_active.png","subitems":[],"url":"\/chtm\/app\/explorer\/builder?skipPage=1","params":{},"target":null},{"id":"processes","label":"\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043a\u0430","hideLabel":false,"iconUrl":"\/public\/img\/service\/processes.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/processes_active.png","subitems":[],"url":"\/pl\/tasks\/task\/stat","params":{},"target":null},{"id":"all_tasks","label":"\u0421\u043f\u0438\u0441\u043e\u043a","hideLabel":false,"iconUrl":"\/public\/img\/service\/all_tasks.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/all_tasks_active.png","subitems":[],"url":"\/pl\/tasks\/task\/my","params":{},"target":null},{"id":"gus-crm","label":"\u041f\u043e\u043c\u043e\u0433\u0438\u0442\u0435 \u043d\u0430\u043c \u0441\u0442\u0430\u0442\u044c \u043b\u0443\u0447\u0448\u0435: \u043e\u0446\u0435\u043d\u0438\u0442\u0435 \u0443\u0434\u043e\u0431\u0441\u0442\u0432\u043e \u0438\u043d\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430","hideLabel":false,"iconUrl":"\/public\/img\/service\/gus-crm.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/gus-crm_active.png","subitems":[],"url":"\/pl\/csi\/survey\/general-usability-survey?section=crm&returnUrl=%2Fkmp%3Frel_scan%3D33e9aa16-da5c-4070-ac5b-17de4297e255%257C%7B%7D","params":{"hasDelimiter":true},"target":"_blank"}],"url":null,"params":{},"target":null},{"id":"notifications","label":"\u0421\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f","hideLabel":false,"iconUrl":"\/public\/img\/service\/notifications.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/notifications_active.png","subitems":[{"id":"inbox","label":"\u0412\u0445\u043e\u0434\u044f\u0449\u0438\u0435","hideLabel":false,"iconUrl":"\/public\/img\/service\/inbox.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/inbox_active.png","subitems":[],"url":"\/pl\/tasks\/resp?filter%5Bobject_type_id%5D=55","params":{},"target":null},{"id":"mailings","label":"\u0420\u0430\u0441\u0441\u044b\u043b\u043a\u0438","hideLabel":false,"iconUrl":"\/public\/img\/service\/mailings.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/mailings_active.png","subitems":[],"url":"\/notifications\/control\/mailings","params":{},"target":null},{"id":"settings","label":"\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438","hideLabel":false,"iconUrl":"\/public\/img\/service\/settings.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/settings_active.png","subitems":[],"url":"\/pl\/notifications\/control\/account-settings","params":{},"target":null},{"id":"notifications","label":"\u0428\u0430\u0431\u043b\u043e\u043d\u044b","hideLabel":false,"iconUrl":"\/public\/img\/service\/notifications.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/notifications_active.png","subitems":[],"url":"\/pl\/notifications\/control\/mailings\/templates-list","params":{},"target":null},{"id":"vk","label":"VK","hideLabel":false,"iconUrl":"\/public\/img\/service\/vk.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/vk_active.png","subitems":[],"url":"\/pl\/vk\/control\/themes","params":{},"target":null},{"id":"whatsapp","label":"WhatsApp","hideLabel":false,"iconUrl":"\/public\/img\/service\/whatsapp.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/whatsapp_active.png","subitems":[],"url":"\/pl\/whatsapp\/control\/bots","params":{},"target":null},{"id":"telegram","label":"Telegram","hideLabel":false,"iconUrl":"\/public\/img\/service\/telegram.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/telegram_active.png","subitems":[],"url":"\/pl\/telegram\/control\/bots","params":{},"target":null},{"id":"viber","label":"Viber","hideLabel":false,"iconUrl":"\/public\/img\/service\/viber.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/viber_active.png","subitems":[],"url":"\/pl\/viber\/control\/bots","params":{},"target":null},{"id":"reports","label":"\u041e\u0442\u0447\u0435\u0442\u044b","hideLabel":false,"iconUrl":"\/public\/img\/service\/reports.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/reports_active.png","subitems":[],"url":"\/pl\/user\/employers-stat\/index","params":{},"target":null},{"id":"gus-messages","label":"\u041f\u043e\u043c\u043e\u0433\u0438\u0442\u0435 \u043d\u0430\u043c \u0441\u0442\u0430\u0442\u044c \u043b\u0443\u0447\u0448\u0435: \u043e\u0446\u0435\u043d\u0438\u0442\u0435 \u0443\u0434\u043e\u0431\u0441\u0442\u0432\u043e \u0438\u043d\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430","hideLabel":false,"iconUrl":"\/public\/img\/service\/gus-messages.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/gus-messages_active.png","subitems":[],"url":"\/pl\/csi\/survey\/general-usability-survey?section=messages&returnUrl=%2Fkmp%3Frel_scan%3D33e9aa16-da5c-4070-ac5b-17de4297e255%257C%7B%7D","params":{"hasDelimiter":true},"target":"_blank"}],"url":null,"params":{},"target":null},{"id":"sales","label":"\u041f\u0440\u043e\u0434\u0430\u0436\u0438","hideLabel":false,"iconUrl":"\/public\/img\/service\/sales.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/sales_active.png","subitems":[{"id":"deals","label":"\u0414\u043e\u0441\u043a\u0430 \u0437\u0430\u043a\u0430\u0437\u043e\u0432","hideLabel":false,"iconUrl":"\/public\/img\/service\/deals.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/deals_active.png","subitems":[],"url":"\/pl\/tasks\/task\/kanban\/deals","params":{},"target":null},{"id":"deals","label":"\u0421\u043f\u0438\u0441\u043e\u043a \u0437\u0430\u043a\u0430\u0437\u043e\u0432","hideLabel":false,"iconUrl":"\/public\/img\/service\/deals.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/deals_active.png","subitems":[],"url":"\/sales\/default\/deals","params":{},"target":null},{"id":"offers","label":"\u041f\u0440\u043e\u0434\u0443\u043a\u0442\u044b","hideLabel":false,"iconUrl":"\/public\/img\/service\/offers.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/offers_active.png","subitems":[],"url":"\/pl\/sales\/product\/index","params":{},"target":null},{"id":"partners","label":"\u041f\u0430\u0440\u0442\u043d\u0435\u0440\u0441\u043a\u0430\u044f \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0430","hideLabel":false,"iconUrl":"\/public\/img\/service\/partners.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/partners_active.png","subitems":[],"url":"\/sales\/control\/participant","params":{"show":true},"target":null},{"id":"statistic","label":"\u0421\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043a\u0430","hideLabel":false,"iconUrl":"\/public\/img\/service\/statistic.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/statistic_active.png","subitems":[],"url":"\/pl\/sales\/dealstat\/index","params":{},"target":null},{"id":"my_deals","label":"\u041c\u043e\u0438 \u043f\u043e\u043a\u0443\u043f\u043a\u0438","hideLabel":false,"iconUrl":"\/public\/img\/service\/my_deals.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/my_deals_active.png","subitems":[],"url":"\/sales\/control\/userProduct\/my","params":{},"target":null},{"id":"promo","label":"\u041f\u0440\u043e\u043c\u043e\u0430\u043a\u0446\u0438\u0438","hideLabel":false,"iconUrl":"\/public\/img\/service\/promo.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/promo_active.png","subitems":[],"url":"\/pl\/sales\/promo","params":{"show":true},"target":null},{"id":"deals","label":"\u041f\u043e\u0442\u043e\u043a\u0438","hideLabel":false,"iconUrl":"\/public\/img\/service\/deals.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/deals_active.png","subitems":[],"url":"\/pl\/sales\/stream\/stream-stat","params":{},"target":null},{"id":"gc_pay_client","label":"\u041f\u043b\u0430\u0442\u0435\u0436\u043d\u044b\u0439 \u043c\u043e\u0434\u0443\u043b\u044c","hideLabel":false,"iconUrl":"\/public\/img\/service\/gc_pay_client.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/gc_pay_client_active.png","subitems":[],"url":"\/pl\/gcpay\/client\/payment","params":{},"target":null},{"id":"admin_quality_school","label":"\u0417\u043d\u0430\u043a \u043a\u0430\u0447\u0435\u0441\u0442\u0432\u0430","hideLabel":false,"iconUrl":"\/public\/img\/service\/admin_quality_school.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/admin_quality_school_active.png","subitems":[],"url":"\/saas\/account\/qualityMarkSettings","params":{},"target":null},{"id":"gus-sales","label":"\u041f\u043e\u043c\u043e\u0433\u0438\u0442\u0435 \u043d\u0430\u043c \u0441\u0442\u0430\u0442\u044c \u043b\u0443\u0447\u0448\u0435: \u043e\u0446\u0435\u043d\u0438\u0442\u0435 \u0443\u0434\u043e\u0431\u0441\u0442\u0432\u043e \u0438\u043d\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430","hideLabel":false,"iconUrl":"\/public\/img\/service\/gus-sales.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/gus-sales_active.png","subitems":[],"url":"\/pl\/csi\/survey\/general-usability-survey?section=sales&returnUrl=%2Fkmp%3Frel_scan%3D33e9aa16-da5c-4070-ac5b-17de4297e255%257C%7B%7D","params":{"hasDelimiter":true},"target":"_blank"}],"url":null,"params":{},"target":null},{"id":"chatium","label":"Apps","hideLabel":false,"iconUrl":"\/public\/img\/service\/chatium.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/chatium_active.png","subitems":[{"id":"chatium_app","label":"\u041f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0435","hideLabel":false,"iconUrl":"\/public\/img\/service\/chatium_app.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/chatium_app_active.png","subitems":[],"url":"\/pl\/chatium\/school\/enter","params":{},"target":null},{"id":"app_sender","label":"\u0411\u043e\u0442\u044b","hideLabel":false,"iconUrl":"\/public\/img\/service\/app_sender.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/app_sender_active.png","subitems":[],"url":"\/chtm\/app\/sender","params":{},"target":null},{"id":"chatium_builder","label":"\u0412\u043e\u0440\u043e\u043d\u043a\u0438","hideLabel":false,"iconUrl":"\/public\/img\/service\/chatium_builder.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/chatium_builder_active.png","subitems":[],"url":"\/chtm\/app\/explorer\/builder?skipPage=1","params":{},"target":null},{"id":"chatium_bothelp","label":"BotHelp","hideLabel":false,"iconUrl":"\/public\/img\/service\/chatium_bothelp.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/chatium_bothelp_active.png","subitems":[],"url":"\/chtm\/app\/explorer\/gc-bothelp?skipPage=1","params":{},"target":null},{"id":"chatium_gcads","label":"Getcourse ads","hideLabel":false,"iconUrl":"\/public\/img\/service\/chatium_gcads.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/chatium_gcads_active.png","subitems":[],"url":"\/chtm\/app\/gcads","params":{},"target":null},{"id":"chatium_branding","label":"IDE","hideLabel":false,"iconUrl":"\/public\/img\/service\/chatium_branding.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/chatium_branding_active.png","subitems":[],"url":"\/chtm\/s\/ide\/","params":{},"target":null}],"url":null,"params":{},"target":null}],"activeItem":"cms","navMenuItems":{"id":"navmenu","label":"\u0421\u0438\u0441\u0442\u0435\u043c\u043d\u043e\u0435 \u043c\u0435\u043d\u044e","hideLabel":false,"iconUrl":"\/public\/img\/service\/navmenu.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/navmenu_active.png","subitems":[{"id":"page-edit","label":"\u0420\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0443","hideLabel":false,"iconUrl":"\/public\/img\/service\/page-edit.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/page-edit_active.png","subitems":[],"url":"\/pl\/cms\/page\/editor?id=4391358&rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C%7B%7D","params":{},"target":null},{"id":"create-link","label":"\u0421\u043e\u0437\u0434\u0430\u0442\u044c \u0441\u0441\u044b\u043b\u043a\u0443","hideLabel":false,"iconUrl":"\/public\/img\/service\/create-link.png","subIconHtml":null,"activeIconUrl":"\/public\/img\/service\/create-link_active.png","subitems":[],"url":"\/pl\/cms\/link\/create?url=https:\/\/pavelpresnyakov.ru\/kmp&object_type=Page&object_id=4391358","params":{},"target":null}],"url":null,"params":{},"target":null}};
+						        </script>
+	
+					    <div class="gc-main-content gc-both-main-content wide  front-page-content with-left-menu gc-user-logined gc-user-admin">
+      
+
+<div class="lite-page block-set">
+
+	
+			
+
+<style>
+	#ltBlock2208290505 .lt-block-wrapper {
+		padding-top: 0px; padding-bottom: 0px	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208290505" data-block-id="2208290518" class="lt-block lt-view raw-css lt-raw lt-raw-css lt-system-block lt-invisible-block" data-code="b-3874d">
+	<div class="lt-block-wrapper">
+	<style id="rawCss4591530">.page_intensive{
+	/* Акцентный цвет на сайте */
+	--color-accent: #0098f6;
+	/* Акцентный цвет при взаимодействии */
+	--color-accent-active: #0077c5;
+	/* Цвет текста темный*/
+	--color-text-dark: #4a4a4a;
+	/* Цвет текста светлый*/
+	--color-text-light: #ffffff;
+	/* Цвет главного фона блока */
+	--color-bg-main: #00121d;
+    /* Цвет главного фона блока */
+	--color-bg-main1: #001e31;
+	/* Цвет фона формы */
+	--color-bg-block-box: #222222cc;
+	/* Цвет текста в плейсхолдере */
+	--color-placeholder: #f4f4f4;
+	/* Цвет фона в полях для ввода */
+	--color-bg-input: transparent;
+	/* Цвет фона у подвала (footer) */
+	--color-bg-block-box-footer: #292929;
+	/* Закругления в блоках */
+	--radius-block-box: 50px;
+	/* Стандартное время анимации */
+	--transition: 0.3s;
+	/* Ускоренное время анимации */
+	--transition-fast: 0.2s;
+	--font-family: 'Montserrat', sans-serif;
+    /*цвет кнопки*/
+    --btn-color: #00c26f;
+    --btn-color-active: #00ae63;
+    	--font-xxl: 44px;
+	--font-xl: 44px;
+    --font-ll: 32px;
+    --font-l: 26px;
+    --font-m: 20px;
+    --font-s: 16px;
+    
+    --color-bg: rgb(235, 238, 242);
+    --color-white: #fff;
+    --color-text: #333;
+    --color-green: rgb(0, 197, 102);
+    --color-dark-green: rgb(0, 177, 92);
+    --color-light-green: rgb(216, 243, 234);
+    --color-blue: rgb(0, 140, 255);
+    --color-light-gray: rgb(243, 245, 247);
+    --color-red: rgb(238, 29, 36);
+    
+    --radius-xl: 2rem;
+    --radius-l: 1.25rem;
+    --radius-s: .5rem;
+    
+    --space-arrow: -6rem;
+    --space-btn: 2rem 4rem;
+    --space-xxl: 4rem;
+    --space-xl: 3rem;
+    --space-l: 1.75rem;
+    --space-m: 1rem;
+    --space-s: .5rem;
+}
+
+@media (max-width: 535px) {
+    :root {
+        --font-xxl: 30px;
+		--font-xl: 36px;
+	    --font-ll: 24px;
+        --font-l: 18px;
+	    --font-m: 16px;
+        
+	    --space-arrow: -4rem;
+        --space-btn: 1.5rem;
+        --space-xxl: 2rem;
+	    --space-xl: 1.5rem;
+    }
+}
+/*===================================== 
+ПАНЕЛЬ УПРАВЛЕНИЯ. КОНЕЦ 
+===================================== */
+@media screen and (max-width: 980px) {
+.lt-menu.mobile-toggler .menu-wrapper .collapsed-view .collapsed-contacts {
+    display: none;
+}
+.lt-menu.mobile-toggler .menu-wrapper .collapsed-view .collapsed-button {
+    text-align: right;
+}
+}
+.block-set .lt-anchor.lt-system-block.lt-invisible-block.lt-view {
+    height: 0px;
+}
+.field-label {
+    font-size: 14px;
+}
+.form__input .custom-field-input input {
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	padding: 0 20px;
+}
+
+.form__input .custom-field-input input::-webkit-input-placeholder {
+	color: var(--color-placeholder);
+	opacity: 0.7;
+}
+
+.form__input .custom-field-input input:-moz-placeholder {
+	color: var(--color-placeholder);
+	opacity: 0.7;
+}
+
+.form__input .custom-field-input input::-moz-placeholder {
+	color: var(--color-placeholder);
+	opacity: 0.7;
+}
+
+.form__input .custom-field-input input:-ms-input-placeholder {
+	color: var(--color-placeholder);
+	opacity: 0.7;
+}
+
+.form__input .custom-field-input input::-ms-input-placeholder {
+	color: var(--color-placeholder);
+	opacity: 0.7;
+}
+
+.form__input .custom-field-input input::placeholder {
+	color: var(--color-placeholder);
+	opacity: 0.7;
+}
+
+.form__input input {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	height: 55px;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+	color: var(--color-text-dark) !important;
+	background-color: var(--color-bg-input);
+	font-weight: 400;
+	font-size: 16px;
+	border: 2px solid transparent !important;
+	-webkit-transition: background-color var(--transition) ease-in-out, border-color var(--transition) ease-in-out, -webkit-box-shadow var(--transition) ease-in-out;
+	transition: background-color var(--transition) ease-in-out, border-color var(--transition) ease-in-out, -webkit-box-shadow var(--transition) ease-in-out;
+	-o-transition: background-color var(--transition) ease-in-out, border-color var(--transition) ease-in-out, box-shadow var(--transition) ease-in-out;
+	-moz-transition: background-color var(--transition) ease-in-out, border-color var(--transition) ease-in-out, box-shadow var(--transition) ease-in-out, -moz-box-shadow var(--transition) ease-in-out;
+	transition: background-color var(--transition) ease-in-out, border-color var(--transition) ease-in-out, box-shadow var(--transition) ease-in-out;
+	transition: background-color var(--transition) ease-in-out, border-color var(--transition) ease-in-out, box-shadow var(--transition) ease-in-out, -webkit-box-shadow var(--transition) ease-in-out, -moz-box-shadow var(--transition) ease-in-out;
+}
+
+@media (max-width: 576px) {
+	.form__input input {
+		height: 50px;
+		font-size: 14px;
+	}
+}
+
+.form__input input::-webkit-input-placeholder {
+	color: var(--color-placeholder);
+	opacity: 0.7;
+}
+
+.form__input input:-moz-placeholder {
+	color: var(--color-placeholder);
+	opacity: 0.7;
+}
+
+.form__input input::-moz-placeholder {
+	color: var(--color-placeholder);
+	opacity: 0.7;
+}
+
+.form__input input:-ms-input-placeholder {
+	color: var(--color-placeholder);
+	opacity: 0.7;
+}
+
+.form__input input::-ms-input-placeholder {
+	color: var(--color-placeholder);
+	opacity: 0.7;
+}
+
+.form__input input::placeholder {
+	color: var(--color-placeholder);
+	opacity: 0.7;
+}
+
+.form__input input:focus {
+	background-color: #ffffff;
+	border-color: var(--color-accent) !important;
+	-webkit-box-shadow: 0px 4px 10px rgba(130, 130, 130, 0.25);
+	-moz-box-shadow: 0px 4px 10px rgba(130, 130, 130, 0.25);
+	box-shadow: 0px 4px 10px rgba(130, 130, 130, 0.25);
+}
+
+.form__input .field-label {
+	display: inline-block;
+	padding: 0;
+	margin: 0;
+	margin-bottom: 3px;
+	font-size: 14px;
+}
+
+@media (max-width: 576px) {
+	.form__input .field-label {
+		font-size: 13px;
+	}
+}
+
+@media (max-width: 576px) {
+	.form__button {
+		margin-bottom: 15px !important;
+	}
+}
+
+.form__button button {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	padding: 20px !important;
+	width: 70% !important;
+	-webkit-border-radius: -webkit-calc(var(--radius-block-box) / 3) !important;
+	-moz-border-radius: -moz-calc(var(--radius-block-box) / 3) !important;
+	border-radius: var(--radius-block-box) !important;
+	font-weight: 700 !important;
+	text-transform: uppercase;
+	color: var(--color-text-light);
+	background-color: var(--btn-color) !important;
+	-webkit-box-shadow: 0px 4px 15px rgba(130, 130, 130, 0.25);
+	-moz-box-shadow: 0px 4px 15px rgba(130, 130, 130, 0.25);
+	box-shadow: 0px 4px 15px rgba(130, 130, 130, 0.25);
+	-webkit-transition: background-color 0.3s ease-in-out, -webkit-transform 0.3s ease-in-out,
+		-webkit-box-shadow 0.3s ease-in-out;
+	transition: background-color 0.3s ease-in-out, -webkit-transform 0.3s ease-in-out,
+		-webkit-box-shadow 0.3s ease-in-out;
+	-o-transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, -o-transform 0.3s ease-in-out;
+	-moz-transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out,
+		box-shadow 0.3s ease-in-out, -moz-transform 0.3s ease-in-out,
+		-moz-box-shadow 0.3s ease-in-out;
+	transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out,
+		box-shadow 0.3s ease-in-out;
+	transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out,
+		box-shadow 0.3s ease-in-out, -webkit-transform 0.3s ease-in-out,
+		-moz-transform 0.3s ease-in-out,
+		-o-transform 0.3s ease-in-out,
+		-webkit-box-shadow 0.3s ease-in-out, -moz-box-shadow 0.3s ease-in-out;
+}
+
+.form__button button:active {
+	background-color: var(--btn-color-active) !important;
+	-webkit-transform: translate3d(0px, -3px, 0px);
+	-moz-transform: translate3d(0px, -3px, 0px);
+	transform: translate3d(0px, -3px, 0px);
+	-webkit-box-shadow: 0px 10px 15px rgba(130, 130, 130, 0.25);
+	-moz-box-shadow: 0px 10px 15px rgba(130, 130, 130, 0.25);
+	box-shadow: 0px 10px 15px rgba(130, 130, 130, 0.25);
+}
+
+@media (min-width: 768px) {
+	.form__button button:hover {
+		background-color: var(--btn-color-active) !important;
+		-webkit-transform: translate3d(0px, -3px, 0px);
+		-moz-transform: translate3d(0px, -3px, 0px);
+		transform: translate3d(0px, -3px, 0px);
+		-webkit-box-shadow: 0px 10px 15px rgba(130, 130, 130, 0.25);
+		-moz-box-shadow: 0px 10px 15px rgba(130, 130, 130, 0.25);
+		box-shadow: 0px 10px 15px rgba(130, 130, 130, 0.25);
+	}
+}
+
+@media (max-width: 768px) {
+	.form__button button {
+		width: 80% !important;
+	}
+}
+
+@media (max-width: 576px) {
+     .form__button button {
+		min-height: 50px !important;
+		width: 100% !important;
+		padding: 13px 20px !important;
+	}
+}
+
+@media (max-width: 375px) {
+	.form__button button {
+		width: 100% !important;
+		font-size: 14px !important;
+	}
+}
+
+.form__docs .f-text {
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+@media (max-width: 576px) {
+	.form__docs .f-text {
+		font-size: 12px;
+	}
+}
+
+.form__docs .f-text a {
+	font-weight: 700;
+}
+
+
+@media (min-width: 535px) {
+    .hide-on-desk {
+    	display: none;
+    }
+}
+@media (max-width: 535px) {
+    .hide-on-mob {
+    	display: none;
+    }
+}</style>
+
+</div></div>
+
+
+
+			
+	<style>
+		#ltBlock2208081622 .block-box {
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+}
+@media (max-width: 535px) { 
+#ltBlock2208081622 
+	.lt-block-wrapper {  padding-inline: var(--space-m) }
+}	</style>
+
+<style>
+	#ltBlock2208081622 .lt-block-wrapper {
+		padding-top: 60px; padding-bottom: 0px; background-color: var(--color-bg-main); color: var(--color-text-light)	}
+	#ltBlock2208081622 .lt-block-wrapper a:link {
+		color: var(--color-accent-active);
+	}
+	#ltBlock2208081622 .lt-block-wrapper a:visited {
+		color: var(--color-accent-active);
+	}
+	#ltBlock2208081622 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:link {
+		color: inherit;
+	}
+	#ltBlock2208081622 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:visited {
+		color: inherit;
+	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081622" data-block-id="2208085351" data-has-css="true" class="lt-block lt-view bld01 lt-onecolumn lt-onecolumn-common page_intensive" data-code="b-7b141">
+	<div class="lt-block-wrapper">
+		<style>
+		.col-md-var(--color-accent-active)  a:link {
+			color: var(--color-accent-active);
+		}
+		.col-md-var(--color-accent-active)  a:visited {
+			color: var(--color-accent-active);
+		}
+	</style>
+<div class="container">
+	<div class="row">
+		<div class="modal-block-content block-box col-md-12 text-left col-md-var(--color-accent-active)" style="color: var(--color-text-light)">
+			<div id="builder1714306" class="builder  animated-block" data-path="items" data-animation-order="in-turn">
+	
+	</div>
+
+
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder1714306 input[type="radio"]').length == 1 && $('#builder1714306 input[type="radio"]').prop('checked') ) {
+			$('#builder1714306 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+		</div>
+	</div>
+</div>
+
+	<style>
+		#ltBlock2208081622 .block-box {
+			background-color:var(--color-bg-main1);padding-left: 40px;
+padding-right: 40px;
+padding-top: 20px;
+padding-bottom: 20px;border: 0px solid #999999;		}
+	</style>
+</div></div>
+
+
+<style>
+	#ltBlock2208081622 hr.separator {
+		border-color: var(--color-text-light);
+	}
+	#ltBlock2208081622 .f-text {
+		color: var(--color-text-light);
+	}
+
+</style>
+<style>
+	#ltBlock2208081622 .f-text a:link {
+		color: var(--color-accent-active);
+	}
+	#ltBlock2208081622 .f-text a:visited {
+		color: var(--color-accent-active);
+	}
+</style>
+
+			
+	<style>
+		#ltBlock2208091847 .datetime .f-text {
+	display: flex;
+	max-width: 100%;
+	/*flex-wrap: wrap;*/
+	white-space: nowrap;
+	gap: 1rem;
+	align-items: center;
+} 
+#ltBlock2208091847 
+.datetime .f-text p:first-child { 
+	background: #004c7b;
+	padding: 10px 25px;
+    border-radius: 30px;
+	margin-right: 15px;
+} 
+#ltBlock2208091847 
+.datetime .f-text p:last-child { 
+	background: #072d439e;
+	padding: 10px 25px;
+    border-radius: 30px;
+	margin-right: 15px;
+} 
+#ltBlock2208091847 
+.accent-data { 
+	color: var(--color-text-light);
+} 
+#ltBlock2208091847 
+.block-cover .cover-filter, #ltBlock2208091847 .lt-cover .cover-filter { 
+      box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.3);
+}
+@media (min-width: 535px) { 
+#ltBlock2208091847 
+	.flex-column:nth-child(n+2) .part-image:nth-child(n+2):not(.vector) img {  max-width: 500px } 
+#ltBlock2208091847 
+	.f-header span {  white-space: nowrap }
+}
+@media (max-width: 535px) { 
+#ltBlock2208091847 
+	.lt-block-wrapper {  padding-inline: var(--space-m) } 
+#ltBlock2208091847 
+	.datetime .f-text {  
+	flex-direction: column;
+	white-space: normal;
+	} 
+#ltBlock2208091847 
+	.f-header p, #ltBlock2208091847 .f-subheader p, #ltBlock2208091847 .f-text p {  text-align: center }
+	
+}
+	</style>
+
+<style>
+	#ltBlock2208091847 .lt-block-wrapper {
+		padding-top: 0px; padding-bottom: 0px; background-color: var(--color-bg-main); color: var(--color-text-light)	}
+	#ltBlock2208091847 .lt-block-wrapper a:link {
+		color: var(--color-accent);
+	}
+	#ltBlock2208091847 .lt-block-wrapper a:visited {
+		color: var(--color-accent);
+	}
+	#ltBlock2208091847 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:link {
+		color: inherit;
+	}
+	#ltBlock2208091847 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:visited {
+		color: inherit;
+	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208091847" data-block-id="2208092042" data-has-css="true" class="lt-block lt-view tcb-01 lt-twocolumn lt-twocolumn-standard page_intensive" data-code="b-b2335">
+	<div class="lt-block-wrapper">
+	
+
+
+
+
+
+<div class="my-container flex-container wrap-col">
+	<div id="builder4024919" class="builder  flex-column col-md-7 col-md-offset-0" data-path="column2">
+			<div class="common-setting-link box-setting-link" data-icon-class="fa fa-adjust" data-param="column2/box" data-title="Стиль блока" data-setting-editable="true"></div>
+	
+			<div data-param="column2/parts/field36751" data-item-name="field36751" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 20px; border-radius: ; " data-setting-editable="true" class="builder-item part-text  datetime" id="aca50ab225">
+	<div style="" class="text-small f-text" data-param="column2/parts/field36751/inner/text" data-editable="true"><p>🔥 Новый&nbsp;курс</p></div>	<div class="add-redesign-subblock" data-id="2208092042">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#aca50ab225 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="column2/parts/header1" data-item-name="header1" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 20px; color: var(--color-accent); border-radius: ; " data-setting-editable="true" class="builder-item part-header  text-left" id="a89b3fbf77">
+	<div data-editable="true" data-param="column2/parts/header1/inner/text" class="f-header f-header-52"><p>Курс молодого предпринимателя</p></div>	<div class="add-redesign-subblock" data-id="2208092042">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a89b3fbf77 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="column2/parts/field79632" data-item-name="field79632" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 30px; border-radius: ; " data-setting-editable="true" class="builder-item part-text  text-left" id="ace26d0295">
+	<div style="" class="text-large f-text" data-param="column2/parts/field79632/inner/text" data-editable="true"><p>Пошаговый план по запуску, росту и масштабированию твоего бизнеса <strong>за 1,5 месяца</strong></p></div>	<div class="add-redesign-subblock" data-id="2208092042">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#ace26d0295 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="column2/parts/field49048" data-item-name="field49048" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 0px; border-radius: ; " data-setting-editable="true" class="builder-item part-button  form__button" id="ae5f8e9a28">
+	
+
+<button type="button" id="button3222729" class="btn f-btn  button-md btn-success" style="color: white; background-color: ; ">
+
+			Записаться	</button>
+
+<script>
+$( function() {
+	var disableButton = function (e) {
+		if (window['prsbutton3222729']) {
+			e.preventDefault();
+			return false;
+		} else {
+			$('#button3222729').addClass('disabled');
+			window['prsbutton3222729'] = true;
+			setTimeout(function(){window['prsbutton3222729'] = false;$('#button3222729').removeClass('disabled');}, 6000);
+		}
+		return true;
+	};
+	$( '#button3222729' ).click( function(e) {
+		//disableButton(e);
+				location.href='#form';			} );
+});
+</script>
+	<div class="add-redesign-subblock" data-id="2208092042">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#ae5f8e9a28 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="column2/parts/field5958" data-item-name="field5958" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 0px; margin-top: 0px; border-radius: ; " data-setting-editable="true" class="builder-item part-quote " id="aa4b9cbd19">
+	<div class="f-quote medium-image" style="background-color: rgba( ,,,1);">
+			<div class="img-block">
+			<img loading="lazy" data-image-editable="true" data-hash="4bd8fcd6bfaa31aa8e3ce348f3c627eb.png" data-param="column2/parts/field5958/inner/authorImage" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/478">
+		</div>
+		<div class="text-block emoji-text text-small f-text">
+		<div data-param="column2/parts/field5958/inner/text" data-editable="true"><p><br></p>
+<p>Бонус при регистрации:<br><b>книга «Личный Маркетинг"</b></p></div>
+
+			</div>
+</div>
+<script>
+	$(function () {
+		window.GcEmojiHelper.initEmojies($('.emoji-text'));
+	})
+</script>
+	<div class="add-redesign-subblock" data-id="2208092042">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#aa4b9cbd19 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+	</div>
+
+			<style>
+			#builder4024919 {
+				align-self:stretch;
+background-color:var(--color-bg-main1);padding-left: 30px;
+padding-right: 30px;
+padding-top: 0px;
+padding-bottom: 0px;border: 0px solid #999999;			}
+		</style>
+	
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder4024919 input[type="radio"]').length == 1 && $('#builder4024919 input[type="radio"]').prop('checked') ) {
+			$('#builder4024919 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+
+	<div id="builder8340910" class="builder  flex-column col-md-5 col-md-offset-0" data-path="column1">
+			<div class="common-setting-link box-setting-link" data-icon-class="fa fa-adjust" data-param="column1/box" data-title="Стиль блока" data-setting-editable="true"></div>
+	
+			<div data-param="column1/parts/field57121" data-item-name="field57121" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 0px; margin-top: auto; border-radius: ; " data-setting-editable="true" class="builder-item part-image " id="ac465ff3c6">
+	<div id="image4210112" class="image-box" data-img-title="" data-img-src="//fs-thb01.getcourse.ru/fileservice/file/thumbnail/h/622b33e3c64628f747447baa820f512f.png/s/s1200x/a/539771/sc/48">
+	<img class=" lazyloaded" data-src="//fs-thb01.getcourse.ru/fileservice/file/thumbnail/h/622b33e3c64628f747447baa820f512f.png/s/s1200x/a/539771/sc/48" data-param="column1/parts/field57121/inner/image" data-hash="622b33e3c64628f747447baa820f512f.png" data-image-editable="true" title="" alt="" style="" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/48">
+		<div data-editable="true" data-param="column1/parts/field57121/inner/image/caption" class="lt-image-caption">
+			</div>
+	</div>
+
+	<div class="add-redesign-subblock" data-id="2208092042">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#ac465ff3c6 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+	</div>
+
+			<style>
+			#builder8340910 {
+				align-self:stretch;
+background-color:var(--color-bg-main1);padding-left: 0px;
+padding-right: 0px;
+padding-top: 0px;
+padding-bottom: 0px;border: 0px solid #999999;			}
+		</style>
+	
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder8340910 input[type="radio"]').length == 1 && $('#builder8340910 input[type="radio"]').prop('checked') ) {
+			$('#builder8340910 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+</div>
+</div></div>
+
+
+<style>
+	#ltBlock2208091847 hr.separator {
+		border-color: var(--color-text-light);
+	}
+	#ltBlock2208091847 .f-text {
+		color: var(--color-text-light);
+	}
+
+</style>
+<style>
+	#ltBlock2208091847 .f-text a:link {
+		color: var(--color-accent);
+	}
+	#ltBlock2208091847 .f-text a:visited {
+		color: var(--color-accent);
+	}
+</style>
+
+			
+	<style>
+		#ltBlock2208081625 .builder { 
+	display: flex; 
+	gap: 3rem;
+} 
+#ltBlock2208081625 
+.part-quote {  flex: 1 1 } 
+#ltBlock2208081625 
+.f-quote {  background: #072d439e; 
+	border-radius: 20px; 
+	padding: 15px; 
+	gap: 1.75rem;
+} 
+#ltBlock2208081625 
+.f-quote .img-block {  width: 80px } 
+#ltBlock2208081625 
+.f-quote .img-block img {  max-width: 80px } 
+#ltBlock2208081625 
+.f-quote .f-text {  padding: unset } 
+#ltBlock2208081625 
+.f-quote .f-text p {  color: #fff } 
+#ltBlock2208081625 
+.f-quote .f-text p:last-child {  font-size: 14px }
+@media (max-width: 535px) { 
+#ltBlock2208081625 
+	.builder {  flex-direction: column; gap: unset }
+}	</style>
+
+<style>
+	#ltBlock2208081625 .lt-block-wrapper {
+		padding-top: 30px; padding-bottom: 30px; background-color: var(--color-bg-main); color: var(--color-text-light)	}
+	#ltBlock2208081625 .lt-block-wrapper a:link {
+		color: var(--color-accent-active);
+	}
+	#ltBlock2208081625 .lt-block-wrapper a:visited {
+		color: var(--color-accent-active);
+	}
+	#ltBlock2208081625 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:link {
+		color: inherit;
+	}
+	#ltBlock2208081625 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:visited {
+		color: inherit;
+	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081625" data-block-id="2208085355" data-has-css="true" class="lt-block lt-view bld01 lt-onecolumn lt-onecolumn-common page_intensive" data-code="b-90849">
+	<div class="lt-block-wrapper">
+		<style>
+		.col-md-var(--color-accent-active)  a:link {
+			color: var(--color-accent-active);
+		}
+		.col-md-var(--color-accent-active)  a:visited {
+			color: var(--color-accent-active);
+		}
+	</style>
+<div class="container">
+	<div class="row">
+		<div class="modal-block-content block-box col-md-12 text-left col-md-var(--color-accent-active)" style="color: var(--color-text-light)">
+			<div id="builder2257223" class="builder  animated-block" data-path="items" data-animation-order="in-turn">
+	
+			<div data-param="items/parts/field74074" data-item-name="field74074" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-quote " id="a145fb0aaf">
+	<div class="f-quote medium-image" style="">
+			<div class="img-block">
+			<img loading="lazy" data-image-editable="true" data-hash="4d2924442d47221af61a499ee3ef119f.png" data-param="items/parts/field74074/inner/authorImage" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/101">
+		</div>
+		<div class="text-block emoji-text text-small f-text">
+		<div data-param="items/parts/field74074/inner/text" data-editable="true"><p>Без часовых лекций. Только <strong>практическая</strong> выжимка</p></div>
+
+			</div>
+</div>
+<script>
+	$(function () {
+		window.GcEmojiHelper.initEmojies($('.emoji-text'));
+	})
+</script>
+	<div class="add-redesign-subblock" data-id="2208085355">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a145fb0aaf .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="items/parts/field74074_80" data-item-name="field74074_80" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-quote " id="a05d4bff21">
+	<div class="f-quote medium-image" style="">
+			<div class="img-block">
+			<img loading="lazy" data-image-editable="true" data-hash="147fe99f9c30ed1d98590f1b1c2f061e.png" data-param="items/parts/field74074_80/inner/authorImage" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/204">
+		</div>
+		<div class="text-block emoji-text text-small f-text">
+		<div data-param="items/parts/field74074_80/inner/text" data-editable="true"><p>Все уроки в&nbsp;<span class="redactor-inline-converted"><strong>студийном качестве,</strong> с&nbsp;</span>хорошей картинкой и&nbsp;звуком</p></div>
+
+			</div>
+</div>
+<script>
+	$(function () {
+		window.GcEmojiHelper.initEmojies($('.emoji-text'));
+	})
+</script>
+	<div class="add-redesign-subblock" data-id="2208085355">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a05d4bff21 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="items/parts/field74074_11" data-item-name="field74074_11" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-quote " id="a629289a21">
+	<div class="f-quote medium-image" style="">
+			<div class="img-block">
+			<img loading="lazy" data-image-editable="true" data-hash="c08b5a3997782dbd3c8642ea0c960e8b.png" data-param="items/parts/field74074_11/inner/authorImage" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/203">
+		</div>
+		<div class="text-block emoji-text text-small f-text">
+		<div data-param="items/parts/field74074_11/inner/text" data-editable="true"><p>Доступ к&nbsp;обучению и&nbsp;чату участников&nbsp;— <strong>навсегда</strong></p></div>
+
+			</div>
+</div>
+<script>
+	$(function () {
+		window.GcEmojiHelper.initEmojies($('.emoji-text'));
+	})
+</script>
+	<div class="add-redesign-subblock" data-id="2208085355">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a629289a21 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+	</div>
+
+
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder2257223 input[type="radio"]').length == 1 && $('#builder2257223 input[type="radio"]').prop('checked') ) {
+			$('#builder2257223 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+		</div>
+	</div>
+</div>
+
+</div></div>
+
+
+<style>
+	#ltBlock2208081625 hr.separator {
+		border-color: var(--color-text-light);
+	}
+	#ltBlock2208081625 .f-text {
+		color: var(--color-text-light);
+	}
+
+</style>
+<style>
+	#ltBlock2208081625 .f-text a:link {
+		color: var(--color-accent-active);
+	}
+	#ltBlock2208081625 .f-text a:visited {
+		color: var(--color-accent-active);
+	}
+</style>
+
+			
+
+<style>
+	#ltBlock2208081626 .lt-block-wrapper {
+		padding-top: 90px; padding-bottom: 0px; background-color: var(--color-bg-main2); color: var(--color-text-light)	}
+	#ltBlock2208081626 .lt-block-wrapper a:link {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081626 .lt-block-wrapper a:visited {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081626 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:link {
+		color: inherit;
+	}
+	#ltBlock2208081626 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:visited {
+		color: inherit;
+	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081626" data-block-id="2208085357" class="lt-block lt-view bld01 lt-onecolumn lt-onecolumn-common page_intensive" data-code="b-42797">
+	<div class="lt-block-wrapper">
+		<style>
+		.col-md-var(--color-accent)  a:link {
+			color: var(--color-accent);
+		}
+		.col-md-var(--color-accent)  a:visited {
+			color: var(--color-accent);
+		}
+	</style>
+<div class="container">
+	<div class="row">
+		<div class="modal-block-content block-box col-md-12 text-left col-md-var(--color-accent)" style="color: var(--color-text-light)">
+			<div id="builder3672627" class="builder  animated-block" data-path="items" data-animation-order="in-turn">
+	
+			<div data-param="items/parts/header1" data-item-name="header1" data-title="Элемент" data-animation-mode="appear" style="margin-bottom: 0px; color: var(--color-accent); border-radius: ; " data-setting-editable="true" class="builder-item part-header  text-left animated-element before-animation" id="af2501dd06">
+	<div data-editable="true" data-param="items/parts/header1/inner/text" class="f-header f-header-52"><p><strong>Кому подходит обучение?</strong></p></div>	<div class="add-redesign-subblock" data-id="2208085357">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#af2501dd06 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+	</div>
+
+
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder3672627 input[type="radio"]').length == 1 && $('#builder3672627 input[type="radio"]').prop('checked') ) {
+			$('#builder3672627 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+		</div>
+	</div>
+</div>
+
+</div></div>
+
+
+<style>
+	#ltBlock2208081626 hr.separator {
+		border-color: var(--color-text-light);
+	}
+	#ltBlock2208081626 .f-text {
+		color: var(--color-text-light);
+	}
+
+</style>
+<style>
+	#ltBlock2208081626 .f-text a:link {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081626 .f-text a:visited {
+		color: var(--color-accent);
+	}
+</style>
+
+			
+
+<style>
+	#ltBlock2208081627 .lt-block-wrapper {
+		padding-top: 0px; padding-bottom: 0px; background-color: var(--color-bg-main2); color: var(--color-text-light)	}
+	#ltBlock2208081627 .lt-block-wrapper a:link {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081627 .lt-block-wrapper a:visited {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081627 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:link {
+		color: inherit;
+	}
+	#ltBlock2208081627 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:visited {
+		color: inherit;
+	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081627" data-block-id="2208085358" class="lt-block lt-view bld01 lt-onecolumn lt-onecolumn-common page_intensive" data-code="b-be28e">
+	<div class="lt-block-wrapper">
+		<style>
+		.col-md-var(--color-accent)  a:link {
+			color: var(--color-accent);
+		}
+		.col-md-var(--color-accent)  a:visited {
+			color: var(--color-accent);
+		}
+	</style>
+<div class="container">
+	<div class="row">
+		<div class="modal-block-content block-box col-md-12 text-left col-md-var(--color-accent)" style="color: var(--color-text-light)">
+			<div id="builder6497810" class="builder  animated-block" data-path="items" data-animation-order="in-turn">
+	
+	</div>
+
+
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder6497810 input[type="radio"]').length == 1 && $('#builder6497810 input[type="radio"]').prop('checked') ) {
+			$('#builder6497810 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+		</div>
+	</div>
+</div>
+
+</div></div>
+
+
+<style>
+	#ltBlock2208081627 hr.separator {
+		border-color: var(--color-text-light);
+	}
+	#ltBlock2208081627 .f-text {
+		color: var(--color-text-light);
+	}
+
+</style>
+<style>
+	#ltBlock2208081627 .f-text a:link {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081627 .f-text a:visited {
+		color: var(--color-accent);
+	}
+</style>
+
+			
+	<style>
+		#ltBlock2208081629 .image-card {
+	padding-bottom: 24px;
+} 
+#ltBlock2208081629 
+.image-wrapper { 
+	height: unset !important;
+} 
+#ltBlock2208081629 
+.lt-tsr-content { 
+	background: #f2f5f7;
+	padding: 1rem 1.75rem;
+	padding-top: unset;
+	height: 100%;
+	border-radius: 20px;
+} 
+#ltBlock2208081629 
+.lt-tsr-block.flex-column, #ltBlock2208081629 .lt-tsr-content, #ltBlock2208081629 .image-card, #ltBlock2208081629 .image-wrapper { 
+	overflow: visible;
+} 
+#ltBlock2208081629 
+img { 
+	width: 32px;
+	height: 32px;
+	margin: unset;
+	margin-top: -1.5rem;
+}
+@media (max-width: 535px) { 
+#ltBlock2208081629 
+	.image-card { 
+		padding: .5rem;
+	}
+}	</style>
+	<style>
+	#ltBlock2208081629 .lt-tsr-block {;-webkit-flex: 0;-ms-flex: 0;-moz-flex: 0;flex: 0;margin: 10px;flex-basis: calc(33% - 20px);} 
+#ltBlock2208081629 
+.lt-tsr-block .image-wrapper { } 
+#ltBlock2208081629 
+.flex-row {  justify-content: flex-start; -webkit-justify-content: flex-start;}	</style>
+
+<style>
+	#ltBlock2208081629 .lt-block-wrapper {
+		padding-top: 0px; padding-bottom: 0px; background-color: #fff	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081629" data-block-id="2208085359" data-has-css="true" class="lt-block lt-view tsr05 lt-tsr tsr-auto-image-height" data-code="b-3b93d">
+	<div class="lt-block-wrapper">
+	<div class="container">
+	<div class="row">
+		<div class="modal-block-content block-box col-md-12 text-left" style="">
+			
+
+
+
+
+
+
+
+<div class="flex-row  ">
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+												<div class="image-card">
+		<div class="image-wrapper">
+										<img loading="lazy" class="img-responsive" data-hash="d6633ff62dcff866c38d9b37ba6f2d35.png" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/309" data-image-editable="true" data-param="data/0/image">
+								</div>
+	</div>
+														
+										
+														
+										
+														
+										
+		<div data-editable="true" data-param="data/0/description" class="  f-description lt-tsr-text-part description">
+				
+				<p>Вы владелец бизнеса и хотите его систематизировать</p>						</div>
+																	<div class="common-setting-link in-block-setting-link" data-param="data/0" data-title="Элемент 0" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+												<div class="image-card">
+		<div class="image-wrapper">
+										<img loading="lazy" class="img-responsive" data-hash="d6633ff62dcff866c38d9b37ba6f2d35.png" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/309" data-image-editable="true" data-param="data/1/image">
+								</div>
+	</div>
+														
+										
+														
+										
+														
+										
+		<div data-editable="true" data-param="data/1/description" class="  f-description lt-tsr-text-part description">
+				
+				<p>Вы предприниматель и Вы хотите выстроить найм, маркетинг и продажи в бизнесе</p>						</div>
+																	<div class="common-setting-link in-block-setting-link" data-param="data/1" data-title="Элемент 1" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+												<div class="image-card">
+		<div class="image-wrapper">
+										<img loading="lazy" class="img-responsive" data-hash="d6633ff62dcff866c38d9b37ba6f2d35.png" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/309" data-image-editable="true" data-param="data/2/image">
+								</div>
+	</div>
+														
+										
+														
+										
+														
+										
+		<div data-editable="true" data-param="data/2/description" class="  f-description lt-tsr-text-part description">
+				
+				<p>Вы новичок, и хотите разобраться во всех аспектах бизнеса, чтобы не "наломать дров"</p>						</div>
+																	<div class="common-setting-link in-block-setting-link" data-param="data/2" data-title="Элемент 2" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+												<div class="image-card">
+		<div class="image-wrapper">
+										<img loading="lazy" class="img-responsive" data-hash="d6633ff62dcff866c38d9b37ba6f2d35.png" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/309" data-image-editable="true" data-param="data/3/image">
+								</div>
+	</div>
+														
+										
+														
+										
+														
+										
+		<div data-editable="true" data-param="data/3/description" class="  f-description lt-tsr-text-part description">
+				
+				<p>Вы - новичок, и только задумываетесь, чтобы открыть собственное дело</p>						</div>
+																	<div class="common-setting-link in-block-setting-link" data-param="data/3" data-title="Элемент 3" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+												<div class="image-card">
+		<div class="image-wrapper">
+										<img loading="lazy" class="img-responsive" data-hash="d6633ff62dcff866c38d9b37ba6f2d35.png" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/309" data-image-editable="true" data-param="data/4/image">
+								</div>
+	</div>
+														
+										
+														
+										
+														
+										
+		<div data-editable="true" data-param="data/4/description" class="  f-description lt-tsr-text-part description">
+				<p>Хотите продавать больше,&nbsp;легче и увереннее.&nbsp;</p>			</div>
+																	<div class="common-setting-link in-block-setting-link" data-param="data/4" data-title="Элемент 4" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+												<div class="image-card">
+		<div class="image-wrapper">
+										<img loading="lazy" class="img-responsive" data-hash="d6633ff62dcff866c38d9b37ba6f2d35.png" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/309" data-image-editable="true" data-param="data/5/image">
+								</div>
+	</div>
+														
+										
+														
+										
+														
+										
+		<div data-editable="true" data-param="data/5/description" class="  f-description lt-tsr-text-part description">
+				<p>У Вас уже был печальный опыт в бизнесе и хотите изправить ситуацию, и вывести бизнес в прибыль!</p>			</div>
+																	<div class="common-setting-link in-block-setting-link" data-param="data/5" data-title="Элемент 5" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+		</div>
+
+
+
+
+		</div>
+	</div>
+</div>
+
+</div></div>
+
+
+
+			
+
+<style>
+	#ltBlock2208081633 .lt-block-wrapper {
+		padding-top: 30px; padding-bottom: 0px; background-color: var(--color-bg-main2); color: var(--color-text-light)	}
+	#ltBlock2208081633 .lt-block-wrapper a:link {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081633 .lt-block-wrapper a:visited {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081633 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:link {
+		color: inherit;
+	}
+	#ltBlock2208081633 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:visited {
+		color: inherit;
+	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081633" data-block-id="2208085360" class="lt-block lt-view bld01 lt-onecolumn lt-onecolumn-common page_intensive" data-code="b-b36ed">
+	<div class="lt-block-wrapper">
+		<style>
+		.col-md-var(--color-accent)  a:link {
+			color: var(--color-accent);
+		}
+		.col-md-var(--color-accent)  a:visited {
+			color: var(--color-accent);
+		}
+	</style>
+<div class="container">
+	<div class="row">
+		<div class="modal-block-content block-box col-md-12 text-left col-md-var(--color-accent)" style="color: var(--color-text-light)">
+			<div id="builder1425238" class="builder  animated-block" data-path="items" data-animation-order="in-turn">
+	
+			<div data-param="items/parts/header1" data-item-name="header1" data-title="Элемент" data-animation-mode="appear" style="margin-bottom: 0px; color: var(--color-accent); border-radius: ; " data-setting-editable="true" class="builder-item part-header  text-left animated-element before-animation" id="aa22638858">
+	<div data-editable="true" data-param="items/parts/header1/inner/text" class="f-header f-header-52"><p><strong></strong></p>
+
+<p>Программа курса:&nbsp;</p>
+
+<p><strong></strong></p></div>	<div class="add-redesign-subblock" data-id="2208085360">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#aa22638858 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+	</div>
+
+
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder1425238 input[type="radio"]').length == 1 && $('#builder1425238 input[type="radio"]').prop('checked') ) {
+			$('#builder1425238 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+		</div>
+	</div>
+</div>
+
+</div></div>
+
+
+<style>
+	#ltBlock2208081633 hr.separator {
+		border-color: var(--color-text-light);
+	}
+	#ltBlock2208081633 .f-text {
+		color: var(--color-text-light);
+	}
+
+</style>
+<style>
+	#ltBlock2208081633 .f-text a:link {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081633 .f-text a:visited {
+		color: var(--color-accent);
+	}
+</style>
+
+			
+	<style>
+		#ltBlock2208081635 .lt-tsr-block.flex-column {
+    -webkit-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+} 
+#ltBlock2208081635 
+.lt-tsr-block.flex-column:hover { 
+    -webkit-transform: translateY(-3px);
+        -ms-transform: translateY(-3px);
+            transform: translateY(-3px);
+} 
+#ltBlock2208081635 
+.image-card { 
+display: none;
+} 
+#ltBlock2208081635 
+.lt-tsr-block .image-wrapper { 
+height: 100%!important;
+} 
+#ltBlock2208081635 
+.lt-tsr-block .image-wrapper div.image { 
+background-size: contain;
+margin-left: 20px;
+margin-top: 10px;
+background-position: left top; /* иконка по центру */
+} 
+#ltBlock2208081635 
+.header { 
+    position: relative;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+	padding-top: 15px;
+} 
+#ltBlock2208081635 
+.header::before { 
+    content: '';
+    display: block;
+    background: var(--color-accent);
+    width: 50px;
+    height: 2px;
+    position: absolute;
+    bottom: 0;
+    left: 2%;
+    -webkit-transform: translateX(-10%);
+        -ms-transform: translateX(-10%);
+            transform: translateX(-10%);
+    -webkit-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+} 
+#ltBlock2208081635 
+.lt-tsr-block.flex-column:hover .header::before { 
+    width: 100px;
+} 
+#ltBlock2208081635 
+.lt-tsr-block.flex-column:hover { 
+    border-color: var(--color-accent);
+}	</style>
+	<style>
+	#ltBlock2208081635 .lt-tsr-block {background-color:#f2f5f7;padding-left: 20px;
+padding-right: 20px;
+padding-top: 35px;
+padding-bottom: 35px;border: 0px solid #999999;border-radius: 16px;-webkit-flex: 1 0 1000px;-ms-flex: 1 0 1000px;-moz-flex: 1 0 1000px;flex: 1 0 1000px;margin: 10px;} 
+#ltBlock2208081635 
+.lt-tsr-block .image-wrapper { height:1000px;
+}	</style>
+
+<style>
+	#ltBlock2208081635 .lt-block-wrapper {
+		padding-top: 0px; padding-bottom: 15px; background-color: var(--color-bg-main2); color: var(--color-text-dark)	}
+	#ltBlock2208081635 .lt-block-wrapper a:link {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081635 .lt-block-wrapper a:visited {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081635 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:link {
+		color: inherit;
+	}
+	#ltBlock2208081635 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:visited {
+		color: inherit;
+	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081635" data-block-id="2208085361" data-has-css="true" class="lt-block lt-view tsr05 lt-tsr tsr-with-text-paddings page_intensive" data-code="b-26d38">
+	<div class="lt-block-wrapper">
+		<style>
+		.col-md-var(--color-accent)  a:link {
+			color: var(--color-accent);
+		}
+		.col-md-var(--color-accent)  a:visited {
+			color: var(--color-accent);
+		}
+	</style>
+<div class="container">
+	<div class="row">
+		<div class="modal-block-content block-box col-md-12 text-left col-md-var(--color-accent)" style="color: var(--color-text-dark)">
+			
+
+
+
+
+
+
+
+<div class="flex-row  ">
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+												<div class="image-card">
+		<div class="image-wrapper">
+														<div class="image lazyload" data-hash="" data-image-editable="true" data-param="data/0/image" data-bg="">
+				</div>
+								</div>
+	</div>
+														
+										
+														
+										
+		<div data-editable="true" data-param="data/0/header" class=" f-header-26 f-header lt-tsr-text-part header">
+				<p>Модуль&nbsp;1: Продукт и бизнес модель</p>			</div>
+														
+										
+		<div data-editable="true" data-param="data/0/description" class="  f-description lt-tsr-text-part description">
+				<p>• Как выбирать нишу с самого нуля</p>
+
+<p>•&nbsp;Где есть деньги, а где нет денег от слова совсем</p>
+
+
+
+<p>•&nbsp;Просто и легкий вход или тяжелый и дорогой?</p>
+
+
+
+<p>•&nbsp;Работа с поставщиками</p>
+
+
+
+<p>•&nbsp;Выбор бизнес модели</p>			</div>
+																	<div class="common-setting-link in-block-setting-link" data-param="data/0" data-title="Элемент 0" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+												<div class="image-card">
+		<div class="image-wrapper">
+														<div class="image lazyload" data-hash="" data-image-editable="true" data-param="data/1/image" data-bg="">
+				</div>
+								</div>
+	</div>
+														
+										
+														
+										
+		<div data-editable="true" data-param="data/1/header" class=" f-header-26 f-header lt-tsr-text-part header">
+				<p>Модуль&nbsp;2: Экономика и финмодель</p>			</div>
+														
+										
+		<div data-editable="true" data-param="data/1/description" class="  f-description lt-tsr-text-part description">
+				<p>• Построение финансовой модели</p>
+
+<p>•&nbsp;Расходы и доходы, как посчитать заранее</p>
+
+
+
+<p>•&nbsp;Ключевые метрики</p>
+
+
+
+<p>•&nbsp;UNIT экономика на коленке</p>
+
+
+
+<p>•&nbsp;Личные финансы или финансы бизнеса</p>
+
+
+
+<p>•&nbsp;Где брать деньги на бизнес</p>
+
+
+
+<p>•&nbsp;Как можно начать бизнес без денег</p>
+
+
+
+<p>•&nbsp;Партнерство - сила или слабость</p>
+
+
+
+<p>•&nbsp;Отчет о движении денежных средств</p>
+
+
+
+<p>•&nbsp;Отчет о прибылях и убытках</p>
+
+
+
+<p>•&nbsp;Как управлять бизнесом на основе цифр</p>
+
+
+
+<p>•&nbsp;Что делать, если экономика никак не сходится</p>			</div>
+																	<div class="common-setting-link in-block-setting-link" data-param="data/1" data-title="Элемент 1" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+												<div class="image-card">
+		<div class="image-wrapper">
+														<div class="image lazyload" data-hash="" data-image-editable="true" data-param="data/2/image" data-bg="">
+				</div>
+								</div>
+	</div>
+														
+										
+														
+										
+		<div data-editable="true" data-param="data/2/header" class=" f-header-26 f-header lt-tsr-text-part header">
+				<p>Модуль&nbsp;3:&nbsp;<span>Финансы и управление</span></p>			</div>
+														
+										
+		<div data-editable="true" data-param="data/2/description" class="  f-description lt-tsr-text-part description">
+				<p><span>•&nbsp;</span>Как можно попасть в суд не сделав маленький документ</p>
+
+<p>•&nbsp;Как получать больше клинетов</p>
+
+
+
+<p>•&nbsp;Онлайн-кассы и ОФД</p>
+
+
+
+<p>•&nbsp;Как принимать оплаты легально</p>
+
+
+
+<p>•&nbsp;Учет товаров</p>
+
+
+
+<p>•&nbsp;Учет финансов</p>
+
+
+
+<p>•&nbsp;Финансовая модель планирования рекламного бюджета</p>
+
+
+
+<p>•&nbsp;Возвраты и споры с покупателями</p>
+
+
+
+<p>•&nbsp;Риски и проверки</p>
+
+
+
+<p>•&nbsp;Как учитывать риски</p>
+
+
+
+<p>•&nbsp;Кредит - благо или болото</p>
+
+<p><br></p>			</div>
+																	<div class="common-setting-link in-block-setting-link" data-param="data/2" data-title="Элемент 2" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+												<div class="image-card">
+		<div class="image-wrapper">
+														<div class="image lazyload" data-hash="" data-image-editable="true" data-param="data/3/image" data-bg="">
+				</div>
+								</div>
+	</div>
+														
+										
+														
+										
+		<div data-editable="true" data-param="data/3/header" class=" f-header-26 f-header lt-tsr-text-part header">
+				<p>Модуль&nbsp;4:&nbsp;<span>Налоги, бухгалтерия и юридические вопросы</span></p>			</div>
+														
+										
+		<div data-editable="true" data-param="data/3/description" class="  f-description lt-tsr-text-part description">
+				<p><span>•&nbsp;</span>ИП или ООО - что выбрать и в чем различие</p>
+
+<p>•&nbsp;Почему не надо бояться платить налогов</p>
+
+
+
+<p>•&nbsp;Что делать, если налоги съедают всю прибыль</p>
+
+
+
+<p>•&nbsp;Можно ли оптимизировать налоги?</p>
+
+
+
+<p>•&nbsp;Какие налоговые режимы есть</p>
+
+
+
+<p>•&nbsp;УСН, НДС, ОСНО - что это такое и как с этим работать</p>
+
+
+
+<p>•&nbsp;Какие отчеты надо сдавать и как это сделать легко</p>
+
+
+
+<p>•&nbsp;Юридические моменты - договоры, оферты, персональные данные</p>			</div>
+																	<div class="common-setting-link in-block-setting-link" data-param="data/3" data-title="Элемент 3" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+												<div class="image-card">
+		<div class="image-wrapper">
+														<div class="image lazyload" data-hash="" data-image-editable="true" data-param="data/4/image" data-bg="">
+				</div>
+								</div>
+	</div>
+														
+										
+														
+										
+		<div data-editable="true" data-param="data/4/header" class=" f-header-26 f-header lt-tsr-text-part header">
+				<p>Модуль&nbsp;5: Маркетинг и реклама</p>			</div>
+														
+										
+		<div data-editable="true" data-param="data/4/description" class="  f-description lt-tsr-text-part description">
+				<p><span>•&nbsp;</span>Какие источники рекламы работают лучше всего</p>
+
+<p>•&nbsp;Как нанять крутого маркетолога</p>
+
+
+
+<p>•&nbsp;Оффлайн реклама работает ли она</p>
+
+
+
+<p>•&nbsp;Как считать эффективность рекламы</p>
+
+
+
+<p>•&nbsp;LTV и отложенные конверсии</p>			</div>
+																	<div class="common-setting-link in-block-setting-link" data-param="data/4" data-title="Элемент 4" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+												<div class="image-card">
+		<div class="image-wrapper">
+														<div class="image lazyload" data-hash="" data-image-editable="true" data-param="data/5/image" data-bg="">
+				</div>
+								</div>
+	</div>
+														
+										
+														
+										
+		<div data-editable="true" data-param="data/5/header" class=" f-header-26 f-header lt-tsr-text-part header">
+				<p>Модуль&nbsp;6:&nbsp;Время и делегирование</p>			</div>
+														
+										
+		<div data-editable="true" data-param="data/5/description" class="  f-description lt-tsr-text-part description">
+				<p><span>•&nbsp;</span>Как нанимать крутых людей к себе в команду</p>
+
+<p>•&nbsp;Когда надо начинать делегировать</p>
+
+
+
+<p>•&nbsp;Найм на работу, договор, отчеты и налоги</p>
+
+
+
+<p>•&nbsp;Как успеть все</p>
+
+
+
+<p>•&nbsp;Почему одни успевают 10 бизнесов, а у других и 1 не получается</p>
+
+
+
+<p>•&nbsp;Выгорание и как его избежать</p>
+
+
+
+<p>•&nbsp;Курс по тайм-менеджменту</p>			</div>
+																	<div class="common-setting-link in-block-setting-link" data-param="data/5" data-title="Элемент 5" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+												<div class="image-card">
+		<div class="image-wrapper">
+														<div class="image lazyload" data-hash="" data-image-editable="true" data-param="data/6/image" data-bg="">
+				</div>
+								</div>
+	</div>
+														
+										
+														
+										
+		<div data-editable="true" data-param="data/6/header" class=" f-header-26 f-header lt-tsr-text-part header">
+				<p>Модуль 7:&nbsp;Продажи и CRM<span></span></p>			</div>
+														
+										
+		<div data-editable="true" data-param="data/6/description" class="  f-description lt-tsr-text-part description">
+				<p>• Как продавать больше</p>
+
+<p>•&nbsp;Как построить отдел продаж?</p>
+
+
+
+<p>•&nbsp;Нужен ли вам отдел продаж</p>
+
+
+
+<p>•&nbsp;Как его автоматизировать</p>
+
+
+
+<p>•&nbsp;Как не терять продажи за счет внедрения CRM</p>
+
+
+
+<p>•&nbsp;Как самому внедрить CRM систему и увеличить продажу</p>
+
+
+
+<p>•&nbsp;Работа с клиентской базой</p>
+
+
+
+<p>•&nbsp;Увеличиваем LTV клиентов</p>
+
+
+
+<p>•&nbsp;Регламенты для увеличения продаж</p>			</div>
+																	<div class="common-setting-link in-block-setting-link" data-param="data/6" data-title="Элемент 6" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+												<div class="image-card">
+		<div class="image-wrapper">
+														<div class="image lazyload" data-hash="" data-image-editable="true" data-param="data/7/image" data-bg="">
+				</div>
+								</div>
+	</div>
+														
+										
+														
+										
+		<div data-editable="true" data-param="data/7/header" class=" f-header-26 f-header lt-tsr-text-part header">
+				<p>Модуль 8:&nbsp;Масштабирование<span></span></p>			</div>
+														
+										
+		<div data-editable="true" data-param="data/7/description" class="  f-description lt-tsr-text-part description">
+				<p><span>•&nbsp;</span>Как масштабировать бизнес</p>
+
+<p>•&nbsp;3 принципа масштабирования бизнеса</p>
+
+
+
+<p>•&nbsp;Почему у меня было 6 магазинов, но я их продал</p>
+
+
+
+<p>•&nbsp;Как открывать новые бизнесы и что делать, если они не полетели</p>
+
+
+
+<p>•&nbsp;Когда пора закрывать бизнес?</p>			</div>
+																	<div class="common-setting-link in-block-setting-link" data-param="data/7" data-title="Элемент 7" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+												<div class="image-card">
+		<div class="image-wrapper">
+														<div class="image lazyload" data-hash="" data-image-editable="true" data-param="data/8/image" data-bg="">
+				</div>
+								</div>
+	</div>
+														
+										
+														
+										
+		<div data-editable="true" data-param="data/8/header" class=" f-header-26 f-header lt-tsr-text-part header">
+				<p>Модуль 9:&nbsp;Психология предпринимателя:</p>			</div>
+														
+										
+		<div data-editable="true" data-param="data/8/description" class="  f-description lt-tsr-text-part description">
+				
+				
+				<p><span>•&nbsp;</span>Почему люди не растут и не развиваются</p>
+
+<p>•&nbsp;С какими проблемами мы чаще всего сталкиваемся</p>
+
+
+
+<p>•&nbsp;Как победить себя и надо ли это делать</p>
+
+
+
+<p>•&nbsp;Помогающие специалисты, которые действительно помогают</p>
+
+
+
+<p>•&nbsp;Как взять на себя больше ответсвенности</p>									</div>
+																	<div class="common-setting-link in-block-setting-link" data-param="data/8" data-title="Элемент 8" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+												<div class="image-card">
+		<div class="image-wrapper">
+														<div class="image lazyload" data-hash="" data-image-editable="true" data-param="data/9/image" data-bg="">
+				</div>
+								</div>
+	</div>
+														
+										
+														
+										
+		<div data-editable="true" data-param="data/9/header" class=" f-header-26 f-header lt-tsr-text-part header">
+				<p>Модуль 10:&nbsp;Личный бренд предпринимателя:</p>			</div>
+														
+										
+		<div data-editable="true" data-param="data/9/description" class="  f-description lt-tsr-text-part description">
+				
+				<p>•&nbsp;Как за счет личного бренда можно открывать все новые и новые направления</p><p>•&nbsp;Почему каждый бизнес у меня - это личный бренд</p><p>•&nbsp;Как уйти от личного бренда и делать бренд компании</p><p>•&nbsp;Как построить личный бренд - 10 простых шагов</p><p>•&nbsp;Как развивать свой личный бренд</p>						</div>
+																	<div class="common-setting-link in-block-setting-link" data-param="data/9" data-title="Элемент 9" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+		</div>
+
+
+
+	<style>
+		#ltBlock2208081635 .lt-tsr-text-part {
+			color: var(--color-text-dark)		}
+
+	</style>
+	<style>
+		#ltBlock2208081635 .lt-tsr-text-part a:link {
+			color: var(--color-accent)		}
+		
+		#ltBlock2208081635 .lt-tsr-text-part a:visited {
+			color: var(--color-accent)		}
+	</style>
+
+		</div>
+	</div>
+</div>
+
+</div></div>
+
+
+<style>
+	#ltBlock2208081635 hr.separator {
+		border-color: var(--color-text-dark);
+	}
+	#ltBlock2208081635 .f-text {
+		color: var(--color-text-dark);
+	}
+
+</style>
+<style>
+	#ltBlock2208081635 .f-text a:link {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081635 .f-text a:visited {
+		color: var(--color-accent);
+	}
+</style>
+
+			
+
+<style>
+	#ltBlock2208081636 .lt-block-wrapper {
+		padding-top: 15px; padding-bottom: 60px; background-color: var(--color-bg-main2); color: var(--color-text-dark)	}
+	#ltBlock2208081636 .lt-block-wrapper a:link {
+		color: var(--color-accent-active);
+	}
+	#ltBlock2208081636 .lt-block-wrapper a:visited {
+		color: var(--color-accent-active);
+	}
+	#ltBlock2208081636 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:link {
+		color: inherit;
+	}
+	#ltBlock2208081636 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:visited {
+		color: inherit;
+	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081636" data-block-id="2208085363" class="lt-block lt-view bld01 lt-onecolumn lt-onecolumn-common page_intensive" data-code="b-1e654">
+	<div class="lt-block-wrapper">
+		<style>
+		.col-md-var(--color-accent-active)  a:link {
+			color: var(--color-accent-active);
+		}
+		.col-md-var(--color-accent-active)  a:visited {
+			color: var(--color-accent-active);
+		}
+	</style>
+<div class="container">
+	<div class="row">
+		<div class="modal-block-content block-box col-md-6 col-md-offset-3 text-left col-md-var(--color-accent-active)" style="color: var(--color-text-dark)">
+			<div id="builder9831975" class="builder  animated-block" data-path="items" data-animation-order="in-turn">
+	
+			<div data-param="items/parts/field5592" data-item-name="field5592" data-title="Элемент" data-animation-mode="appear" style="margin-bottom: 0px; border-radius: ; " data-setting-editable="true" class="builder-item part-button  form__button text-center animated-element before-animation" id="a736bf0030">
+	
+
+<button type="button" id="button7165299" class="btn f-btn  button-md btn-success" style="color: #FFFFFF; background-color: #199c68; ">
+
+			Записаться на обучение	</button>
+
+<script>
+$( function() {
+	var disableButton = function (e) {
+		if (window['prsbutton7165299']) {
+			e.preventDefault();
+			return false;
+		} else {
+			$('#button7165299').addClass('disabled');
+			window['prsbutton7165299'] = true;
+			setTimeout(function(){window['prsbutton7165299'] = false;$('#button7165299').removeClass('disabled');}, 6000);
+		}
+		return true;
+	};
+	$( '#button7165299' ).click( function(e) {
+		//disableButton(e);
+				location.href='#form';			} );
+});
+</script>
+	<div class="add-redesign-subblock" data-id="2208085363">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a736bf0030 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+	</div>
+
+
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder9831975 input[type="radio"]').length == 1 && $('#builder9831975 input[type="radio"]').prop('checked') ) {
+			$('#builder9831975 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+		</div>
+	</div>
+</div>
+
+</div></div>
+
+
+<style>
+	#ltBlock2208081636 hr.separator {
+		border-color: var(--color-text-dark);
+	}
+	#ltBlock2208081636 .f-text {
+		color: var(--color-text-dark);
+	}
+
+</style>
+<style>
+	#ltBlock2208081636 .f-text a:link {
+		color: var(--color-accent-active);
+	}
+	#ltBlock2208081636 .f-text a:visited {
+		color: var(--color-accent-active);
+	}
+</style>
+
+			
+
+<style>
+	#ltBlock2208081637 .lt-block-wrapper {
+		padding-top: 0px; padding-bottom: 30px; background-color: var(--color-bg-main2); color: var(--color-text-light)	}
+	#ltBlock2208081637 .lt-block-wrapper a:link {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081637 .lt-block-wrapper a:visited {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081637 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:link {
+		color: inherit;
+	}
+	#ltBlock2208081637 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:visited {
+		color: inherit;
+	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081637" data-block-id="2208085364" class="lt-block lt-view bld01 lt-onecolumn lt-onecolumn-common page_intensive" data-code="b-6213f">
+	<div class="lt-block-wrapper">
+		<style>
+		.col-md-var(--color-accent)  a:link {
+			color: var(--color-accent);
+		}
+		.col-md-var(--color-accent)  a:visited {
+			color: var(--color-accent);
+		}
+	</style>
+<div class="container">
+	<div class="row">
+		<div class="modal-block-content block-box col-md-12 text-left col-md-var(--color-accent)" style="color: var(--color-text-light)">
+			<div id="builder1202093" class="builder  animated-block" data-path="items" data-animation-order="in-turn">
+	
+			<div data-param="items/parts/header1" data-item-name="header1" data-title="Элемент" data-animation-mode="appear" style="margin-bottom: 0px; color: var(--color-accent); border-radius: ; " data-setting-editable="true" class="builder-item part-header  text-left animated-element before-animation" id="a30db9df92">
+	<div data-editable="true" data-param="items/parts/header1/inner/text" class="f-header f-header-52"><p><strong></strong></p>
+
+<p>Как будет проходить обучение:</p>
+
+
+
+
+
+
+
+<p><strong></strong></p></div>	<div class="add-redesign-subblock" data-id="2208085364">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a30db9df92 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="items/parts/field89494" data-item-name="field89494" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 0px; color: #000000; border-radius: ; " data-setting-editable="true" class="builder-item part-text  text-left" id="ad96a70abf">
+	<div style="" class="text-large f-text" data-param="items/parts/field89494/inner/text" data-editable="true"><p><span style="color: rgb(0, 0, 0);" class="redactor-inline-converted">- 2 модуля в неделю</span></p>
+
+<p><span style="color: rgb(0, 0, 0);" class="redactor-inline-converted">- Обучение в записи<br>- Доступ навсегда</span></p></div>	<div class="add-redesign-subblock" data-id="2208085364">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#ad96a70abf .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+	</div>
+
+
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder1202093 input[type="radio"]').length == 1 && $('#builder1202093 input[type="radio"]').prop('checked') ) {
+			$('#builder1202093 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+		</div>
+	</div>
+</div>
+
+</div></div>
+
+
+<style>
+	#ltBlock2208081637 hr.separator {
+		border-color: var(--color-text-light);
+	}
+	#ltBlock2208081637 .f-text {
+		color: var(--color-text-light);
+	}
+
+</style>
+<style>
+	#ltBlock2208081637 .f-text a:link {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081637 .f-text a:visited {
+		color: var(--color-accent);
+	}
+</style>
+
+			
+
+<style>
+	#ltBlock2208081639 .lt-block-wrapper {
+		padding-top: 0px; padding-bottom: 30px; background-color: var(--color-bg-main2); color: var(--color-text-light)	}
+	#ltBlock2208081639 .lt-block-wrapper a:link {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081639 .lt-block-wrapper a:visited {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081639 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:link {
+		color: inherit;
+	}
+	#ltBlock2208081639 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:visited {
+		color: inherit;
+	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081639" data-block-id="2208085365" class="lt-block lt-view bld01 lt-onecolumn lt-onecolumn-common page_intensive" data-code="b-7b620">
+	<div class="lt-block-wrapper">
+		<style>
+		.col-md-var(--color-accent)  a:link {
+			color: var(--color-accent);
+		}
+		.col-md-var(--color-accent)  a:visited {
+			color: var(--color-accent);
+		}
+	</style>
+<div class="container">
+	<div class="row">
+		<div class="modal-block-content block-box col-md-12 text-left col-md-var(--color-accent)" style="color: var(--color-text-light)">
+			<div id="builder8282269" class="builder  animated-block" data-path="items" data-animation-order="in-turn">
+	
+			<div data-param="items/parts/header1" data-item-name="header1" data-title="Элемент" data-animation-mode="appear" style="margin-bottom: 0px; color: var(--color-accent); border-radius: ; " data-setting-editable="true" class="builder-item part-header  text-center animated-element before-animation" id="ab7168a3f4">
+	<div data-editable="true" data-param="items/parts/header1/inner/text" class="f-header f-header-52">
+
+<p><span style="color: rgb(0, 0, 0);" class="redactor-inline-converted">Кто ведет обучение?</span></p>
+
+
+
+
+
+
+
+
+
+
+
+</div>	<div class="add-redesign-subblock" data-id="2208085365">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#ab7168a3f4 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+	</div>
+
+
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder8282269 input[type="radio"]').length == 1 && $('#builder8282269 input[type="radio"]').prop('checked') ) {
+			$('#builder8282269 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+		</div>
+	</div>
+</div>
+
+</div></div>
+
+
+<style>
+	#ltBlock2208081639 hr.separator {
+		border-color: var(--color-text-light);
+	}
+	#ltBlock2208081639 .f-text {
+		color: var(--color-text-light);
+	}
+
+</style>
+<style>
+	#ltBlock2208081639 .f-text a:link {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081639 .f-text a:visited {
+		color: var(--color-accent);
+	}
+</style>
+
+			
+	<style>
+		#ltBlock2208081641 .text-gradient {
+	color: var(--color-accent)!important;
+} 
+#ltBlock2208081641 
+.f-text p { 
+	display: flex;
+	gap: 1rem;
+	margin: 1.75rem 0;
+} 
+#ltBlock2208081641 
+.f-text p::before { 
+	content: '';
+	background: url("https://fs.getcourse.ru/fileservice/file/download/a/539771/sc/167/h/c0113cf9aedff501c024411e2c527d06.png");
+	background-size: contain;
+	background-repeat: no-repeat;
+	flex: 0 0 24px;
+}
+@media (max-width: 535px) { 
+#ltBlock2208081641 
+	.f-header p { 
+		text-align: center;
+	}
+}	</style>
+
+<style>
+	#ltBlock2208081641 .lt-block-wrapper {
+		padding-top: 30px; padding-bottom: 0px	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081641" data-block-id="2208085366" data-has-css="true" class="lt-block lt-view tcb-01 lt-twocolumn lt-twocolumn-standard page_intensive" data-code="b-3b58f">
+	<div class="lt-block-wrapper">
+	
+
+
+
+
+
+<div class="my-container flex-container wrap-col">
+	<div id="builder9474752" class="builder  flex-column col-md-6 col-md-offset-0" data-path="column1">
+			<div class="common-setting-link box-setting-link" data-icon-class="fa fa-adjust" data-param="column1/box" data-title="Стиль блока" data-setting-editable="true"></div>
+	
+			<div data-param="column1/parts/header1" data-item-name="header1" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; color: #000000; border-radius: ; " data-setting-editable="true" class="builder-item part-header  text-left" id="a3f25fd60b">
+	<div data-editable="true" data-param="column1/parts/header1/inner/text" class="f-header f-header-52"><p>Павел Пресняков</p></div>	<div class="add-redesign-subblock" data-id="2208085366">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a3f25fd60b .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="column1/parts/text1" data-item-name="text1" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-text  text-left" id="a253e1e306">
+	<div style="" class="text-subnormal f-text" data-param="column1/parts/text1/inner/text" data-editable="true"><p>Экс-Владелец 6&nbsp;интернет-магазинов, маркетолог<br></p>
+
+<p>В&nbsp;маркетинге больше 13&nbsp;лет и&nbsp;обучил несколько тысяч человек продвижению в&nbsp;социальных сетях</p>
+
+<p>Автор книги Лайк-Репост-Покупка<br></p>
+
+<p>Спикер самых крупных конференций по&nbsp;SMM и&nbsp;маркетинг Стачка, Суровый Питерский SMM, Белая конфа и&nbsp;тд</p>
+
+<p>Регулярно провожу свой семинар «Реальный маркетинг» в&nbsp;разных городах России</p><p>Открывал десятки бизнесов,&nbsp;делал их успешными и продавал.&nbsp;</p><p>Плательщик НДС с 2025 года&nbsp;</p><p>Совладелец IT&nbsp;Компании и Агентства по рекламе&nbsp;</p><p>Владелец онлайн-школы&nbsp;</p><p>Провел 5 потоков курса "Системный бизнес" для предпринимателей&nbsp;</p></div>	<div class="add-redesign-subblock" data-id="2208085366">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a253e1e306 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="column1/parts/field7044" data-item-name="field7044" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-separator " id="a4d7265a15">
+	<hr>	<div class="add-redesign-subblock" data-id="2208085366">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a4d7265a15 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+	</div>
+
+			<style>
+			#builder9474752 {
+				;			}
+		</style>
+	
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder9474752 input[type="radio"]').length == 1 && $('#builder9474752 input[type="radio"]').prop('checked') ) {
+			$('#builder9474752 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+
+	<div id="builder8915179" class="builder  flex-column col-md-6 col-md-offset-0" data-path="column2">
+			<div class="common-setting-link box-setting-link" data-icon-class="fa fa-adjust" data-param="column2/box" data-title="Стиль блока" data-setting-editable="true"></div>
+	
+			<div data-param="column2/parts/image1" data-item-name="image1" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 40px; border-radius: ; " data-setting-editable="true" class="builder-item part-image  text-left" id="a91a367248">
+	<div id="image2106864" class="image-box" data-img-title="" data-img-src="//fs-thb02.getcourse.ru/fileservice/file/thumbnail/h/46cbf2b6eba0bed88e763f3f9fc009b6.jpg/s/s1200x/a/539771/sc/393">
+	<img class="lazyload" data-src="//fs-thb02.getcourse.ru/fileservice/file/thumbnail/h/46cbf2b6eba0bed88e763f3f9fc009b6.jpg/s/s1200x/a/539771/sc/393" data-param="column2/parts/image1/inner/image" data-hash="46cbf2b6eba0bed88e763f3f9fc009b6.jpg" data-image-editable="true" title="" alt="" style="">
+		<div data-editable="true" data-param="column2/parts/image1/inner/image/caption" class="lt-image-caption">
+			</div>
+	</div>
+
+	<div class="add-redesign-subblock" data-id="2208085366">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a91a367248 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+	</div>
+
+			<style>
+			#builder8915179 {
+				align-self:flex-end;			}
+		</style>
+	
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder8915179 input[type="radio"]').length == 1 && $('#builder8915179 input[type="radio"]').prop('checked') ) {
+			$('#builder8915179 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+</div>
+</div></div>
+
+
+
+			
+	<style>
+		#ltBlock2208081646 .container {
+	max-width: unset;
+} 
+#ltBlock2208081646 
+.thumbnails-list { 
+	display: flex;
+	flex-wrap: wrap;
+} 
+#ltBlock2208081646 
+a { 
+	flex: 0 0 calc(25% - 10px);
+} 
+#ltBlock2208081646 
+img { 
+	aspect-ratio: 1.42;
+	object-fit: cover;
+}
+@media (max-width: 535px) { 
+#ltBlock2208081646 
+	a { 
+		flex: 0 0 calc(33% - px);
+	}
+}	</style>
+
+<style>
+	#ltBlock2208081646 .lt-block-wrapper {
+		padding-top: 0px; padding-bottom: 30px	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081646" data-block-id="2208085368" data-has-css="true" class="lt-block lt-view glr01 lt-gallery lt-gallery-list" data-code="b-5201c">
+	<div class="lt-block-wrapper">
+	<div class="container">
+	<div class="row">
+		<div class="modal-block-content block-box col-md-12" style="">
+			<div id="links" class="text-center thumbnails-list">
+					<a id="thumbnail-697fccd7e1a8d" title="" href="https://fs23.getcourse.ru/fileservice/file/download/a/539771/sc/203/h/7d5b6b7ec76e65944e414b271cf480cb.jpeg?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" data-gallery="thumbnail-697fccd7e1a8d">
+			<img loading="lazy" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/203(1)">
+		</a>
+					<a id="thumbnail-697fccd7e1ae0" title="" href="https://fs01.getcourse.ru/fileservice/file/download/a/539771/sc/347/h/4dc2edd3747a5c23d874bd6ceb98af27.jpg?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" data-gallery="thumbnail-697fccd7e1ae0">
+			<img loading="lazy" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/347">
+		</a>
+					<a id="thumbnail-697fccd7e1af1" title="" href="https://fs17.getcourse.ru/fileservice/file/download/a/539771/sc/63/h/86c5208d4746ca8247d88a1577f81a3a.png?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" data-gallery="thumbnail-697fccd7e1af1">
+			<img loading="lazy" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/63">
+		</a>
+					<a id="thumbnail-697fccd7e1afe" title="" href="https://fs23.getcourse.ru/fileservice/file/download/a/539771/sc/283/h/0c24067591d08de97dcdf25b3de3b0db.jpg?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" data-gallery="thumbnail-697fccd7e1afe">
+			<img loading="lazy" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/283">
+		</a>
+					<a id="thumbnail-697fccd7e1b0a" title="" href="https://fs17.getcourse.ru/fileservice/file/download/a/539771/sc/146/h/7c5bf98c5a97c249fc88f70577676c88.jpg?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" data-gallery="thumbnail-697fccd7e1b0a">
+			<img loading="lazy" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/146">
+		</a>
+					<a id="thumbnail-697fccd7e1b15" title="" href="https://fs26.getcourse.ru/fileservice/file/download/a/539771/sc/83/h/9551d70013354bd6007cdbdc3d46e506.jpeg?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" data-gallery="thumbnail-697fccd7e1b15">
+			<img loading="lazy" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/83">
+		</a>
+					<a id="thumbnail-697fccd7e1b20" title="" href="https://fs17.getcourse.ru/fileservice/file/download/a/539771/sc/215/h/5e83eac582b10b3db25202dc2a2f4c80.jpg?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" data-gallery="thumbnail-697fccd7e1b20">
+			<img loading="lazy" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/215">
+		</a>
+					<a id="thumbnail-697fccd7e1b30" title="" href="https://fs02.getcourse.ru/fileservice/file/download/a/539771/sc/275/h/cc15a624d908b4bfe303f07d3becc236.png?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" data-gallery="thumbnail-697fccd7e1b30">
+			<img loading="lazy" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/275">
+		</a>
+	</div>
+		</div>
+	</div>
+</div>
+
+</div></div>
+
+
+
+			
+
+<style>
+	#ltBlock2208081649 .lt-block-wrapper {
+		padding-top: 0px; padding-bottom: 0px	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081649" data-block-id="2208085369" class="lt-block lt-view anc01 lt-anchor lt-anchor-common lt-system-block lt-invisible-block" data-code="b-ffae6">
+	<div class="lt-block-wrapper">
+	<div class="edit-block btn-settings ">
+						Ссылка на это место страницы:
+			<a class="anchor" data-anchor="form" name="form" id="form" href="https://pavelpresnyakov.ru/kmp?scan=1360311a-29d3-46e0-bc41-c839ca00b365&amp;scan_id=33e9aa16-da5c-4070-ac5b-17de4297e255#form">
+				#form			</a>
+			</div>
+</div></div>
+
+
+
+						
+	<style>
+	#ltBlock2208081652 .lt-tsr-block {color:#ffffff;
+background-color:#0098f6;padding-left: 10px;
+padding-right: 10px;
+padding-top: 20px;
+padding-bottom: 20px;border: 0px solid #999999;border-radius: 10px;-webkit-flex: 1 0 200px;-ms-flex: 1 0 200px;-moz-flex: 1 0 200px;flex: 1 0 200px;margin: 10px;} 
+#ltBlock2208081652 
+.lt-tsr-block .image-wrapper { height:200px;
+}	</style>
+
+<style>
+	#ltBlock2208081652 .lt-block-wrapper {
+		padding-top: 45px; padding-bottom: 45px; color: #ffffff	}
+	#ltBlock2208081652 .lt-block-wrapper a:link {
+		color: #ffffff;
+	}
+	#ltBlock2208081652 .lt-block-wrapper a:visited {
+		color: #ffffff;
+	}
+	#ltBlock2208081652 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:link {
+		color: inherit;
+	}
+	#ltBlock2208081652 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:visited {
+		color: inherit;
+	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081652" data-block-id="2208085371" class="lt-block lt-view tsr01 lt-tsr" data-code="b-a333e">
+	<div class="lt-block-wrapper">
+		<style>
+		.col-md-ffffff  a:link {
+			color: #ffffff;
+		}
+		.col-md-ffffff  a:visited {
+			color: #ffffff;
+		}
+	</style>
+<div class="container">
+	<div class="row">
+		<div class="modal-block-content block-box col-md-12 text-center col-md-ffffff" style="color: #ffffff">
+			
+
+
+
+
+
+
+
+<div class="flex-row  ">
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+										
+		<div data-editable="true" data-param="data/0/header" class="  f-header lt-tsr-text-part header">
+				
+				
+				
+				<p><span style="color: rgb(255, 255, 255);" class="redactor-inline-converted">Тариф «Смотреть!»</span></p>												</div>
+														
+										
+		<div data-editable="true" data-param="data/0/price" class="  f-price lt-tsr-text-part price">
+				
+				
+				
+				
+				
+				
+				<p>от 1662&nbsp;руб/месяц</p>
+
+<h4>или <strong>3</strong><strong class="redactor-inline-converted">9</strong><strong class="redactor-inline-converted">&nbsp;900</strong>&nbsp;рублей полностью</h4>																					</div>
+														
+										
+		<div data-editable="true" data-param="data/0/description" class="  f-description lt-tsr-text-part description">
+				
+				
+				
+				<p>доступ к курсу&nbsp;<strong>навсегда</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p><br></p>												</div>
+														
+										
+<div class="button">
+	
+
+<button type="button" id="button4708037" class="btn f-btn  button-md btn-success" style="color: #FFFFFF; background-color: #000000; border-radius:  !important; ">
+
+			Записаться	</button>
+
+<script>
+$( function() {
+	var disableButton = function (e) {
+		if (window['prsbutton4708037']) {
+			e.preventDefault();
+			return false;
+		} else {
+			$('#button4708037').addClass('disabled');
+			window['prsbutton4708037'] = true;
+			setTimeout(function(){window['prsbutton4708037'] = false;$('#button4708037').removeClass('disabled');}, 6000);
+		}
+		return true;
+	};
+	$( '#button4708037' ).click( function(e) {
+		//disableButton(e);
+				ltShowModalBlock("b-93eb4")			} );
+});
+</script>
+</div>																	<div class="common-setting-link in-block-setting-link" data-param="data/0" data-title="Элемент 0" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+										
+		<div data-editable="true" data-param="data/1/header" class="  f-header lt-tsr-text-part header">
+				
+				
+				
+				
+				<p><span style="color: rgb(255, 255, 255);" class="redactor-inline-converted">Тариф «Делать!»&nbsp;</span></p>															</div>
+														
+										
+		<div data-editable="true" data-param="data/1/price" class="  f-price lt-tsr-text-part price">
+				
+				
+				
+				
+				<p>от 2495&nbsp;руб/месяц</p>
+
+<h4>или<span class="redactor-inline-converted"><strong class="redactor-inline-converted">&nbsp;59</strong><strong class="redactor-inline-converted">&nbsp;900</strong></span>&nbsp;рублей полностью</h4>															</div>
+														
+										
+		<div data-editable="true" data-param="data/1/description" class="  f-description lt-tsr-text-part description">
+				
+				
+				
+				
+				
+				<p>доступ к курсу <strong class="redactor-inline-converted">навсегда</strong></p><p><strong class="redactor-inline-converted">+чат где отвечу на любые вопросы&nbsp;<br></strong><strong>+6 месяцев закрытого клуба "Синдикат"</strong></p>
+
+<p><strong>+интенсив "7 каналов трафика"&nbsp;<br>+интенсив по нейросетям</strong></p>																		</div>
+														
+										
+<div class="button">
+	
+
+<button type="button" id="button6698263" class="btn f-btn  button-md btn-success" style="color: #FFFFFF; background-color: #000000; border-radius:  !important; ">
+
+			Записаться	</button>
+
+<script>
+$( function() {
+	var disableButton = function (e) {
+		if (window['prsbutton6698263']) {
+			e.preventDefault();
+			return false;
+		} else {
+			$('#button6698263').addClass('disabled');
+			window['prsbutton6698263'] = true;
+			setTimeout(function(){window['prsbutton6698263'] = false;$('#button6698263').removeClass('disabled');}, 6000);
+		}
+		return true;
+	};
+	$( '#button6698263' ).click( function(e) {
+		//disableButton(e);
+				ltShowModalBlock("b-2b2e7")			} );
+});
+</script>
+</div>																	<div class="common-setting-link in-block-setting-link" data-param="data/1" data-title="Элемент 1" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+						<div class="lt-tsr-block flex-column">
+
+			<div class="lt-tsr-content">
+
+														
+										
+		<div data-editable="true" data-param="data/2/header" class="  f-header lt-tsr-text-part header">
+				
+				
+				<p>Тариф «Премиум»</p>									</div>
+														
+										
+		<div data-editable="true" data-param="data/2/price" class="  f-price lt-tsr-text-part price">
+				
+				
+				
+				
+				
+				<p>от 4995 руб/месяц</p>
+
+<h4>или <strong>11</strong><strong class="redactor-inline-converted">9&nbsp;900</strong>&nbsp;рублей полностью</h4>																		</div>
+														
+										
+		<div data-editable="true" data-param="data/2/description" class="  f-description lt-tsr-text-part description">
+				
+				
+				<p>Всё, что в тарифе "Делать!"</p><p><br></p><p><strong>+курс по ВКонтакте 4.0</strong></p><p><strong class="redactor-inline-converted">+запись курса системный бизнес&nbsp;<br>+синдикат на 12 месяцев&nbsp;<br>+2 личные консультации с Павлом&nbsp;<br>+книга с автографом Павла</strong></p>									</div>
+														
+										
+<div class="button">
+	
+
+<button type="button" id="button1639819" class="btn f-btn  button-md btn-success" style="color: #FFFFFF; background-color: #000000; border-radius:  !important; ">
+
+			Записаться	</button>
+
+<script>
+$( function() {
+	var disableButton = function (e) {
+		if (window['prsbutton1639819']) {
+			e.preventDefault();
+			return false;
+		} else {
+			$('#button1639819').addClass('disabled');
+			window['prsbutton1639819'] = true;
+			setTimeout(function(){window['prsbutton1639819'] = false;$('#button1639819').removeClass('disabled');}, 6000);
+		}
+		return true;
+	};
+	$( '#button1639819' ).click( function(e) {
+		//disableButton(e);
+				ltShowModalBlock("b-fd272")			} );
+});
+</script>
+</div>																	<div class="common-setting-link in-block-setting-link" data-param="data/2" data-title="Элемент 2" data-setting-editable="true"></div>
+				
+																										</div>
+
+		</div>
+		</div>
+
+
+
+	<style>
+		#ltBlock2208081652 .lt-tsr-text-part {
+			color: #ffffff		}
+
+	</style>
+	<style>
+		#ltBlock2208081652 .lt-tsr-text-part a:link {
+			color: #ffffff		}
+		
+		#ltBlock2208081652 .lt-tsr-text-part a:visited {
+			color: #ffffff		}
+	</style>
+
+		</div>
+	</div>
+</div>
+
+</div></div>
+
+
+<style>
+	#ltBlock2208081652 hr.separator {
+		border-color: #ffffff;
+	}
+	#ltBlock2208081652 .f-text {
+		color: #ffffff;
+	}
+
+</style>
+<style>
+	#ltBlock2208081652 .f-text a:link {
+		color: #ffffff;
+	}
+	#ltBlock2208081652 .f-text a:visited {
+		color: #ffffff;
+	}
+</style>
+
+			
+
+<style>
+	#ltBlock2208081657 .lt-block-wrapper {
+		padding-top: 0px; padding-bottom: 0px; background-color: var(--color-bg-main2); color: var(--color-text-light)	}
+	#ltBlock2208081657 .lt-block-wrapper a:link {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081657 .lt-block-wrapper a:visited {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081657 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:link {
+		color: inherit;
+	}
+	#ltBlock2208081657 .lt-block-wrapper .f-header-26.f-header.lt-tsr-text-part.header a:visited {
+		color: inherit;
+	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081657" data-block-id="2208085373" class="lt-block lt-view bld01 lt-onecolumn lt-onecolumn-common page_intensive" data-code="b-6e9fa">
+	<div class="lt-block-wrapper">
+		<style>
+		.col-md-var(--color-accent)  a:link {
+			color: var(--color-accent);
+		}
+		.col-md-var(--color-accent)  a:visited {
+			color: var(--color-accent);
+		}
+	</style>
+<div class="container">
+	<div class="row">
+		<div class="modal-block-content block-box col-md-12 text-left col-md-var(--color-accent)" style="color: var(--color-text-light)">
+			<div id="builder7039919" class="builder  animated-block" data-path="items" data-animation-order="in-turn">
+	
+			<div data-param="items/parts/field62724" data-item-name="field62724" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-button  text-right" id="a80bdf3431">
+	
+
+<button type="button" id="button9437475" class="btn f-btn  button-md btn-success" style="color: #FFFFFF; background-color: #0098f6; border-radius: 16px !important; ">
+
+			Написать менеджеру	</button>
+
+<script>
+$( function() {
+	var disableButton = function (e) {
+		if (window['prsbutton9437475']) {
+			e.preventDefault();
+			return false;
+		} else {
+			$('#button9437475').addClass('disabled');
+			window['prsbutton9437475'] = true;
+			setTimeout(function(){window['prsbutton9437475'] = false;$('#button9437475').removeClass('disabled');}, 6000);
+		}
+		return true;
+	};
+	$( '#button9437475' ).click( function(e) {
+		//disableButton(e);
+				location.href='https://wa.me/79192675176';			} );
+});
+</script>
+	<div class="add-redesign-subblock" data-id="2208085373">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a80bdf3431 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+	</div>
+
+
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder7039919 input[type="radio"]').length == 1 && $('#builder7039919 input[type="radio"]').prop('checked') ) {
+			$('#builder7039919 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+		</div>
+	</div>
+</div>
+
+</div></div>
+
+
+<style>
+	#ltBlock2208081657 hr.separator {
+		border-color: var(--color-text-light);
+	}
+	#ltBlock2208081657 .f-text {
+		color: var(--color-text-light);
+	}
+
+</style>
+<style>
+	#ltBlock2208081657 .f-text a:link {
+		color: var(--color-accent);
+	}
+	#ltBlock2208081657 .f-text a:visited {
+		color: var(--color-accent);
+	}
+</style>
+
+			
+
+<style>
+	#ltBlock2208081659 .lt-block-wrapper {
+		padding-top: 0px; padding-bottom: 0px; background-color: transparent; color: #ffffff	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081659" data-block-id="2208085374" class="lt-block lt-view form02 lt-form lt-form-normal lt-modal-block lt-modal-block lt-system-block" data-code="b-93eb4" data-modal-width="600">
+	<div class="lt-block-wrapper">
+	<div class="container">
+	<div class="row">
+		<div class="modal-block-content block-box col-md-12" style="color: #ffffff">
+			
+<form id="ltForm9211176" class="
+		lt-normal-form
+		lt-form-inner
+		lt-form
+							" data-id="2208085374" action="https://pavelpresnyakov.ru/pl/lite/block-public/process?id=2208085374" method="post" data-open-new-window="0" data-sequential-request="1">
+	<input type="hidden" name="formParams[setted_offer_id]" class="external-value offer_id">
+	<input type="hidden" name="formParams[willCreatePaidDeal]" value="1">
+				<input type="hidden" name="__gc__internal__form__helper" value="https://pavelpresnyakov.ru/kmp?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}">
+		<input type="hidden" name="__gc__internal__form__helper_ref" value="https://pavelpresnyakov.ru/pl/cms/page?scan=7ddc1411-824b-4229-a99c-ba5b610e0090&amp;scan_id=33e9aa16-da5c-4070-ac5b-17de4297e255">
+			
+	<div class="form-result-block"></div>
+
+	<div class="form-content">
+		<div id="builder687309" class="builder " data-path="form/items">
+	
+			<div data-param="form/items/parts/header1" data-item-name="header1" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-header  text-center" id="ac632539f6">
+	<div data-editable="true" data-param="form/items/parts/header1/inner/text" class="f-header f-header-82"><h2>Тариф «Смотреть!»</h2></div>	<div class="add-redesign-subblock" data-id="2208085374">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#ac632539f6 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/header1_63" data-item-name="header1_63" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-header  text-center" id="afb7be40e1">
+	<div data-editable="true" data-param="form/items/parts/header1_63/inner/text" class="f-header f-header-82"><h2><strong>от 1662₽/мес</strong></h2></div>	<div class="add-redesign-subblock" data-id="2208085374">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#afb7be40e1 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/header1_71" data-item-name="header1_71" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-header  text-center" id="ac81226856">
+	<div data-editable="true" data-param="form/items/parts/header1_71/inner/text" class="f-header f-header-26"><p>или 39<span class="redactor-inline-converted">.900</span>₽ полностью</p></div>	<div class="add-redesign-subblock" data-id="2208085374">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#ac81226856 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/emailField" data-item-name="emailField" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-userField " id="a01b7c71ed">
+	<div id="fieldStandard9195937" data-hide-filled="0">
+	
+	<div class="field-content">
+		
+				<input type="text" maxlength="60" class="f-input" placeholder="Введите ваш эл. адрес" name="formParams[email]" value="prov02@mail.ru" readonly="readonly" spellcheck="false" autocorrect="off" autocapitalize="off">
+		<div id="email-err-text"></div><div id="email_dropdown" style="position: absolute; top: 60px; left: 0px; display: none;"></div></div>
+</div>
+	<div class="add-redesign-subblock" data-id="2208085374">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a01b7c71ed .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/nameField" data-item-name="nameField" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-userField " id="a9b2acdcf0">
+	<div id="fieldStandard9460619" data-hide-filled="0">
+	
+	<div class="field-content">
+		
+				<input type="text" maxlength="60" class="f-input" placeholder="Введите ваше имя" name="formParams[full_name]" value="Павел Пресняков">
+		</div>
+</div>
+	<div class="add-redesign-subblock" data-id="2208085374">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a9b2acdcf0 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/phoneField" data-item-name="phoneField" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-userField " id="a34916dece">
+	<div id="fieldStandard8380929" data-hide-filled="0">
+	
+	<div class="field-content">
+		
+			    <input type="text" class="f-input" name="formParams[phone]" value="+79606520839" maxlength="60" placeholder="Введите ваш телефон">    	</div>
+</div>
+	<div class="add-redesign-subblock" data-id="2208085374">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a34916dece .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/submitButton" data-item-name="submitButton" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-button  text-center" id="ad3625db3f">
+	
+
+<button type="submit" id="button4298684" data-btn-locked="" class="btn f-btn  button-lg btn-success" style="color: #FFFFFF; background-color: #000000; border-radius: 16px !important; ">
+
+			Записаться	</button>
+
+<script>
+$( function() {
+	var disableButton = function (e) {
+		if (window['prsbutton4298684']) {
+			e.preventDefault();
+			return false;
+		} else {
+			$('#button4298684').addClass('disabled');
+			window['prsbutton4298684'] = true;
+			setTimeout(function(){window['prsbutton4298684'] = false;$('#button4298684').removeClass('disabled');}, 6000);
+		}
+		return true;
+	};
+	$( '#button4298684' ).click( function(e) {
+		//disableButton(e);
+			} );
+});
+</script>
+	<div class="add-redesign-subblock" data-id="2208085374">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#ad3625db3f .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/field72981" data-item-name="field72981" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-text " id="af35257270">
+	<div style="" class="text-normal f-text" data-param="form/items/parts/field72981/inner/text" data-editable="true"><h5>Нажимая на&nbsp;кнопку&nbsp;Вы даёте согласие на&nbsp;обработку персональных данных. Ознакомиться можете прочитав <a href="https://pavelpresnyakov.ru/tgpersonal?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}"><span style="color: rgb(255, 255, 255);" class="redactor-inline-converted"><strong class="redactor-inline-converted">Политику персональных данных.</strong></span></a></h5>
+
+<h5>Нажимая на&nbsp;кнопку «Записаться», Вы&nbsp;соглашаетесь с&nbsp;условиями <a href="https://pavelpresnyakov.ru/tgoferta?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}"><strong><span style="color: rgb(255, 255, 255);" class="redactor-inline-converted">Договора оферты.</span></strong></a></h5></div>	<div class="add-redesign-subblock" data-id="2208085374">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#af35257270 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+	</div>
+
+
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder687309 input[type="radio"]').length == 1 && $('#builder687309 input[type="radio"]').prop('checked') ) {
+			$('#builder687309 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+	</div>
+
+	<div class="common-setting-link box-setting-link" data-icon-class="fa fa-adjust" data-param="form/formBox" data-title="Стиль блока" data-setting-editable="true"></div>
+	<div class="common-setting-link form-setting-link" data-icon-class="fa fa-wpforms" data-param="form/handler" data-title="Что делать после заполнения" data-setting-editable="true"></div>
+<input type="hidden" name="formParams[clarity_uid]" value="yxjyQJ3aGAoa06SzjofnXcau-gn_RSm6" style="display:none;position:absolute;width:0;max-width:0;height:0;max-height:0;left:-999999999px;pointer-events:none;vizability:hidden;"></form>
+<script>
+	$( function() {
+		$('#ltForm9211176').liteForm();
+	} );
+</script>
+
+
+
+	<style>
+		#ltForm9211176 {
+		;		}
+	</style>
+		</div>
+	</div>
+</div>
+
+	<style>
+		#ltBlock2208081659 .block-box {
+			color:#000000;
+background-color:#0098f6;padding-left: 40px;
+padding-right: 40px;
+padding-top: 30px;
+padding-bottom: 30px;border: 0px solid ;border-radius: 16px;		}
+	</style>
+</div></div>
+
+
+<style>
+	#ltBlock2208081659 hr.separator {
+		border-color: #ffffff;
+	}
+	#ltBlock2208081659 .f-text {
+		color: #ffffff;
+	}
+
+</style>
+
+			
+
+<style>
+	#ltBlock2208081662 .lt-block-wrapper {
+		padding-top: 0px; padding-bottom: 0px; background-color: transparent; color: #ffffff	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081662" data-block-id="2208085375" class="lt-block lt-view form02 lt-form lt-form-normal lt-modal-block lt-modal-block lt-system-block" data-code="b-2b2e7" data-modal-width="600">
+	<div class="lt-block-wrapper">
+	<div class="container">
+	<div class="row">
+		<div class="modal-block-content block-box col-md-12" style="color: #ffffff">
+			
+<form id="ltForm7599554" class="
+		lt-normal-form
+		lt-form-inner
+		lt-form
+							" data-id="2208085375" action="https://pavelpresnyakov.ru/pl/lite/block-public/process?id=2208085375" method="post" data-open-new-window="0" data-sequential-request="1">
+	<input type="hidden" name="formParams[setted_offer_id]" class="external-value offer_id">
+	<input type="hidden" name="formParams[willCreatePaidDeal]" value="1">
+				<input type="hidden" name="__gc__internal__form__helper" value="https://pavelpresnyakov.ru/kmp?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}">
+		<input type="hidden" name="__gc__internal__form__helper_ref" value="https://pavelpresnyakov.ru/pl/cms/page?scan=7ddc1411-824b-4229-a99c-ba5b610e0090&amp;scan_id=33e9aa16-da5c-4070-ac5b-17de4297e255">
+			
+	<div class="form-result-block"></div>
+
+	<div class="form-content">
+		<div id="builder3899998" class="builder " data-path="form/items">
+	
+			<div data-param="form/items/parts/header1" data-item-name="header1" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-header  text-center" id="a60bd8fb91">
+	<div data-editable="true" data-param="form/items/parts/header1/inner/text" class="f-header f-header-82"><h2>Тариф «Делать!»</h2></div>	<div class="add-redesign-subblock" data-id="2208085375">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a60bd8fb91 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/header1_63" data-item-name="header1_63" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-header  text-center" id="a1f5f86eae">
+	<div data-editable="true" data-param="form/items/parts/header1_63/inner/text" class="f-header f-header-82"><h2><strong>от 2495₽/мес</strong></h2></div>	<div class="add-redesign-subblock" data-id="2208085375">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a1f5f86eae .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/header1_71" data-item-name="header1_71" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-header  text-center" id="a06ab60cd1">
+	<div data-editable="true" data-param="form/items/parts/header1_71/inner/text" class="f-header f-header-26"><p>или 59.<span class="redactor-inline-converted">900</span>₽ полностью</p></div>	<div class="add-redesign-subblock" data-id="2208085375">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a06ab60cd1 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/emailField" data-item-name="emailField" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-userField " id="a5dbe25e5c">
+	<div id="fieldStandard7018024" data-hide-filled="0">
+	
+	<div class="field-content">
+		
+				<input type="text" maxlength="60" class="f-input" placeholder="Введите ваш эл. адрес" name="formParams[email]" value="prov02@mail.ru" readonly="readonly">
+		</div>
+</div>
+	<div class="add-redesign-subblock" data-id="2208085375">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a5dbe25e5c .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/nameField" data-item-name="nameField" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-userField " id="ae9f742ce9">
+	<div id="fieldStandard7870273" data-hide-filled="0">
+	
+	<div class="field-content">
+		
+				<input type="text" maxlength="60" class="f-input" placeholder="Введите ваше имя" name="formParams[full_name]" value="Павел Пресняков">
+		</div>
+</div>
+	<div class="add-redesign-subblock" data-id="2208085375">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#ae9f742ce9 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/phoneField" data-item-name="phoneField" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-userField " id="adcdc52fd0">
+	<div id="fieldStandard9536042" data-hide-filled="0">
+	
+	<div class="field-content">
+		
+			    <input type="text" class="f-input" name="formParams[phone]" value="+79606520839" maxlength="60" placeholder="Введите ваш телефон">    	</div>
+</div>
+	<div class="add-redesign-subblock" data-id="2208085375">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#adcdc52fd0 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/submitButton" data-item-name="submitButton" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-button  text-center" id="a543eb869a">
+	
+
+<button type="submit" id="button1205387" data-btn-locked="" class="btn f-btn  button-lg btn-success" style="color: #FFFFFF; background-color: #000000; border-radius: 16px !important; ">
+
+			Записаться	</button>
+
+<script>
+$( function() {
+	var disableButton = function (e) {
+		if (window['prsbutton1205387']) {
+			e.preventDefault();
+			return false;
+		} else {
+			$('#button1205387').addClass('disabled');
+			window['prsbutton1205387'] = true;
+			setTimeout(function(){window['prsbutton1205387'] = false;$('#button1205387').removeClass('disabled');}, 6000);
+		}
+		return true;
+	};
+	$( '#button1205387' ).click( function(e) {
+		//disableButton(e);
+			} );
+});
+</script>
+	<div class="add-redesign-subblock" data-id="2208085375">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a543eb869a .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/field22016" data-item-name="field22016" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-text " id="a09fac2030">
+	<div style="" class="text-normal f-text" data-param="form/items/parts/field22016/inner/text" data-editable="true"><h5>Нажимая на&nbsp;кнопку&nbsp;Вы даёте согласие на&nbsp;обработку персональных данных. Ознакомиться можете прочитав <a href="https://pavelpresnyakov.ru/tgpersonal?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" target="_blank"><span style="color: rgb(255, 255, 255);" class="redactor-inline-converted"><strong class="redactor-inline-converted">Политику персональных данных.</strong></span></a></h5>
+
+<h5>Нажимая на&nbsp;кнопку «Записаться», Вы&nbsp;соглашаетесь с&nbsp;условиями <span style="color: rgb(255, 255, 255);" class="redactor-inline-converted"><a href="https://pavelpresnyakov.ru/tgoferta?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" target="_blank"><span style="color: rgb(255, 255, 255);" class="redactor-inline-converted"><strong>Договора оферты.</strong></span></a></span></h5></div>	<div class="add-redesign-subblock" data-id="2208085375">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a09fac2030 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+	</div>
+
+
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder3899998 input[type="radio"]').length == 1 && $('#builder3899998 input[type="radio"]').prop('checked') ) {
+			$('#builder3899998 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+	</div>
+
+	<div class="common-setting-link box-setting-link" data-icon-class="fa fa-adjust" data-param="form/formBox" data-title="Стиль блока" data-setting-editable="true"></div>
+	<div class="common-setting-link form-setting-link" data-icon-class="fa fa-wpforms" data-param="form/handler" data-title="Что делать после заполнения" data-setting-editable="true"></div>
+<input type="hidden" name="formParams[clarity_uid]" value="yxjyQJ3aGAoa06SzjofnXcau-gn_RSm6" style="display:none;position:absolute;width:0;max-width:0;height:0;max-height:0;left:-999999999px;pointer-events:none;vizability:hidden;"></form>
+<script>
+	$( function() {
+		$('#ltForm7599554').liteForm();
+	} );
+</script>
+
+
+
+	<style>
+		#ltForm7599554 {
+		;		}
+	</style>
+		</div>
+	</div>
+</div>
+
+	<style>
+		#ltBlock2208081662 .block-box {
+			color:#000000;
+background-color:#0098f6;padding-left: 40px;
+padding-right: 40px;
+padding-top: 30px;
+padding-bottom: 30px;border: 0px solid ;border-radius: 16px;		}
+	</style>
+</div></div>
+
+
+<style>
+	#ltBlock2208081662 hr.separator {
+		border-color: #ffffff;
+	}
+	#ltBlock2208081662 .f-text {
+		color: #ffffff;
+	}
+
+</style>
+
+			
+
+<style>
+	#ltBlock2208081663 .lt-block-wrapper {
+		padding-top: 0px; padding-bottom: 0px; background-color: transparent; color: #ffffff	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081663" data-block-id="2208085376" class="lt-block lt-view form02 lt-form lt-form-normal lt-modal-block lt-modal-block lt-system-block" data-code="b-fd272" data-modal-width="600">
+	<div class="lt-block-wrapper">
+	<div class="container">
+	<div class="row">
+		<div class="modal-block-content block-box col-md-12" style="color: #ffffff">
+			
+<form id="ltForm7837510" class="
+		lt-normal-form
+		lt-form-inner
+		lt-form
+							" data-id="2208085376" action="https://pavelpresnyakov.ru/pl/lite/block-public/process?id=2208085376" method="post" data-open-new-window="0" data-sequential-request="1">
+	<input type="hidden" name="formParams[setted_offer_id]" class="external-value offer_id">
+	<input type="hidden" name="formParams[willCreatePaidDeal]" value="1">
+				<input type="hidden" name="__gc__internal__form__helper" value="https://pavelpresnyakov.ru/kmp?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}">
+		<input type="hidden" name="__gc__internal__form__helper_ref" value="https://pavelpresnyakov.ru/pl/cms/page?scan=7ddc1411-824b-4229-a99c-ba5b610e0090&amp;scan_id=33e9aa16-da5c-4070-ac5b-17de4297e255">
+			
+	<div class="form-result-block"></div>
+
+	<div class="form-content">
+		<div id="builder8776168" class="builder " data-path="form/items">
+	
+			<div data-param="form/items/parts/header1" data-item-name="header1" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-header  text-center" id="a1fc3473f3">
+	<div data-editable="true" data-param="form/items/parts/header1/inner/text" class="f-header f-header-82"><h2>Тариф «Премиум»</h2></div>	<div class="add-redesign-subblock" data-id="2208085376">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a1fc3473f3 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/header1_63" data-item-name="header1_63" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-header  text-center" id="a40fa6f0f4">
+	<div data-editable="true" data-param="form/items/parts/header1_63/inner/text" class="f-header f-header-82"><h2><strong>от 4995₽/мес</strong></h2></div>	<div class="add-redesign-subblock" data-id="2208085376">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a40fa6f0f4 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/header1_71" data-item-name="header1_71" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-header  text-center" id="a52da485fe">
+	<div data-editable="true" data-param="form/items/parts/header1_71/inner/text" class="f-header f-header-26"><p>или 119.<span class="redactor-inline-converted">900</span>₽ полностью</p></div>	<div class="add-redesign-subblock" data-id="2208085376">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a52da485fe .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/emailField" data-item-name="emailField" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-userField " id="a251fcafc3">
+	<div id="fieldStandard8132751" data-hide-filled="0">
+	
+	<div class="field-content">
+		
+				<input type="text" maxlength="60" class="f-input" placeholder="Введите ваш эл. адрес" name="formParams[email]" value="prov02@mail.ru" readonly="readonly">
+		</div>
+</div>
+	<div class="add-redesign-subblock" data-id="2208085376">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a251fcafc3 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/nameField" data-item-name="nameField" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-userField " id="a305860030">
+	<div id="fieldStandard7579196" data-hide-filled="0">
+	
+	<div class="field-content">
+		
+				<input type="text" maxlength="60" class="f-input" placeholder="Введите ваше имя" name="formParams[full_name]" value="Павел Пресняков">
+		</div>
+</div>
+	<div class="add-redesign-subblock" data-id="2208085376">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a305860030 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/phoneField" data-item-name="phoneField" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-userField " id="a46739ce96">
+	<div id="fieldStandard5506832" data-hide-filled="0">
+	
+	<div class="field-content">
+		
+			    <input type="text" class="f-input" name="formParams[phone]" value="+79606520839" maxlength="60" placeholder="Введите ваш телефон">    	</div>
+</div>
+	<div class="add-redesign-subblock" data-id="2208085376">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a46739ce96 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/submitButton" data-item-name="submitButton" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-button  text-center" id="a24be4d1df">
+	
+
+<button type="submit" id="button7171547" data-btn-locked="" class="btn f-btn  button-lg btn-success" style="color: #FFFFFF; background-color: #000000; border-radius: 16px !important; ">
+
+			Записаться	</button>
+
+<script>
+$( function() {
+	var disableButton = function (e) {
+		if (window['prsbutton7171547']) {
+			e.preventDefault();
+			return false;
+		} else {
+			$('#button7171547').addClass('disabled');
+			window['prsbutton7171547'] = true;
+			setTimeout(function(){window['prsbutton7171547'] = false;$('#button7171547').removeClass('disabled');}, 6000);
+		}
+		return true;
+	};
+	$( '#button7171547' ).click( function(e) {
+		//disableButton(e);
+			} );
+});
+</script>
+	<div class="add-redesign-subblock" data-id="2208085376">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a24be4d1df .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="form/items/parts/field22016" data-item-name="field22016" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-text " id="a5ab6e56e9">
+	<div style="" class="text-normal f-text" data-param="form/items/parts/field22016/inner/text" data-editable="true"><h5>Нажимая на&nbsp;кнопку&nbsp;Вы даёте согласие на&nbsp;обработку персональных данных. Ознакомиться можете прочитав <a href="https://pavelpresnyakov.ru/tgpersonal?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" target="_blank"><span style="color: rgb(255, 255, 255);" class="redactor-inline-converted"><strong class="redactor-inline-converted">Политику персональных данных.</strong></span></a></h5>
+
+<h5>Нажимая на&nbsp;кнопку «Записаться», Вы&nbsp;соглашаетесь с&nbsp;условиями <span style="color: rgb(255, 255, 255);" class="redactor-inline-converted"><a href="https://pavelpresnyakov.ru/tgoferta?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" target="_blank"><span style="color: rgb(255, 255, 255);" class="redactor-inline-converted"><strong>Договора оферты.</strong></span></a></span></h5></div>	<div class="add-redesign-subblock" data-id="2208085376">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a5ab6e56e9 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+	</div>
+
+
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder8776168 input[type="radio"]').length == 1 && $('#builder8776168 input[type="radio"]').prop('checked') ) {
+			$('#builder8776168 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+	</div>
+
+	<div class="common-setting-link box-setting-link" data-icon-class="fa fa-adjust" data-param="form/formBox" data-title="Стиль блока" data-setting-editable="true"></div>
+	<div class="common-setting-link form-setting-link" data-icon-class="fa fa-wpforms" data-param="form/handler" data-title="Что делать после заполнения" data-setting-editable="true"></div>
+<input type="hidden" name="formParams[clarity_uid]" value="yxjyQJ3aGAoa06SzjofnXcau-gn_RSm6" style="display:none;position:absolute;width:0;max-width:0;height:0;max-height:0;left:-999999999px;pointer-events:none;vizability:hidden;"></form>
+<script>
+	$( function() {
+		$('#ltForm7837510').liteForm();
+	} );
+</script>
+
+
+
+	<style>
+		#ltForm7837510 {
+		;		}
+	</style>
+		</div>
+	</div>
+</div>
+
+	<style>
+		#ltBlock2208081663 .block-box {
+			color:#000000;
+background-color:#0098f6;padding-left: 40px;
+padding-right: 40px;
+padding-top: 30px;
+padding-bottom: 30px;border: 0px solid ;border-radius: 16px;		}
+	</style>
+</div></div>
+
+
+<style>
+	#ltBlock2208081663 hr.separator {
+		border-color: #ffffff;
+	}
+	#ltBlock2208081663 .f-text {
+		color: #ffffff;
+	}
+
+</style>
+
+			
+	<style>
+		#ltBlock2208081664 a {
+    color: #ffffff!important;
+	text-decoration-color: #a8ff01;
+} 
+#ltBlock2208081664 
+a:visited { 
+    color: #ffffff00!important;
+} 
+#ltBlock2208081664 
+a:hover { 
+text-decoration: underline solid 2px;
+text-decoration-color: #a8ff01;
+} 
+#ltBlock2208081664 
+{ 
+	--social-img-size: 36px; /*Размер иконок социальных сетей*/
+} 
+#ltBlock2208081664 
+.builder[data-path="column1"] .f-text { 
+	margin-right: 20px;
+} 
+#ltBlock2208081664 
+.block-set { 
+    font-size: 16px!important;
+} 
+#ltBlock2208081664 
+.image-box { 
+	max-width: var(--social-img-size);
+	margin: 0 5px;
+} 
+#ltBlock2208081664 
+
+.builder[data-path="column1"] .image-box { 
+	max-width: 200px;
+} 
+#ltBlock2208081664 
+.builder[data-path="column2"] { 
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+} 
+#ltBlock2208081664 
+.flex-container .builder[data-path="column2"].flex-column>.builder-item.part-image  { 
+	flex: initial;
+} 
+#ltBlock2208081664 
+.part-text { 
+	display: inline;
+	max-width: max-content;
+}
+
+/*Стили мобильной версии*/
+@media screen and (max-width: 640px) { 
+#ltBlock2208081664 
+	.builder { 
+		align-self: center;
+		justify-content: center;
+		margin-bottom: 20px;
+	} 
+#ltBlock2208081664 
+
+	.builder[data-path="column2"] { 
+		margin-bottom: 20px;
+		justify-content: center;
+	} 
+#ltBlock2208081664 
+
+	.part-text { 
+		display: block;
+		max-width: 100%;
+	} 
+#ltBlock2208081664 
+
+	.f-text { 
+		display: block;
+		margin-right: 0;
+		margin-bottom: 3px;
+	} 
+#ltBlock2208081664 
+
+	.my-container { 
+		display: flex;
+		flex-direction: column;
+	} 
+#ltBlock2208081664 
+
+	.builder[data-path="column1"] .image-box { 
+		margin: 0 auto;
+	} 
+#ltBlock2208081664 
+	
+	.flex-container .flex-column>* { 
+		text-align: center !important;
+	}
+}
+
+	</style>
+
+<style>
+	#ltBlock2208081664 .lt-block-wrapper {
+		padding-top: 30px; padding-bottom: 30px; background-color: #222; color: #fff	}
+
+			
+			</style>
+
+
+<div id="ltBlock2208081664" data-block-id="2208085377" data-has-css="true" class="lt-block lt-view tcb-01 lt-twocolumn lt-twocolumn-standard" data-code="b-f2e62">
+	<div class="lt-block-wrapper">
+	
+
+
+
+
+
+<div class="my-container flex-container wrap-col">
+	<div id="builder271036" class="builder  flex-column col-md-8 col-md-offset-0" data-path="column1">
+			<div class="common-setting-link box-setting-link" data-icon-class="fa fa-adjust" data-param="column1/box" data-title="Стиль блока" data-setting-editable="true"></div>
+	
+			<div data-param="column1/parts/text1" data-item-name="text1" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 5px; border-radius: ; " data-setting-editable="true" class="builder-item part-text  text-left" id="abc6a14d7a">
+	<div style="" class="text-subnormal f-text" data-param="column1/parts/text1/inner/text" data-editable="true"><p><a href="https://pavelpresnyakov.ru/oferta_one?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" target="_blank"></a><a href="https://pavelpresnyakov.ru/tgoferta?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" target="_blank">Договор оферты</a></p></div>	<div class="add-redesign-subblock" data-id="2208085377">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#abc6a14d7a .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="column1/parts/text1_91" data-item-name="text1_91" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 5px; border-radius: ; " data-setting-editable="true" class="builder-item part-text  text-left" id="ac382018d4">
+	<div style="" class="text-subnormal f-text" data-param="column1/parts/text1_91/inner/text" data-editable="true"><p><a href="https://pavelpresnyakov.ru/politika?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" target="_blank">Политика обработки персональных данных</a></p></div>	<div class="add-redesign-subblock" data-id="2208085377">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#ac382018d4 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="column1/parts/field43469" data-item-name="field43469" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 25px; border-radius: ; " data-setting-editable="true" class="builder-item part-text " id="acf5d2b514">
+	<div style="" class="text-subnormal f-text" data-param="column1/parts/field43469/inner/text" data-editable="true"><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p></div>	<div class="add-redesign-subblock" data-id="2208085377">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#acf5d2b514 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="column1/parts/field46905" data-item-name="field46905" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 0px; border-radius: ; " data-setting-editable="true" class="builder-item part-text " id="ae3873569b">
+	<div style="" class="text-subnormal f-text" data-param="column1/parts/field46905/inner/text" data-editable="true"><p><span class="redactor-inline-converted">© 2026, ИП Пресняков П.Д.</span></p>
+
+<p><span class="redactor-inline-converted">ИНН&nbsp;575307462228<br></span></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p><span class="redactor-inline-converted">ОГРНИП&nbsp;315574900011521</span></p></div>	<div class="add-redesign-subblock" data-id="2208085377">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#ae3873569b .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+	</div>
+
+			<style>
+			#builder271036 {
+				align-self:center;			}
+		</style>
+	
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder271036 input[type="radio"]').length == 1 && $('#builder271036 input[type="radio"]').prop('checked') ) {
+			$('#builder271036 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+
+	<div id="builder7879613" class="builder  flex-column col-md-4 col-md-offset-0" data-path="column2">
+			<div class="common-setting-link box-setting-link" data-icon-class="fa fa-adjust" data-param="column2/box" data-title="Стиль блока" data-setting-editable="true"></div>
+	
+			<div data-param="column2/parts/field28442" data-item-name="field28442" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 0px; border-radius: ; " data-setting-editable="true" class="builder-item part-image " id="a66d67b7ed">
+	<div id="image2851684" class="image-box" data-img-title="" data-img-src="//fs-thb02.getcourse.ru/fileservice/file/thumbnail/h/1e134bf8b7da2ed53472a34f9b7228c4.png/s/s1200x/a/539771/sc/191">
+	<img class="lazyload" data-src="//fs-thb02.getcourse.ru/fileservice/file/thumbnail/h/1e134bf8b7da2ed53472a34f9b7228c4.png/s/s1200x/a/539771/sc/191" data-param="column2/parts/field28442/inner/image" data-hash="1e134bf8b7da2ed53472a34f9b7228c4.png" data-image-editable="true" title="" alt="" style="">
+		<div data-editable="true" data-param="column2/parts/field28442/inner/image/caption" class="lt-image-caption">
+			</div>
+	</div>
+
+	<script>
+		$( function() {
+			$( '#image2851684' ).click( function(ev) {
+				window.open('https://vk.com/smmpavel');			} );
+		});
+	</script>
+	<style>
+		#image2851684 { cursor: pointer; }
+	</style>
+	<div class="add-redesign-subblock" data-id="2208085377">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a66d67b7ed .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+			<div data-param="column2/parts/field74882" data-item-name="field74882" data-title="Элемент" data-animation-mode="no" style="margin-bottom: 0px; border-radius: ; " data-setting-editable="true" class="builder-item part-image " id="a7e0c34482">
+	<div id="image1886596" class="image-box" data-img-title="" data-img-src="//fs-thb01.getcourse.ru/fileservice/file/thumbnail/h/68de2ec15bed286b9430fbdfd77c8c9d.png/s/s1200x/a/539771/sc/403">
+	<img class="lazyload" data-src="//fs-thb01.getcourse.ru/fileservice/file/thumbnail/h/68de2ec15bed286b9430fbdfd77c8c9d.png/s/s1200x/a/539771/sc/403" data-param="column2/parts/field74882/inner/image" data-hash="68de2ec15bed286b9430fbdfd77c8c9d.png" data-image-editable="true" title="" alt="" style="">
+		<div data-editable="true" data-param="column2/parts/field74882/inner/image/caption" class="lt-image-caption">
+			</div>
+	</div>
+
+	<script>
+		$( function() {
+			$( '#image1886596' ).click( function(ev) {
+				window.open('https://t.me/presnyakovpavel');			} );
+		});
+	</script>
+	<style>
+		#image1886596 { cursor: pointer; }
+	</style>
+	<div class="add-redesign-subblock" data-id="2208085377">
+		<span class="fa fa-plus"></span>
+	</div>
+</div>
+<style>
+		.add-redesign-subblock,
+	div#a7e0c34482 .add-redesign-subblock
+	{
+		display: none;
+	}
+</style>
+	</div>
+
+			<style>
+			#builder7879613 {
+				align-self:center;			}
+		</style>
+	
+
+
+
+<script>
+	$( function() {
+
+		if( $('#builder7879613 input[type="radio"]').length == 1 && $('#builder7879613 input[type="radio"]').prop('checked') ) {
+			$('#builder7879613 input[type="radio"]').hide();
+		}
+
+		if ($('.animated-block').animatedBlock) {
+            $('.animated-block').animatedBlock();
+		}
+	} );
+</script>
+</div>
+</div></div>
+
+
+<style>
+	#ltBlock2208081664 hr.separator {
+		border-color: #fff;
+	}
+	#ltBlock2208081664 .f-text {
+		color: #fff;
+	}
+
+</style>
+
+	
+	
+
+</div>
+
+
+
+
+	
+
+<style>
+						.gc-account-leftbar, .talks-widget-window, .page-edit-link, .create-link-link {
+		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif!important;
+	}
+</style>
+
+    </div>
+    							
+<div class="notice-widget" id="noticeWidget"></div>
+<script>
+	$( function() {
+		if ($('#noticeWidget')?.noticeWidget) {
+			$('#noticeWidget').noticeWidget();
+
+					}
+	} );
+</script>
+			<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/superlite-block-9590d22be216138bf867f7746234969d.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/replace.js"></script>
+<script type="module" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/index.js" crossorigin=""></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/widget.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/yii.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/bootstrap.min.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/jquery.autosize.min.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/jquery.toast.min.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/jquery.form.min.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/jquery.emojiarea.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/emoji.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/blueimp-gallery.min.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/jquery.blueimp-gallery.min.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/blueimp-gallery-indicator.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/image-gallery.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/bootstrap-core.min.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/modal.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/localstore.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/light-menu.js"></script>
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/notice.js"></script>
+    <script async="" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/clarity.js"></script><style>
+.lesson-send-answer-block .btn-save-draft {
+display: none;
+}
+</style>
+
+<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/openapi.js"></script>
+
+    <!--— ===SCAN===analitika.school===START===v2=== —-->
+    <script type="text/javascript">
+    var school_webvisor = {
+            user_id: 1894,
+            school_id: 658,
+            account_id: window.accountUserId,
+            version: 2,
+            accept_incoming: false,
+            params: {
+                launch_delay: 1000,
+                interval: 10000
+            }
+    };
+    
+    (function(conf) {
+        let GETParams, script;
+    
+        GETParams = new URLSearchParams({
+            user_id: conf.user_id,
+            school_id: conf.school_id,
+            account_id: conf.account_id,
+            version: conf.version
+        });
+    
+        script = document.createElement('script');
+        script.setAttribute('src','https://api.analitika.school/script?' + GETParams.toString());
+        script.setAttribute("async","true");
+        document.documentElement.children[0].appendChild(script);
+    })(window.school_webvisor || {});
+    </script>
+    <!--— ===SCAN===analitika.school===END===v2=== —-->
+
+    
+
+			<script src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/gccounter-new.js"></script><script type="text/javascript" async="" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/counter"></script>
+	<!-- <script async src="https://vhencapi13.gcfiles.net/st/stat.js?v=--><!--"></script>-->
+		<script>
+		$(document).ready(function () {
+			setTimeout(function () {
+				let zkMenu = document.createElement('a');
+				zkMenu.className = 'zk_left_menu';
+				zkMenu.href = 'https://getcourse.ru/qualityreestr~c0a271bc0ecb776a094786474322cb82';
+				zkMenu.target = '_blank';
+				$('.gc-account-leftbar').append(zkMenu);
+
+				let zkMenuMobile = document.createElement('a');
+				zkMenuMobile.className = 'zk_left_menu_mobile';
+				zkMenuMobile.href = 'https://getcourse.ru/qualityreestr~c0a271bc0ecb776a094786474322cb82';
+				zkMenuMobile.target = '_blank';
+				$('#gcAccountUserMenu').append(zkMenuMobile);
+
+			}, 100);
+			});
+	</script>
+	<style>
+		.zk_left_menu {
+			height: 60px;
+			width: 60px;
+			background-image: url(/public/img/ZK_logo.png);
+			display: inline-block;
+			background-size: cover;
+			margin-bottom: -14px;
+			margin-left: 5px;
+			position: absolute;
+			bottom: 20px;
+			cursor: pointer;
+		}
+		.zk_left_menu_mobile {
+			display: none;
+		}
+		@media (max-width: 768px) {
+			.zk_left_menu {
+				display: none;
+			}
+						.zk_left_menu_mobile {
+				height: 50px;
+				width: 50px;
+				background-image: url(/public/img/ZK_logo.png);
+				display: inline-block;
+				background-size: cover;
+				margin-bottom: -14px;
+				margin-left: 5px;
+				position: fixed;
+				bottom: 27px;
+				cursor: pointer;
+				/* z-index: 1000000000000; */
+				right: 75px;
+				z-index: 1500;
+			}
+		}
+	</style>
+
+	
+<div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls" style="display: none;"><div class="slides next-click"></div><h3 class="title"></h3><a class="prev">‹</a><a class="next next-click">›</a><a class="play-pause"></a><ol class="indicator"></ol></div><div class="gc-fade-wrapper" style="display: none;"><div class="gc-fade"></div></div><div class="gc-qualityreestr-school show">
+        <style>
+        .gc-qualityreestr-school {
+            position: fixed !important;
+            right: -292px !important;
+            top: 177px !important;
+            transition: 0.5s ease-in-out !important;
+			z-index: 999 !important;
+        }
+        .show.gc-qualityreestr-school {
+            right: -195px !important;
+        }
+        .gc-qualityreestr-school:hover {
+            right: 0 !important;
+        }
+
+        @media screen and (max-width: 768px) {
+            .gc-qualityreestr-school-qr {
+                width: 221px !important;
+                height: auto !important;
+            }
+            .gc-qualityreestr-school {
+                right: -221px !important;
+            }
+            .show.gc-qualityreestr-school {
+                right: -148px !important;
+            }
+            .gc-qualityreestr-school:hover {
+                right: -148px !important;
+            }
+        }
+        .gc-qualityreestr-school a {
+		    display: flex !important;
+		}
+
+		@media print {
+			.gc-qualityreestr-school { 
+				display: none !important; 
+			}
+		}
+		
+        </style>
+        <a href="https://getcourse.ru/qualityreestr~c0a271bc0ecb776a094786474322cb82?rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}" target="_blank">
+            <svg xmlns="http://www.w3.org/2000/svg" class="gc-qualityreestr-school-qr" fill="none" width="292" height="95">
+                <image width="100%" href="https://getcourse.ru/public/img/true_version.svg"></image>
+                <svg xmlns="http://www.w3.org/2000/svg" width="66" height="66" x="222" y="15" viewBox="0 0 37 37" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h37v37H0z"></path><path stroke="#000000" d="M0 0.5h7m1 0h1m3 0h2m1 0h3m1 0h2m1 0h2m1 0h4m1 0h7M0 1.5h1m5 0h1m1 0h2m1 0h1m2 0h1m2 0h3m2 0h3m1 0h1m1 0h1m1 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h6m1 0h2m1 0h2m1 0h3m1 0h4m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m2 0h4m1 0h2m1 0h1m3 0h1m1 0h3m1 0h1m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h2m3 0h2m4 0h1m1 0h1m4 0h1m1 0h1m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m3 0h3m9 0h2m4 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M11 7.5h2m1 0h1m1 0h4m2 0h1m1 0h2m1 0h1M0 8.5h1m2 0h6m2 0h1m1 0h2m4 0h1m1 0h2m2 0h1m1 0h3m2 0h1m1 0h3M0 9.5h3m1 0h1m3 0h2m2 0h1m3 0h3m2 0h1m2 0h1m3 0h3m1 0h4M0 10.5h1m1 0h2m2 0h3m1 0h2m1 0h4m2 0h3m1 0h1m3 0h2m1 0h3m3 0h1M1 11.5h1m1 0h1m1 0h1m4 0h1m2 0h2m1 0h5m2 0h2m1 0h1m6 0h4M0 12.5h1m1 0h2m2 0h3m1 0h3m2 0h2m6 0h2m1 0h2m2 0h2m1 0h1m2 0h1M1 13.5h5m6 0h2m1 0h2m1 0h1m2 0h3m2 0h3m3 0h2M0 14.5h2m1 0h1m1 0h2m1 0h1m1 0h2m1 0h1m1 0h1m2 0h3m4 0h1m1 0h1m2 0h1m1 0h5M0 15.5h3m4 0h1m1 0h4m3 0h1m2 0h4m2 0h2m3 0h2m1 0h2m1 0h1M0 16.5h1m2 0h2m1 0h1m1 0h1m1 0h1m2 0h3m1 0h2m2 0h4m2 0h1m1 0h2m3 0h3M2 17.5h2m4 0h1m1 0h1m1 0h3m2 0h1m4 0h2m1 0h4m2 0h1m2 0h1M1 18.5h1m4 0h3m2 0h2m3 0h1m1 0h2m1 0h1m2 0h1m5 0h2m4 0h1M3 19.5h1m4 0h4m3 0h2m2 0h2m2 0h1m1 0h2m1 0h3m1 0h2m2 0h1M0 20.5h2m2 0h4m1 0h4m4 0h4m2 0h1m2 0h1m2 0h5M1 21.5h1m3 0h1m2 0h2m3 0h5m1 0h1m3 0h1m1 0h1m1 0h1m1 0h1m2 0h1m1 0h2M3 22.5h1m1 0h2m1 0h2m2 0h1m1 0h3m4 0h1m1 0h1m2 0h6m1 0h1m1 0h2M1 23.5h3m3 0h3m2 0h2m1 0h1m2 0h1m1 0h1m2 0h3m1 0h1m1 0h6M6 24.5h3m1 0h1m2 0h1m1 0h1m1 0h1m1 0h8m3 0h1m4 0h2M0 25.5h1m2 0h2m4 0h2m2 0h2m3 0h2m1 0h2m1 0h3m2 0h4M0 26.5h2m1 0h4m1 0h2m2 0h2m1 0h1m2 0h1m2 0h2m1 0h1m3 0h3m1 0h2m1 0h2M0 27.5h1m3 0h1m3 0h4m4 0h1m1 0h2m4 0h1m1 0h1m3 0h3m1 0h2M0 28.5h1m1 0h3m1 0h2m5 0h1m1 0h2m2 0h2m1 0h2m1 0h1m1 0h6m1 0h3M8 29.5h2m5 0h7m3 0h2m1 0h1m3 0h1m1 0h2M0 30.5h7m1 0h1m2 0h1m3 0h5m3 0h1m4 0h1m1 0h1m1 0h1m3 0h1M0 31.5h1m5 0h1m1 0h2m5 0h1m3 0h1m1 0h1m1 0h1m1 0h4m3 0h1M0 32.5h1m1 0h3m1 0h1m1 0h1m1 0h2m2 0h3m1 0h4m1 0h3m1 0h6m3 0h1M0 33.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m6 0h1m1 0h1m1 0h1m1 0h2m1 0h2m2 0h3M0 34.5h1m1 0h3m1 0h1m2 0h1m2 0h1m1 0h1m2 0h2m5 0h1m2 0h1m1 0h1m2 0h1m1 0h3M0 35.5h1m5 0h1m2 0h1m2 0h1m2 0h1m1 0h1m4 0h2m2 0h1m1 0h1m3 0h1m1 0h3M0 36.5h7m1 0h4m1 0h2m3 0h3m3 0h1m1 0h1m2 0h1m1 0h1m4 0h1"></path></svg>
+
+            </svg>
+        </a>
+        </div><iframe style="display: none;" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/saved_resource.html"></iframe><script type="text/javascript" async="" src="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/dyn-goal-config.js"></script><div>
+                <style>
+                    .dropdown-content {
+                        position: relative;
+                        background-color: #f9f9f9;
+                        min-width: 160px;
+                        max-height: 400px;
+                        overflow: auto;
+                        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+                        z-index: 1000 !important;
+                    }
+                    
+                    #email-err-text {
+                        margin-top: -1px !important;
+                        font-size: 12px !important;
+                        text-align: left !important;
+                        padding-left: 8px !important;
+                    }
+                
+                    .dropdown-content div {
+                        color: black;
+                        padding: 12px 14px;
+                        text-decoration: none;
+                        display: block;
+                        cursor: pointer;
+                        font-size: 14px;
+                    }
+                
+                    .dropdown-content div:hover {background-color: #f1f1f1}
+                
+                </style>
+            </div><link id="fz-style" rel="stylesheet" href="./pavelpresnyakov.ru_kmp_rel_scan=33e9aa16-da5c-4070-ac5b-17de4297e255%7C{}_files/fzn.css" crossorigin="use-credentials"></body></html>
