@@ -2441,12 +2441,30 @@
             const doc = parser.parseFromString(html, 'text/html');
             const elements = [];
 
+            // Debug: log what we're parsing
+            console.log('=== PARSE HTML DEBUG ===');
+            console.log('HTML length:', html?.length);
+
             // Extract title for page meta
             const title = doc.querySelector('title')?.textContent || 'Импортированная страница';
+            console.log('Title:', title);
 
             // Process body content
             const body = doc.body;
-            if (!body) return elements;
+            if (!body) {
+                console.log('ERROR: No body found');
+                return elements;
+            }
+
+            // Debug: check for different platforms
+            const tildaBlocks = body.querySelectorAll('[class*="t-rec"], [id*="rec"]');
+            const getCourseBlocks = body.querySelectorAll('[id^="ltBlock"], [class*="lt-block"], [class*="builder"]');
+            console.log('Tilda blocks found:', tildaBlocks.length);
+            console.log('GetCourse blocks found:', getCourseBlocks.length);
+            console.log('Body children:', body.children.length);
+            console.log('All divs:', body.querySelectorAll('div').length);
+            console.log('All headings:', body.querySelectorAll('h1,h2,h3,h4').length);
+            console.log('All paragraphs:', body.querySelectorAll('p').length);
 
             // Check for Taplink (data stored in window.data JSON)
             function parseTaplink() {
@@ -3396,6 +3414,11 @@
                 });
             }
 
+            console.log('=== PARSE RESULT ===');
+            console.log('Total elements parsed:', elements.length);
+            if (elements.length > 0) {
+                console.log('First element:', elements[0]);
+            }
             return elements;
         }
 
