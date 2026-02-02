@@ -2704,61 +2704,114 @@
                 return { bgImage, bgColor };
             }
 
+            // Helper: check if text looks like code (JS/CSS)
+            function isCodeText(text) {
+                if (!text) return true;
+                const codePatterns = [
+                    /^\s*\$\s*\(/,           // jQuery $(
+                    /^\s*function\s*\(/,     // function(
+                    /^\s*var\s+/,            // var
+                    /^\s*const\s+/,          // const
+                    /^\s*let\s+/,            // let
+                    /^\s*if\s*\(/,           // if(
+                    /^\s*\.\w+\s*\{/,        // .class {
+                    /^\s*#\w+\s*\{/,         // #id {
+                    /^\s*@media/,            // @media
+                    /^\s*--[\w-]+:/,         // CSS variables --var:
+                    /var\s*\(\s*--/,         // var(--
+                    /\.add-redesign/,        // GetCourse specific
+                    /display:\s*none/,       // CSS display: none
+                    /window\[/,              // window[
+                    /document\./,            // document.
+                    /setTimeout/,            // setTimeout
+                    /addEventListener/,      // addEventListener
+                    /\.click\s*\(/,          // .click(
+                    /\.hide\s*\(/,           // .hide(
+                    /\.show\s*\(/,           // .show(
+                    /\.addClass/,            // .addClass
+                    /\.removeClass/,         // .removeClass
+                    /return\s+(true|false)/, // return true/false
+                    /e\.preventDefault/,     // e.preventDefault
+                    /location\.href/,        // location.href
+                    /{\s*}\s*$/,             // ends with {}
+                    /;\s*}\s*\)\s*;?\s*$/,   // ends with }); or });
+                ];
+                return codePatterns.some(pattern => pattern.test(text));
+            }
+
+            // Helper: clean text from inline scripts and styles
+            function cleanText(text) {
+                if (!text) return '';
+                // Remove inline JS
+                let cleaned = text.replace(/\$\s*\(\s*function\s*\(\s*\)\s*\{[\s\S]*?\}\s*\)\s*;?/g, '');
+                // Remove CSS blocks
+                cleaned = cleaned.replace(/\.[a-zA-Z][\w-]*\s*\{[^}]*\}/g, '');
+                cleaned = cleaned.replace(/#[a-zA-Z][\w-]*\s*\{[^}]*\}/g, '');
+                // Remove CSS variable declarations
+                cleaned = cleaned.replace(/--[\w-]+:\s*[^;]+;/g, '');
+                // Remove display: none blocks
+                cleaned = cleaned.replace(/\.[\w-]+,\s*div#[\w]+\s*\.[\w-]+\s*\{\s*display:\s*none;\s*\}/g, '');
+                // Remove $(function...) patterns
+                cleaned = cleaned.replace(/\$\(\s*function[\s\S]*?\}\s*\);?/g, '');
+                // Remove window.* patterns
+                cleaned = cleaned.replace(/window\.[\w.]+\([^)]*\);?/g, '');
+                // Trim and collapse whitespace
+                cleaned = cleaned.replace(/\s+/g, ' ').trim();
+                return cleaned;
+            }
+
             // Process GetCourse block
             function processGetCourseBlock(node) {
                 const children = [];
                 const { bgImage, bgColor } = getBackground(node);
                 const nodeStyles = extractStyles(node);
+                const processedTexts = new Set(); // Track processed texts to avoid duplicates
 
-                // Find all text elements
-                node.querySelectorAll('[class*="text"], p, span, div').forEach(textEl => {
-                    const text = textEl.textContent?.trim();
-                    // Skip if parent already processed or too short
+                // Find all text elements - but be more selective
+                node.querySelectorAll('h1, h2, h3, h4, h5, h6, p, [class*="text-block"], [class*="title"]').forEach(textEl => {
+                    // Skip script and style elements
+                    if (textEl.closest('script') || textEl.closest('style')) return;
+
+                    // Get only direct text, not from children
+                    let text = '';
+                    textEl.childNodes.forEach(child => {
+                        if (child.nodeType === 3) { // Text node
+                            text += child.textContent;
+                        } else if (child.nodeType === 1 && !['SCRIPT', 'STYLE'].includes(child.tagName)) {
+                            // Include text from simple inline elements
+                            if (['SPAN', 'STRONG', 'B', 'EM', 'I', 'A'].includes(child.tagName)) {
+                                text += child.textContent;
+                            }
+                        }
+                    });
+
+                    text = cleanText(text);
+
+                    // Skip if empty, too short, looks like code, or already processed
                     if (!text || text.length < 3) return;
-                    // Skip if it's a container with many children
-                    if (textEl.children.length > 3) return;
+                    if (isCodeText(text)) return;
+                    if (processedTexts.has(text)) return;
+
+                    processedTexts.add(text);
 
                     const styles = extractStyles(textEl);
                     const fontSize = parseInt(styles.fontSize) || 16;
                     const fontWeight = styles.fontWeight || '';
-                    const isHeading = fontSize >= 24 || fontWeight === 'bold' || fontWeight >= 600 ||
-                                     textEl.tagName?.match(/^H[1-6]$/);
+                    const tag = textEl.tagName?.toLowerCase();
+                    const isHeading = tag?.match(/^h[1-6]$/) || fontSize >= 24 ||
+                                     fontWeight === 'bold' || parseInt(fontWeight) >= 600;
 
-                    // Avoid duplicates
-                    const isDuplicate = children.some(c => c.content === text.substring(0, 1000));
-                    if (!isDuplicate && text.length > 2) {
-                        children.push({
-                            type: isHeading ? 'heading' : 'text',
-                            content: text.substring(0, 1000),
-                            styles: {
-                                fontSize: styles.fontSize || (isHeading ? '32px' : '16px'),
-                                color: styles.color || '#1e293b',
-                                textAlign: styles.textAlign || 'left',
-                                fontWeight: styles.fontWeight,
-                                lineHeight: styles.lineHeight || '1.5'
-                            }
-                        });
-                    }
-                });
-
-                // Find headings
-                node.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
-                    const text = h.textContent?.trim();
-                    if (!text) return;
-                    const styles = extractStyles(h);
-                    const isDuplicate = children.some(c => c.content === text.substring(0, 500));
-                    if (!isDuplicate) {
-                        children.push({
-                            type: 'heading',
-                            content: text.substring(0, 500),
-                            styles: {
-                                fontSize: styles.fontSize || '32px',
-                                color: styles.color || '#1e293b',
-                                textAlign: styles.textAlign || 'center',
-                                fontWeight: styles.fontWeight || 'bold'
-                            }
-                        });
-                    }
+                    children.push({
+                        type: isHeading ? 'heading' : 'text',
+                        content: text.substring(0, 1000),
+                        styles: {
+                            fontSize: styles.fontSize || (isHeading ? '32px' : '16px'),
+                            color: styles.color || '#1e293b',
+                            textAlign: styles.textAlign || 'center',
+                            fontWeight: styles.fontWeight || (isHeading ? 'bold' : 'normal'),
+                            lineHeight: styles.lineHeight || '1.5'
+                        }
+                    });
                 });
 
                 // Find images
@@ -2781,11 +2834,12 @@
 
                 // Find buttons
                 node.querySelectorAll('button, a[class*="btn"], a[class*="button"], .form__button').forEach(btn => {
-                    const text = btn.textContent?.trim();
-                    if (text && text.length > 1 && text.length < 100) {
+                    let text = cleanText(btn.textContent?.trim() || '');
+                    if (text && text.length > 1 && text.length < 100 && !isCodeText(text)) {
                         const styles = extractStyles(btn);
                         const isDuplicate = children.some(c => c.type === 'button' && c.content === text);
-                        if (!isDuplicate) {
+                        if (!isDuplicate && !processedTexts.has(text)) {
+                            processedTexts.add(text);
                             children.push({
                                 type: 'button',
                                 content: text,
@@ -2858,10 +2912,12 @@
                 const children = [];
                 const { bgImage, bgColor } = getTildaBackground(artboard);
 
+                const seenTexts = new Set();
                 elementsInBlock.forEach(elem => {
                     const atom = elem.querySelector('.tn-atom') || elem;
                     const tag = atom.tagName?.toLowerCase();
-                    const text = atom.textContent?.trim() || '';
+                    const rawText = atom.textContent?.trim() || '';
+                    const text = cleanText(rawText);
                     const styles = getImportantStyles(elem);
                     const atomStyles = extractStyles(atom);
                     const combinedStyles = { ...styles, ...atomStyles };
@@ -2882,7 +2938,8 @@
                         }
                     }
                     // Button/Link
-                    else if ((tag === 'a' || tag === 'button' || atom.classList?.contains('tn-atom__button')) && text) {
+                    else if ((tag === 'a' || tag === 'button' || atom.classList?.contains('tn-atom__button')) && text && !isCodeText(text) && !seenTexts.has(text)) {
+                        seenTexts.add(text);
                         childElement = {
                             type: 'button',
                             content: text,
@@ -2899,7 +2956,8 @@
                         };
                     }
                     // Text/Heading (determine by font size)
-                    else if (text && text.length > 0) {
+                    else if (text && text.length > 0 && !isCodeText(text) && !seenTexts.has(text)) {
+                        seenTexts.add(text);
                         const fontSize = parseInt(combinedStyles.fontSize) || 16;
                         const isHeading = fontSize >= 24 || atom.closest('[class*="title"]') ||
                                          atom.querySelector('strong, b') || combinedStyles.fontWeight === 'bold';
@@ -2981,28 +3039,32 @@
 
                 // Generic block - try to extract content
                 const children = [];
+                const seenTexts = new Set();
 
                 // Find all text elements
                 node.querySelectorAll('[class*="title"], [class*="descr"], [class*="text"], h1, h2, h3, h4, p').forEach(textEl => {
-                    const text = textEl.textContent?.trim();
-                    if (text && text.length > 2) {
-                        const styles = extractStyles(textEl);
-                        const fontSize = parseInt(styles.fontSize) || 16;
-                        const isHeading = fontSize >= 24 || textEl.tagName?.match(/^H[1-6]$/) ||
-                                         textEl.className?.includes('title');
+                    if (textEl.closest('script') || textEl.closest('style')) return;
 
-                        children.push({
-                            type: isHeading ? 'heading' : 'text',
-                            content: text.substring(0, 1000),
-                            styles: {
-                                fontSize: styles.fontSize || (isHeading ? '32px' : '16px'),
-                                color: styles.color || '#1e293b',
-                                textAlign: styles.textAlign || 'center',
-                                fontWeight: styles.fontWeight,
-                                lineHeight: styles.lineHeight || '1.5'
-                            }
-                        });
-                    }
+                    let text = cleanText(textEl.textContent?.trim() || '');
+                    if (!text || text.length < 3 || isCodeText(text) || seenTexts.has(text)) return;
+
+                    seenTexts.add(text);
+                    const styles = extractStyles(textEl);
+                    const fontSize = parseInt(styles.fontSize) || 16;
+                    const isHeading = fontSize >= 24 || textEl.tagName?.match(/^H[1-6]$/) ||
+                                     textEl.className?.includes('title');
+
+                    children.push({
+                        type: isHeading ? 'heading' : 'text',
+                        content: text.substring(0, 1000),
+                        styles: {
+                            fontSize: styles.fontSize || (isHeading ? '32px' : '16px'),
+                            color: styles.color || '#1e293b',
+                            textAlign: styles.textAlign || 'center',
+                            fontWeight: styles.fontWeight,
+                            lineHeight: styles.lineHeight || '1.5'
+                        }
+                    });
                 });
 
                 // Find images
@@ -3019,8 +3081,9 @@
 
                 // Find buttons
                 node.querySelectorAll('a[class*="btn"], button, .t-btn').forEach(btn => {
-                    const text = btn.textContent?.trim();
-                    if (text) {
+                    let text = cleanText(btn.textContent?.trim() || '');
+                    if (text && !isCodeText(text) && !seenTexts.has(text)) {
+                        seenTexts.add(text);
                         const styles = extractStyles(btn);
                         children.push({
                             type: 'button',
