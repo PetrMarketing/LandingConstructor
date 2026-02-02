@@ -1243,7 +1243,7 @@
                         <div class="user-name">Администратор</div>
                         <div class="user-role">Владелец</div>
                     </div>
-                    <button class="btn-icon" title="Выйти">
+                    <button class="btn-icon" title="Выйти" onclick="doLogout()">
                         <i class="fas fa-sign-out-alt"></i>
                     </button>
                 </div>
@@ -1981,6 +1981,65 @@
         </div>
     </div>
 
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-sign-in-alt" style="color: var(--primary); margin-right: 8px;"></i> Вход в систему</h2>
+            </div>
+            <div class="modal-body">
+                <div id="loginError" style="display:none; padding: 12px; background: rgba(239,68,68,0.1); border: 1px solid var(--danger); border-radius: 8px; margin-bottom: 16px; color: var(--danger);"></div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" placeholder="admin@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="loginPassword" placeholder="Введите пароль">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="showRegisterModal()">Регистрация</button>
+                <button class="btn btn-primary" onclick="doLogin()">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Войти
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal-overlay" id="registerModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-plus" style="color: var(--primary); margin-right: 8px;"></i> Регистрация</h2>
+                <button class="modal-close" onclick="closeModal('registerModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="registerError" style="display:none; padding: 12px; background: rgba(239,68,68,0.1); border: 1px solid var(--danger); border-radius: 8px; margin-bottom: 16px; color: var(--danger);"></div>
+                <div class="form-group">
+                    <label>Имя</label>
+                    <input type="text" id="registerName" placeholder="Ваше имя">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="registerEmail" placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="registerPassword" placeholder="Минимум 6 символов">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="showLoginModal()">Уже есть аккаунт</button>
+                <button class="btn btn-primary" onclick="doRegister()">
+                    <i class="fas fa-user-plus"></i>
+                    Зарегистрироваться
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Create Landing Modal -->
     <div class="modal-overlay" id="createLandingModal">
         <div class="modal" style="max-width: 600px;">
@@ -2022,7 +2081,11 @@
     </div>
 
     <script>
+        // API Configuration
+        const API_URL = '/api';
+
         // State
+        let currentUser = null;
         let currentProject = null;
         let projects = [];
         let pages = [];
@@ -2031,15 +2094,266 @@
         let currentSection = 'dashboard';
         let currentFolder = 'all';
 
+        // API Helper
+        const api = {
+            getToken() {
+                return localStorage.getItem('accessToken');
+            },
+
+            setTokens(accessToken, refreshToken) {
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('refreshToken', refreshToken);
+            },
+
+            clearTokens() {
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+            },
+
+            async request(endpoint, options = {}) {
+                const token = this.getToken();
+                const headers = {
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                };
+
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+
+                try {
+                    const response = await fetch(`${API_URL}${endpoint}`, {
+                        ...options,
+                        headers
+                    });
+
+                    const data = await response.json();
+
+                    // Handle token expiration
+                    if (response.status === 401 && data.code === 'TOKEN_EXPIRED') {
+                        const refreshed = await this.refreshToken();
+                        if (refreshed) {
+                            return this.request(endpoint, options);
+                        }
+                    }
+
+                    return data;
+                } catch (error) {
+                    console.error('API Error:', error);
+                    return { success: false, error: error.message };
+                }
+            },
+
+            async refreshToken() {
+                const refreshToken = localStorage.getItem('refreshToken');
+                if (!refreshToken) return false;
+
+                try {
+                    const response = await fetch(`${API_URL}/auth/refresh`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ refreshToken })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        this.setTokens(data.data.accessToken, data.data.refreshToken);
+                        return true;
+                    }
+                } catch (error) {
+                    console.error('Refresh token error:', error);
+                }
+
+                this.clearTokens();
+                return false;
+            },
+
+            get(endpoint) {
+                return this.request(endpoint);
+            },
+
+            post(endpoint, data) {
+                return this.request(endpoint, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+            },
+
+            put(endpoint, data) {
+                return this.request(endpoint, {
+                    method: 'PUT',
+                    body: JSON.stringify(data)
+                });
+            },
+
+            delete(endpoint) {
+                return this.request(endpoint, { method: 'DELETE' });
+            }
+        };
+
+        // Auth Functions
+        async function checkAuth() {
+            const token = api.getToken();
+            if (!token) {
+                showLoginModal();
+                return false;
+            }
+
+            const result = await api.get('/auth/me');
+            if (result.success) {
+                currentUser = result.data.user;
+                updateUserInfo();
+                return true;
+            }
+
+            showLoginModal();
+            return false;
+        }
+
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.add('open');
+        }
+
+        function showRegisterModal() {
+            document.getElementById('loginModal').classList.remove('open');
+            document.getElementById('registerModal').classList.add('open');
+        }
+
+        async function doLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorEl = document.getElementById('loginError');
+
+            if (!email || !password) {
+                errorEl.textContent = 'Заполните все поля';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            const result = await api.post('/auth/login', { email, password });
+
+            if (result.success) {
+                api.setTokens(result.data.accessToken, result.data.refreshToken);
+                currentUser = result.data.user;
+                document.getElementById('loginModal').classList.remove('open');
+                updateUserInfo();
+                loadData();
+            } else {
+                errorEl.textContent = result.error || 'Ошибка входа';
+                errorEl.style.display = 'block';
+            }
+        }
+
+        async function doRegister() {
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const errorEl = document.getElementById('registerError');
+
+            if (!name || !email || !password) {
+                errorEl.textContent = 'Заполните все поля';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            if (password.length < 6) {
+                errorEl.textContent = 'Пароль должен быть не менее 6 символов';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            const result = await api.post('/auth/register', { name, email, password });
+
+            if (result.success) {
+                api.setTokens(result.data.accessToken, result.data.refreshToken);
+                currentUser = result.data.user;
+                document.getElementById('registerModal').classList.remove('open');
+                updateUserInfo();
+                loadData();
+            } else {
+                errorEl.textContent = result.error || 'Ошибка регистрации';
+                errorEl.style.display = 'block';
+            }
+        }
+
+        async function doLogout() {
+            const refreshToken = localStorage.getItem('refreshToken');
+            await api.post('/auth/logout', { refreshToken });
+            api.clearTokens();
+            currentUser = null;
+            showLoginModal();
+        }
+
+        function updateUserInfo() {
+            if (currentUser) {
+                document.querySelector('.user-name').textContent = currentUser.name;
+                document.querySelector('.user-role').textContent = getRoleName(currentUser.role);
+                document.querySelector('.user-avatar').textContent = currentUser.name.charAt(0).toUpperCase();
+            }
+        }
+
+        function getRoleName(role) {
+            const names = {
+                owner: 'Владелец',
+                admin: 'Администратор',
+                manager: 'Менеджер',
+                editor: 'Редактор',
+                client: 'Клиент'
+            };
+            return names[role] || role;
+        }
+
         // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadData();
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check if API is available, fallback to localStorage
+            try {
+                const health = await fetch(`${API_URL}/health`);
+                if (health.ok) {
+                    const isAuthed = await checkAuth();
+                    if (isAuthed) {
+                        await loadDataFromAPI();
+                    }
+                } else {
+                    loadDataFromLocalStorage();
+                }
+            } catch (e) {
+                console.log('API not available, using localStorage');
+                loadDataFromLocalStorage();
+            }
+
             setupNavigation();
             setupProjectSelector();
             setupTabs();
             updateStats();
             renderContent();
+
+            // Enter key login
+            document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') doLogin();
+            });
         });
+
+        // Load data from API
+        async function loadDataFromAPI() {
+            const projectsResult = await api.get('/projects');
+            if (projectsResult.success) {
+                projects = projectsResult.data;
+            }
+
+            if (projects.length > 0) {
+                currentProject = projects[0];
+                document.getElementById('currentProjectName').textContent = currentProject.name;
+            }
+
+            // Load landings from localStorage for now (API endpoints can be added later)
+            landings = JSON.parse(localStorage.getItem('landing_pages') || '[]');
+            pages = JSON.parse(localStorage.getItem(`cms_pages_${currentProject?.id}`) || '[]');
+            folders = JSON.parse(localStorage.getItem(`cms_folders_${currentProject?.id}`) || '[]');
+        }
+
+        function loadDataFromLocalStorage() {
+            loadData();
+        }
 
         // Load data from localStorage
         function loadData() {
