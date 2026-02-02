@@ -4,9 +4,9 @@
 const urlParams = new URLSearchParams(window.location.search);
 const currentPageId = urlParams.get('id');
 
-// Redirect to pages if no page ID
+// Redirect to admin if no page ID
 if (!currentPageId) {
-    window.location.href = 'pages.html';
+    window.location.href = 'admin.html';
 }
 
 // State
