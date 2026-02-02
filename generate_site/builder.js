@@ -52,6 +52,20 @@ function loadPageData() {
             ogImage: '',
             favicon: ''
         };
+
+        // Regenerate content for elements with componentSettings (for imported pages)
+        function regenerateContent(elements) {
+            elements.forEach(el => {
+                if (el.componentSettings && (!el.content || el.content === '')) {
+                    el.content = generateComponentContent(el.type, el.componentSettings);
+                }
+                if (el.children && el.children.length > 0) {
+                    regenerateContent(el.children);
+                }
+            });
+        }
+        regenerateContent(state.elements);
+
         renderCanvas();
         renderLayers();
         saveHistory();
