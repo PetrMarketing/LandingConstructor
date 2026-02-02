@@ -2,6 +2,7 @@ services:
   - type: web
     name: cms-backend
     runtime: node
+    nodeVersion: 20.11.0
     buildCommand: npm install && npm run build
     startCommand: npm start
     envVars:
