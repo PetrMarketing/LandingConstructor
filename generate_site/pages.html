@@ -2372,7 +2372,13 @@
             }
 
             // Parse HTML
-            parsedElements = parseHtmlToElements(importedHtml);
+            try {
+                parsedElements = parseHtmlToElements(importedHtml);
+                console.log('Parsed elements:', parsedElements.length);
+            } catch (e) {
+                console.error('Parse error:', e);
+                parsedElements = [];
+            }
 
             // Show preview
             const previewDiv = document.getElementById('importPreview');
@@ -2381,17 +2387,24 @@
             if (parsedElements.length === 0) {
                 listDiv.innerHTML = '<div class="import-preview-item"><i class="fas fa-exclamation-triangle"></i> Не удалось распознать элементы</div>';
             } else {
-                listDiv.innerHTML = parsedElements.map((el, i) => `
-                    <div class="import-preview-item">
-                        <i class="fas ${getElementIcon(el.type)}"></i>
-                        <span class="type">${el.type}</span>
-                        <span class="content">${getElementPreview(el)}</span>
-                    </div>
-                `).join('');
+                try {
+                    listDiv.innerHTML = parsedElements.map((el, i) => `
+                        <div class="import-preview-item">
+                            <i class="fas ${getElementIcon(el.type)}"></i>
+                            <span class="type">${el.type}</span>
+                            <span class="content">${getElementPreview(el)}</span>
+                        </div>
+                    `).join('');
+                } catch (e) {
+                    console.error('Preview render error:', e);
+                }
             }
 
             previewDiv.style.display = 'block';
-            document.getElementById('confirmImportBtn').disabled = parsedElements.length === 0;
+            // Enable import button
+            const importBtn = document.getElementById('confirmImportBtn');
+            importBtn.disabled = parsedElements.length === 0;
+            console.log('Import button disabled:', importBtn.disabled, 'elements:', parsedElements.length);
         }
 
         function getElementIcon(type) {
