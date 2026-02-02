@@ -1,17 +1,17 @@
-const { db } = require('../config/database');
+const { getDb } = require('../config/database');
 const { v4: uuidv4 } = require('uuid');
 
 class Project {
     static findById(id) {
-        return db.prepare('SELECT * FROM projects WHERE id = ?').get(id);
+        return getDb().prepare('SELECT * FROM projects WHERE id = ?').get(id);
     }
 
     static findByOwner(ownerId) {
-        return db.prepare('SELECT * FROM projects WHERE owner_id = ? ORDER BY created_at DESC').all(ownerId);
+        return getDb().prepare('SELECT * FROM projects WHERE owner_id = ? ORDER BY created_at DESC').all(ownerId);
     }
 
     static findByMember(userId) {
-        return db.prepare(`
+        return getDb().prepare(`
             SELECT p.*, pm.role as member_role
             FROM projects p
             LEFT JOIN project_members pm ON p.id = pm.project_id
@@ -36,13 +36,13 @@ class Project {
             params.push(options.limit);
         }
 
-        return db.prepare(query).all(...params);
+        return getDb().prepare(query).all(...params);
     }
 
     static create(data) {
         const id = uuidv4();
 
-        const stmt = db.prepare(`
+        const stmt = getDb().prepare(`
             INSERT INTO projects (id, name, description, domain, owner_id, settings)
             VALUES (?, ?, ?, ?, ?, ?)
         `);
@@ -93,28 +93,28 @@ class Project {
         fields.push('updated_at = CURRENT_TIMESTAMP');
         values.push(id);
 
-        const stmt = db.prepare(`UPDATE projects SET ${fields.join(', ')} WHERE id = ?`);
+        const stmt = getDb().prepare(`UPDATE projects SET ${fields.join(', ')} WHERE id = ?`);
         stmt.run(...values);
 
         return this.findById(id);
     }
 
     static delete(id) {
-        const stmt = db.prepare('DELETE FROM projects WHERE id = ?');
+        const stmt = getDb().prepare('DELETE FROM projects WHERE id = ?');
         return stmt.run(id);
     }
 
     static count(ownerId = null) {
         if (ownerId) {
-            return db.prepare('SELECT COUNT(*) as count FROM projects WHERE owner_id = ?').get(ownerId).count;
+            return getDb().prepare('SELECT COUNT(*) as count FROM projects WHERE owner_id = ?').get(ownerId).count;
         }
-        return db.prepare('SELECT COUNT(*) as count FROM projects').get().count;
+        return getDb().prepare('SELECT COUNT(*) as count FROM projects').get().count;
     }
 
     // Project members
     static addMember(projectId, userId, role = 'editor') {
         const id = uuidv4();
-        const stmt = db.prepare(`
+        const stmt = getDb().prepare(`
             INSERT OR REPLACE INTO project_members (id, project_id, user_id, role)
             VALUES (?, ?, ?, ?)
         `);
@@ -123,12 +123,12 @@ class Project {
     }
 
     static removeMember(projectId, userId) {
-        const stmt = db.prepare('DELETE FROM project_members WHERE project_id = ? AND user_id = ?');
+        const stmt = getDb().prepare('DELETE FROM project_members WHERE project_id = ? AND user_id = ?');
         return stmt.run(projectId, userId);
     }
 
     static getMembers(projectId) {
-        return db.prepare(`
+        return getDb().prepare(`
             SELECT u.id, u.email, u.name, u.avatar, pm.role, pm.created_at
             FROM project_members pm
             JOIN users u ON pm.user_id = u.id
@@ -142,7 +142,7 @@ class Project {
             return 'owner';
         }
 
-        const member = db.prepare(`
+        const member = getDb().prepare(`
             SELECT role FROM project_members
             WHERE project_id = ? AND user_id = ?
         `).get(projectId, userId);

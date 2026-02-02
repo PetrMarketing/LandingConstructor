@@ -1,15 +1,15 @@
-const { db } = require('../config/database');
+const { getDb } = require('../config/database');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const config = require('../config/config');
 
 class User {
     static findById(id) {
-        return db.prepare('SELECT * FROM users WHERE id = ?').get(id);
+        return getDb().prepare('SELECT * FROM users WHERE id = ?').get(id);
     }
 
     static findByEmail(email) {
-        return db.prepare('SELECT * FROM users WHERE email = ?').get(email.toLowerCase());
+        return getDb().prepare('SELECT * FROM users WHERE email = ?').get(email.toLowerCase());
     }
 
     static findAll(options = {}) {
@@ -33,14 +33,14 @@ class User {
             params.push(options.offset);
         }
 
-        return db.prepare(query).all(...params);
+        return getDb().prepare(query).all(...params);
     }
 
     static async create(data) {
         const id = uuidv4();
         const hashedPassword = await bcrypt.hash(data.password, config.BCRYPT_ROUNDS);
 
-        const stmt = db.prepare(`
+        const stmt = getDb().prepare(`
             INSERT INTO users (id, email, password, name, role, phone, avatar)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         `);
@@ -108,14 +108,14 @@ class User {
         fields.push('updated_at = CURRENT_TIMESTAMP');
         values.push(id);
 
-        const stmt = db.prepare(`UPDATE users SET ${fields.join(', ')} WHERE id = ?`);
+        const stmt = getDb().prepare(`UPDATE users SET ${fields.join(', ')} WHERE id = ?`);
         stmt.run(...values);
 
         return this.findById(id);
     }
 
     static delete(id) {
-        const stmt = db.prepare('DELETE FROM users WHERE id = ?');
+        const stmt = getDb().prepare('DELETE FROM users WHERE id = ?');
         return stmt.run(id);
     }
 
@@ -124,7 +124,7 @@ class User {
     }
 
     static updateLastLogin(id) {
-        const stmt = db.prepare('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?');
+        const stmt = getDb().prepare('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?');
         stmt.run(id);
     }
 
@@ -137,7 +137,7 @@ class User {
             params.push(options.role);
         }
 
-        return db.prepare(query).get(...params).count;
+        return getDb().prepare(query).get(...params).count;
     }
 
     // Get user without sensitive data

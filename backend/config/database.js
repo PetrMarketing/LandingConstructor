@@ -3,20 +3,30 @@ const path = require('path');
 const fs = require('fs');
 const config = require('./config');
 
-// Ensure data directory exists
-const dataDir = path.dirname(config.DB_PATH);
-if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
+// Database instance (lazy initialization)
+let db = null;
+
+function getDb() {
+    if (db) return db;
+
+    // Ensure data directory exists
+    const dataDir = path.dirname(config.DB_PATH);
+    if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+    }
+
+    // Initialize database
+    db = new Database(config.DB_PATH);
+
+    // Enable foreign keys
+    db.pragma('foreign_keys = ON');
+
+    return db;
 }
-
-// Initialize database
-const db = new Database(config.DB_PATH);
-
-// Enable foreign keys
-db.pragma('foreign_keys = ON');
 
 // Initialize tables
 function initDatabase() {
+    const db = getDb();
     // Users table
     db.exec(`
         CREATE TABLE IF NOT EXISTS users (
@@ -283,4 +293,4 @@ function initDatabase() {
     console.log('Database initialized successfully');
 }
 
-module.exports = { db, initDatabase };
+module.exports = { getDb, initDatabase };

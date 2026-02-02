@@ -5,11 +5,39 @@ const rateLimit = require('express-rate-limit');
 const path = require('path');
 
 const config = require('./config/config');
-const { initDatabase } = require('./config/database');
+const { initDatabase, getDb } = require('./config/database');
 const routes = require('./routes');
 
-// Initialize database
-initDatabase();
+// Initialize database and create default admin
+async function initApp() {
+    initDatabase();
+
+    // Create default admin if no owner exists
+    const User = require('./models/User');
+    const Project = require('./models/Project');
+
+    const existingOwner = getDb().prepare("SELECT * FROM users WHERE role = 'owner' LIMIT 1").get();
+
+    if (!existingOwner) {
+        console.log('Creating default admin user...');
+        const owner = await User.create({
+            email: 'admin@example.com',
+            password: 'admin123',
+            name: 'Администратор',
+            role: 'owner'
+        });
+
+        Project.create({
+            name: 'Мой проект',
+            description: 'Основной проект',
+            owner_id: owner.id
+        });
+
+        console.log('Default admin created: admin@example.com / admin123');
+    }
+}
+
+initApp().catch(err => console.error('Init error:', err));
 
 // Create Express app
 const app = express();

@@ -1,4 +1,4 @@
-const { db } = require('../config/database');
+const { getDb } = require('../config/database');
 const { v4: uuidv4 } = require('uuid');
 const config = require('../config/config');
 
@@ -7,7 +7,7 @@ class RefreshToken {
         const id = uuidv4();
         const expiresAt = new Date(Date.now() + this.parseExpiry(config.JWT_REFRESH_EXPIRES_IN)).toISOString();
 
-        const stmt = db.prepare(`
+        const stmt = getDb().prepare(`
             INSERT INTO refresh_tokens (id, user_id, token, expires_at)
             VALUES (?, ?, ?, ?)
         `);
@@ -17,25 +17,25 @@ class RefreshToken {
     }
 
     static findByToken(token) {
-        return db.prepare('SELECT * FROM refresh_tokens WHERE token = ?').get(token);
+        return getDb().prepare('SELECT * FROM refresh_tokens WHERE token = ?').get(token);
     }
 
     static findByUserId(userId) {
-        return db.prepare('SELECT * FROM refresh_tokens WHERE user_id = ?').all(userId);
+        return getDb().prepare('SELECT * FROM refresh_tokens WHERE user_id = ?').all(userId);
     }
 
     static delete(token) {
-        const stmt = db.prepare('DELETE FROM refresh_tokens WHERE token = ?');
+        const stmt = getDb().prepare('DELETE FROM refresh_tokens WHERE token = ?');
         return stmt.run(token);
     }
 
     static deleteByUserId(userId) {
-        const stmt = db.prepare('DELETE FROM refresh_tokens WHERE user_id = ?');
+        const stmt = getDb().prepare('DELETE FROM refresh_tokens WHERE user_id = ?');
         return stmt.run(userId);
     }
 
     static deleteExpired() {
-        const stmt = db.prepare('DELETE FROM refresh_tokens WHERE expires_at < ?');
+        const stmt = getDb().prepare('DELETE FROM refresh_tokens WHERE expires_at < ?');
         return stmt.run(new Date().toISOString());
     }
 

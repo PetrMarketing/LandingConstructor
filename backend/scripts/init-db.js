@@ -3,7 +3,7 @@
  * Creates tables and a default owner user
  */
 
-const { initDatabase, db } = require('../config/database');
+const { initDatabase, getDb } = require('../config/database');
 const User = require('../models/User');
 const Project = require('../models/Project');
 
@@ -14,7 +14,7 @@ async function init() {
     initDatabase();
 
     // Check if owner exists
-    const existingOwner = db.prepare("SELECT * FROM users WHERE role = 'owner' LIMIT 1").get();
+    const existingOwner = getDb().prepare("SELECT * FROM users WHERE role = 'owner' LIMIT 1").get();
 
     if (!existingOwner) {
         console.log('Creating default owner user...');
