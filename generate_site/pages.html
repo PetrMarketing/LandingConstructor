@@ -2487,7 +2487,7 @@
                             const images = field.pictures || field.items || [];
                             if (images.length > 0) {
                                 const imgUrl = images[0]?.url || images[0]?.image?.url || '';
-                                if (imgUrl) {
+                                if (imgUrl && isValidImageUrl(imgUrl)) {
                                     element = {
                                         type: 'image',
                                         attrs: { src: imgUrl, alt: field.title || '' },
@@ -2596,6 +2596,46 @@
             const taplinkElements = parseTaplink();
             if (taplinkElements && taplinkElements.length > 0) {
                 return taplinkElements;
+            }
+
+            // Helper: check if URL is a tracking pixel or unwanted resource
+            function isTrackingPixel(url) {
+                if (!url) return true;
+                const trackingPatterns = [
+                    'vk.com/rtrg',
+                    'facebook.com/tr',
+                    'pixel',
+                    'counter',
+                    'mc.yandex',
+                    'google-analytics',
+                    'googletagmanager',
+                    'doubleclick',
+                    'adservice',
+                    'tracking',
+                    'beacon',
+                    '1x1',
+                    'spacer',
+                    'blank.gif',
+                    'clear.gif',
+                    'data:image/gif',
+                    'data:image/png;base64,iVBOR', // 1x1 transparent PNG
+                    '.svg?', // often tracking SVGs
+                    'stat.',
+                    'cnt.',
+                    'top-fwz',
+                    'top.mail.ru',
+                    'tns-counter'
+                ];
+                const lowerUrl = url.toLowerCase();
+                return trackingPatterns.some(pattern => lowerUrl.includes(pattern));
+            }
+
+            // Helper: check if URL is a valid image
+            function isValidImageUrl(url) {
+                if (!url || typeof url !== 'string') return false;
+                if (isTrackingPixel(url)) return false;
+                if (url.startsWith('data:image') && url.length < 200) return false; // tiny data URLs are likely pixels
+                return true;
             }
 
             // Helper: extract inline styles from element
@@ -2724,7 +2764,7 @@
                 // Find images
                 node.querySelectorAll('img').forEach(img => {
                     const src = img.getAttribute('data-src') || img.getAttribute('src') || '';
-                    if (src && !src.includes('data:image') && !src.includes('pixel') && !src.includes('spacer')) {
+                    if (isValidImageUrl(src)) {
                         const styles = extractStyles(img);
                         children.push({
                             type: 'image',
@@ -2833,7 +2873,7 @@
                     const img = atom.tagName === 'IMG' ? atom : atom.querySelector('img');
                     if (img) {
                         const src = img.getAttribute('data-original') || img.getAttribute('src') || '';
-                        if (src && !src.includes('data:image')) {
+                        if (isValidImageUrl(src)) {
                             childElement = {
                                 type: 'image',
                                 attrs: { src, alt: img.getAttribute('alt') || '' },
@@ -2968,7 +3008,7 @@
                 // Find images
                 node.querySelectorAll('img').forEach(img => {
                     const src = img.getAttribute('data-original') || img.getAttribute('src') || '';
-                    if (src && !src.includes('data:image') && !src.includes('placeholder')) {
+                    if (isValidImageUrl(src)) {
                         children.push({
                             type: 'image',
                             attrs: { src, alt: img.getAttribute('alt') || '' },
@@ -3097,7 +3137,7 @@
                 // Images
                 else if (tag === 'img') {
                     const src = node.getAttribute('data-original') || node.getAttribute('src') || '';
-                    if (src && !src.includes('data:image')) {
+                    if (isValidImageUrl(src)) {
                         const styles = extractStyles(node);
                         element = {
                             type: 'image',
@@ -3270,7 +3310,7 @@
 
                 images.forEach(img => {
                     const src = img.getAttribute('data-original') || img.getAttribute('src') || '';
-                    if (src && !src.includes('data:image')) {
+                    if (isValidImageUrl(src)) {
                         elements.push({
                             type: 'image',
                             attrs: { src, alt: img.getAttribute('alt') || '' },
