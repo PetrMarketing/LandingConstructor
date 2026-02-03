@@ -39,6 +39,9 @@
                 <button class="toolbar-btn" id="redoBtn" title="Повторить">
                     <i class="fas fa-redo"></i>
                 </button>
+                <button class="toolbar-btn" id="themeBtn" title="Тема оформления">
+                    <i class="fas fa-palette"></i>
+                </button>
                 <button class="toolbar-btn" id="seoBtn" title="SEO настройки">
                     <i class="fas fa-search"></i>
                 </button>
@@ -212,6 +215,10 @@
                                 <i class="fas fa-clock"></i>
                                 <span>Таймер</span>
                             </div>
+                            <div class="block-item" draggable="true" data-type="modalForm">
+                                <i class="fas fa-window-maximize"></i>
+                                <span>Модальная форма</span>
+                            </div>
                         </div>
                     </div>
 
@@ -270,6 +277,22 @@
                             <div class="block-item" draggable="true" data-type="footer">
                                 <i class="fas fa-shoe-prints"></i>
                                 <span>Футер</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="program">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span>Программа</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="speaker">
+                                <i class="fas fa-user-tie"></i>
+                                <span>Спикер</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="legalFooter">
+                                <i class="fas fa-balance-scale"></i>
+                                <span>Юр. подвал</span>
+                            </div>
+                            <div class="block-item" draggable="true" data-type="analytics">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Аналитика</span>
                             </div>
                         </div>
                     </div>
@@ -633,6 +656,119 @@
                 <button class="btn" id="cancelPublishBtn">Закрыть</button>
                 <button class="btn primary" id="downloadForPublish">
                     <i class="fas fa-download"></i> Скачать ZIP
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Modal -->
+    <div class="modal" id="themeModal">
+        <div class="modal-content" style="max-width: 650px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-palette" style="color: var(--accent); margin-right: 8px;"></i> Тема оформления</h3>
+                <button class="modal-close" id="closeThemeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="edit-section">
+                    <h4><i class="fas fa-swatchbook"></i> Пресеты</h4>
+                    <div id="themePresets" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;"></div>
+                </div>
+
+                <div class="edit-section">
+                    <h4><i class="fas fa-fill-drip"></i> Цвета</h4>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <div class="edit-row">
+                            <label>Основной</label>
+                            <div class="edit-color">
+                                <input type="color" id="themePrimary" value="#3b82f6">
+                                <input type="text" class="edit-input" id="themePrimaryText" value="#3b82f6">
+                            </div>
+                        </div>
+                        <div class="edit-row">
+                            <label>Вторичный</label>
+                            <div class="edit-color">
+                                <input type="color" id="themeSecondary" value="#10b981">
+                                <input type="text" class="edit-input" id="themeSecondaryText" value="#10b981">
+                            </div>
+                        </div>
+                        <div class="edit-row">
+                            <label>Акцент</label>
+                            <div class="edit-color">
+                                <input type="color" id="themeAccent" value="#f59e0b">
+                                <input type="text" class="edit-input" id="themeAccentText" value="#f59e0b">
+                            </div>
+                        </div>
+                        <div class="edit-row">
+                            <label>Текст</label>
+                            <div class="edit-color">
+                                <input type="color" id="themeText" value="#1e293b">
+                                <input type="text" class="edit-input" id="themeTextText" value="#1e293b">
+                            </div>
+                        </div>
+                        <div class="edit-row">
+                            <label>Текст (вторичный)</label>
+                            <div class="edit-color">
+                                <input type="color" id="themeTextSecondary" value="#64748b">
+                                <input type="text" class="edit-input" id="themeTextSecondaryText" value="#64748b">
+                            </div>
+                        </div>
+                        <div class="edit-row">
+                            <label>Фон</label>
+                            <div class="edit-color">
+                                <input type="color" id="themeBg" value="#ffffff">
+                                <input type="text" class="edit-input" id="themeBgText" value="#ffffff">
+                            </div>
+                        </div>
+                        <div class="edit-row">
+                            <label>Фон (вторичный)</label>
+                            <div class="edit-color">
+                                <input type="color" id="themeBgSecondary" value="#f8fafc">
+                                <input type="text" class="edit-input" id="themeBgSecondaryText" value="#f8fafc">
+                            </div>
+                        </div>
+                        <div class="edit-row">
+                            <label>Границы</label>
+                            <div class="edit-color">
+                                <input type="color" id="themeBorder" value="#e2e8f0">
+                                <input type="text" class="edit-input" id="themeBorderText" value="#e2e8f0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="edit-section">
+                    <h4><i class="fas fa-text-height"></i> Типографика</h4>
+                    <div class="edit-row">
+                        <label>Шрифт</label>
+                        <select class="edit-select" id="themeFontFamily">
+                            <option value="Inter">Inter</option>
+                            <option value="Roboto">Roboto</option>
+                            <option value="Open Sans">Open Sans</option>
+                            <option value="Montserrat">Montserrat</option>
+                            <option value="Nunito">Nunito</option>
+                            <option value="Poppins">Poppins</option>
+                            <option value="Raleway">Raleway</option>
+                            <option value="Playfair Display">Playfair Display</option>
+                            <option value="Manrope">Manrope</option>
+                            <option value="Space Grotesk">Space Grotesk</option>
+                        </select>
+                    </div>
+                    <div class="edit-row">
+                        <label>Скругление углов</label>
+                        <select class="edit-select" id="themeBorderRadius">
+                            <option value="0px">Без скругления</option>
+                            <option value="4px">Минимальное (4px)</option>
+                            <option value="8px">Среднее (8px)</option>
+                            <option value="12px">Большое (12px)</option>
+                            <option value="16px">Очень большое (16px)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="cancelThemeBtn">Отмена</button>
+                <button class="btn primary" id="saveThemeBtn">
+                    <i class="fas fa-check"></i> Применить тему
                 </button>
             </div>
         </div>

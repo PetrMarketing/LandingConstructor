@@ -30,8 +30,30 @@ const state = {
         ogDescription: '',
         ogImage: '',
         favicon: ''
+    },
+    theme: {
+        primaryColor: '#3b82f6',
+        secondaryColor: '#10b981',
+        accentColor: '#f59e0b',
+        textColor: '#1e293b',
+        textSecondary: '#64748b',
+        bgColor: '#ffffff',
+        bgSecondary: '#f8fafc',
+        borderColor: '#e2e8f0',
+        fontFamily: 'Inter',
+        borderRadius: '8px'
     }
 };
+
+// Theme presets
+const themePresets = [
+    { name: 'По умолчанию', id: 'default', theme: { primaryColor: '#3b82f6', secondaryColor: '#10b981', accentColor: '#f59e0b', textColor: '#1e293b', textSecondary: '#64748b', bgColor: '#ffffff', bgSecondary: '#f8fafc', borderColor: '#e2e8f0', fontFamily: 'Inter', borderRadius: '8px' } },
+    { name: 'Тёмная', id: 'dark', theme: { primaryColor: '#6366f1', secondaryColor: '#22d3ee', accentColor: '#f59e0b', textColor: '#f1f5f9', textSecondary: '#94a3b8', bgColor: '#0f172a', bgSecondary: '#1e293b', borderColor: '#334155', fontFamily: 'Inter', borderRadius: '8px' } },
+    { name: 'Зелёная', id: 'green', theme: { primaryColor: '#059669', secondaryColor: '#0d9488', accentColor: '#f59e0b', textColor: '#1e293b', textSecondary: '#64748b', bgColor: '#ffffff', bgSecondary: '#f0fdf4', borderColor: '#d1fae5', fontFamily: 'Inter', borderRadius: '8px' } },
+    { name: 'Фиолетовая', id: 'purple', theme: { primaryColor: '#8b5cf6', secondaryColor: '#a78bfa', accentColor: '#f59e0b', textColor: '#1e293b', textSecondary: '#64748b', bgColor: '#ffffff', bgSecondary: '#faf5ff', borderColor: '#e9d5ff', fontFamily: 'Inter', borderRadius: '12px' } },
+    { name: 'Тёплая', id: 'warm', theme: { primaryColor: '#ea580c', secondaryColor: '#d97706', accentColor: '#dc2626', textColor: '#1c1917', textSecondary: '#78716c', bgColor: '#fffbeb', bgSecondary: '#fef3c7', borderColor: '#fed7aa', fontFamily: 'Inter', borderRadius: '8px' } },
+    { name: 'Минимализм', id: 'minimal', theme: { primaryColor: '#18181b', secondaryColor: '#3f3f46', accentColor: '#18181b', textColor: '#18181b', textSecondary: '#71717a', bgColor: '#ffffff', bgSecondary: '#fafafa', borderColor: '#e4e4e7', fontFamily: 'Inter', borderRadius: '4px' } }
+];
 
 // Load page data
 function loadPageData() {
@@ -52,6 +74,9 @@ function loadPageData() {
             ogImage: '',
             favicon: ''
         };
+        if (page.theme) {
+            state.theme = { ...state.theme, ...page.theme };
+        }
 
         // Regenerate content for elements with componentSettings (for imported pages)
         function regenerateContent(elements) {
@@ -86,6 +111,7 @@ function savePageData() {
     if (pageIndex !== -1) {
         pages[pageIndex].elements = state.elements;
         pages[pageIndex].meta = state.meta;
+        pages[pageIndex].theme = state.theme;
         pages[pageIndex].updatedAt = new Date().toISOString();
         localStorage.setItem('landing_pages', JSON.stringify(pages));
     }
@@ -1125,6 +1151,111 @@ const blockTemplates = {
         }
     },
 
+    // ===== New Feature Blocks =====
+
+    // Modal Form - trigger button + modal with form fields
+    modalForm: {
+        tag: 'div',
+        label: 'Модальная форма',
+        icon: 'fa-window-maximize',
+        content: '',
+        defaultStyles: {},
+        componentSettings: {
+            modalId: 'modal_form_1',
+            buttonText: 'Оставить заявку',
+            buttonColor: '#3b82f6',
+            title: 'Оставьте заявку',
+            subtitle: 'Мы свяжемся с вами в ближайшее время',
+            fields: [
+                { type: 'text', name: 'name', label: 'Ваше имя', placeholder: 'Введите имя', required: true },
+                { type: 'tel', name: 'phone', label: 'Телефон', placeholder: '+7 (___) ___-__-__', required: true },
+                { type: 'email', name: 'email', label: 'Email', placeholder: 'email@example.com', required: false }
+            ],
+            submitText: 'Отправить',
+            successMessage: 'Спасибо! Мы свяжемся с вами.'
+        }
+    },
+
+    // Program/Course Modules
+    program: {
+        tag: 'div',
+        label: 'Программа курса',
+        icon: 'fa-graduation-cap',
+        content: '',
+        defaultStyles: { padding: '40px 20px' },
+        componentSettings: {
+            title: 'Программа курса',
+            modules: [
+                { title: 'Модуль 1. Введение', items: ['Обзор курса', 'Основные понятия', 'Инструменты'] },
+                { title: 'Модуль 2. Основы', items: ['Теоретическая база', 'Первая практика', 'Домашнее задание'] },
+                { title: 'Модуль 3. Продвинутый уровень', items: ['Сложные кейсы', 'Работа с клиентами', 'Итоговый проект'] }
+            ],
+            accentColor: '#3b82f6'
+        }
+    },
+
+    // Speaker/Author
+    speaker: {
+        tag: 'div',
+        label: 'Спикер',
+        icon: 'fa-user-tie',
+        content: '',
+        defaultStyles: { padding: '40px 20px' },
+        componentSettings: {
+            name: 'Имя Фамилия',
+            role: 'Эксперт в своей области',
+            photo: 'https://via.placeholder.com/300x300',
+            bio: [
+                '10 лет опыта в индустрии',
+                'Автор 3-х книг-бестселлеров',
+                'Спикер международных конференций',
+                'Основатель собственной школы'
+            ],
+            socialTelegram: '',
+            socialInstagram: '',
+            socialYoutube: '',
+            socialLinkedin: '',
+            accentColor: '#3b82f6'
+        }
+    },
+
+    // Analytics Block
+    analytics: {
+        tag: 'div',
+        label: 'Аналитика',
+        icon: 'fa-chart-bar',
+        content: '<div style="padding:20px;background:#f0fdf4;border:1px dashed #10b981;text-align:center;color:#059669;border-radius:8px;"><i class="fas fa-chart-bar" style="font-size:24px;margin-bottom:8px;display:block;"></i>Блок аналитики (скрыт на сайте)</div>',
+        defaultStyles: {},
+        componentSettings: {
+            yandexMetrikaId: '',
+            googleAnalyticsId: '',
+            facebookPixelId: '',
+            vkPixelId: ''
+        }
+    },
+
+    // Legal Footer
+    legalFooter: {
+        tag: 'footer',
+        label: 'Юр. подвал',
+        icon: 'fa-balance-scale',
+        content: '',
+        defaultStyles: { backgroundColor: '#1e293b', color: '#94a3b8', padding: '40px 20px', fontSize: '14px' },
+        componentSettings: {
+            companyName: 'ООО «Компания»',
+            inn: '',
+            ogrn: '',
+            offerUrl: '',
+            privacyUrl: '',
+            email: 'info@example.com',
+            phone: '+7 (999) 123-45-67',
+            socialTelegram: '',
+            socialVk: '',
+            socialInstagram: '',
+            socialYoutube: ''
+        }
+    },
+
     // Code
     html: {
         tag: 'div',
@@ -1584,11 +1715,20 @@ function generateComponentContent(type, settings) {
             const buttonColor = settings.buttonColor || '#3b82f6';
             const bgColor = settings.highlighted ? buttonColor : 'white';
             const textColor = settings.highlighted ? 'white' : '#1e293b';
+            const oldPrice = settings.oldPrice || '';
+            const installmentPrice = settings.installmentPrice || '';
+            const installmentPeriod = settings.installmentPeriod || '/мес';
+            const modalFormId = settings.modalFormId || '';
+            const oldPriceHtml = oldPrice ? `<div style="font-size:20px;text-decoration:line-through;color:${settings.highlighted ? 'rgba(255,255,255,0.5)' : '#9ca3af'};margin-bottom:4px;">${currency}${oldPrice}</div>` : '';
+            const installmentHtml = installmentPrice ? `<div style="font-size:15px;color:${settings.highlighted ? 'rgba(255,255,255,0.8)' : '#64748b'};margin-top:4px;">или ${currency}${installmentPrice}${installmentPeriod} в рассрочку</div>` : '';
+            const pricingBtnHref = modalFormId ? `javascript:document.getElementById('${modalFormId}')&&(document.getElementById('${modalFormId}').style.display='flex')` : (settings.buttonUrl || '#');
             return `<div style="text-align:center;padding:32px;background:${bgColor};border-radius:12px;box-shadow:0 4px 6px rgba(0,0,0,0.1);">
                 <h3 style="font-size:24px;margin-bottom:8px;color:${textColor};">${planName}</h3>
+                ${oldPriceHtml}
                 <div style="font-size:48px;font-weight:bold;margin:16px 0;color:${textColor};">${currency}${price}<span style="font-size:16px;color:${settings.highlighted ? 'rgba(255,255,255,0.8)' : '#64748b'};">${period}</span></div>
+                ${installmentHtml}
                 <ul style="list-style:none;padding:0;margin-bottom:24px;color:${settings.highlighted ? 'rgba(255,255,255,0.9)' : '#64748b'};">${featuresListHtml}</ul>
-                <a href="${settings.buttonUrl || '#'}" style="display:block;padding:12px;background:${settings.highlighted ? 'white' : buttonColor};color:${settings.highlighted ? buttonColor : 'white'};text-decoration:none;border-radius:6px;">${settings.buttonText || 'Выбрать'}</a>
+                <a href="${pricingBtnHref}" style="display:block;padding:12px;background:${settings.highlighted ? 'white' : buttonColor};color:${settings.highlighted ? buttonColor : 'white'};text-decoration:none;border-radius:6px;">${settings.buttonText || 'Выбрать'}</a>
             </div>`;
 
         case 'counter':
@@ -1743,9 +1883,182 @@ function generateComponentContent(type, settings) {
                 <p style="font-size:12px;color:#9ca3af;text-align:center;margin-top:16px;">${settings.privacyText || ''}</p>
             </div>`;
 
+        case 'modalForm': {
+            const mfId = settings.modalId || 'modal_form_1';
+            const mfFields = settings.fields || [];
+            const mfFieldsHtml = mfFields.map(field => {
+                if (field.type === 'select') {
+                    const opts = (field.options || []).map(o => `<option value="${o}">${o}</option>`).join('');
+                    return `<div style="margin-bottom:16px;">
+                        <label style="display:block;font-size:14px;font-weight:500;margin-bottom:6px;color:#374151;">${field.label || ''}</label>
+                        <select name="${field.name}" ${field.required ? 'required' : ''} style="width:100%;padding:14px 16px;border:1px solid #d1d5db;border-radius:8px;font-size:16px;background:white;"><option value="">Выберите...</option>${opts}</select>
+                    </div>`;
+                }
+                return `<div style="margin-bottom:16px;">
+                    <label style="display:block;font-size:14px;font-weight:500;margin-bottom:6px;color:#374151;">${field.label || ''}</label>
+                    <input type="${field.type || 'text'}" name="${field.name}" placeholder="${field.placeholder || ''}" ${field.required ? 'required' : ''} style="width:100%;padding:14px 16px;border:1px solid #d1d5db;border-radius:8px;font-size:16px;">
+                </div>`;
+            }).join('');
+            return `<button onclick="document.getElementById('${mfId}').style.display='flex'" style="display:inline-block;padding:16px 32px;background:${settings.buttonColor || '#3b82f6'};color:white;border:none;border-radius:8px;font-weight:600;font-size:16px;cursor:pointer;">${settings.buttonText || 'Оставить заявку'}</button>
+            <div id="${mfId}" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;z-index:10000;" onclick="if(event.target===this)this.style.display='none'">
+                <div style="background:white;padding:40px;border-radius:16px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto;position:relative;">
+                    <button onclick="this.closest('[id=\\'${mfId}\\']').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:24px;cursor:pointer;color:#9ca3af;">&times;</button>
+                    <h3 style="font-size:24px;font-weight:bold;margin-bottom:8px;color:#1e293b;">${settings.title || 'Оставьте заявку'}</h3>
+                    <p style="font-size:15px;color:#6b7280;margin-bottom:24px;">${settings.subtitle || ''}</p>
+                    <form onsubmit="event.preventDefault();this.innerHTML='<div style=\\'padding:20px;text-align:center;color:#10b981;font-weight:500;\\'>${settings.successMessage || 'Спасибо!'}</div>';">
+                        ${mfFieldsHtml}
+                        <button type="submit" style="width:100%;padding:16px;background:${settings.buttonColor || '#3b82f6'};color:white;border:none;border-radius:8px;font-size:17px;font-weight:600;cursor:pointer;">${settings.submitText || 'Отправить'}</button>
+                    </form>
+                </div>
+            </div>`;
+        }
+
+        case 'program': {
+            const progModules = settings.modules || [];
+            const progAccent = settings.accentColor || '#3b82f6';
+            const modulesHtml = progModules.map((mod, idx) => {
+                const itemsHtml = (mod.items || []).map(item => `
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f1f5f9;">
+                        <div style="width:8px;height:8px;border-radius:50%;background:${progAccent};flex-shrink:0;"></div>
+                        <span style="color:#475569;font-size:15px;">${item}</span>
+                    </div>
+                `).join('');
+                return `<div style="background:white;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);overflow:hidden;margin-bottom:16px;">
+                    <div onclick="var c=this.nextElementSibling;c.style.display=c.style.display==='none'?'block':'none';this.querySelector('.prog-arrow').style.transform=c.style.display==='none'?'':'rotate(180deg)'" style="display:flex;align-items:center;gap:16px;padding:20px 24px;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+                        <div style="flex-shrink:0;width:40px;height:40px;border-radius:10px;background:${progAccent};color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:16px;">${idx + 1}</div>
+                        <h4 style="flex:1;font-size:17px;font-weight:600;color:#1e293b;margin:0;">${mod.title || ''}</h4>
+                        <span class="prog-arrow" style="color:#94a3b8;transition:transform 0.3s;">▼</span>
+                    </div>
+                    <div style="padding:4px 24px 16px 80px;">${itemsHtml}</div>
+                </div>`;
+            }).join('');
+            return `<div style="max-width:800px;margin:0 auto;">
+                <h3 style="font-size:32px;font-weight:bold;margin-bottom:32px;color:#1e293b;text-align:center;">${settings.title || 'Программа курса'}</h3>
+                ${modulesHtml}
+            </div>`;
+        }
+
+        case 'speaker': {
+            const spkAccent = settings.accentColor || '#3b82f6';
+            const bioItems = settings.bio || [];
+            const bioHtml = bioItems.map(item => `
+                <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+                    <div style="flex-shrink:0;width:32px;height:32px;border-radius:8px;background:${spkAccent}15;color:${spkAccent};display:flex;align-items:center;justify-content:center;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
+                    <span style="font-size:16px;color:#374151;">${item}</span>
+                </div>
+            `).join('');
+            const socialLinks = [];
+            if (settings.socialTelegram) socialLinks.push(`<a href="${settings.socialTelegram}" target="_blank" style="width:40px;height:40px;border-radius:50%;background:#0088cc;color:white;display:flex;align-items:center;justify-content:center;text-decoration:none;"><i class="fab fa-telegram-plane"></i></a>`);
+            if (settings.socialInstagram) socialLinks.push(`<a href="${settings.socialInstagram}" target="_blank" style="width:40px;height:40px;border-radius:50%;background:#e4405f;color:white;display:flex;align-items:center;justify-content:center;text-decoration:none;"><i class="fab fa-instagram"></i></a>`);
+            if (settings.socialYoutube) socialLinks.push(`<a href="${settings.socialYoutube}" target="_blank" style="width:40px;height:40px;border-radius:50%;background:#ff0000;color:white;display:flex;align-items:center;justify-content:center;text-decoration:none;"><i class="fab fa-youtube"></i></a>`);
+            if (settings.socialLinkedin) socialLinks.push(`<a href="${settings.socialLinkedin}" target="_blank" style="width:40px;height:40px;border-radius:50%;background:#0077b5;color:white;display:flex;align-items:center;justify-content:center;text-decoration:none;"><i class="fab fa-linkedin-in"></i></a>`);
+            const socialHtml = socialLinks.length ? `<div style="display:flex;gap:12px;margin-top:24px;">${socialLinks.join('')}</div>` : '';
+            return `<div style="max-width:900px;margin:0 auto;display:flex;gap:48px;align-items:center;flex-wrap:wrap;">
+                <div style="flex-shrink:0;">
+                    <img src="${settings.photo || 'https://via.placeholder.com/300x300'}" alt="${settings.name}" style="width:280px;height:280px;border-radius:20px;object-fit:cover;box-shadow:0 10px 30px rgba(0,0,0,0.12);">
+                </div>
+                <div style="flex:1;min-width:280px;">
+                    <h3 style="font-size:32px;font-weight:bold;color:#1e293b;margin-bottom:8px;">${settings.name || 'Имя Фамилия'}</h3>
+                    <p style="font-size:18px;color:${spkAccent};font-weight:500;margin-bottom:24px;">${settings.role || 'Эксперт'}</p>
+                    ${bioHtml}
+                    ${socialHtml}
+                </div>
+            </div>`;
+        }
+
+        case 'legalFooter': {
+            const legalSocials = [];
+            if (settings.socialTelegram) legalSocials.push(`<a href="${settings.socialTelegram}" target="_blank" style="color:#94a3b8;text-decoration:none;font-size:18px;"><i class="fab fa-telegram-plane"></i></a>`);
+            if (settings.socialVk) legalSocials.push(`<a href="${settings.socialVk}" target="_blank" style="color:#94a3b8;text-decoration:none;font-size:18px;"><i class="fab fa-vk"></i></a>`);
+            if (settings.socialInstagram) legalSocials.push(`<a href="${settings.socialInstagram}" target="_blank" style="color:#94a3b8;text-decoration:none;font-size:18px;"><i class="fab fa-instagram"></i></a>`);
+            if (settings.socialYoutube) legalSocials.push(`<a href="${settings.socialYoutube}" target="_blank" style="color:#94a3b8;text-decoration:none;font-size:18px;"><i class="fab fa-youtube"></i></a>`);
+            const socialsRow = legalSocials.length ? `<div style="display:flex;gap:16px;margin-top:16px;">${legalSocials.join('')}</div>` : '';
+            const legalLinks = [];
+            if (settings.offerUrl) legalLinks.push(`<a href="${settings.offerUrl}" target="_blank" style="color:#94a3b8;text-decoration:underline;">Договор оферты</a>`);
+            if (settings.privacyUrl) legalLinks.push(`<a href="${settings.privacyUrl}" target="_blank" style="color:#94a3b8;text-decoration:underline;">Политика конфиденциальности</a>`);
+            const linksRow = legalLinks.length ? `<div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:12px;">${legalLinks.join('')}</div>` : '';
+            const innOgrn = [];
+            if (settings.inn) innOgrn.push(`ИНН: ${settings.inn}`);
+            if (settings.ogrn) innOgrn.push(`ОГРН: ${settings.ogrn}`);
+            const innOgrnRow = innOgrn.length ? `<p style="margin-top:8px;font-size:13px;color:#64748b;">${innOgrn.join(' | ')}</p>` : '';
+            return `<div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:32px;">
+                <div>
+                    <h4 style="font-size:16px;color:#e2e8f0;margin-bottom:12px;">${settings.companyName || 'Компания'}</h4>
+                    <p style="color:#94a3b8;">© ${new Date().getFullYear()} Все права защищены</p>
+                    ${innOgrnRow}
+                    ${linksRow}
+                </div>
+                <div>
+                    <h4 style="font-size:16px;color:#e2e8f0;margin-bottom:12px;">Контакты</h4>
+                    ${settings.email ? `<p style="color:#94a3b8;margin-bottom:4px;"><a href="mailto:${settings.email}" style="color:#94a3b8;text-decoration:none;">${settings.email}</a></p>` : ''}
+                    ${settings.phone ? `<p style="color:#94a3b8;"><a href="tel:${settings.phone.replace(/[^+\d]/g, '')}" style="color:#94a3b8;text-decoration:none;">${settings.phone}</a></p>` : ''}
+                    ${socialsRow}
+                </div>
+            </div>`;
+        }
+
         default:
             return '';
     }
+}
+
+// Collect anchor IDs from all elements
+function collectAnchors(elements = state.elements) {
+    const anchors = [];
+    function traverse(els) {
+        for (const el of els) {
+            if (el.anchorId) {
+                anchors.push({ id: el.anchorId, label: el.label + ': ' + el.anchorId });
+            }
+            if (el.children?.length) traverse(el.children);
+        }
+    }
+    traverse(elements);
+    return anchors;
+}
+
+// Generate analytics scripts from analytics elements
+function generateAnalyticsScripts(elements) {
+    let scripts = '';
+    function traverse(els) {
+        for (const el of els) {
+            if (el.type === 'analytics' && el.componentSettings) {
+                const cs = el.componentSettings;
+                if (cs.yandexMetrikaId) {
+                    scripts += `\n<!-- Yandex.Metrika -->
+<script>(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(${cs.yandexMetrikaId},"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/${cs.yandexMetrikaId}" style="position:absolute;left:-9999px;" alt=""></div></noscript>`;
+                }
+                if (cs.googleAnalyticsId) {
+                    scripts += `\n<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=${cs.googleAnalyticsId}"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${cs.googleAnalyticsId}');</script>`;
+                }
+                if (cs.facebookPixelId) {
+                    scripts += `\n<!-- Facebook Pixel -->
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${cs.facebookPixelId}');fbq('track','PageView');</script>`;
+                }
+                if (cs.vkPixelId) {
+                    scripts += `\n<!-- VK Pixel -->
+<script>!function(){var t=document.createElement("script");t.type="text/javascript",t.async=!0,t.src="https://vk.com/js/api/openapi.js?169",t.onload=function(){VK.Retargeting.Init("${cs.vkPixelId}"),VK.Retargeting.Hit()},document.head.appendChild(t)}();</script>`;
+                }
+            }
+            if (el.children?.length) traverse(el.children);
+        }
+    }
+    traverse(elements);
+    return scripts;
+}
+
+// Check if page has gallery blocks
+function checkForGalleries(elements) {
+    for (const el of elements) {
+        if (el.type === 'gallery') return true;
+        if (el.children?.length && checkForGalleries(el.children)) return true;
+    }
+    return false;
 }
 
 // Get styles based on current viewport
@@ -2986,6 +3299,15 @@ function setupEditHandlers() {
         });
     }
 
+    // Anchor ID handler
+    const anchorIdInput = editContent.querySelector('[data-custom="anchorId"]');
+    if (anchorIdInput) {
+        anchorIdInput.addEventListener('change', (e) => {
+            state.editingElement.anchorId = e.target.value.trim();
+            renderCanvas();
+        });
+    }
+
     // Child min-width handler
     const childMinWidthInput = editContent.querySelector('[data-custom="childMinWidth"]');
     if (childMinWidthInput) {
@@ -3294,6 +3616,31 @@ function setupEditHandlers() {
                 });
             } else if (key === 'marqueeText') {
                 el.componentSettings.items = value.split('\n').filter(l => l.trim());
+            } else if (key === 'fieldsText') {
+                // Parse modal form fields: type|name|label|placeholder|required
+                el.componentSettings.fields = value.split('\n').filter(l => l.trim()).map(line => {
+                    const parts = line.split('|');
+                    return {
+                        type: parts[0] || 'text',
+                        name: parts[1] || '',
+                        label: parts[2] || '',
+                        placeholder: parts[3] || '',
+                        required: (parts[4] || '').trim().toLowerCase() === 'required'
+                    };
+                });
+            } else if (key === 'modulesText') {
+                // Parse program modules: blocks separated by empty lines
+                const blocks = value.split('\n\n').filter(b => b.trim());
+                el.componentSettings.modules = blocks.map(block => {
+                    const lines = block.split('\n').filter(l => l.trim());
+                    return {
+                        title: lines[0] || '',
+                        items: lines.slice(1)
+                    };
+                });
+            } else if (key === 'bioText') {
+                // Parse speaker bio items
+                el.componentSettings.bio = value.split('\n').filter(l => l.trim());
             } else if (key === 'columns' || key === 'speed') {
                 el.componentSettings[key] = parseInt(value) || 0;
             } else {
@@ -3370,7 +3717,10 @@ function renderContentTab(el) {
         `,
 
         // ===== КНОПКА =====
-        button: () => `
+        button: () => {
+            const anchors = collectAnchors();
+            const anchorOptions = anchors.map(a => `<option value="#${a.id}" ${el.attrs?.href === '#' + a.id ? 'selected' : ''}>${a.label}</option>`).join('');
+            return `
             <div class="edit-section">
                 <h4><i class="fas fa-hand-pointer"></i> Кнопка</h4>
                 <div class="edit-row">
@@ -3381,6 +3731,13 @@ function renderContentTab(el) {
                     <label>Ссылка</label>
                     <input type="text" class="edit-input" data-attr="href" value="${el.attrs?.href || '#'}" placeholder="https://...">
                 </div>
+                ${anchors.length ? `<div class="edit-row">
+                    <label>Или выберите якорь на странице</label>
+                    <select class="edit-select" data-custom="anchorSelect" onchange="if(this.value){this.closest('.edit-section').querySelector('[data-attr=\\'href\\']').value=this.value}">
+                        <option value="">— Выберите якорь —</option>
+                        ${anchorOptions}
+                    </select>
+                </div>` : ''}
                 <div class="edit-row">
                     <label>Открывать в</label>
                     <select class="edit-select" data-attr="target">
@@ -3389,10 +3746,13 @@ function renderContentTab(el) {
                     </select>
                 </div>
             </div>
-        `,
+        `},
 
         // ===== ССЫЛКА =====
-        link: () => `
+        link: () => {
+            const anchors = collectAnchors();
+            const anchorOptions = anchors.map(a => `<option value="#${a.id}" ${el.attrs?.href === '#' + a.id ? 'selected' : ''}>${a.label}</option>`).join('');
+            return `
             <div class="edit-section">
                 <h4><i class="fas fa-link"></i> Ссылка</h4>
                 <div class="edit-row">
@@ -3403,6 +3763,13 @@ function renderContentTab(el) {
                     <label>URL</label>
                     <input type="text" class="edit-input" data-attr="href" value="${el.attrs?.href || '#'}" placeholder="https://...">
                 </div>
+                ${anchors.length ? `<div class="edit-row">
+                    <label>Или выберите якорь на странице</label>
+                    <select class="edit-select" data-custom="anchorSelect" onchange="if(this.value){this.closest('.edit-section').querySelector('[data-attr=\\'href\\']').value=this.value}">
+                        <option value="">— Выберите якорь —</option>
+                        ${anchorOptions}
+                    </select>
+                </div>` : ''}
                 <div class="edit-row">
                     <label>Открывать в</label>
                     <select class="edit-select" data-attr="target">
@@ -3411,7 +3778,7 @@ function renderContentTab(el) {
                     </select>
                 </div>
             </div>
-        `,
+        `},
 
         // ===== СПИСОК =====
         list: () => `
@@ -3830,12 +4197,30 @@ function renderContentTab(el) {
                     </div>
                 </div>
                 <div class="edit-row">
+                    <label>Старая цена (зачёркнутая)</label>
+                    <input type="text" class="edit-input" data-component="oldPrice" value="${cs.oldPrice || ''}" placeholder="Например: 49000">
+                </div>
+                <div class="edit-grid">
+                    <div class="edit-row">
+                        <label>Цена рассрочки</label>
+                        <input type="text" class="edit-input" data-component="installmentPrice" value="${cs.installmentPrice || ''}" placeholder="Например: 3900">
+                    </div>
+                    <div class="edit-row">
+                        <label>Период рассрочки</label>
+                        <input type="text" class="edit-input" data-component="installmentPeriod" value="${cs.installmentPeriod || '/мес'}" placeholder="/мес">
+                    </div>
+                </div>
+                <div class="edit-row">
                     <label>Преимущества (каждое с новой строки)</label>
                     <textarea class="edit-textarea" data-component="featuresText" rows="4">${(cs.features || []).join('\n')}</textarea>
                 </div>
                 <div class="edit-row">
                     <label>Текст кнопки</label>
                     <input type="text" class="edit-input" data-component="buttonText" value="${escapeHtml(cs.buttonText)}">
+                </div>
+                <div class="edit-row">
+                    <label>ID модальной формы (кнопка откроет форму)</label>
+                    <input type="text" class="edit-input" data-component="modalFormId" value="${cs.modalFormId || ''}" placeholder="modal_form_1">
                 </div>
                 <div class="edit-row">
                     <label>Цвет кнопки</label>
@@ -4069,6 +4454,222 @@ React
                         <input type="range" min="5" max="60" value="${cs.speed || 20}" data-component="speed">
                         <span>${cs.speed || 20}s</span>
                     </div>
+                </div>
+            </div>
+        `},
+
+        modalForm: () => {
+            const cs = el.componentSettings || {};
+            const fieldsText = (cs.fields || []).map(f => {
+                const parts = [f.type || 'text', f.name || '', f.label || '', f.placeholder || '', f.required ? 'required' : ''];
+                return parts.join('|');
+            }).join('\n');
+            return `
+            <div class="edit-section">
+                <h4><i class="fas fa-window-maximize"></i> Модальная форма</h4>
+                <div class="edit-row">
+                    <label>ID модального окна</label>
+                    <input type="text" class="edit-input" data-component="modalId" value="${cs.modalId || 'modal_form_1'}">
+                </div>
+                <div class="edit-row">
+                    <label>Текст кнопки</label>
+                    <input type="text" class="edit-input" data-component="buttonText" value="${escapeHtml(cs.buttonText || '')}">
+                </div>
+                <div class="edit-row">
+                    <label>Цвет кнопки</label>
+                    <div class="edit-color">
+                        <input type="color" value="${cs.buttonColor || '#3b82f6'}" data-component="buttonColor">
+                        <input type="text" class="edit-input" value="${cs.buttonColor || '#3b82f6'}" data-component="buttonColor">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Заголовок формы</label>
+                    <input type="text" class="edit-input" data-component="title" value="${escapeHtml(cs.title || '')}">
+                </div>
+                <div class="edit-row">
+                    <label>Подзаголовок</label>
+                    <input type="text" class="edit-input" data-component="subtitle" value="${escapeHtml(cs.subtitle || '')}">
+                </div>
+                <div class="edit-row">
+                    <label>Поля формы (тип|имя|метка|placeholder|required)</label>
+                    <textarea class="edit-textarea" data-component="fieldsText" rows="5" placeholder="text|name|Ваше имя|Введите имя|required
+tel|phone|Телефон|+7|required
+email|email|Email|email@example.com|">${fieldsText}</textarea>
+                </div>
+                <p class="edit-hint">Формат: тип|имя|метка|placeholder|required</p>
+                <div class="edit-row">
+                    <label>Текст кнопки отправки</label>
+                    <input type="text" class="edit-input" data-component="submitText" value="${escapeHtml(cs.submitText || 'Отправить')}">
+                </div>
+                <div class="edit-row">
+                    <label>Сообщение после отправки</label>
+                    <input type="text" class="edit-input" data-component="successMessage" value="${escapeHtml(cs.successMessage || '')}">
+                </div>
+            </div>
+        `},
+
+        program: () => {
+            const cs = el.componentSettings || { title: '', modules: [], accentColor: '#3b82f6' };
+            const modulesText = (cs.modules || []).map(m => {
+                return m.title + '\n' + (m.items || []).join('\n');
+            }).join('\n\n');
+            return `
+            <div class="edit-section">
+                <h4><i class="fas fa-graduation-cap"></i> Программа курса</h4>
+                <div class="edit-row">
+                    <label>Заголовок</label>
+                    <input type="text" class="edit-input" data-component="title" value="${escapeHtml(cs.title)}">
+                </div>
+                <div class="edit-row">
+                    <label>Модули и темы</label>
+                    <textarea class="edit-textarea" data-component="modulesText" rows="12" placeholder="Модуль 1. Введение
+Тема 1
+Тема 2
+
+Модуль 2. Основы
+Тема 1
+Тема 2">${modulesText}</textarea>
+                </div>
+                <p class="edit-hint">Первая строка блока — название модуля, остальные — темы. Разделяйте модули пустой строкой.</p>
+                <div class="edit-row">
+                    <label>Цвет акцента</label>
+                    <div class="edit-color">
+                        <input type="color" value="${cs.accentColor || '#3b82f6'}" data-component="accentColor">
+                        <input type="text" class="edit-input" value="${cs.accentColor || '#3b82f6'}" data-component="accentColor">
+                    </div>
+                </div>
+            </div>
+        `},
+
+        speaker: () => {
+            const cs = el.componentSettings || {};
+            const bioText = (cs.bio || []).join('\n');
+            return `
+            <div class="edit-section">
+                <h4><i class="fas fa-user-tie"></i> Спикер / Автор</h4>
+                <div class="edit-row">
+                    <label>Имя</label>
+                    <input type="text" class="edit-input" data-component="name" value="${escapeHtml(cs.name || '')}">
+                </div>
+                <div class="edit-row">
+                    <label>Роль / Должность</label>
+                    <input type="text" class="edit-input" data-component="role" value="${escapeHtml(cs.role || '')}">
+                </div>
+                <div class="edit-row">
+                    <label>URL фото</label>
+                    <input type="text" class="edit-input" data-component="photo" value="${cs.photo || ''}">
+                </div>
+                <div class="edit-row">
+                    <label>Биография (каждый пункт с новой строки)</label>
+                    <textarea class="edit-textarea" data-component="bioText" rows="5">${bioText}</textarea>
+                </div>
+                <div class="edit-row">
+                    <label>Цвет акцента</label>
+                    <div class="edit-color">
+                        <input type="color" value="${cs.accentColor || '#3b82f6'}" data-component="accentColor">
+                        <input type="text" class="edit-input" value="${cs.accentColor || '#3b82f6'}" data-component="accentColor">
+                    </div>
+                </div>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-share-alt"></i> Социальные сети</h4>
+                <div class="edit-row">
+                    <label>Telegram</label>
+                    <input type="text" class="edit-input" data-component="socialTelegram" value="${cs.socialTelegram || ''}" placeholder="https://t.me/...">
+                </div>
+                <div class="edit-row">
+                    <label>Instagram</label>
+                    <input type="text" class="edit-input" data-component="socialInstagram" value="${cs.socialInstagram || ''}" placeholder="https://instagram.com/...">
+                </div>
+                <div class="edit-row">
+                    <label>YouTube</label>
+                    <input type="text" class="edit-input" data-component="socialYoutube" value="${cs.socialYoutube || ''}" placeholder="https://youtube.com/...">
+                </div>
+                <div class="edit-row">
+                    <label>LinkedIn</label>
+                    <input type="text" class="edit-input" data-component="socialLinkedin" value="${cs.socialLinkedin || ''}" placeholder="https://linkedin.com/in/...">
+                </div>
+            </div>
+        `},
+
+        analytics: () => {
+            const cs = el.componentSettings || {};
+            return `
+            <div class="edit-section">
+                <h4><i class="fas fa-chart-bar"></i> Коды аналитики</h4>
+                <p class="edit-hint">Этот блок невидим на сайте. Скрипты аналитики будут добавлены в &lt;head&gt; экспортированной страницы.</p>
+                <div class="edit-row">
+                    <label>Яндекс.Метрика ID</label>
+                    <input type="text" class="edit-input" data-component="yandexMetrikaId" value="${cs.yandexMetrikaId || ''}" placeholder="12345678">
+                </div>
+                <div class="edit-row">
+                    <label>Google Analytics ID</label>
+                    <input type="text" class="edit-input" data-component="googleAnalyticsId" value="${cs.googleAnalyticsId || ''}" placeholder="G-XXXXXXXXXX">
+                </div>
+                <div class="edit-row">
+                    <label>Facebook Pixel ID</label>
+                    <input type="text" class="edit-input" data-component="facebookPixelId" value="${cs.facebookPixelId || ''}" placeholder="123456789012345">
+                </div>
+                <div class="edit-row">
+                    <label>VK Pixel ID</label>
+                    <input type="text" class="edit-input" data-component="vkPixelId" value="${cs.vkPixelId || ''}" placeholder="VK-RTRG-123456-XXXXX">
+                </div>
+            </div>
+        `},
+
+        legalFooter: () => {
+            const cs = el.componentSettings || {};
+            return `
+            <div class="edit-section">
+                <h4><i class="fas fa-balance-scale"></i> Юридический подвал</h4>
+                <div class="edit-row">
+                    <label>Название компании</label>
+                    <input type="text" class="edit-input" data-component="companyName" value="${escapeHtml(cs.companyName || '')}">
+                </div>
+                <div class="edit-grid">
+                    <div class="edit-row">
+                        <label>ИНН</label>
+                        <input type="text" class="edit-input" data-component="inn" value="${cs.inn || ''}">
+                    </div>
+                    <div class="edit-row">
+                        <label>ОГРН</label>
+                        <input type="text" class="edit-input" data-component="ogrn" value="${cs.ogrn || ''}">
+                    </div>
+                </div>
+                <div class="edit-row">
+                    <label>Ссылка на оферту</label>
+                    <input type="text" class="edit-input" data-component="offerUrl" value="${cs.offerUrl || ''}" placeholder="https://...">
+                </div>
+                <div class="edit-row">
+                    <label>Ссылка на политику конфиденциальности</label>
+                    <input type="text" class="edit-input" data-component="privacyUrl" value="${cs.privacyUrl || ''}" placeholder="https://...">
+                </div>
+                <div class="edit-row">
+                    <label>Email</label>
+                    <input type="text" class="edit-input" data-component="email" value="${cs.email || ''}">
+                </div>
+                <div class="edit-row">
+                    <label>Телефон</label>
+                    <input type="text" class="edit-input" data-component="phone" value="${cs.phone || ''}">
+                </div>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-share-alt"></i> Социальные сети</h4>
+                <div class="edit-row">
+                    <label>Telegram</label>
+                    <input type="text" class="edit-input" data-component="socialTelegram" value="${cs.socialTelegram || ''}" placeholder="https://t.me/...">
+                </div>
+                <div class="edit-row">
+                    <label>VK</label>
+                    <input type="text" class="edit-input" data-component="socialVk" value="${cs.socialVk || ''}" placeholder="https://vk.com/...">
+                </div>
+                <div class="edit-row">
+                    <label>Instagram</label>
+                    <input type="text" class="edit-input" data-component="socialInstagram" value="${cs.socialInstagram || ''}" placeholder="https://instagram.com/...">
+                </div>
+                <div class="edit-row">
+                    <label>YouTube</label>
+                    <input type="text" class="edit-input" data-component="socialYoutube" value="${cs.socialYoutube || ''}" placeholder="https://youtube.com/...">
                 </div>
             </div>
         `}
@@ -5046,6 +5647,15 @@ function renderAdvancedTab(el) {
         </div>
 
         <div class="edit-section">
+            <h4><i class="fas fa-anchor"></i> Якорь (Anchor)</h4>
+            <div class="edit-row">
+                <label>ID якоря для навигации</label>
+                <input type="text" class="edit-input" data-custom="anchorId" value="${el.anchorId || ''}" placeholder="например: about, pricing, contacts">
+            </div>
+            <p class="edit-hint">Используйте для smooth scroll навигации. Ссылка: #якорь</p>
+        </div>
+
+        <div class="edit-section">
             <h4>CSS классы</h4>
             <div class="edit-row">
                 <input type="text" class="edit-input" data-attr="class" value="${el.attrs?.class || ''}" placeholder="class1 class2">
@@ -5318,8 +5928,8 @@ function generateElementHTML(el) {
 
     const styleStr = stylesToString(styles);
 
-    // Always add id for auto-responsive CSS targeting
-    attrs['id'] = el.id;
+    // Always add id for auto-responsive CSS targeting; use anchorId if set
+    attrs['id'] = el.anchorId || el.id;
 
     // Add class based on element type for responsive targeting
     const typeClass = el.type || '';
@@ -5341,6 +5951,7 @@ function generateHTML(elements = state.elements) {
 function generateFullHTML() {
     // Check if page has forms
     const hasForm = checkForForms(state.elements);
+    const hasGallery = checkForGalleries(state.elements);
 
     // Collect used Google Fonts
     const usedFonts = collectUsedFonts();
@@ -5377,16 +5988,66 @@ function generateFullHTML() {
         faviconTag = `\n    <link rel="icon" href="${meta.favicon}">`;
     }
 
+    // Theme CSS variables
+    const t = state.theme || {};
+    const themeCss = `
+        :root {
+            --primary: ${t.primaryColor || '#3b82f6'};
+            --secondary: ${t.secondaryColor || '#10b981'};
+            --accent: ${t.accentColor || '#f59e0b'};
+            --text: ${t.textColor || '#1e293b'};
+            --text-secondary: ${t.textSecondary || '#64748b'};
+            --bg: ${t.bgColor || '#ffffff'};
+            --bg-secondary: ${t.bgSecondary || '#f8fafc'};
+            --border: ${t.borderColor || '#e2e8f0'};
+            --radius: ${t.borderRadius || '8px'};
+        }`;
+
+    // Analytics scripts
+    const analyticsScripts = generateAnalyticsScripts(state.elements);
+
+    // Lightbox code for galleries
+    const lightboxCode = hasGallery ? `
+    <div id="lb-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.92);z-index:99999;align-items:center;justify-content:center;cursor:pointer;" onclick="if(event.target===this)closeLb()">
+        <button onclick="closeLb()" style="position:absolute;top:20px;right:20px;background:none;border:none;color:white;font-size:32px;cursor:pointer;z-index:100000;">&times;</button>
+        <button id="lb-prev" onclick="lbNav(-1)" style="position:absolute;left:20px;top:50%;transform:translateY(-50%);background:none;border:none;color:white;font-size:36px;cursor:pointer;">&#10094;</button>
+        <img id="lb-img" src="" style="max-width:90%;max-height:90vh;border-radius:8px;object-fit:contain;">
+        <button id="lb-next" onclick="lbNav(1)" style="position:absolute;right:20px;top:50%;transform:translateY(-50%);background:none;border:none;color:white;font-size:36px;cursor:pointer;">&#10095;</button>
+    </div>
+    <script>
+    (function(){
+        var imgs=[],ci=0,ov=document.getElementById('lb-overlay'),im=document.getElementById('lb-img');
+        document.querySelectorAll('.gallery img').forEach(function(img,i){
+            img.style.cursor='pointer';
+            img.addEventListener('click',function(){
+                imgs=Array.from(img.closest('.gallery').querySelectorAll('img')).map(function(x){return x.src;});
+                ci=imgs.indexOf(img.src);if(ci<0)ci=0;
+                im.src=imgs[ci];ov.style.display='flex';
+            });
+        });
+        window.closeLb=function(){ov.style.display='none';};
+        window.lbNav=function(d){ci+=d;if(ci<0)ci=imgs.length-1;if(ci>=imgs.length)ci=0;im.src=imgs[ci];};
+        document.addEventListener('keydown',function(e){
+            if(ov.style.display==='flex'){
+                if(e.key==='Escape')closeLb();
+                if(e.key==='ArrowLeft')lbNav(-1);
+                if(e.key==='ArrowRight')lbNav(1);
+            }
+        });
+    })();
+    </script>` : '';
+
     return `<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${escapeHtml(pageTitle)}</title>${metaTags}${faviconTag}
-    ${fontLinks ? fontLinks + '\n    ' : ''}<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
+    ${fontLinks ? fontLinks + '\n    ' : ''}<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">${analyticsScripts}
+    <style>${themeCss}
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { font-family: '${t.fontFamily || 'Inter'}', -apple-system, BlinkMacSystemFont, sans-serif; color: var(--text); background: var(--bg); }
         img { max-width: 100%; height: auto; }
         img[loading="lazy"] { opacity: 1; transition: opacity 0.3s; }
         img.loading { opacity: 0; }
@@ -5410,7 +6071,7 @@ function generateFullHTML() {
         [data-hover="shake"]:hover { animation: shake 0.5s; }
 
         /* Form styles */
-        form input:focus, form textarea:focus { outline: none; border-color: #3b82f6 !important; }
+        form input:focus, form textarea:focus, form select:focus { outline: none; border-color: var(--primary) !important; }
         form button:hover { opacity: 0.9; }
         form button:disabled { opacity: 0.6; cursor: not-allowed; }
         .form-success { padding: 16px; background: #10b981; color: white; border-radius: 8px; text-align: center; }
@@ -5422,7 +6083,7 @@ ${generateResponsiveCSS()}
 </head>
 <body>
 ${generateHTML()}
-${hasForm ? generateFormScript() : ''}
+${hasForm ? generateFormScript() : ''}${lightboxCode}
 </body>
 </html>`;
 }
@@ -5436,21 +6097,22 @@ function generateResponsiveCSS() {
 
     function collectResponsiveStyles(elements) {
         for (const el of elements) {
+            const elCssId = el.anchorId || el.id;
             // User-defined tablet styles
             if (el.tabletStyles && Object.keys(el.tabletStyles).length > 0) {
                 const styleStr = stylesToString(el.tabletStyles);
-                tabletCSS += `        #${el.id} { ${styleStr} }\n`;
+                tabletCSS += `        #${elCssId} { ${styleStr} }\n`;
             }
 
             // User-defined mobile styles
             if (el.mobileStyles && Object.keys(el.mobileStyles).length > 0) {
                 const styleStr = stylesToString(el.mobileStyles);
-                mobileCSS += `        #${el.id} { ${styleStr} }\n`;
+                mobileCSS += `        #${elCssId} { ${styleStr} }\n`;
             }
 
             // Auto-responsive: horizontal containers switch to vertical on mobile
             if (el.isContainer && el.styles?.flexDirection === 'row') {
-                autoMobileCSS += `        #${el.id} > .element-children, #${el.id} { flex-direction: column !important; }\n`;
+                autoMobileCSS += `        #${elCssId} > .element-children, #${elCssId} { flex-direction: column !important; }\n`;
             }
 
             // Auto-responsive: reduce large font sizes on mobile
@@ -5458,14 +6120,14 @@ function generateResponsiveCSS() {
             if (fontSize && fontSize > 32) {
                 const tabletSize = Math.max(24, Math.round(fontSize * 0.75));
                 const mobileSize = Math.max(20, Math.round(fontSize * 0.6));
-                autoTabletCSS += `        #${el.id} { font-size: ${tabletSize}px !important; }\n`;
-                autoMobileCSS += `        #${el.id} { font-size: ${mobileSize}px !important; }\n`;
+                autoTabletCSS += `        #${elCssId} { font-size: ${tabletSize}px !important; }\n`;
+                autoMobileCSS += `        #${elCssId} { font-size: ${mobileSize}px !important; }\n`;
             }
 
             // Auto-responsive: reduce large padding on mobile
             const padding = parseInt(el.styles?.padding);
             if (padding && padding > 40) {
-                autoMobileCSS += `        #${el.id} { padding: ${Math.round(padding * 0.5)}px !important; }\n`;
+                autoMobileCSS += `        #${elCssId} { padding: ${Math.round(padding * 0.5)}px !important; }\n`;
             }
 
             // Process children
@@ -5954,6 +6616,104 @@ document.getElementById('seoFaviconUpload').addEventListener('change', (e) => {
         };
         reader.readAsDataURL(file);
     }
+});
+
+// ===== Theme Modal Handlers =====
+const themeModal = document.getElementById('themeModal');
+
+// Theme color field pairs mapping
+const themeFields = [
+    { key: 'primaryColor', picker: 'themePrimary', text: 'themePrimaryText' },
+    { key: 'secondaryColor', picker: 'themeSecondary', text: 'themeSecondaryText' },
+    { key: 'accentColor', picker: 'themeAccent', text: 'themeAccentText' },
+    { key: 'textColor', picker: 'themeText', text: 'themeTextText' },
+    { key: 'textSecondary', picker: 'themeTextSecondary', text: 'themeTextSecondaryText' },
+    { key: 'bgColor', picker: 'themeBg', text: 'themeBgText' },
+    { key: 'bgSecondary', picker: 'themeBgSecondary', text: 'themeBgSecondaryText' },
+    { key: 'borderColor', picker: 'themeBorder', text: 'themeBorderText' }
+];
+
+function populateThemeModal() {
+    const t = state.theme || {};
+    themeFields.forEach(f => {
+        const val = t[f.key] || '#000000';
+        const p = document.getElementById(f.picker);
+        const tx = document.getElementById(f.text);
+        if (p) p.value = val;
+        if (tx) tx.value = val;
+    });
+    const fontSel = document.getElementById('themeFontFamily');
+    if (fontSel) fontSel.value = t.fontFamily || 'Inter';
+    const radiusSel = document.getElementById('themeBorderRadius');
+    if (radiusSel) radiusSel.value = t.borderRadius || '8px';
+
+    // Render preset buttons
+    const presetsContainer = document.getElementById('themePresets');
+    if (presetsContainer) {
+        presetsContainer.innerHTML = themePresets.map(p => `
+            <button type="button" class="btn" style="padding:8px 16px;font-size:13px;" data-preset="${p.id}">
+                <span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${p.theme.primaryColor};margin-right:6px;vertical-align:middle;"></span>
+                ${p.name}
+            </button>
+        `).join('');
+        presetsContainer.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const preset = themePresets.find(p => p.id === btn.dataset.preset);
+                if (preset) {
+                    const t = preset.theme;
+                    themeFields.forEach(f => {
+                        const val = t[f.key] || '#000000';
+                        const p = document.getElementById(f.picker);
+                        const tx = document.getElementById(f.text);
+                        if (p) p.value = val;
+                        if (tx) tx.value = val;
+                    });
+                    const fontSel = document.getElementById('themeFontFamily');
+                    if (fontSel) fontSel.value = t.fontFamily || 'Inter';
+                    const radiusSel = document.getElementById('themeBorderRadius');
+                    if (radiusSel) radiusSel.value = t.borderRadius || '8px';
+                }
+            });
+        });
+    }
+}
+
+// Sync color pickers with text inputs in theme modal
+themeFields.forEach(f => {
+    const p = document.getElementById(f.picker);
+    const tx = document.getElementById(f.text);
+    if (p && tx) {
+        p.addEventListener('input', () => { tx.value = p.value; });
+        tx.addEventListener('input', () => { if (/^#[0-9A-Fa-f]{6}$/.test(tx.value)) p.value = tx.value; });
+    }
+});
+
+document.getElementById('themeBtn').addEventListener('click', () => {
+    populateThemeModal();
+    themeModal.classList.add('active');
+});
+
+document.getElementById('closeThemeModal').addEventListener('click', () => {
+    themeModal.classList.remove('active');
+});
+
+document.getElementById('cancelThemeBtn').addEventListener('click', () => {
+    themeModal.classList.remove('active');
+});
+
+document.getElementById('saveThemeBtn').addEventListener('click', () => {
+    themeFields.forEach(f => {
+        const tx = document.getElementById(f.text);
+        if (tx) state.theme[f.key] = tx.value;
+    });
+    const fontSel = document.getElementById('themeFontFamily');
+    if (fontSel) state.theme.fontFamily = fontSel.value;
+    const radiusSel = document.getElementById('themeBorderRadius');
+    if (radiusSel) state.theme.borderRadius = radiusSel.value;
+
+    savePageData();
+    themeModal.classList.remove('active');
+    alert('Тема применена!');
 });
 
 // ===== Publish Modal Handlers =====
