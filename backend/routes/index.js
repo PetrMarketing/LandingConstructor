@@ -4,11 +4,13 @@ const router = express.Router();
 const authRoutes = require('./auth');
 const usersRoutes = require('./users');
 const projectsRoutes = require('./projects');
+const pagesRoutes = require('./pages');
 
 // API routes
 router.use('/auth', authRoutes);
 router.use('/users', usersRoutes);
 router.use('/projects', projectsRoutes);
+router.use('/pages', pagesRoutes);
 
 // Health check
 router.get('/health', (req, res) => {

@@ -582,7 +582,103 @@
     </div>
 
     <script>
-        // Templates
+        // ==================== API Client ====================
+        const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+            ? `${location.protocol}//${location.hostname}:3000/api`
+            : '/api';
+
+        const api = {
+            token: localStorage.getItem('cms_token'),
+            refreshToken: localStorage.getItem('cms_refresh_token'),
+            user: null,
+            isOnline: false,
+
+            headers() {
+                const h = { 'Content-Type': 'application/json' };
+                if (this.token) h['Authorization'] = 'Bearer ' + this.token;
+                return h;
+            },
+
+            async request(method, path, body = null) {
+                const opts = { method, headers: this.headers() };
+                if (body) opts.body = JSON.stringify(body);
+                try {
+                    const res = await fetch(API_BASE + path, opts);
+                    const data = await res.json();
+                    if (res.status === 401 && this.refreshToken) {
+                        const refreshed = await this.doRefresh();
+                        if (refreshed) {
+                            opts.headers['Authorization'] = 'Bearer ' + this.token;
+                            const res2 = await fetch(API_BASE + path, opts);
+                            return await res2.json();
+                        }
+                    }
+                    return data;
+                } catch (e) {
+                    console.warn('API request failed:', e);
+                    return { success: false, error: 'Network error', offline: true };
+                }
+            },
+
+            async doRefresh() {
+                try {
+                    const res = await fetch(API_BASE + '/auth/refresh', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ refreshToken: this.refreshToken })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        this.token = data.data.accessToken;
+                        localStorage.setItem('cms_token', this.token);
+                        return true;
+                    }
+                } catch (e) {}
+                this.logout();
+                return false;
+            },
+
+            async login(email, password) {
+                const res = await this.request('POST', '/auth/login', { email, password });
+                if (res.success) {
+                    this.token = res.data.accessToken;
+                    this.refreshToken = res.data.refreshToken;
+                    this.user = res.data.user;
+                    localStorage.setItem('cms_token', this.token);
+                    localStorage.setItem('cms_refresh_token', this.refreshToken);
+                    this.isOnline = true;
+                }
+                return res;
+            },
+
+            async getMe() {
+                const res = await this.request('GET', '/auth/me');
+                if (res.success) {
+                    this.user = res.data.user;
+                    this.isOnline = true;
+                }
+                return res;
+            },
+
+            logout() {
+                if (this.refreshToken) {
+                    this.request('POST', '/auth/logout', { refreshToken: this.refreshToken }).catch(() => {});
+                }
+                this.token = null;
+                this.refreshToken = null;
+                this.user = null;
+                this.isOnline = false;
+                localStorage.removeItem('cms_token');
+                localStorage.removeItem('cms_refresh_token');
+            },
+
+            get: (path) => api.request('GET', path),
+            post: (path, body) => api.request('POST', path, body),
+            put: (path, body) => api.request('PUT', path, body),
+            del: (path) => api.request('DELETE', path)
+        };
+
+        // ==================== Templates ====================
         const pageTemplates = [
             { id: 'blank', name: 'Пустая страница', category: 'basic', thumbnail: '📄' },
             { id: 'landing-basic', name: 'Базовый лендинг', category: 'basic', thumbnail: '🚀' },
@@ -610,21 +706,92 @@
             { id: 'business-card', name: 'Визитка', category: 'personal', thumbnail: '💼' }
         ];
 
-        // State
-        let projects = [], pages = [], folders = [], currentProject = null, currentFolder = 'all', selectedTemplateId = 'blank';
+        // ==================== State ====================
+        let projects = [], pages = [], folders = [], users = [];
+        let currentProject = null, currentFolder = 'all', selectedTemplateId = 'blank';
         const STORAGE_KEY = 'landing_pages';
 
-        // Init
-        document.addEventListener('DOMContentLoaded', () => {
-            loadData();
+        // ==================== Init ====================
+        document.addEventListener('DOMContentLoaded', async () => {
             setupNavigation();
             setupProjectSelector();
             setupTabs();
             setupTemplateCategories();
-            renderAll();
+
+            // Try to authenticate with existing token
+            if (api.token) {
+                const me = await api.getMe();
+                if (me.success) {
+                    api.isOnline = true;
+                    updateUserUI();
+                    await loadDataFromAPI();
+                    renderAll();
+                    return;
+                }
+            }
+
+            // Check if API is available
+            const health = await api.get('/health');
+            if (health.success) {
+                openModal('loginModal');
+            } else {
+                // Offline mode - use localStorage
+                loadDataLocal();
+                renderAll();
+            }
         });
 
-        function loadData() {
+        // ==================== Data Loading ====================
+        async function loadDataFromAPI() {
+            // Load projects
+            const projRes = await api.get('/projects');
+            if (projRes.success) {
+                projects = projRes.data || [];
+                if (projects.length > 0) {
+                    currentProject = projects[0];
+                    document.getElementById('currentProjectName').textContent = currentProject.name;
+                }
+            }
+
+            if (currentProject) {
+                // Load pages for current project
+                const pagesRes = await api.get('/pages?project_id=' + currentProject.id);
+                if (pagesRes.success) {
+                    pages = (pagesRes.data || []).map(p => ({
+                        id: p.id,
+                        name: p.name,
+                        folder: p.folder_id || 'landings',
+                        template: (() => { try { const c = JSON.parse(p.content || '{}'); return c.template || 'blank'; } catch(e) { return 'blank'; } })(),
+                        elements: (() => { try { const c = JSON.parse(p.content || '{}'); return c.elements || []; } catch(e) { return []; } })(),
+                        createdAt: p.created_at,
+                        updatedAt: p.updated_at,
+                        _raw: p
+                    }));
+                }
+
+                // Load folders
+                const foldersRes = await api.get('/pages/folders/list?project_id=' + currentProject.id);
+                if (foldersRes.success) {
+                    folders = (foldersRes.data || []).map(f => ({ id: f.id, name: f.name }));
+                }
+            }
+
+            // Sync to localStorage as cache
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(pages));
+            localStorage.setItem('cms_folders', JSON.stringify(folders));
+            localStorage.setItem('cms_projects', JSON.stringify(projects));
+
+            // Load users if admin
+            if (api.user && (api.user.role === 'owner' || api.user.role === 'admin')) {
+                const usersRes = await api.get('/users');
+                if (usersRes.success) {
+                    users = usersRes.data || [];
+                    renderUsersTable();
+                }
+            }
+        }
+
+        function loadDataLocal() {
             projects = JSON.parse(localStorage.getItem('cms_projects') || '[]');
             if (projects.length === 0) {
                 projects.push({ id: generateId(), name: 'Мой проект', created: new Date().toISOString() });
@@ -636,7 +803,7 @@
             folders = JSON.parse(localStorage.getItem('cms_folders') || '[]');
         }
 
-        function saveData() {
+        function saveDataLocal() {
             localStorage.setItem('cms_projects', JSON.stringify(projects));
             localStorage.setItem(STORAGE_KEY, JSON.stringify(pages));
             localStorage.setItem('cms_folders', JSON.stringify(folders));
@@ -644,6 +811,62 @@
 
         function generateId() { return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); }
 
+        // ==================== Auth ====================
+        async function doLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorEl = document.getElementById('loginError');
+
+            if (!email || !password) {
+                errorEl.textContent = 'Введите email и пароль';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            errorEl.style.display = 'none';
+            const res = await api.login(email, password);
+
+            if (res.success) {
+                closeModal('loginModal');
+                updateUserUI();
+                await loadDataFromAPI();
+                renderAll();
+            } else {
+                errorEl.textContent = res.error || 'Ошибка входа';
+                errorEl.style.display = 'block';
+            }
+        }
+
+        function doLogout() {
+            api.logout();
+            pages = [];
+            projects = [];
+            folders = [];
+            users = [];
+            openModal('loginModal');
+            renderAll();
+        }
+
+        function updateUserUI() {
+            if (api.user) {
+                const nameEl = document.querySelector('.user-name');
+                const roleEl = document.querySelector('.user-role');
+                const avatarEl = document.querySelector('.user-avatar');
+                if (nameEl) nameEl.textContent = api.user.name;
+                const roles = { owner: 'Владелец', admin: 'Администратор', manager: 'Менеджер', editor: 'Редактор', client: 'Клиент' };
+                if (roleEl) roleEl.textContent = roles[api.user.role] || api.user.role;
+                if (avatarEl) avatarEl.textContent = (api.user.name || 'U').charAt(0).toUpperCase();
+            }
+        }
+
+        // Handle Enter key in login form
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && document.getElementById('loginModal').classList.contains('open')) {
+                doLogin();
+            }
+        });
+
+        // ==================== Navigation ====================
         function setupNavigation() {
             document.querySelectorAll('.nav-item[data-section]').forEach(item => {
                 item.addEventListener('click', () => switchSection(item.dataset.section));
@@ -661,10 +884,14 @@
             document.querySelector(`.nav-item[data-section="${sectionId}"]`)?.classList.add('active');
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById('section-' + sectionId)?.classList.add('active');
-            const titles = { dashboard: 'Дашборд', pages: 'Страницы', products: 'Товары', services: 'Услуги', orders: 'Заказы', users: 'Пользователи', settings: 'Настройки' };
+            const titles = { dashboard: 'Дашборд', pages: 'Страницы', products: 'Товары', services: 'Услуги', digital: 'Онлайн-продукты', specialists: 'Специалисты', orders: 'Заказы', payments: 'Платежи', warehouse: 'Склад', delivery: 'Доставка', users: 'Пользователи', settings: 'Настройки' };
             document.getElementById('sectionTitle').textContent = titles[sectionId] || sectionId;
+
+            // Load users when switching to users section
+            if (sectionId === 'users' && api.isOnline) loadUsers();
         }
 
+        // ==================== Projects ====================
         function setupProjectSelector() {
             const dropdown = document.getElementById('projectDropdown');
             const menu = document.getElementById('projectMenu');
@@ -675,19 +902,55 @@
         function renderProjectMenu() {
             const menu = document.getElementById('projectMenu');
             menu.innerHTML = projects.map(p => `
-                <div class="project-menu-item ${p.id === currentProject.id ? 'active' : ''}" onclick="switchProject('${p.id}')">
-                    <i class="fas fa-folder"></i><span>${p.name}</span>
+                <div class="project-menu-item ${currentProject && p.id === currentProject.id ? 'active' : ''}" onclick="switchProject('${p.id}')">
+                    <i class="fas fa-folder"></i><span>${escapeHtml(p.name)}</span>
                 </div>
             `).join('') + '<div class="project-menu-divider"></div><div class="project-menu-item create" onclick="openModal(\'createProjectModal\')"><i class="fas fa-plus"></i><span>Создать проект</span></div>';
         }
 
-        function switchProject(id) {
+        async function switchProject(id) {
             currentProject = projects.find(p => p.id === id);
             document.getElementById('currentProjectName').textContent = currentProject.name;
             document.getElementById('projectMenu').classList.remove('open');
+
+            if (api.isOnline && currentProject) {
+                const pagesRes = await api.get('/pages?project_id=' + currentProject.id);
+                if (pagesRes.success) {
+                    pages = (pagesRes.data || []).map(p => ({
+                        id: p.id, name: p.name, folder: p.folder_id || 'landings',
+                        template: (() => { try { return JSON.parse(p.content || '{}').template || 'blank'; } catch(e) { return 'blank'; } })(),
+                        elements: (() => { try { return JSON.parse(p.content || '{}').elements || []; } catch(e) { return []; } })(),
+                        createdAt: p.created_at, updatedAt: p.updated_at, _raw: p
+                    }));
+                }
+                const foldersRes = await api.get('/pages/folders/list?project_id=' + currentProject.id);
+                if (foldersRes.success) folders = (foldersRes.data || []).map(f => ({ id: f.id, name: f.name }));
+            }
             renderAll();
         }
 
+        async function saveNewProject() {
+            const name = document.getElementById('newProjectName').value || 'Новый проект';
+
+            if (api.isOnline) {
+                const res = await api.post('/projects', { name });
+                if (res.success) {
+                    projects.push(res.data);
+                    closeModal('createProjectModal');
+                    switchProject(res.data.id);
+                    return;
+                }
+            }
+
+            // Fallback to localStorage
+            const proj = { id: generateId(), name, created: new Date().toISOString() };
+            projects.push(proj);
+            saveDataLocal();
+            closeModal('createProjectModal');
+            switchProject(proj.id);
+        }
+
+        // ==================== Tabs ====================
         function setupTabs() {
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.onclick = () => {
@@ -710,6 +973,7 @@
             });
         }
 
+        // ==================== Rendering ====================
         function renderAll() {
             renderPages();
             renderFolders();
@@ -729,7 +993,7 @@
                     <div class="card">
                         <div class="card-preview"><i class="fas fa-file-alt card-preview-placeholder"></i></div>
                         <div class="card-body">
-                            <div class="card-title"><input value="${page.name}" onchange="renamePage('${page.id}', this.value)"></div>
+                            <div class="card-title"><input value="${escapeHtml(page.name)}" onchange="renamePage('${page.id}', this.value)"></div>
                             <div class="card-meta">Изменен: ${date}</div>
                             <div class="card-actions">
                                 <button class="card-action primary" onclick="editPage('${page.id}')"><i class="fas fa-edit"></i> Редактировать</button>
@@ -740,7 +1004,26 @@
                     </div>`;
             });
             grid.innerHTML = html;
-            recent.innerHTML = html;
+
+            // Recent pages on dashboard (max 6)
+            let recentHtml = `<div class="card new" onclick="createPage()"><i class="fas fa-plus-circle"></i><span>Создать страницу</span></div>`;
+            pages.slice(0, 5).forEach(page => {
+                const date = new Date(page.updatedAt || page.createdAt).toLocaleDateString('ru-RU');
+                recentHtml += `
+                    <div class="card">
+                        <div class="card-preview"><i class="fas fa-file-alt card-preview-placeholder"></i></div>
+                        <div class="card-body">
+                            <div class="card-title"><input value="${escapeHtml(page.name)}" onchange="renamePage('${page.id}', this.value)"></div>
+                            <div class="card-meta">Изменен: ${date}</div>
+                            <div class="card-actions">
+                                <button class="card-action primary" onclick="editPage('${page.id}')"><i class="fas fa-edit"></i> Редактировать</button>
+                                <button class="card-action" onclick="duplicatePage('${page.id}')"><i class="fas fa-copy"></i></button>
+                                <button class="card-action danger" onclick="deletePage('${page.id}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            recent.innerHTML = recentHtml;
 
             document.getElementById('pagesCount').textContent = pages.length;
             document.getElementById('allPagesCount').textContent = pages.length;
@@ -748,16 +1031,28 @@
         }
 
         function renderFolders() {
-            document.getElementById('foldersList').innerHTML = folders.map(f => `
-                <div class="folder-item ${currentFolder === f.id ? 'active' : ''}" data-folder="${f.id}" onclick="selectFolder('${f.id}')">
-                    <i class="fas fa-folder"></i><span>${f.name}</span>
-                    <span class="count">${pages.filter(p => p.folder === f.id).length}</span>
-                </div>
-            `).join('');
+            const foldersEl = document.getElementById('foldersList');
+            // Update folder select in create page modal
+            const folderSelect = document.getElementById('newPageFolder');
+            let optionsHtml = '<option value="landings">Лендинги</option><option value="">Без папки</option>';
+
+            let foldersHtml = '';
+            folders.forEach(f => {
+                foldersHtml += `
+                    <div class="folder-item ${currentFolder === f.id ? 'active' : ''}" data-folder="${f.id}" onclick="selectFolder('${f.id}')">
+                        <i class="fas fa-folder"></i><span>${escapeHtml(f.name)}</span>
+                        <span class="count">${pages.filter(p => p.folder === f.id).length}</span>
+                    </div>`;
+                optionsHtml += `<option value="${f.id}">${escapeHtml(f.name)}</option>`;
+            });
+
+            foldersEl.innerHTML = foldersHtml;
+            folderSelect.innerHTML = optionsHtml;
         }
 
         function renderTemplates(category, gridId) {
             const grid = document.getElementById(gridId);
+            if (!grid) return;
             const filtered = category === 'all' ? pageTemplates : pageTemplates.filter(t => t.category === category);
             grid.innerHTML = filtered.map(t => `
                 <div class="template-card ${selectedTemplateId === t.id ? 'selected' : ''}" onclick="selectTemplate('${t.id}')">
@@ -769,8 +1064,7 @@
 
         function selectTemplate(id) {
             selectedTemplateId = id;
-            document.querySelectorAll('.template-card').forEach(c => c.classList.toggle('selected', c.onclick.toString().includes(id)));
-            renderTemplates(document.querySelector('.template-category.active')?.dataset.category || 'all', 'modalTemplatesGrid');
+            renderTemplates(document.querySelector('#modalCategories .template-category.active')?.dataset.category || 'all', 'modalTemplatesGrid');
         }
 
         function selectFolder(id) {
@@ -781,9 +1075,47 @@
 
         function updateStats() {
             document.getElementById('stat-pages').textContent = pages.length;
+            document.getElementById('stat-users').textContent = users.length || 1;
         }
 
-        // CRUD
+        // ==================== Users ====================
+        async function loadUsers() {
+            if (!api.isOnline) return;
+            const res = await api.get('/users');
+            if (res.success) {
+                users = res.data || [];
+                renderUsersTable();
+            }
+        }
+
+        function renderUsersTable() {
+            const tbody = document.querySelector('#section-users table tbody');
+            if (!tbody) return;
+
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4"><div class="empty-state"><i class="fas fa-users"></i><h3>Нет пользователей</h3></div></td></tr>';
+                return;
+            }
+
+            const roles = { owner: 'Владелец', admin: 'Администратор', manager: 'Менеджер', editor: 'Редактор', client: 'Клиент' };
+            tbody.innerHTML = users.map(u => `
+                <tr>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div class="table-avatar">${(u.name || 'U').charAt(0).toUpperCase()}</div>
+                            <strong>${escapeHtml(u.name)}</strong>
+                        </div>
+                    </td>
+                    <td>${escapeHtml(u.email)}</td>
+                    <td>${roles[u.role] || u.role}</td>
+                    <td><span class="status-badge ${u.is_active ? 'active' : ''}"><i class="fas fa-circle"></i> ${u.is_active ? 'Активен' : 'Неактивен'}</span></td>
+                </tr>
+            `).join('');
+
+            document.getElementById('stat-users').textContent = users.length;
+        }
+
+        // ==================== Pages CRUD ====================
         function createPage() {
             selectedTemplateId = 'blank';
             document.getElementById('newPageName').value = '';
@@ -803,9 +1135,38 @@
             renderTemplates(category, 'modalTemplatesGrid');
         }
 
-        function saveNewPage() {
+        async function saveNewPage() {
             const name = document.getElementById('newPageName').value || 'Новая страница';
             const folder = document.getElementById('newPageFolder').value;
+
+            if (api.isOnline && currentProject) {
+                const res = await api.post('/pages', {
+                    project_id: currentProject.id,
+                    name,
+                    folder_id: (folder && folder !== 'landings') ? folder : null,
+                    template: selectedTemplateId,
+                    content: { template: selectedTemplateId, elements: [] }
+                });
+
+                if (res.success) {
+                    const newPage = {
+                        id: res.data.id,
+                        name: res.data.name,
+                        folder: folder || 'landings',
+                        template: selectedTemplateId,
+                        elements: [],
+                        createdAt: res.data.created_at,
+                        updatedAt: res.data.updated_at
+                    };
+                    pages.unshift(newPage);
+                    saveDataLocal();
+                    closeModal('createPageModal');
+                    window.location.href = `index.html?id=${newPage.id}${selectedTemplateId !== 'blank' ? '&template=' + selectedTemplateId : ''}`;
+                    return;
+                }
+            }
+
+            // Fallback to localStorage
             const newPage = {
                 id: 'page_' + Date.now(),
                 name,
@@ -816,65 +1177,106 @@
                 updatedAt: new Date().toISOString()
             };
             pages.unshift(newPage);
-            saveData();
+            saveDataLocal();
             closeModal('createPageModal');
             window.location.href = `index.html?id=${newPage.id}${selectedTemplateId !== 'blank' ? '&template=' + selectedTemplateId : ''}`;
         }
 
         function editPage(id) { window.location.href = `index.html?id=${id}`; }
 
-        function renamePage(id, name) {
+        async function renamePage(id, name) {
             const page = pages.find(p => p.id === id);
-            if (page) { page.name = name; page.updatedAt = new Date().toISOString(); saveData(); }
+            if (!page) return;
+            page.name = name;
+            page.updatedAt = new Date().toISOString();
+
+            if (api.isOnline) {
+                await api.put('/pages/' + id, { name });
+            }
+            saveDataLocal();
         }
 
-        function duplicatePage(id) {
+        async function duplicatePage(id) {
+            if (api.isOnline) {
+                const res = await api.post('/pages/' + id + '/duplicate');
+                if (res.success) {
+                    const p = res.data;
+                    pages.unshift({
+                        id: p.id, name: p.name, folder: p.folder_id || 'landings',
+                        template: (() => { try { return JSON.parse(p.content || '{}').template || 'blank'; } catch(e) { return 'blank'; } })(),
+                        elements: (() => { try { return JSON.parse(p.content || '{}').elements || []; } catch(e) { return []; } })(),
+                        createdAt: p.created_at, updatedAt: p.updated_at
+                    });
+                    saveDataLocal();
+                    renderPages();
+                    return;
+                }
+            }
+
+            // Fallback
             const page = pages.find(p => p.id === id);
             if (page) {
                 const copy = { ...JSON.parse(JSON.stringify(page)), id: 'page_' + Date.now(), name: page.name + ' (копия)', createdAt: new Date().toISOString() };
                 pages.unshift(copy);
-                saveData();
+                saveDataLocal();
                 renderPages();
             }
         }
 
-        function deletePage(id) {
-            if (confirm('Удалить страницу?')) {
-                pages = pages.filter(p => p.id !== id);
-                saveData();
-                renderPages();
-                updateStats();
+        async function deletePage(id) {
+            if (!confirm('Удалить страницу?')) return;
+
+            if (api.isOnline) {
+                await api.del('/pages/' + id);
             }
+
+            pages = pages.filter(p => p.id !== id);
+            saveDataLocal();
+            renderPages();
+            updateStats();
         }
 
+        // ==================== Folders CRUD ====================
         function createFolder() { document.getElementById('newFolderName').value = ''; openModal('createFolderModal'); }
 
-        function saveNewFolder() {
+        async function saveNewFolder() {
             const name = document.getElementById('newFolderName').value;
-            if (name) {
-                folders.push({ id: generateId(), name });
-                saveData();
-                renderFolders();
-                closeModal('createFolderModal');
+            if (!name) return;
+
+            if (api.isOnline && currentProject) {
+                const res = await api.post('/pages/folders', { project_id: currentProject.id, name });
+                if (res.success) {
+                    folders.push({ id: res.data.id, name: res.data.name });
+                    saveDataLocal();
+                    renderFolders();
+                    closeModal('createFolderModal');
+                    return;
+                }
             }
+
+            // Fallback
+            folders.push({ id: generateId(), name });
+            saveDataLocal();
+            renderFolders();
+            closeModal('createFolderModal');
         }
 
-        function saveNewProject() {
-            const name = document.getElementById('newProjectName').value || 'Новый проект';
-            const proj = { id: generateId(), name, created: new Date().toISOString() };
-            projects.push(proj);
-            localStorage.setItem('cms_projects', JSON.stringify(projects));
-            closeModal('createProjectModal');
-            switchProject(proj.id);
-        }
-
-        // Modals
+        // ==================== Modals ====================
         function openModal(id) { document.getElementById(id).classList.add('open'); }
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-        // Auth placeholder
-        function doLogin() { closeModal('loginModal'); }
-        function doLogout() { /* logout logic */ }
+        // Close modal on overlay click
+        document.addEventListener('click', e => {
+            if (e.target.classList.contains('modal-overlay') && e.target.id !== 'loginModal') {
+                e.target.classList.remove('open');
+            }
+        });
+
+        // ==================== Helpers ====================
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
     </script>
 </body>
 </html>
