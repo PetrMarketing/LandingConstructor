@@ -199,6 +199,14 @@ const pageTemplates = [
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Не откладывайте своё развитие', description: 'Консультация бесплатна. Мы поможем найти оптимальное решение для ваших целей.', buttonText: 'Записаться на консультацию', buttonColor: '#3b82f6', guaranteeText: 'Ваши данные конфиденциальны. Мы свяжемся с вами в течение 24 часов.' } }
             ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'Отличная консультация! Помогли разобраться в ситуации и составить чёткий план действий.', authorName: 'Алексей Петров', authorRole: 'Предприниматель', authorPhoto: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150' } }
+            ]},
             { type: 'footer' }
         ]
     },
@@ -223,6 +231,14 @@ const pageTemplates = [
             ]},
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Не откладывай своё профессиональное развитие', description: 'Консультация бесплатна, а подобранная программа обучения станет твоей инвестицией в успешное будущее.', buttonText: 'ВЫБРАТЬ ОБУЧЕНИЕ С ПОДАРКОМ', buttonColor: '#8b5cf6', guaranteeText: 'Ваши данные конфиденциальны. Мы свяжемся с вами в течение 24 часов в рабочее время.' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'После обучения в этом центре мой доход вырос в 2 раза. Отличные спикеры и практика на реальных моделях.', authorName: 'Мария Козлова', authorRole: 'Косметолог, стаж 3 года', authorPhoto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150' } }
             ]},
             { type: 'footer' }
         ]
@@ -249,6 +265,14 @@ const pageTemplates = [
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Сделай первый шаг к своей лучшей версии', description: 'Стратегическая сессия бесплатна и ни к чему не обязывает.', buttonText: 'НАЧАТЬ ТРАНСФОРМАЦИЮ', buttonColor: '#8b5cf6', guaranteeText: 'Конфиденциальность гарантирована. Свяжусь с вами лично.' } }
             ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1552581234-26160f608093?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1531545514256-b1400bc00f31?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'За 3 месяца коучинга вырос в должности и увеличил доход на 40%. Рекомендую!', authorName: 'Дмитрий Соколов', authorRole: 'Руководитель отдела продаж', authorPhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150' } }
+            ]},
             { type: 'footer' }
         ]
     },
@@ -267,6 +291,14 @@ const pageTemplates = [
             ]},
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'leadForm', componentSettings: { title: 'Запишитесь на консультацию стилиста', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'select', name: 'goal', label: 'Что хотите подобрать', options: ['Повседневный гардероб', 'Деловой стиль', 'Образ для мероприятия', 'Полный разбор гардероба'] }], buttonText: 'ЗАПИСАТЬСЯ', buttonColor: '#1e293b' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'Стилист подобрала идеальный гардероб! Теперь получаю комплименты каждый день.', authorName: 'Анна Смирнова', authorRole: 'Клиент', authorPhoto: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150' } }
             ]},
             { type: 'footer' }
         ]
@@ -293,6 +325,14 @@ const pageTemplates = [
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Начните поиск своей квартиры сегодня', description: 'Консультация бесплатна. Поможем найти идеальный вариант.', buttonText: 'ПОЛУЧИТЬ КОНСУЛЬТАЦИЮ', buttonColor: '#059669', guaranteeText: 'Ваши данные защищены. Никакого спама — только полезная информация.' } }
             ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'Нашли идеальную квартиру за 5 дней. Профессиональный подход и никаких скрытых комиссий.', authorName: 'Игорь Волков', authorRole: 'Купил квартиру', authorPhoto: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150' } }
+            ]},
             { type: 'footer' }
         ]
     },
@@ -316,6 +356,14 @@ const pageTemplates = [
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Ваша квартира ждёт вас', description: 'Сдача Q4 2025. Рассрочка 0%. Ипотека от 0.1%.', buttonText: 'ЗАБРОНИРОВАТЬ КВАРТИРУ', buttonColor: '#1e40af', guaranteeText: 'Цены актуальны на сегодня. Бронь бесплатна и ни к чему не обязывает.' } }
             ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'Купили квартиру ещё на этапе строительства. Сдали вовремя, качество отделки на высоте!', authorName: 'Елена Новикова', authorRole: 'Собственница квартиры в ЖК', authorPhoto: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150' } }
+            ]},
             { type: 'footer' }
         ]
     },
@@ -338,6 +386,14 @@ const pageTemplates = [
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Ждём вас в La Maison', description: 'Бронирование бесплатно. Комплимент от шефа — при заказе онлайн.', buttonText: 'ЗАБРОНИРОВАТЬ СТОЛИК', buttonColor: '#7c2d12', guaranteeText: 'Работаем ежедневно с 12:00 до 00:00' } }
             ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'Лучший ресторан для романтического ужина. Превосходная кухня и безупречный сервис.', authorName: 'Михаил Ковалёв', authorRole: 'Гость ресторана', authorPhoto: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150' } }
+            ]},
             { type: 'footer' }
         ]
     },
@@ -354,6 +410,14 @@ const pageTemplates = [
             ]},
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'leadForm', componentSettings: { title: 'Записаться на бесплатную дегустацию', fields: [{ type: 'text', name: 'name', label: 'Ваше имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'select', name: 'interest', label: 'Что интересует', options: ['Дегустация кофе', 'Мастер-класс', 'Покупка зёрен', 'Франшиза'] }], buttonText: 'ЗАПИСАТЬСЯ', buttonColor: '#78350f' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'Лучший specialty кофе в городе! Захожу каждое утро перед работой. Бариста настоящие профессионалы.', authorName: 'Ольга Тарасова', authorRole: 'Постоянный гость', authorPhoto: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150' } }
             ]},
             { type: 'footer' }
         ]
@@ -374,6 +438,14 @@ const pageTemplates = [
             ]},
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Закажите пиццу прямо сейчас', description: 'Скидка 20% на первый заказ. Напиток в подарок.', buttonText: 'ЗАКАЗАТЬ ПИЦЦУ', buttonColor: '#dc2626', guaranteeText: 'Доставка от 30 минут. Оплата при получении.' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'Заказываю каждую пятницу. Пицца всегда горячая, доставка реально за 30 минут!', authorName: 'Артём Кузнецов', authorRole: 'Постоянный клиент', authorPhoto: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150' } }
             ]},
             { type: 'footer' }
         ]
@@ -400,6 +472,14 @@ const pageTemplates = [
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Начни менять себя сегодня', description: 'Первая тренировка бесплатна. Заморозка абонемента на время отпуска.', buttonText: 'ЗАПИСАТЬСЯ', buttonColor: '#f97316', guaranteeText: 'Работаем 24/7. Парковка для клиентов бесплатно.' } }
             ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'Лучший фитнес-клуб! Современное оборудование, чистота и отличные тренеры.', authorName: 'Сергей Морозов', authorRole: 'Член клуба 2 года', authorPhoto: 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=150' } }
+            ]},
             { type: 'footer' }
         ]
     },
@@ -423,6 +503,14 @@ const pageTemplates = [
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Начни трансформацию сегодня', description: 'Первая консультация бесплатна. Результат гарантирую.', buttonText: 'ЗАПИСАТЬСЯ К ТРЕНЕРУ', buttonColor: '#16a34a', guaranteeText: 'Тренировки онлайн или в зале. Гибкий график.' } }
             ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'За 3 месяца с Алексеем сбросила 15 кг без жёстких диет. Лучший тренер!', authorName: 'Наталья Белова', authorRole: 'Похудела на 15 кг', authorPhoto: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150' } }
+            ]},
             { type: 'footer' }
         ]
     },
@@ -442,6 +530,14 @@ const pageTemplates = [
             ]},
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Найди гармонию в Shanti Yoga', description: 'Первое занятие бесплатно. Коврики и всё необходимое предоставляем.', buttonText: 'НАЧАТЬ ПРАКТИКУ', buttonColor: '#7c3aed', guaranteeText: 'Камерные группы до 12 человек. Удобное расположение в центре.' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1588286840104-8957b019727f?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'Shanti Yoga изменила мою жизнь. Спина больше не болит, стала спокойнее и энергичнее.', authorName: 'Ирина Лебедева', authorRole: 'Практикует йогу 1 год', authorPhoto: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150' } }
             ]},
             { type: 'footer' }
         ]
@@ -471,6 +567,14 @@ const pageTemplates = [
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Начни карьеру в IT уже сегодня', description: 'Гарантия трудоустройства или возврат денег. Рассрочка без переплаты.', buttonText: 'НАЧАТЬ ОБУЧЕНИЕ', buttonColor: '#2563eb', guaranteeText: 'Обучение онлайн. Старт нового потока каждый месяц.' } }
             ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'Пришёл с нуля, через 6 месяцев устроился в IT-компанию с зарплатой 120K. Спасибо WebDev Pro!', authorName: 'Андрей Сидоров', authorRole: 'Выпускник, Junior Developer', authorPhoto: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150' } }
+            ]},
             { type: 'footer' }
         ]
     },
@@ -493,6 +597,14 @@ const pageTemplates = [
             ]},
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Развивайте таланты вашего ребёнка', description: 'Пробный урок бесплатно. Удобное расписание. Группы до 8 человек.', buttonText: 'ЗАПИСАТЬСЯ НА УРОК', buttonColor: '#ea580c', guaranteeText: 'Возврат оплаты, если вам не понравится.' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1544776193-352d25ca82cd?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'Дети ходят с удовольствием! Старший заговорил по-английски, младшая обожает робототехнику.', authorName: 'Татьяна Федорова', authorRole: 'Мама двоих детей', authorPhoto: 'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=150' } }
             ]},
             { type: 'footer' }
         ]
@@ -517,6 +629,14 @@ const pageTemplates = [
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Начни подготовку к ЕГЭ прямо сейчас', description: 'Пробный урок бесплатный. Гибкий график. Оплата помесячно.', buttonText: 'ЗАПИСАТЬСЯ К РЕПЕТИТОРУ', buttonColor: '#0891b2', guaranteeText: 'Места на этот месяц ограничены.' } }
             ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1523050854058-8df90110c8f1?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'Елена Ивановна — лучший репетитор! Объясняет так, что даже самые сложные темы становятся понятными.', authorName: 'Варвара Комарова', authorRole: 'Сдала ЕГЭ на 98 баллов', authorPhoto: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150' } }
+            ]},
             { type: 'footer' }
         ]
     },
@@ -538,6 +658,14 @@ const pageTemplates = [
             ]},
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Станьте красивее с Beauty Lab', description: 'Скидка 20% на первый визит. Онлайн-запись 24/7.', buttonText: 'ЗАПИСАТЬСЯ', buttonColor: '#db2777', guaranteeText: 'Если результат вам не понравится — исправим бесплатно.' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1487412912498-0447578fcca8?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'Хожу только в Beauty Lab! Мастера профессионалы, всегда довольна результатом.', authorName: 'Юлия Егорова', authorRole: 'Постоянная клиентка', authorPhoto: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=150' } }
             ]},
             { type: 'footer' }
         ]
@@ -562,6 +690,14 @@ const pageTemplates = [
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Закажите уборку прямо сейчас', description: 'Приедем сегодня. Оплата после проверки качества.', buttonText: 'ЗАКАЗАТЬ УБОРКУ', buttonColor: '#0d9488', guaranteeText: 'Гарантия качества. Если не понравится — переделаем бесплатно.' } }
             ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1563453392212-326f5e854473?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'Пользуюсь услугами CleanHome каждую неделю. Всегда приходят вовремя, убирают идеально!', authorName: 'Марина Зайцева', authorRole: 'Заказывает регулярную уборку', authorPhoto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150' } }
+            ]},
             { type: 'footer' }
         ]
     },
@@ -584,6 +720,14 @@ const pageTemplates = [
             ]},
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Доверьте свой автомобиль профессионалам', description: 'Бесплатная диагностика. Гарантия на все работы. Запчасти в наличии.', buttonText: 'ЗАПИСАТЬСЯ НА СЕРВИС', buttonColor: '#dc2626', guaranteeText: 'Работаем без выходных. Есть зона ожидания с кофе и Wi-Fi.' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1625047509248-ec889c3a4bba?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1530046339160-ce3e530c7d2f?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'Честный сервис! Не навязывают лишнего, делают качественно. Езжу только к ним уже 3 года.', authorName: 'Павел Григорьев', authorRole: 'Владелец BMW X5', authorPhoto: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150' } }
             ]},
             { type: 'footer' }
         ]
@@ -610,6 +754,14 @@ const pageTemplates = [
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Не упустите главное IT-событие года', description: 'Early Bird скидка 30% до 1 февраля. Количество мест ограничено.', buttonText: 'ЗАБРОНИРОВАТЬ МЕСТО', buttonColor: '#7c3aed', guaranteeText: 'Возврат 100% при отмене за 14 дней.' } }
             ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'TechConf — обязательное событие для всех, кто в IT. Потрясающие спикеры и нетворкинг!', authorName: 'Виктор Романов', authorRole: 'CTO, Технологии будущего', authorPhoto: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150' } }
+            ]},
             { type: 'footer' }
         ]
     },
@@ -633,6 +785,14 @@ const pageTemplates = [
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Создадим вашу идеальную свадьбу', description: 'Консультация бесплатна. Работаем с любым бюджетом.', buttonText: 'ЗАПИСАТЬСЯ НА ВСТРЕЧУ', buttonColor: '#be185d', guaranteeText: 'Организуем свадьбы с 2010 года. 100% пар рекомендуют нас друзьям.' } }
             ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'Wedding Day сделали нашу свадьбу идеальной! Всё прошло без единой заминки. Спасибо!', authorName: 'Кристина и Александр', authorRole: 'Поженились в июне 2025', authorPhoto: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150' } }
+            ]},
             { type: 'footer' }
         ]
     },
@@ -653,6 +813,14 @@ const pageTemplates = [
             { type: 'section', styles: { padding: '80px 20px' }, children: [
                 { type: 'guarantee', componentSettings: { title: 'Сделаем ваш праздник незабываемым', description: 'Расчёт бесплатный. Работаем по всей Москве и области.', buttonText: 'ЗАКАЗАТЬ ПРАЗДНИК', buttonColor: '#eab308', guaranteeText: 'Более 1000 проведённых мероприятий. Довольные клиенты возвращаются.' } }
             ]},
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1496843916299-590492c751f4?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
+            { type: 'section', styles: { padding: '60px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'heading', content: 'Отзыв клиента', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'testimonial', componentSettings: { quote: 'Организовали сыну незабываемый день рождения! Дети были в восторге от шоу. Обязательно обратимся снова!', authorName: 'Светлана Миронова', authorRole: 'Мама именинника', authorPhoto: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=150' } }
+            ]},
             { type: 'footer' }
         ]
     },
@@ -664,6 +832,10 @@ const pageTemplates = [
             { type: 'navbar' },
             { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(99,102,241,0.8), rgba(99,102,241,0.85)), url(https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Дизайнер-фрилансер', subtitle: 'Создаю визуальные истории для брендов', buttonText: 'Смотреть работы', buttonColor: '#6366f1' } },
             { type: 'section', styles: { padding: '80px 20px' }, children: [{ type: 'features' }] },
+            { type: 'section', styles: { padding: '60px 20px' }, children: [
+                { type: 'heading', content: 'Фотогалерея', styles: { fontSize: '28px', fontWeight: 'bold', marginBottom: '24px', textAlign: 'center', color: '#1e293b' } },
+                { type: 'gallery', content: `<img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1558655146-d09347e92766?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;"><img src="https://images.unsplash.com/photo-1545235617-9465d2a55698?w=800" alt="" style="border-radius:8px;width:100%;height:250px;object-fit:cover;">`, styles: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' } }
+            ]},
             { type: 'footer' }
         ]
     },
