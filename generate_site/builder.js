@@ -7118,9 +7118,10 @@ document.getElementById('aiGenerateSubmit').addEventListener('click', async () =
 
         console.log('[AI] Response status:', response.status);
 
-        const text = await response.text();
+        const rawText = await response.text();
+        const text = rawText.trim(); // Remove keepAlive whitespace
         if (!text) {
-            throw new Error('Сервер вернул пустой ответ (HTTP ' + response.status + '). Возможно таймаут сервера. Попробуйте ещё раз.');
+            throw new Error('Сервер вернул пустой ответ (HTTP ' + response.status + '). Возможно таймаут сервера — попробуйте ещё раз.');
         }
 
         let data;

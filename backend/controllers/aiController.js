@@ -1,68 +1,32 @@
-// System prompt for landing page generation
-const SYSTEM_PROMPT = `You are a landing page generator. You generate JSON for a visual page builder.
+// System prompt for landing page generation (compact to reduce tokens)
+const SYSTEM_PROMPT = `You are a landing page JSON generator for a visual page builder. Output a JSON object: {"elements": [...]}.
 
-Output a JSON object with key "elements" containing an array of page blocks.
+Block types and componentSettings:
+- navbar: {logo:"Name", items:["Text|#url",...]}
+- hero: {title:"...", subtitle:"...", buttonText:"...", buttonUrl:"#", buttonColor:"#3b82f6", alignment:"center", textColor:"#1e293b"}
+- features: {columns:3, items:[{icon:"🚀", title:"...", description:"..."},..]}
+- testimonial: {quote:"...", authorName:"...", authorRole:"...", authorPhoto:"https://via.placeholder.com/48"}
+- pricing: {planName:"...", price:"...", currency:"₽", period:"/мес", features:["..."], buttonText:"Выбрать", buttonColor:"#3b82f6", highlighted:false}
+- counter: {items:[{value:"500+", label:"Клиентов"},...], color:"#3b82f6"}
+- checklist: {title:"...", items:["..."], iconColor:"#10b981"}
+- leadForm: {title:"...", subtitle:"...", buttonText:"Отправить", fields:["name","email","phone"]}
+- footer: {companyName:"...", year:"2025", links:["Text|#"]}
 
-Available block types and their componentSettings:
+Element: {"type":"blockType", "componentSettings":{...}, "styles":{...}}
+styles = CSS properties: {padding:"60px 20px", backgroundColor:"#f8fafc"}
 
-1. navbar - Navigation bar
-   componentSettings: { logo: "Company Name", items: ["Главная|#", "О нас|#about", "Контакты|#contact"] }
-
-2. hero - Hero section with title, subtitle and CTA button
-   componentSettings: { title: "...", subtitle: "...", buttonText: "...", buttonUrl: "#", buttonColor: "#3b82f6", alignment: "center", textColor: "#1e293b" }
-   styles: { padding: "80px 20px" }
-
-3. features - Feature cards grid
-   componentSettings: { columns: 3, items: [{ icon: "🚀", title: "...", description: "..." }, ...] }
-
-4. testimonial - Client testimonial
-   componentSettings: { quote: "...", authorName: "...", authorRole: "...", authorPhoto: "https://via.placeholder.com/48" }
-
-5. pricing - Pricing card
-   componentSettings: { planName: "...", price: "...", currency: "₽", period: "/мес", features: ["Feature 1", "Feature 2"], buttonText: "Выбрать", buttonColor: "#3b82f6", highlighted: false }
-
-6. counter - Statistics counters
-   componentSettings: { items: [{ value: "500+", label: "Клиентов" }, ...], color: "#3b82f6" }
-
-7. checklist - Checklist with checkmarks
-   componentSettings: { title: "...", items: ["Item 1", "Item 2", ...], iconColor: "#10b981" }
-
-8. footer - Page footer
-   componentSettings: { companyName: "...", year: "2025", links: ["Политика конфиденциальности|#", "Условия|#"] }
-
-9. leadForm - Lead capture form
-   componentSettings: { title: "...", subtitle: "...", buttonText: "Отправить", fields: ["name", "email", "phone"] }
-
-Each element format:
-{ "type": "blockType", "componentSettings": {...}, "styles": {...} }
-
-- styles are optional CSS properties as an object: { padding: "60px 20px", backgroundColor: "#f8fafc" }
-- Use the provided color scheme for styling
-- Generate Russian-language content
-- Make content specific and relevant to the niche, not generic placeholder text
-- Include 8-12 blocks forming a complete landing page
-- Always start with navbar and end with footer
-- Use realistic, compelling copy that would work for the specific business
-
-Color schemes:
-- blue: primary=#3b82f6, accent=#2563eb
-- green: primary=#059669, accent=#047857
-- dark: primary=#6366f1, accent=#818cf8
-- warm: primary=#ea580c, accent=#dc2626
-- purple: primary=#8b5cf6, accent=#7c3aed
-
-IMPORTANT: Output ONLY valid JSON. No markdown, no code blocks, just the JSON object.`;
+Rules: Russian text, 8-10 blocks, start with navbar, end with footer, relevant to business.
+Output ONLY valid JSON, no markdown.`;
 
 // Generate landing page
 exports.generateLanding = async (req, res) => {
     try {
         const { niche, product, productDescription, audience, mainOffer, tone, colorScheme } = req.body;
 
-        // Validate required fields
         if (!niche || !product || !productDescription || !audience || !mainOffer) {
             return res.status(400).json({
                 success: false,
-                error: 'Заполните все обязательные поля: ниша, продукт, описание, аудитория, предложение'
+                error: 'Заполните все обязательные поля'
             });
         }
 
@@ -74,26 +38,29 @@ exports.generateLanding = async (req, res) => {
             });
         }
 
-        const userPrompt = `Generate a complete landing page for:
-- Ниша: ${niche}
-- Продукт: ${product}
-- Описание продукта: ${productDescription}
-- Целевая аудитория: ${audience}
-- Главное предложение (УТП): ${mainOffer}
-- Тон коммуникации: ${tone || 'Профессиональный'}
-- Цветовая схема: ${colorScheme || 'blue'}
+        const userPrompt = `Landing page: ниша "${niche}", продукт "${product}". Описание: ${productDescription}. Аудитория: ${audience}. УТП: ${mainOffer}. Тон: ${tone || 'Профессиональный'}. Цвета: ${colorScheme || 'blue'}.`;
 
-Generate 8-12 blocks. All text content must be in Russian. Make the content specific, compelling and relevant to this exact business.`;
+        console.log('[AI] Starting generation for:', niche);
 
-        console.log('[AI] Starting generation for:', niche, product);
+        // Send headers immediately to keep connection alive on Render
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache',
+            'X-Accel-Buffering': 'no' // Disable Nginx/Render buffering
+        });
 
-        // Abort after 90 seconds
+        // Send a space to keep connection alive (valid JSON whitespace)
+        const keepAlive = setInterval(() => {
+            res.write(' ');
+        }, 5000);
+
+        // Abort after 25 seconds (before Render's 30s timeout)
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 90000);
+        const timeout = setTimeout(() => controller.abort(), 25000);
 
-        let response;
+        let apiResponse;
         try {
-            response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            apiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -109,95 +76,72 @@ Generate 8-12 blocks. All text content must be in Russian. Make the content spec
                     ],
                     response_format: { type: 'json_object' },
                     temperature: 0.7,
-                    max_tokens: 4096
+                    max_tokens: 3000
                 }),
                 signal: controller.signal
             });
         } catch (fetchErr) {
             clearTimeout(timeout);
-            if (fetchErr.name === 'AbortError') {
-                console.error('[AI] Request timed out');
-                return res.status(504).json({
-                    success: false,
-                    error: 'Превышено время ожидания ответа от AI. Попробуйте ещё раз.'
-                });
-            }
-            console.error('[AI] Fetch error:', fetchErr.message);
-            return res.status(502).json({
-                success: false,
-                error: 'Не удалось подключиться к AI сервису: ' + fetchErr.message
-            });
+            clearInterval(keepAlive);
+            const errMsg = fetchErr.name === 'AbortError'
+                ? 'Превышено время ожидания AI (25с). Попробуйте ещё раз.'
+                : 'Не удалось подключиться к AI: ' + fetchErr.message;
+            console.error('[AI] Fetch error:', errMsg);
+            res.end(JSON.stringify({ success: false, error: errMsg }));
+            return;
         }
 
         clearTimeout(timeout);
 
-        const responseText = await response.text();
-        console.log('[AI] Response status:', response.status, 'length:', responseText.length);
+        const responseText = await apiResponse.text();
+        clearInterval(keepAlive);
 
-        if (!response.ok) {
-            console.error('[AI] API error:', response.status, responseText.substring(0, 500));
-            return res.status(502).json({
-                success: false,
-                error: `Ошибка API (${response.status}). Попробуйте позже.`
-            });
+        console.log('[AI] Response status:', apiResponse.status, 'length:', responseText.length);
+
+        if (!apiResponse.ok) {
+            console.error('[AI] API error:', apiResponse.status, responseText.substring(0, 300));
+            res.end(JSON.stringify({ success: false, error: `Ошибка API (${apiResponse.status})` }));
+            return;
         }
 
         let data;
         try {
             data = JSON.parse(responseText);
         } catch (e) {
-            console.error('[AI] Failed to parse API response:', responseText.substring(0, 500));
-            return res.status(502).json({
-                success: false,
-                error: 'Некорректный ответ от AI API.'
-            });
+            console.error('[AI] Parse error:', responseText.substring(0, 300));
+            res.end(JSON.stringify({ success: false, error: 'Некорректный ответ AI API' }));
+            return;
         }
 
         if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-            console.error('[AI] No choices in response:', JSON.stringify(data).substring(0, 500));
-            return res.status(502).json({
-                success: false,
-                error: 'AI не вернул результат. Попробуйте ещё раз.'
-            });
+            console.error('[AI] No choices:', JSON.stringify(data).substring(0, 300));
+            res.end(JSON.stringify({ success: false, error: 'AI не вернул результат' }));
+            return;
         }
 
         const content = data.choices[0].message.content;
         let parsed;
-
         try {
             parsed = JSON.parse(content);
         } catch (e) {
-            console.error('[AI] Failed to parse AI content:', content.substring(0, 500));
-            return res.status(502).json({
-                success: false,
-                error: 'AI вернул некорректный JSON. Попробуйте ещё раз.'
-            });
+            console.error('[AI] Content parse error:', content.substring(0, 300));
+            res.end(JSON.stringify({ success: false, error: 'AI вернул некорректный JSON' }));
+            return;
         }
 
         const elements = parsed.elements || parsed;
-
         if (!Array.isArray(elements)) {
-            return res.status(502).json({
-                success: false,
-                error: 'AI вернул некорректную структуру. Попробуйте ещё раз.'
-            });
+            res.end(JSON.stringify({ success: false, error: 'AI вернул некорректную структуру' }));
+            return;
         }
 
-        console.log('[AI] Success, generated', elements.length, 'elements');
-
-        res.json({
-            success: true,
-            elements: elements
-        });
+        console.log('[AI] Success:', elements.length, 'elements');
+        res.end(JSON.stringify({ success: true, elements }));
 
     } catch (error) {
-        console.error('[AI] Unhandled error:', error);
-        // Make sure we always send a response
-        if (!res.headersSent) {
-            res.status(500).json({
-                success: false,
-                error: 'Внутренняя ошибка сервера: ' + (error.message || 'unknown')
-            });
+        console.error('[AI] Unhandled:', error);
+        if (!res.writableEnded) {
+            res.end(JSON.stringify({ success: false, error: 'Ошибка сервера: ' + (error.message || 'unknown') }));
         }
     }
 };
