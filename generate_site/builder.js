@@ -7089,11 +7089,25 @@ document.getElementById('aiGenerateSubmit').addEventListener('click', async () =
         ? `${location.protocol}//${location.hostname}:3000/api`
         : '/api';
 
+    // Safe JSON parse from fetch response
+    const safeParseResponse = async (resp, context) => {
+        const text = await resp.text();
+        if (!text || !text.trim()) {
+            throw new Error(context + ': сервер вернул пустой ответ (HTTP ' + resp.status + ')');
+        }
+        try {
+            return JSON.parse(text.trim());
+        } catch (e) {
+            console.error('[AI] ' + context + ' raw response:', text.substring(0, 300));
+            throw new Error(context + ': некорректный ответ сервера');
+        }
+    };
+
     try {
         // First check if AI is configured
         try {
             const statusCheck = await fetch(apiBase + '/ai/status');
-            const statusData = await statusCheck.json();
+            const statusData = await safeParseResponse(statusCheck, 'Status check');
             if (!statusData.configured) {
                 throw new Error('OPENROUTER_API_KEY не настроен на сервере. Добавьте ключ в переменные окружения.');
             }
@@ -7109,7 +7123,7 @@ document.getElementById('aiGenerateSubmit').addEventListener('click', async () =
             body: JSON.stringify({ niche, product, productDescription, audience, mainOffer, tone, colorScheme })
         });
 
-        const startData = await startResponse.json();
+        const startData = await safeParseResponse(startResponse, 'Запуск генерации');
         if (!startData.success || !startData.jobId) {
             throw new Error(startData.error || 'Не удалось запустить генерацию');
         }
@@ -7128,8 +7142,14 @@ document.getElementById('aiGenerateSubmit').addEventListener('click', async () =
 
             console.log('[AI] Polling attempt', attempts, 'for job', jobId);
 
-            const pollResponse = await fetch(apiBase + '/ai/result/' + jobId);
-            const pollData = await pollResponse.json();
+            let pollData;
+            try {
+                const pollResponse = await fetch(apiBase + '/ai/result/' + jobId);
+                pollData = await safeParseResponse(pollResponse, 'Polling');
+            } catch (pollErr) {
+                console.warn('[AI] Poll error (attempt ' + attempts + '):', pollErr.message);
+                continue; // Retry on transient errors
+            }
 
             if (pollData.status === 'processing') {
                 continue;
