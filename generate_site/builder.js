@@ -1814,9 +1814,11 @@ function generateComponentContent(type, settings) {
     switch (type) {
         case 'hero':
             const alignment = settings.alignment || 'center';
+            const heroTextColor = settings.textColor || '#1e293b';
+            const heroSubColor = settings.textColor ? settings.textColor : '#475569';
             return `<div style="text-align:${alignment};max-width:800px;margin:0 auto;">
-                <h1 style="font-size:48px;font-weight:bold;margin-bottom:20px;color:#1e293b;">${settings.title || ''}</h1>
-                <p style="font-size:20px;color:#475569;margin-bottom:30px;">${settings.subtitle || ''}</p>
+                <h1 style="font-size:48px;font-weight:bold;margin-bottom:20px;color:${heroTextColor};">${settings.title || ''}</h1>
+                <p style="font-size:20px;color:${heroSubColor};margin-bottom:30px;">${settings.subtitle || ''}</p>
                 <a href="${settings.buttonUrl || '#'}" style="display:inline-block;padding:16px 32px;background:${settings.buttonColor || '#3b82f6'};color:white;text-decoration:none;border-radius:8px;font-weight:500;">${settings.buttonText || 'Начать'}</a>
             </div>`;
 
@@ -3827,6 +3829,60 @@ function setupEditHandlers() {
         input.addEventListener('input', updateComponentSetting);
         input.addEventListener('change', updateComponentSetting);
     });
+
+    // Hero background image handlers
+    const heroBgUrlInput = editContent.querySelector('[data-custom="heroBgUrl"]');
+    const heroBgOverlayInput = editContent.querySelector('[data-custom="heroBgOverlay"]');
+    const heroBgRemoveBtn = editContent.querySelector('[data-custom="heroBgRemove"]');
+
+    const updateHeroBg = () => {
+        const el = state.editingElement;
+        if (!el) return;
+        const url = heroBgUrlInput ? heroBgUrlInput.value.trim() : '';
+        const overlay = heroBgOverlayInput ? heroBgOverlayInput.value.trim() : 'rgba(0,0,0,0.5)';
+        if (url) {
+            el.styles.backgroundImage = `linear-gradient(${overlay}, ${overlay}), url(${url})`;
+            if (!el.styles.backgroundSize) el.styles.backgroundSize = 'cover';
+            if (!el.styles.backgroundPosition) el.styles.backgroundPosition = 'center';
+            // Auto-set text color to white when background is added
+            if (!el.componentSettings) el.componentSettings = {};
+            if (!el.componentSettings.textColor || el.componentSettings.textColor === '#1e293b') {
+                el.componentSettings.textColor = '#ffffff';
+                const textColorInputs = editContent.querySelectorAll('[data-component="textColor"]');
+                textColorInputs.forEach(inp => inp.value = '#ffffff');
+            }
+        } else {
+            delete el.styles.backgroundImage;
+            delete el.styles.backgroundSize;
+            delete el.styles.backgroundPosition;
+        }
+        if (el.componentSettings) {
+            el.content = generateComponentContent(el.type, el.componentSettings);
+        }
+        renderCanvas();
+    };
+
+    if (heroBgUrlInput) heroBgUrlInput.addEventListener('input', updateHeroBg);
+    if (heroBgOverlayInput) heroBgOverlayInput.addEventListener('input', updateHeroBg);
+
+    if (heroBgRemoveBtn) {
+        heroBgRemoveBtn.addEventListener('click', () => {
+            const el = state.editingElement;
+            if (!el) return;
+            delete el.styles.backgroundImage;
+            delete el.styles.backgroundSize;
+            delete el.styles.backgroundPosition;
+            if (heroBgUrlInput) heroBgUrlInput.value = '';
+            if (heroBgOverlayInput) heroBgOverlayInput.value = 'rgba(0,0,0,0.5)';
+            if (el.componentSettings) {
+                el.componentSettings.textColor = '#1e293b';
+                const textColorInputs = editContent.querySelectorAll('[data-component="textColor"]');
+                textColorInputs.forEach(inp => inp.value = '#1e293b');
+                el.content = generateComponentContent(el.type, el.componentSettings);
+            }
+            renderCanvas();
+        });
+    }
 }
 
 function renderContentTab(el) {
@@ -4224,7 +4280,17 @@ function renderContentTab(el) {
         `,
 
         hero: () => {
-            const cs = el.componentSettings || { title: '', subtitle: '', buttonText: '', buttonUrl: '#', buttonColor: '#3b82f6', alignment: 'center' };
+            const cs = el.componentSettings || { title: '', subtitle: '', buttonText: '', buttonUrl: '#', buttonColor: '#3b82f6', alignment: 'center', textColor: '#1e293b' };
+            // Extract current background image URL and overlay from styles
+            const bgImage = el.styles.backgroundImage || '';
+            let currentBgUrl = '';
+            let currentOverlay = 'rgba(0,0,0,0.5)';
+            if (bgImage) {
+                const urlMatch = bgImage.match(/url\(['"]?([^'")\s]+)['"]?\)/);
+                if (urlMatch) currentBgUrl = urlMatch[1];
+                const gradientMatch = bgImage.match(/linear-gradient\(([^,]+),/);
+                if (gradientMatch) currentOverlay = gradientMatch[1].trim();
+            }
             return `
             <div class="edit-section">
                 <h4><i class="fas fa-flag"></i> Hero секция</h4>
@@ -4252,12 +4318,52 @@ function renderContentTab(el) {
                     </div>
                 </div>
                 <div class="edit-row">
+                    <label>Цвет текста</label>
+                    <div class="edit-color">
+                        <input type="color" value="${cs.textColor || '#1e293b'}" data-component="textColor">
+                        <input type="text" class="edit-input" data-component="textColor" value="${cs.textColor || '#1e293b'}">
+                    </div>
+                </div>
+                <div class="edit-row">
                     <label>Выравнивание</label>
                     <select class="edit-select" data-component="alignment">
                         <option value="left" ${cs.alignment === 'left' ? 'selected' : ''}>Слева</option>
                         <option value="center" ${cs.alignment === 'center' ? 'selected' : ''}>По центру</option>
                         <option value="right" ${cs.alignment === 'right' ? 'selected' : ''}>Справа</option>
                     </select>
+                </div>
+            </div>
+            <div class="edit-section">
+                <h4><i class="fas fa-image"></i> Фоновое изображение</h4>
+                <div class="edit-row">
+                    <label>URL изображения</label>
+                    <input type="text" class="edit-input" data-custom="heroBgUrl" value="${escapeHtml(currentBgUrl)}" placeholder="https://images.unsplash.com/...">
+                </div>
+                <div class="edit-row">
+                    <label>Цвет оверлея</label>
+                    <input type="text" class="edit-input" data-custom="heroBgOverlay" value="${currentOverlay}" placeholder="rgba(0,0,0,0.5)">
+                    <p class="edit-hint">Формат: rgba(0,0,0,0.5) — чёрный полупрозрачный</p>
+                </div>
+                <div class="edit-row">
+                    <label>Размер фона</label>
+                    <select class="edit-select" data-style="backgroundSize">
+                        <option value="cover" ${(el.styles.backgroundSize || 'cover') === 'cover' ? 'selected' : ''}>Cover (заполнить)</option>
+                        <option value="contain" ${el.styles.backgroundSize === 'contain' ? 'selected' : ''}>Contain (вписать)</option>
+                        <option value="auto" ${el.styles.backgroundSize === 'auto' ? 'selected' : ''}>Авто</option>
+                    </select>
+                </div>
+                <div class="edit-row">
+                    <label>Позиция фона</label>
+                    <select class="edit-select" data-style="backgroundPosition">
+                        <option value="center" ${(el.styles.backgroundPosition || 'center') === 'center' ? 'selected' : ''}>Центр</option>
+                        <option value="top" ${el.styles.backgroundPosition === 'top' ? 'selected' : ''}>Верх</option>
+                        <option value="bottom" ${el.styles.backgroundPosition === 'bottom' ? 'selected' : ''}>Низ</option>
+                        <option value="left" ${el.styles.backgroundPosition === 'left' ? 'selected' : ''}>Лево</option>
+                        <option value="right" ${el.styles.backgroundPosition === 'right' ? 'selected' : ''}>Право</option>
+                    </select>
+                </div>
+                <div class="edit-row">
+                    <button class="btn" data-custom="heroBgRemove" style="width:100%;justify-content:center;"><i class="fas fa-trash"></i> Убрать фоновое изображение</button>
                 </div>
             </div>
         `},
@@ -6915,6 +7021,125 @@ document.querySelectorAll('.publish-option-header').forEach(header => {
 document.getElementById('downloadForPublish').addEventListener('click', async () => {
     publishModal.classList.remove('active');
     await exportAsZip();
+});
+
+// ===== AI Generation Modal =====
+const aiModal = document.getElementById('aiModal');
+
+document.getElementById('aiGenerateBtn').addEventListener('click', () => {
+    aiModal.classList.add('active');
+    document.getElementById('aiProgress').style.display = 'none';
+    document.getElementById('aiError').style.display = 'none';
+    document.getElementById('aiGenerateSubmit').disabled = false;
+});
+
+document.getElementById('closeAiModal').addEventListener('click', () => {
+    aiModal.classList.remove('active');
+});
+
+document.getElementById('aiCancelBtn').addEventListener('click', () => {
+    aiModal.classList.remove('active');
+});
+
+document.getElementById('aiGenerateSubmit').addEventListener('click', async () => {
+    const niche = document.getElementById('aiNiche').value.trim();
+    const product = document.getElementById('aiProduct').value.trim();
+    const productDescription = document.getElementById('aiProductDesc').value.trim();
+    const audience = document.getElementById('aiAudience').value.trim();
+    const mainOffer = document.getElementById('aiOffer').value.trim();
+    const tone = document.getElementById('aiTone').value;
+    const colorScheme = document.getElementById('aiColors').value;
+
+    if (!niche || !product || !productDescription || !audience || !mainOffer) {
+        document.getElementById('aiError').textContent = 'Заполните все обязательные поля (отмечены *)';
+        document.getElementById('aiError').style.display = 'block';
+        return;
+    }
+
+    // Show progress
+    document.getElementById('aiError').style.display = 'none';
+    document.getElementById('aiProgress').style.display = 'block';
+    document.getElementById('aiGenerateSubmit').disabled = true;
+
+    // Reset progress animation
+    const progressFill = document.querySelector('.ai-progress-fill');
+    progressFill.style.animation = 'none';
+    progressFill.offsetHeight; // trigger reflow
+    progressFill.style.animation = 'ai-progress 30s ease-out forwards';
+
+    // Determine API base URL
+    const apiBase = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? `${location.protocol}//${location.hostname}:3000/api`
+        : '/api';
+
+    try {
+        const response = await fetch(apiBase + '/ai/generate-landing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ niche, product, productDescription, audience, mainOffer, tone, colorScheme })
+        });
+
+        const data = await response.json();
+
+        if (!data.success || !data.elements) {
+            throw new Error(data.error || 'Ошибка генерации');
+        }
+
+        // Confirm replacement if page has content
+        if (state.elements.length > 0) {
+            if (!confirm('Заменить текущее содержимое страницы на сгенерированное?')) {
+                document.getElementById('aiProgress').style.display = 'none';
+                document.getElementById('aiGenerateSubmit').disabled = false;
+                return;
+            }
+        }
+
+        // Apply generated elements using the same logic as applyPageTemplate
+        const createElementsFromAI = (templateElements) => {
+            return templateElements.map(tpl => {
+                const el = createElement(tpl.type);
+                if (!el) return null;
+
+                if (tpl.styles) {
+                    el.styles = { ...el.styles, ...tpl.styles };
+                }
+
+                if (tpl.content) {
+                    el.content = tpl.content;
+                }
+
+                if (tpl.componentSettings) {
+                    el.componentSettings = { ...el.componentSettings, ...tpl.componentSettings };
+                    if (typeof generateComponentContent === 'function') {
+                        el.content = generateComponentContent(tpl.type, el.componentSettings);
+                    }
+                }
+
+                if (tpl.children) {
+                    el.children = createElementsFromAI(tpl.children).filter(Boolean);
+                }
+
+                return el;
+            }).filter(Boolean);
+        };
+
+        state.elements = createElementsFromAI(data.elements);
+        savePageData();
+        renderCanvas();
+        renderLayers();
+        saveHistory();
+
+        // Close modal
+        aiModal.classList.remove('active');
+
+    } catch (err) {
+        console.error('AI generation error:', err);
+        document.getElementById('aiError').textContent = err.message || 'Ошибка генерации. Попробуйте ещё раз.';
+        document.getElementById('aiError').style.display = 'block';
+    } finally {
+        document.getElementById('aiProgress').style.display = 'none';
+        document.getElementById('aiGenerateSubmit').disabled = false;
+    }
 });
 
 // ===== Init =====

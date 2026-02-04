@@ -2247,3 +2247,70 @@ body {
 .edit-select.font-select {
     max-height: 200px;
 }
+
+/* ===== AI Generation Modal ===== */
+.ai-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.ai-form-grid .full-width {
+    grid-column: 1 / -1;
+}
+
+.ai-loading {
+    text-align: center;
+    padding: 24px;
+    font-size: 16px;
+    color: var(--text-secondary, #64748b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.ai-loading i {
+    font-size: 20px;
+    color: #f59e0b;
+}
+
+.ai-progress-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--border, #e2e8f0);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+.ai-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #f59e0b, #ea580c);
+    border-radius: 4px;
+    animation: ai-progress 30s ease-out forwards;
+}
+
+@keyframes ai-progress {
+    0% { width: 0%; }
+    50% { width: 60%; }
+    80% { width: 85%; }
+    100% { width: 95%; }
+}
+
+.ai-error {
+    padding: 12px 16px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    color: #ef4444;
+    margin-top: 16px;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .ai-form-grid {
+        grid-template-columns: 1fr;
+    }
+}

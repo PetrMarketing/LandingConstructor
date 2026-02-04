@@ -39,6 +39,9 @@
                 <button class="toolbar-btn" id="redoBtn" title="Повторить">
                     <i class="fas fa-redo"></i>
                 </button>
+                <button class="toolbar-btn" id="aiGenerateBtn" title="AI генерация" style="background: linear-gradient(135deg, #f59e0b, #ea580c);">
+                    <i class="fas fa-magic"></i>
+                </button>
                 <button class="toolbar-btn" id="themeBtn" title="Тема оформления">
                     <i class="fas fa-palette"></i>
                 </button>
@@ -770,6 +773,70 @@
                 <button class="btn primary" id="saveThemeBtn">
                     <i class="fas fa-check"></i> Применить тему
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Generation Modal -->
+    <div class="modal" id="aiModal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3><i class="fas fa-magic" style="color: #f59e0b; margin-right: 8px;"></i> AI генерация лендинга</h3>
+                <button class="modal-close" id="closeAiModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="aiForm">
+                    <div class="ai-form-grid">
+                        <div class="edit-row">
+                            <label>Ваша ниша *</label>
+                            <input type="text" class="edit-input" id="aiNiche" required placeholder="Например: фитнес, образование, IT">
+                        </div>
+                        <div class="edit-row">
+                            <label>Продукт *</label>
+                            <input type="text" class="edit-input" id="aiProduct" required placeholder="Онлайн-курс, консультация, товар...">
+                        </div>
+                        <div class="edit-row full-width">
+                            <label>Описание продукта *</label>
+                            <textarea class="edit-textarea" id="aiProductDesc" rows="3" required placeholder="Подробно опишите что вы продаёте..."></textarea>
+                        </div>
+                        <div class="edit-row full-width">
+                            <label>Описание аудитории *</label>
+                            <textarea class="edit-textarea" id="aiAudience" rows="2" required placeholder="Кто ваши клиенты? Возраст, интересы, боли..."></textarea>
+                        </div>
+                        <div class="edit-row full-width">
+                            <label>Главное предложение (УТП) *</label>
+                            <input type="text" class="edit-input" id="aiOffer" required placeholder="Почему клиент должен выбрать именно вас?">
+                        </div>
+                        <div class="edit-row">
+                            <label>Тон коммуникации</label>
+                            <select class="edit-select" id="aiTone">
+                                <option>Профессиональный</option>
+                                <option>Дружелюбный</option>
+                                <option>Премиальный</option>
+                                <option>Энергичный</option>
+                            </select>
+                        </div>
+                        <div class="edit-row">
+                            <label>Цветовая схема</label>
+                            <select class="edit-select" id="aiColors">
+                                <option value="blue">Синяя</option>
+                                <option value="green">Зелёная</option>
+                                <option value="dark">Тёмная</option>
+                                <option value="warm">Тёплая</option>
+                                <option value="purple">Фиолетовая</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+                <div id="aiProgress" style="display:none">
+                    <div class="ai-loading"><i class="fas fa-spinner fa-spin"></i> Генерация лендинга...</div>
+                    <div class="ai-progress-bar"><div class="ai-progress-fill"></div></div>
+                </div>
+                <div id="aiError" style="display:none" class="ai-error"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="aiCancelBtn">Отмена</button>
+                <button class="btn primary" id="aiGenerateSubmit"><i class="fas fa-magic"></i> Сгенерировать</button>
             </div>
         </div>
     </div>
