@@ -7082,7 +7082,7 @@ document.getElementById('aiGenerateSubmit').addEventListener('click', async () =
     const progressFill = document.querySelector('.ai-progress-fill');
     progressFill.style.animation = 'none';
     progressFill.offsetHeight; // trigger reflow
-    progressFill.style.animation = 'ai-progress 30s ease-out forwards';
+    progressFill.style.animation = 'ai-progress 60s ease-out forwards';
 
     // Determine API base URL
     const apiBase = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
@@ -7091,9 +7091,8 @@ document.getElementById('aiGenerateSubmit').addEventListener('click', async () =
 
     try {
         // First check if AI is configured
-        let statusCheck;
         try {
-            statusCheck = await fetch(apiBase + '/ai/status');
+            const statusCheck = await fetch(apiBase + '/ai/status');
             const statusData = await statusCheck.json();
             if (!statusData.configured) {
                 throw new Error('OPENROUTER_API_KEY не настроен на сервере. Добавьте ключ в переменные окружения.');
@@ -7101,40 +7100,61 @@ document.getElementById('aiGenerateSubmit').addEventListener('click', async () =
         } catch (statusErr) {
             if (statusErr.message.includes('OPENROUTER_API_KEY')) throw statusErr;
             console.warn('[AI] Status check failed:', statusErr.message);
-            // Continue anyway — status endpoint might not exist on older deployment
         }
 
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 120000); // 2 min timeout
-
-        const response = await fetch(apiBase + '/ai/generate-landing', {
+        // Step 1: Start the generation job
+        const startResponse = await fetch(apiBase + '/ai/generate-landing', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ niche, product, productDescription, audience, mainOffer, tone, colorScheme }),
-            signal: controller.signal
+            body: JSON.stringify({ niche, product, productDescription, audience, mainOffer, tone, colorScheme })
         });
 
-        clearTimeout(timeout);
-
-        console.log('[AI] Response status:', response.status);
-
-        const rawText = await response.text();
-        const text = rawText.trim(); // Remove keepAlive whitespace
-        if (!text) {
-            throw new Error('Сервер вернул пустой ответ (HTTP ' + response.status + '). Возможно таймаут сервера — попробуйте ещё раз.');
+        const startData = await startResponse.json();
+        if (!startData.success || !startData.jobId) {
+            throw new Error(startData.error || 'Не удалось запустить генерацию');
         }
 
-        let data;
-        try {
-            data = JSON.parse(text);
-        } catch (e) {
-            console.error('[AI] Response text:', text.substring(0, 500));
-            throw new Error('Некорректный ответ сервера (HTTP ' + response.status + '): ' + text.substring(0, 100));
+        const jobId = startData.jobId;
+        console.log('[AI] Job started:', jobId);
+
+        // Step 2: Poll for result every 3 seconds, up to 90 seconds
+        const maxAttempts = 30;
+        let attempts = 0;
+        let result = null;
+
+        while (attempts < maxAttempts) {
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            attempts++;
+
+            console.log('[AI] Polling attempt', attempts, 'for job', jobId);
+
+            const pollResponse = await fetch(apiBase + '/ai/result/' + jobId);
+            const pollData = await pollResponse.json();
+
+            if (pollData.status === 'processing') {
+                continue;
+            }
+
+            if (pollData.status === 'error') {
+                throw new Error(pollData.error || 'Ошибка генерации');
+            }
+
+            if (pollData.status === 'done' && pollData.elements) {
+                result = pollData;
+                break;
+            }
+
+            // Unexpected response
+            if (!pollData.success && pollData.error) {
+                throw new Error(pollData.error);
+            }
         }
 
-        if (!data.success || !data.elements) {
-            throw new Error(data.error || 'Ошибка генерации');
+        if (!result) {
+            throw new Error('AI не ответил за 90 секунд. Попробуйте ещё раз.');
         }
+
+        console.log('[AI] Generation done:', result.elements.length, 'elements');
 
         // Confirm replacement if page has content
         if (state.elements.length > 0) {
@@ -7174,7 +7194,7 @@ document.getElementById('aiGenerateSubmit').addEventListener('click', async () =
             }).filter(Boolean);
         };
 
-        state.elements = createElementsFromAI(data.elements);
+        state.elements = createElementsFromAI(result.elements);
         savePageData();
         renderCanvas();
         renderLayers();
