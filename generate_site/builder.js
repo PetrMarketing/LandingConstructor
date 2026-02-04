@@ -60,7 +60,7 @@ function loadPageData() {
     if (!currentPageId) return;
 
     const pages = JSON.parse(localStorage.getItem('landing_pages') || '[]');
-    const page = pages.find(p => p.id === currentPageId);
+    const page = pages.find(p => String(p.id) === String(currentPageId));
 
     if (page) {
         state.elements = page.elements || [];
@@ -106,13 +106,26 @@ function savePageData() {
     }
 
     const pages = JSON.parse(localStorage.getItem('landing_pages') || '[]');
-    const pageIndex = pages.findIndex(p => p.id === currentPageId);
+    // Use loose comparison to handle number vs string ID mismatch
+    const pageIndex = pages.findIndex(p => String(p.id) === String(currentPageId));
 
     if (pageIndex !== -1) {
         pages[pageIndex].elements = state.elements;
         pages[pageIndex].meta = state.meta;
         pages[pageIndex].theme = state.theme;
         pages[pageIndex].updatedAt = new Date().toISOString();
+        localStorage.setItem('landing_pages', JSON.stringify(pages));
+    } else {
+        // Page not found in localStorage — create it
+        pages.push({
+            id: currentPageId,
+            name: state.pageName || 'Новая страница',
+            elements: state.elements,
+            meta: state.meta,
+            theme: state.theme,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        });
         localStorage.setItem('landing_pages', JSON.stringify(pages));
     }
 }
@@ -7148,7 +7161,11 @@ loadProject();
 // Check for template parameter after loading
 const templateParam = urlParams.get('template');
 if (templateParam && state.elements.length === 0) {
+    console.log('[Builder] Applying template:', templateParam);
     applyPageTemplate(templateParam);
+    if (state.elements.length === 0) {
+        console.warn('[Builder] Template applied but no elements created for:', templateParam);
+    }
 }
 
 saveHistory();
