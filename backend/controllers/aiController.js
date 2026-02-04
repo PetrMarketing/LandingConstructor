@@ -1,5 +1,3 @@
-const config = require('../config/config');
-
 // System prompt for landing page generation
 const SYSTEM_PROMPT = `You are a landing page generator. You generate JSON for a visual page builder.
 
@@ -12,7 +10,7 @@ Available block types and their componentSettings:
 
 2. hero - Hero section with title, subtitle and CTA button
    componentSettings: { title: "...", subtitle: "...", buttonText: "...", buttonUrl: "#", buttonColor: "#3b82f6", alignment: "center", textColor: "#1e293b" }
-   styles: { padding: "80px 20px", backgroundImage: "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(IMAGE_URL)", backgroundSize: "cover", backgroundPosition: "center" }
+   styles: { padding: "80px 20px" }
 
 3. features - Feature cards grid
    componentSettings: { columns: 3, items: [{ icon: "🚀", title: "...", description: "..." }, ...] }
@@ -35,9 +33,6 @@ Available block types and their componentSettings:
 9. leadForm - Lead capture form
    componentSettings: { title: "...", subtitle: "...", buttonText: "Отправить", fields: ["name", "email", "phone"] }
 
-10. gallery - Image gallery
-    componentSettings: { columns: 3, images: [{ url: "https://via.placeholder.com/400x300", alt: "..." }, ...] }
-
 Each element format:
 { "type": "blockType", "componentSettings": {...}, "styles": {...} }
 
@@ -49,12 +44,12 @@ Each element format:
 - Always start with navbar and end with footer
 - Use realistic, compelling copy that would work for the specific business
 
-Color schemes available:
-- blue: primary=#3b82f6, accent=#2563eb, bg=#ffffff, bgAlt=#f0f9ff
-- green: primary=#059669, accent=#047857, bg=#ffffff, bgAlt=#f0fdf4
-- dark: primary=#6366f1, accent=#818cf8, bg=#0f172a, bgAlt=#1e293b, text=#f1f5f9
-- warm: primary=#ea580c, accent=#dc2626, bg=#fffbeb, bgAlt=#fef3c7
-- purple: primary=#8b5cf6, accent=#7c3aed, bg=#ffffff, bgAlt=#faf5ff
+Color schemes:
+- blue: primary=#3b82f6, accent=#2563eb
+- green: primary=#059669, accent=#047857
+- dark: primary=#6366f1, accent=#818cf8
+- warm: primary=#ea580c, accent=#dc2626
+- purple: primary=#8b5cf6, accent=#7c3aed
 
 IMPORTANT: Output ONLY valid JSON. No markdown, no code blocks, just the JSON object.`;
 
@@ -75,7 +70,7 @@ exports.generateLanding = async (req, res) => {
         if (!OPENROUTER_API_KEY) {
             return res.status(500).json({
                 success: false,
-                error: 'API ключ OpenRouter не настроен. Добавьте OPENROUTER_API_KEY в .env файл.'
+                error: 'API ключ OpenRouter не настроен. Добавьте OPENROUTER_API_KEY в переменные окружения сервера.'
             });
         }
 
@@ -90,41 +85,79 @@ exports.generateLanding = async (req, res) => {
 
 Generate 8-12 blocks. All text content must be in Russian. Make the content specific, compelling and relevant to this exact business.`;
 
-        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-                'HTTP-Referer': process.env.APP_URL || 'http://localhost:3000',
-                'X-Title': 'Landing Page Builder'
-            },
-            body: JSON.stringify({
-                model: 'google/gemini-2.0-flash-001',
-                messages: [
-                    { role: 'system', content: SYSTEM_PROMPT },
-                    { role: 'user', content: userPrompt }
-                ],
-                response_format: { type: 'json_object' },
-                temperature: 0.7,
-                max_tokens: 4096
-            })
-        });
+        console.log('[AI] Starting generation for:', niche, product);
 
-        if (!response.ok) {
-            const errorData = await response.text();
-            console.error('OpenRouter API error:', response.status, errorData);
+        // Abort after 90 seconds
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 90000);
+
+        let response;
+        try {
+            response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                    'HTTP-Referer': process.env.APP_URL || 'http://localhost:3000',
+                    'X-Title': 'Landing Page Builder'
+                },
+                body: JSON.stringify({
+                    model: 'google/gemini-2.0-flash-001',
+                    messages: [
+                        { role: 'system', content: SYSTEM_PROMPT },
+                        { role: 'user', content: userPrompt }
+                    ],
+                    response_format: { type: 'json_object' },
+                    temperature: 0.7,
+                    max_tokens: 4096
+                }),
+                signal: controller.signal
+            });
+        } catch (fetchErr) {
+            clearTimeout(timeout);
+            if (fetchErr.name === 'AbortError') {
+                console.error('[AI] Request timed out');
+                return res.status(504).json({
+                    success: false,
+                    error: 'Превышено время ожидания ответа от AI. Попробуйте ещё раз.'
+                });
+            }
+            console.error('[AI] Fetch error:', fetchErr.message);
             return res.status(502).json({
                 success: false,
-                error: 'Ошибка API генерации. Попробуйте позже.'
+                error: 'Не удалось подключиться к AI сервису: ' + fetchErr.message
             });
         }
 
-        const data = await response.json();
+        clearTimeout(timeout);
 
-        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+        const responseText = await response.text();
+        console.log('[AI] Response status:', response.status, 'length:', responseText.length);
+
+        if (!response.ok) {
+            console.error('[AI] API error:', response.status, responseText.substring(0, 500));
             return res.status(502).json({
                 success: false,
-                error: 'Некорректный ответ от AI. Попробуйте ещё раз.'
+                error: `Ошибка API (${response.status}). Попробуйте позже.`
+            });
+        }
+
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (e) {
+            console.error('[AI] Failed to parse API response:', responseText.substring(0, 500));
+            return res.status(502).json({
+                success: false,
+                error: 'Некорректный ответ от AI API.'
+            });
+        }
+
+        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+            console.error('[AI] No choices in response:', JSON.stringify(data).substring(0, 500));
+            return res.status(502).json({
+                success: false,
+                error: 'AI не вернул результат. Попробуйте ещё раз.'
             });
         }
 
@@ -134,7 +167,7 @@ Generate 8-12 blocks. All text content must be in Russian. Make the content spec
         try {
             parsed = JSON.parse(content);
         } catch (e) {
-            console.error('Failed to parse AI response:', content);
+            console.error('[AI] Failed to parse AI content:', content.substring(0, 500));
             return res.status(502).json({
                 success: false,
                 error: 'AI вернул некорректный JSON. Попробуйте ещё раз.'
@@ -150,16 +183,21 @@ Generate 8-12 blocks. All text content must be in Russian. Make the content spec
             });
         }
 
+        console.log('[AI] Success, generated', elements.length, 'elements');
+
         res.json({
             success: true,
             elements: elements
         });
 
     } catch (error) {
-        console.error('AI generation error:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Внутренняя ошибка сервера'
-        });
+        console.error('[AI] Unhandled error:', error);
+        // Make sure we always send a response
+        if (!res.headersSent) {
+            res.status(500).json({
+                success: false,
+                error: 'Внутренняя ошибка сервера: ' + (error.message || 'unknown')
+            });
+        }
     }
 };

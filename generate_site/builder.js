@@ -2886,7 +2886,11 @@ function renderCanvas() {
         canvas.appendChild(canvasEmpty);
     } else {
         state.elements.forEach(el => {
-            canvas.appendChild(renderElement(el));
+            try {
+                canvas.appendChild(renderElement(el));
+            } catch (err) {
+                console.error('[Builder] Error rendering element:', el.type, el.id, err);
+            }
         });
     }
 
@@ -7086,13 +7090,30 @@ document.getElementById('aiGenerateSubmit').addEventListener('click', async () =
         : '/api';
 
     try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 120000); // 2 min timeout
+
         const response = await fetch(apiBase + '/ai/generate-landing', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ niche, product, productDescription, audience, mainOffer, tone, colorScheme })
+            body: JSON.stringify({ niche, product, productDescription, audience, mainOffer, tone, colorScheme }),
+            signal: controller.signal
         });
 
-        const data = await response.json();
+        clearTimeout(timeout);
+
+        const text = await response.text();
+        if (!text) {
+            throw new Error('Сервер вернул пустой ответ. Проверьте что OPENROUTER_API_KEY задан в настройках сервера.');
+        }
+
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error('[AI] Response text:', text);
+            throw new Error('Некорректный ответ сервера: ' + text.substring(0, 200));
+        }
 
         if (!data.success || !data.elements) {
             throw new Error(data.error || 'Ошибка генерации');
