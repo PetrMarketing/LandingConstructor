@@ -13,6 +13,17 @@ const aiLimiter = rateLimit({
     }
 });
 
+// GET /api/ai/status - check if AI is configured
+router.get('/status', (req, res) => {
+    res.json({
+        success: true,
+        configured: !!process.env.OPENROUTER_API_KEY,
+        keyPreview: process.env.OPENROUTER_API_KEY
+            ? process.env.OPENROUTER_API_KEY.substring(0, 8) + '...'
+            : null
+    });
+});
+
 // POST /api/ai/generate-landing
 router.post('/generate-landing', aiLimiter, aiController.generateLanding);
 

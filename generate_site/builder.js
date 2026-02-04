@@ -7090,6 +7090,20 @@ document.getElementById('aiGenerateSubmit').addEventListener('click', async () =
         : '/api';
 
     try {
+        // First check if AI is configured
+        let statusCheck;
+        try {
+            statusCheck = await fetch(apiBase + '/ai/status');
+            const statusData = await statusCheck.json();
+            if (!statusData.configured) {
+                throw new Error('OPENROUTER_API_KEY не настроен на сервере. Добавьте ключ в переменные окружения.');
+            }
+        } catch (statusErr) {
+            if (statusErr.message.includes('OPENROUTER_API_KEY')) throw statusErr;
+            console.warn('[AI] Status check failed:', statusErr.message);
+            // Continue anyway — status endpoint might not exist on older deployment
+        }
+
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 120000); // 2 min timeout
 
@@ -7102,17 +7116,19 @@ document.getElementById('aiGenerateSubmit').addEventListener('click', async () =
 
         clearTimeout(timeout);
 
+        console.log('[AI] Response status:', response.status);
+
         const text = await response.text();
         if (!text) {
-            throw new Error('Сервер вернул пустой ответ. Проверьте что OPENROUTER_API_KEY задан в настройках сервера.');
+            throw new Error('Сервер вернул пустой ответ (HTTP ' + response.status + '). Возможно таймаут сервера. Попробуйте ещё раз.');
         }
 
         let data;
         try {
             data = JSON.parse(text);
         } catch (e) {
-            console.error('[AI] Response text:', text);
-            throw new Error('Некорректный ответ сервера: ' + text.substring(0, 200));
+            console.error('[AI] Response text:', text.substring(0, 500));
+            throw new Error('Некорректный ответ сервера (HTTP ' + response.status + '): ' + text.substring(0, 100));
         }
 
         if (!data.success || !data.elements) {
