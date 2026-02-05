@@ -7087,7 +7087,7 @@ document.getElementById('aiGenerateSubmit').addEventListener('click', async () =
     // Determine API base URL
     const apiBase = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
         ? `${location.protocol}//${location.hostname}:3000/api`
-        : '/api';
+        : 'https://cms-backend-34f8.onrender.com/api';
 
     // Safe JSON parse from fetch response
     const safeParseResponse = async (resp, context) => {
