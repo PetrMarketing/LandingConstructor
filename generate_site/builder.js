@@ -7117,11 +7117,17 @@ document.getElementById('aiGenerateSubmit').addEventListener('click', async () =
         }
 
         // Step 1: Start the generation job
+        console.log('[AI] Sending POST to:', apiBase + '/ai/generate-landing');
+        console.log('[AI] Request body:', { niche, product, productDescription, audience, mainOffer, tone, colorScheme });
+
         const startResponse = await fetch(apiBase + '/ai/generate-landing', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ niche, product, productDescription, audience, mainOffer, tone, colorScheme })
         });
+
+        console.log('[AI] Response status:', startResponse.status);
+        console.log('[AI] Response headers:', [...startResponse.headers.entries()]);
 
         const startData = await safeParseResponse(startResponse, 'Запуск генерации');
         if (!startData.success || !startData.jobId) {
