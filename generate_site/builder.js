@@ -7092,13 +7092,14 @@ document.getElementById('aiGenerateSubmit').addEventListener('click', async () =
     // Safe JSON parse from fetch response
     const safeParseResponse = async (resp, context) => {
         const text = await resp.text();
+        console.log('[AI] ' + context + ' raw text (' + text.length + ' chars):', text.substring(0, 500));
         if (!text || !text.trim()) {
             throw new Error(context + ': сервер вернул пустой ответ (HTTP ' + resp.status + ')');
         }
         try {
             return JSON.parse(text.trim());
         } catch (e) {
-            console.error('[AI] ' + context + ' raw response:', text.substring(0, 300));
+            console.error('[AI] ' + context + ' JSON parse failed, raw:', text.substring(0, 500));
             throw new Error(context + ': некорректный ответ сервера');
         }
     };
