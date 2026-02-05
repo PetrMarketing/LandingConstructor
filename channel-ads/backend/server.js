@@ -42,6 +42,7 @@ if (bot) {
 app.use('/api/channels', require('./routes/channels'));
 app.use('/api/links', require('./routes/links'));
 app.use('/api/track', require('./routes/tracking'));
+app.use('/api/max', require('./routes/max'));
 
 // Health check
 app.get('/api/health', (req, res) => {

@@ -45,6 +45,14 @@ function initModals() {
     document.getElementById('cancelSettingsBtn').addEventListener('click', () => closeModal('channelSettingsModal'));
     document.getElementById('saveSettingsBtn').addEventListener('click', saveChannelSettings);
 
+    // MAX Integration
+    document.getElementById('settingsMaxChat').addEventListener('change', (e) => {
+        if (e.target.value) {
+            connectMaxChannel();
+        }
+    });
+    document.getElementById('disconnectMaxBtn').addEventListener('click', disconnectMaxChannel);
+
     // Create Link Modal
     document.getElementById('createLinkBtn').addEventListener('click', openCreateLinkModal);
     document.getElementById('closeLinkModal').addEventListener('click', () => closeModal('createLinkModal'));
@@ -129,6 +137,7 @@ function renderChannels() {
                     ${channel.is_active ? '<span class="badge active">Активен</span>' : '<span class="badge">Неактивен</span>'}
                     ${channel.yandex_metrika_id ? '<span class="badge">Метрика</span>' : ''}
                     ${channel.vk_pixel_id ? '<span class="badge">VK Pixel</span>' : ''}
+                    ${channel.max_connected ? '<span class="badge max">MAX</span>' : ''}
                 </div>
             </div>
             <div class="channel-actions">
@@ -161,7 +170,135 @@ function openChannelSettings(trackingCode) {
     document.getElementById('settingsYmId').value = channel.yandex_metrika_id || '';
     document.getElementById('settingsVkPixel').value = channel.vk_pixel_id || '';
 
+    // Reset MAX section
+    document.getElementById('maxConnectGroup').style.display = 'none';
+    document.getElementById('maxConnectedInfo').style.display = 'none';
+    document.getElementById('maxStatusLabel').textContent = 'Загрузка...';
+
     openModal('channelSettingsModal');
+
+    // Load MAX status
+    loadMaxStatus(channel);
+}
+
+// ===== MAX Integration =====
+async function loadMaxStatus(channel) {
+    try {
+        const response = await fetch(API_BASE + '/max/status');
+        const data = await response.json();
+
+        if (!data.configured) {
+            document.getElementById('maxStatusLabel').textContent = 'MAX бот не настроен';
+            return;
+        }
+
+        if (!data.success) {
+            document.getElementById('maxStatusLabel').textContent = 'Ошибка подключения к MAX';
+            return;
+        }
+
+        // Check if channel has MAX connected
+        if (channel.max_connected && channel.max_chat_id) {
+            document.getElementById('maxStatusLabel').textContent = `Подключен к MAX (ID: ${channel.max_chat_id})`;
+            document.getElementById('maxConnectedInfo').style.display = 'block';
+        } else {
+            document.getElementById('maxStatusLabel').textContent = 'MAX бот доступен';
+            document.getElementById('maxConnectGroup').style.display = 'block';
+            loadMaxChats();
+        }
+    } catch (error) {
+        console.error('Error loading MAX status:', error);
+        document.getElementById('maxStatusLabel').textContent = 'Ошибка загрузки статуса MAX';
+    }
+}
+
+async function loadMaxChats() {
+    const select = document.getElementById('settingsMaxChat');
+    select.innerHTML = '<option value="">Загрузка...</option>';
+
+    try {
+        const response = await fetch(API_BASE + '/max/chats');
+        const data = await response.json();
+
+        if (data.success && data.chats) {
+            select.innerHTML = '<option value="">Выберите канал</option>' +
+                data.chats.map(chat =>
+                    `<option value="${chat.chat_id}">${escapeHtml(chat.title || chat.chat_id)}</option>`
+                ).join('');
+        } else {
+            select.innerHTML = '<option value="">Нет доступных каналов</option>';
+        }
+    } catch (error) {
+        console.error('Error loading MAX chats:', error);
+        select.innerHTML = '<option value="">Ошибка загрузки</option>';
+    }
+}
+
+async function connectMaxChannel() {
+    const trackingCode = document.getElementById('settingsChannelCode').value;
+    const maxChatId = document.getElementById('settingsMaxChat').value;
+
+    if (!maxChatId) {
+        showToast('Выберите канал MAX', 'error');
+        return;
+    }
+
+    try {
+        const response = await fetch(API_BASE + '/max/connect/' + trackingCode, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ maxChatId })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showToast('MAX канал подключен');
+            loadChannels();
+
+            // Update UI
+            document.getElementById('maxConnectGroup').style.display = 'none';
+            document.getElementById('maxConnectedInfo').style.display = 'block';
+            document.getElementById('maxStatusLabel').textContent = `Подключен к MAX (ID: ${maxChatId})`;
+        } else {
+            showToast(data.error || 'Ошибка подключения', 'error');
+        }
+    } catch (error) {
+        console.error('Error connecting MAX:', error);
+        showToast('Ошибка подключения MAX', 'error');
+    }
+}
+
+async function disconnectMaxChannel() {
+    const trackingCode = document.getElementById('settingsChannelCode').value;
+
+    if (!confirm('Отключить MAX канал?')) return;
+
+    try {
+        const response = await fetch(API_BASE + '/max/disconnect/' + trackingCode, {
+            method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showToast('MAX канал отключен');
+            loadChannels();
+
+            // Update UI
+            document.getElementById('maxConnectedInfo').style.display = 'none';
+            document.getElementById('maxConnectGroup').style.display = 'block';
+            document.getElementById('maxStatusLabel').textContent = 'MAX бот доступен';
+            loadMaxChats();
+        } else {
+            showToast(data.error || 'Ошибка отключения', 'error');
+        }
+    } catch (error) {
+        console.error('Error disconnecting MAX:', error);
+        showToast('Ошибка отключения MAX', 'error');
+    }
 }
 
 async function saveChannelSettings() {

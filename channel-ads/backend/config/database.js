@@ -35,6 +35,8 @@ function initDatabase() {
             owner_id INTEGER REFERENCES users(id),
             yandex_metrika_id TEXT,
             vk_pixel_id TEXT,
+            max_chat_id TEXT,
+            max_connected BOOLEAN DEFAULT 0,
             tracking_code TEXT UNIQUE,
             is_active BOOLEAN DEFAULT 1,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP

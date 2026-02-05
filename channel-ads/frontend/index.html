@@ -172,6 +172,8 @@
             <div class="modal-body">
                 <input type="hidden" id="settingsChannelCode">
 
+                <h4 class="settings-section-title">Аналитика</h4>
+
                 <div class="form-group">
                     <label>ID счётчика Яндекс Метрики</label>
                     <input type="text" id="settingsYmId" placeholder="12345678">
@@ -182,6 +184,32 @@
                     <label>ID пикселя VK Рекламы</label>
                     <input type="text" id="settingsVkPixel" placeholder="VK-RTRG-123456-xxxxx">
                     <div class="form-hint">Найдите в VK Рекламе: Ретаргетинг → Пиксели</div>
+                </div>
+
+                <div class="divider"></div>
+
+                <h4 class="settings-section-title">Интеграция с MAX</h4>
+
+                <div class="max-status" id="maxStatus">
+                    <div class="max-status-icon">📱</div>
+                    <div class="max-status-text">
+                        <span id="maxStatusLabel">Загрузка...</span>
+                    </div>
+                </div>
+
+                <div class="form-group" id="maxConnectGroup" style="display: none;">
+                    <label>Выберите канал MAX</label>
+                    <select id="settingsMaxChat">
+                        <option value="">Выберите канал</option>
+                    </select>
+                    <div class="form-hint">Добавьте бота MAX в канал, затем выберите его здесь</div>
+                </div>
+
+                <div id="maxConnectedInfo" style="display: none;">
+                    <div class="connected-badge">
+                        <span class="badge active">✓ MAX подключен</span>
+                        <button class="btn btn-outline btn-small btn-danger" id="disconnectMaxBtn">Отключить</button>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
