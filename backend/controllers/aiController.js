@@ -76,11 +76,17 @@ exports.generateLanding = (req, res) => {
             createdAt: Date.now()
         });
 
-        // Return immediately
-        res.json({ success: true, jobId });
+        // Run AI generation in background (completely async, detached from response)
+        setImmediate(() => {
+            runGeneration(jobId, { niche, product, productDescription, audience, mainOffer, tone, colorScheme }, OPENROUTER_API_KEY)
+                .catch(err => console.error('[AI] Background error:', err));
+        });
 
-        // Run AI generation in background
-        runGeneration(jobId, { niche, product, productDescription, audience, mainOffer, tone, colorScheme }, OPENROUTER_API_KEY);
+        // Return immediately with explicit headers
+        console.log('[AI] Sending jobId response:', jobId);
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200);
+        return res.send(JSON.stringify({ success: true, jobId }));
 
     } catch (error) {
         console.error('[AI] Start error:', error);
