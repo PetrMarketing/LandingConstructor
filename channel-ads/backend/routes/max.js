@@ -1,7 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const crypto = require('crypto');
 const { getDb } = require('../config/database');
 const { getMaxApi } = require('../services/maxApi');
+
+// Generate unique tracking code
+function generateTrackingCode() {
+    return crypto.randomBytes(8).toString('hex');
+}
 
 // Получить информацию о MAX боте
 router.get('/status', async (req, res) => {
@@ -155,47 +161,177 @@ router.delete('/disconnect/:trackingCode', (req, res) => {
     });
 });
 
+// Discover new MAX channels (poll for channels where bot is admin)
+router.get('/discover', async (req, res) => {
+    const maxApi = getMaxApi();
+    const db = getDb();
+
+    if (!maxApi) {
+        return res.status(400).json({
+            success: false,
+            error: 'MAX_BOT_TOKEN не настроен'
+        });
+    }
+
+    try {
+        const result = await maxApi.getChats();
+
+        if (!result.success) {
+            return res.json({
+                success: false,
+                error: result.error
+            });
+        }
+
+        const chats = result.data.chats || [];
+        const newChannels = [];
+
+        for (const chat of chats) {
+            // Only process channels/groups where bot can manage
+            if (chat.type !== 'channel' && chat.type !== 'chat') continue;
+
+            const chatId = chat.chat_id?.toString();
+            if (!chatId) continue;
+
+            // Check if channel already exists
+            const existing = db.prepare(`
+                SELECT id FROM channels WHERE max_chat_id = ? OR (channel_id = ? AND platform = 'max')
+            `).get(chatId, chatId);
+
+            if (!existing) {
+                // Register new MAX channel
+                const trackingCode = generateTrackingCode();
+
+                try {
+                    db.prepare(`
+                        INSERT INTO channels (channel_id, title, username, max_chat_id, max_connected, tracking_code, platform, is_active)
+                        VALUES (?, ?, ?, ?, 1, ?, 'max', 1)
+                    `).run(
+                        chatId,
+                        chat.title || 'MAX Channel',
+                        chat.link || null,
+                        chatId,
+                        trackingCode
+                    );
+
+                    newChannels.push({
+                        chat_id: chatId,
+                        title: chat.title,
+                        tracking_code: trackingCode
+                    });
+
+                    console.log(`[MAX] New channel registered: ${chat.title} (${chatId})`);
+                } catch (e) {
+                    if (!e.message.includes('UNIQUE constraint')) {
+                        console.error('[MAX] Error registering channel:', e.message);
+                    }
+                }
+            }
+        }
+
+        res.json({
+            success: true,
+            discovered: newChannels,
+            total_chats: chats.length
+        });
+
+    } catch (error) {
+        console.error('[MAX] Discover error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
 // Webhook для MAX событий
 router.post('/webhook', async (req, res) => {
     const { update_type, timestamp, message, chat_member } = req.body;
     const db = getDb();
 
-    console.log('[MAX Webhook] Received:', update_type);
+    console.log('[MAX Webhook] Received:', update_type, JSON.stringify(req.body).slice(0, 200));
 
     try {
-        // Обрабатываем событие подписки на канал
+        // Handle bot_added event - auto-register MAX channel
+        if (update_type === 'bot_added') {
+            const chatId = req.body.chat_id?.toString() || req.body.chat?.chat_id?.toString();
+            const chatTitle = req.body.chat?.title || req.body.title || 'MAX Channel';
+            const chatLink = req.body.chat?.link || req.body.link;
+
+            if (chatId) {
+                // Check if channel already exists
+                const existing = db.prepare(`
+                    SELECT id FROM channels WHERE max_chat_id = ? OR (channel_id = ? AND platform = 'max')
+                `).get(chatId, chatId);
+
+                if (!existing) {
+                    const trackingCode = generateTrackingCode();
+
+                    db.prepare(`
+                        INSERT INTO channels (channel_id, title, username, max_chat_id, max_connected, tracking_code, platform, is_active)
+                        VALUES (?, ?, ?, ?, 1, ?, 'max', 1)
+                    `).run(chatId, chatTitle, chatLink, chatId, trackingCode);
+
+                    console.log(`[MAX Webhook] Channel registered via bot_added: ${chatTitle} (${chatId})`);
+                } else {
+                    // Reactivate if it was deactivated
+                    db.prepare(`
+                        UPDATE channels SET is_active = 1, max_connected = 1 WHERE id = ?
+                    `).run(existing.id);
+
+                    console.log(`[MAX Webhook] Channel reactivated: ${chatId}`);
+                }
+            }
+        }
+
+        // Handle bot_removed event - deactivate MAX channel
+        if (update_type === 'bot_removed') {
+            const chatId = req.body.chat_id?.toString() || req.body.chat?.chat_id?.toString();
+
+            if (chatId) {
+                db.prepare(`
+                    UPDATE channels SET is_active = 0, max_connected = 0
+                    WHERE max_chat_id = ? OR (channel_id = ? AND platform = 'max')
+                `).run(chatId, chatId);
+
+                console.log(`[MAX Webhook] Channel deactivated via bot_removed: ${chatId}`);
+            }
+        }
+
+        // Handle chat_member_joined event - track subscription
         if (update_type === 'chat_member_joined' && chat_member) {
             const maxChatId = chat_member.chat_id?.toString();
-            const userId = chat_member.user?.user_id;
+            const userId = chat_member.user?.user_id?.toString();
             const username = chat_member.user?.username;
             const firstName = chat_member.user?.name;
 
-            // Находим связанный Telegram канал
+            // Find MAX channel (either linked or standalone)
             const channel = db.prepare(`
-                SELECT id FROM channels WHERE max_chat_id = ?
-            `).get(maxChatId);
+                SELECT id, platform FROM channels
+                WHERE max_chat_id = ? OR (channel_id = ? AND platform = 'max')
+            `).get(maxChatId, maxChatId);
 
             if (channel) {
-                // Ищем визит этого пользователя (по username если есть)
+                // Look for recent visit by this user (by max_user_id or username)
                 let visit = null;
-                if (username) {
+                if (userId) {
                     visit = db.prepare(`
                         SELECT id FROM visits
-                        WHERE channel_id = ? AND username = ?
+                        WHERE channel_id = ? AND (max_user_id = ? OR username = ?)
                         AND visited_at > datetime('now', '-7 days')
                         ORDER BY visited_at DESC
                         LIMIT 1
-                    `).get(channel.id, username);
+                    `).get(channel.id, userId, username);
                 }
 
-                // Записываем подписку
+                // Record subscription
                 try {
                     db.prepare(`
-                        INSERT INTO subscriptions (channel_id, telegram_id, username, first_name, visit_id)
-                        VALUES (?, ?, ?, ?, ?)
-                    `).run(channel.id, userId, username, firstName, visit?.id || null);
+                        INSERT INTO subscriptions (channel_id, telegram_id, max_user_id, username, first_name, visit_id, platform)
+                        VALUES (?, ?, ?, ?, ?, ?, 'max')
+                    `).run(channel.id, null, userId, username, firstName, visit?.id || null);
 
-                    console.log(`[MAX] Subscription recorded: user=${username}, channel=${channel.id}`);
+                    console.log(`[MAX] Subscription recorded: user=${username || userId}, channel=${channel.id}`);
                 } catch (e) {
                     if (!e.message.includes('UNIQUE constraint')) {
                         console.error('[MAX] Error saving subscription:', e.message);

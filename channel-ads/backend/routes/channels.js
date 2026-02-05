@@ -5,15 +5,28 @@ const { verifyTelegramAuth } = require('../middleware/auth');
 
 // Получить все каналы (временно без авторизации для тестирования)
 router.get('/', (req, res) => {
+    const { platform } = req.query;
     const db = getDb();
-    const channels = db.prepare(`
+
+    let query = `
         SELECT c.*,
             (SELECT COUNT(*) FROM subscriptions WHERE channel_id = c.id) as subscribers_count,
             (SELECT COUNT(*) FROM visits WHERE channel_id = c.id) as visits_count
         FROM channels c
         WHERE c.is_active = 1
-        ORDER BY c.created_at DESC
-    `).all();
+    `;
+
+    const params = [];
+
+    // Filter by platform if specified
+    if (platform && (platform === 'telegram' || platform === 'max')) {
+        query += ` AND (c.platform = ? OR c.platform IS NULL)`;
+        params.push(platform === 'telegram' ? 'telegram' : 'max');
+    }
+
+    query += ` ORDER BY c.created_at DESC`;
+
+    const channels = db.prepare(query).all(...params);
 
     res.json({ success: true, channels });
 });
@@ -63,7 +76,7 @@ router.get('/:trackingCode/stats', (req, res) => {
     const db = getDb();
 
     const channel = db.prepare(`
-        SELECT id FROM channels WHERE tracking_code = ?
+        SELECT id, platform FROM channels WHERE tracking_code = ?
     `).get(req.params.trackingCode);
 
     if (!channel) {
@@ -77,12 +90,24 @@ router.get('/:trackingCode/stats', (req, res) => {
             (SELECT COUNT(*) FROM subscriptions WHERE channel_id = ?) as total_subscribers
     `).get(channel.id, channel.id);
 
+    // Статистика по платформам
+    const platformStats = db.prepare(`
+        SELECT
+            COALESCE(v.platform, 'telegram') as platform,
+            COUNT(DISTINCT v.id) as visits,
+            (SELECT COUNT(*) FROM subscriptions s WHERE s.channel_id = ? AND COALESCE(s.platform, 'telegram') = COALESCE(v.platform, 'telegram')) as subscribers
+        FROM visits v
+        WHERE v.channel_id = ?
+        GROUP BY COALESCE(v.platform, 'telegram')
+    `).all(channel.id, channel.id);
+
     // Статистика по UTM
     const utmStats = db.prepare(`
         SELECT
             v.utm_source,
             v.utm_medium,
             v.utm_campaign,
+            COALESCE(v.platform, 'telegram') as platform,
             COUNT(DISTINCT v.id) as visits,
             COUNT(DISTINCT s.id) as subscribers,
             ROUND(COUNT(DISTINCT s.id) * 100.0 / NULLIF(COUNT(DISTINCT v.id), 0), 2) as conversion
@@ -91,7 +116,7 @@ router.get('/:trackingCode/stats', (req, res) => {
         WHERE v.channel_id = ?
         ${dateFrom ? "AND v.visited_at >= ?" : ""}
         ${dateTo ? "AND v.visited_at <= ?" : ""}
-        GROUP BY v.utm_source, v.utm_medium, v.utm_campaign
+        GROUP BY v.utm_source, v.utm_medium, v.utm_campaign, COALESCE(v.platform, 'telegram')
         ORDER BY visits DESC
     `).all(channel.id, ...[dateFrom, dateTo].filter(Boolean));
 
@@ -114,8 +139,10 @@ router.get('/:trackingCode/stats', (req, res) => {
     res.json({
         success: true,
         totals,
+        platformStats,
         utmStats,
-        dailyStats
+        dailyStats,
+        channelPlatform: channel.platform || 'telegram'
     });
 });
 

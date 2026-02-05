@@ -42,7 +42,7 @@ router.get('/info/:shortCode', (req, res) => {
 
     const link = db.prepare(`
         SELECT l.*, c.channel_id, c.title as channel_title, c.username as channel_username,
-               c.yandex_metrika_id, c.vk_pixel_id
+               c.yandex_metrika_id, c.vk_pixel_id, c.platform, c.max_chat_id
         FROM tracking_links l
         JOIN channels c ON c.id = l.channel_id
         WHERE l.short_code = ? AND c.is_active = 1
@@ -57,8 +57,10 @@ router.get('/info/:shortCode', (req, res) => {
         channel: {
             id: link.channel_id,
             title: link.channel_title,
-            username: link.channel_username
+            username: link.channel_username,
+            max_chat_id: link.max_chat_id
         },
+        platform: link.platform || 'telegram',
         utm: {
             source: link.utm_source,
             medium: link.utm_medium,
@@ -75,10 +77,14 @@ router.get('/info/:shortCode', (req, res) => {
 
 // Записать визит из Mini App
 router.post('/visit', (req, res) => {
-    const { shortCode, initData, telegramId, username, firstName } = req.body;
+    const { shortCode, initData, telegramId, username, firstName, platform, maxUserId } = req.body;
+
+    // Determine platform from request or default
+    const visitPlatform = platform || 'telegram';
 
     // Верификация данных Telegram (опционально в dev режиме)
-    if (process.env.NODE_ENV === 'production' && !verifyTelegramWebAppData(initData)) {
+    // Skip verification for MAX platform
+    if (visitPlatform === 'telegram' && process.env.NODE_ENV === 'production' && !verifyTelegramWebAppData(initData)) {
         return res.status(401).json({ success: false, error: 'Invalid Telegram data' });
     }
 
@@ -86,7 +92,7 @@ router.post('/visit', (req, res) => {
 
     // Находим ссылку
     const link = db.prepare(`
-        SELECT l.*, c.id as channel_db_id, c.yandex_metrika_id, c.vk_pixel_id
+        SELECT l.*, c.id as channel_db_id, c.yandex_metrika_id, c.vk_pixel_id, c.platform as channel_platform
         FROM tracking_links l
         JOIN channels c ON c.id = l.channel_id
         WHERE l.short_code = ?
@@ -100,15 +106,19 @@ router.post('/visit', (req, res) => {
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     const userAgent = req.headers['user-agent'];
 
+    // Use channel platform if visit platform not specified
+    const finalPlatform = visitPlatform || link.channel_platform || 'telegram';
+
     const result = db.prepare(`
-        INSERT INTO visits (tracking_link_id, channel_id, telegram_id, username, first_name,
+        INSERT INTO visits (tracking_link_id, channel_id, telegram_id, max_user_id, username, first_name,
                            utm_source, utm_medium, utm_campaign, utm_content, utm_term,
-                           ip_address, user_agent)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                           ip_address, user_agent, platform)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
         link.id,
         link.channel_db_id,
-        telegramId,
+        telegramId || null,
+        maxUserId || null,
         username,
         firstName,
         link.utm_source,
@@ -117,14 +127,16 @@ router.post('/visit', (req, res) => {
         link.utm_content,
         link.utm_term,
         ip,
-        userAgent
+        userAgent,
+        finalPlatform
     );
 
-    console.log(`[Track] Visit recorded: user=${telegramId}, link=${shortCode}, visit_id=${result.lastInsertRowid}`);
+    console.log(`[Track] Visit recorded: user=${telegramId || maxUserId}, platform=${finalPlatform}, link=${shortCode}, visit_id=${result.lastInsertRowid}`);
 
     res.json({
         success: true,
         visitId: result.lastInsertRowid,
+        platform: finalPlatform,
         analytics: {
             yandex_metrika_id: link.yandex_metrika_id,
             vk_pixel_id: link.vk_pixel_id
@@ -134,16 +146,19 @@ router.post('/visit', (req, res) => {
 
 // Записать подписку (вызывается после проверки подписки в Mini App)
 router.post('/subscribe', (req, res) => {
-    const { shortCode, initData, telegramId, username, firstName, visitId } = req.body;
+    const { shortCode, initData, telegramId, username, firstName, visitId, platform, maxUserId } = req.body;
 
-    if (process.env.NODE_ENV === 'production' && !verifyTelegramWebAppData(initData)) {
+    const subscribePlatform = platform || 'telegram';
+
+    // Skip verification for MAX platform
+    if (subscribePlatform === 'telegram' && process.env.NODE_ENV === 'production' && !verifyTelegramWebAppData(initData)) {
         return res.status(401).json({ success: false, error: 'Invalid Telegram data' });
     }
 
     const db = getDb();
 
     const link = db.prepare(`
-        SELECT l.*, c.id as channel_db_id
+        SELECT l.*, c.id as channel_db_id, c.platform as channel_platform
         FROM tracking_links l
         JOIN channels c ON c.id = l.channel_id
         WHERE l.short_code = ?
@@ -153,15 +168,17 @@ router.post('/subscribe', (req, res) => {
         return res.status(404).json({ success: false, error: 'Ссылка не найдена' });
     }
 
+    const finalPlatform = subscribePlatform || link.channel_platform || 'telegram';
+
     try {
         db.prepare(`
-            INSERT INTO subscriptions (channel_id, telegram_id, username, first_name, visit_id)
-            VALUES (?, ?, ?, ?, ?)
-        `).run(link.channel_db_id, telegramId, username, firstName, visitId || null);
+            INSERT INTO subscriptions (channel_id, telegram_id, max_user_id, username, first_name, visit_id, platform)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `).run(link.channel_db_id, telegramId || null, maxUserId || null, username, firstName, visitId || null, finalPlatform);
 
-        console.log(`[Track] Subscription recorded: user=${telegramId}, channel=${link.channel_db_id}`);
+        console.log(`[Track] Subscription recorded: user=${telegramId || maxUserId}, platform=${finalPlatform}, channel=${link.channel_db_id}`);
 
-        res.json({ success: true });
+        res.json({ success: true, platform: finalPlatform });
     } catch (e) {
         if (e.message.includes('UNIQUE constraint')) {
             res.json({ success: true, message: 'Already subscribed' });

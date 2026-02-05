@@ -28,13 +28,29 @@ router.get('/:trackingCode', (req, res) => {
     res.json({ success: true, links });
 });
 
+// Generate platform-specific tracking URL
+function generateTrackingUrl(shortCode, platform) {
+    const botUsername = process.env.BOT_USERNAME || 'PKmarketingBot';
+    const miniAppName = process.env.MINIAPP_NAME || 'subscribe';
+    const maxBotUsername = process.env.MAX_BOT_USERNAME || 'PKmarketingBot';
+
+    if (platform === 'max') {
+        // MAX Mini App URL format
+        // Note: MAX uses a similar deep link structure
+        return `https://max.ru/app/${maxBotUsername}?startapp=${shortCode}`;
+    }
+
+    // Telegram Mini App URL
+    return `https://t.me/${botUsername}/${miniAppName}?startapp=${shortCode}`;
+}
+
 // Создать новую ссылку
 router.post('/:trackingCode', (req, res) => {
     const { name, utm_source, utm_medium, utm_campaign, utm_content, utm_term } = req.body;
     const db = getDb();
 
     const channel = db.prepare(`
-        SELECT id, username FROM channels WHERE tracking_code = ?
+        SELECT id, username, platform FROM channels WHERE tracking_code = ?
     `).get(req.params.trackingCode);
 
     if (!channel) {
@@ -55,16 +71,16 @@ router.post('/:trackingCode', (req, res) => {
 
     const link = db.prepare('SELECT * FROM tracking_links WHERE id = ?').get(result.lastInsertRowid);
 
-    // Формируем полный URL
-    const botUsername = process.env.BOT_USERNAME || 'PKmarketingBot';
-    const miniAppName = process.env.MINIAPP_NAME || 'subscribe';
-    const fullUrl = `https://t.me/${botUsername}/${miniAppName}?startapp=${shortCode}`;
+    // Generate platform-specific URL
+    const platform = channel.platform || 'telegram';
+    const fullUrl = generateTrackingUrl(shortCode, platform);
 
     res.json({
         success: true,
         link: {
             ...link,
-            full_url: fullUrl
+            full_url: fullUrl,
+            platform: platform
         }
     });
 });

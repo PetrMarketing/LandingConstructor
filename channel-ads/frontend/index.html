@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Реклама канала</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
     <div class="app-container">
@@ -137,8 +137,21 @@
                 <button class="modal-close" id="closeChannelModal">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="instruction-box">
-                    <h4>Как добавить бота в канал:</h4>
+                <!-- Platform Selector -->
+                <div class="platform-selector">
+                    <button class="platform-btn active" data-platform="telegram" onclick="selectPlatform('telegram')">
+                        <span class="platform-icon">📱</span>
+                        <span class="platform-name">Telegram</span>
+                    </button>
+                    <button class="platform-btn" data-platform="max" onclick="selectPlatform('max')">
+                        <span class="platform-icon">💬</span>
+                        <span class="platform-name">MAX</span>
+                    </button>
+                </div>
+
+                <!-- Telegram Instructions -->
+                <div class="instruction-box platform-instructions" id="telegram-instructions">
+                    <h4>Как добавить бота в Telegram канал:</h4>
                     <ol>
                         <li>Откройте ваш канал в Telegram</li>
                         <li>Перейдите в <b>Настройки канала</b> → <b>Администраторы</b></li>
@@ -147,6 +160,24 @@
                         <li>Дайте права на <b>чтение сообщений</b></li>
                         <li>После добавления канал появится в списке</li>
                     </ol>
+                </div>
+
+                <!-- MAX Instructions -->
+                <div class="instruction-box platform-instructions" id="max-instructions" style="display: none;">
+                    <h4>Как добавить бота в MAX канал:</h4>
+                    <ol>
+                        <li>Откройте ваш канал в MAX</li>
+                        <li>Перейдите в <b>Настройки</b> → <b>Администраторы</b></li>
+                        <li>Добавьте бота: <code>@PKmarketingBot</code></li>
+                        <li>Дайте права на управление каналом</li>
+                        <li>Канал появится в списке после обнаружения</li>
+                    </ol>
+                    <div class="max-discover-section">
+                        <button class="btn btn-primary btn-small" id="discoverMaxChannelsBtn" onclick="discoverMaxChannels()">
+                            🔍 Найти MAX каналы
+                        </button>
+                        <span class="discover-status" id="discoverStatus"></span>
+                    </div>
                 </div>
 
                 <div class="pending-channels" id="pendingChannels" style="display: none;">
@@ -282,6 +313,6 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=2"></script>
 </body>
 </html>

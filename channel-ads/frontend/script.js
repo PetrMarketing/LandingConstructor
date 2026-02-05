@@ -7,6 +7,8 @@ const API_BASE = window.location.hostname === 'localhost' || window.location.hos
 // State
 let channels = [];
 let currentChannel = null;
+let selectedPlatform = 'telegram';
+let maxPollingInterval = null;
 
 // ===== Initialization =====
 document.addEventListener('DOMContentLoaded', () => {
@@ -125,33 +127,44 @@ function renderChannels() {
 
     noChannelsState.style.display = 'none';
 
-    channelsList.innerHTML = channels.map(channel => `
-        <div class="channel-card" data-code="${channel.tracking_code}">
-            <div class="channel-info">
-                <div class="channel-name">${escapeHtml(channel.title)}</div>
-                <div class="channel-stats">
-                    <span class="channel-stat">👥 ${channel.subscribers_count || 0} подписчиков</span>
-                    <span class="channel-stat">👁 ${channel.visits_count || 0} визитов</span>
+    channelsList.innerHTML = channels.map(channel => {
+        const platform = channel.platform || 'telegram';
+        const platformBadge = platform === 'max'
+            ? '<span class="badge max">💬 MAX</span>'
+            : '<span class="badge telegram">📱 TG</span>';
+
+        return `
+            <div class="channel-card" data-code="${channel.tracking_code}">
+                <div class="channel-info">
+                    <div class="channel-name">${escapeHtml(channel.title)}</div>
+                    <div class="channel-stats">
+                        <span class="channel-stat">👥 ${channel.subscribers_count || 0} подписчиков</span>
+                        <span class="channel-stat">👁 ${channel.visits_count || 0} визитов</span>
+                    </div>
+                    <div class="channel-badges">
+                        ${platformBadge}
+                        ${channel.is_active ? '<span class="badge active">Активен</span>' : '<span class="badge">Неактивен</span>'}
+                        ${channel.yandex_metrika_id ? '<span class="badge">Метрика</span>' : ''}
+                        ${channel.vk_pixel_id ? '<span class="badge">VK Pixel</span>' : ''}
+                        ${platform === 'telegram' && channel.max_connected ? '<span class="badge max">+MAX</span>' : ''}
+                    </div>
                 </div>
-                <div class="channel-badges">
-                    ${channel.is_active ? '<span class="badge active">Активен</span>' : '<span class="badge">Неактивен</span>'}
-                    ${channel.yandex_metrika_id ? '<span class="badge">Метрика</span>' : ''}
-                    ${channel.vk_pixel_id ? '<span class="badge">VK Pixel</span>' : ''}
-                    ${channel.max_connected ? '<span class="badge max">MAX</span>' : ''}
+                <div class="channel-actions">
+                    <button class="btn btn-outline btn-small" onclick="openChannelSettings('${channel.tracking_code}')">
+                        ⚙️ Настройки
+                    </button>
                 </div>
             </div>
-            <div class="channel-actions">
-                <button class="btn btn-outline btn-small" onclick="openChannelSettings('${channel.tracking_code}')">
-                    ⚙️ Настройки
-                </button>
-            </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function updateChannelSelects() {
     const options = '<option value="">Выберите канал</option>' +
-        channels.map(ch => `<option value="${ch.tracking_code}">${escapeHtml(ch.title)}</option>`).join('');
+        channels.map(ch => {
+            const platformIcon = (ch.platform || 'telegram') === 'max' ? '💬' : '📱';
+            return `<option value="${ch.tracking_code}">${platformIcon} ${escapeHtml(ch.title)}</option>`;
+        }).join('');
 
     document.getElementById('linksChannelSelect').innerHTML = options;
     document.getElementById('statsChannelSelect').innerHTML = options;
@@ -159,7 +172,110 @@ function updateChannelSelects() {
 
 function openAddChannelModal() {
     openModal('addChannelModal');
-    // Could add polling for pending channels here
+    // Reset to Telegram by default
+    selectPlatform('telegram');
+}
+
+// Platform selection for Add Channel modal
+function selectPlatform(platform) {
+    selectedPlatform = platform;
+
+    // Update button states
+    document.querySelectorAll('.platform-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.platform === platform);
+    });
+
+    // Show/hide instructions
+    document.getElementById('telegram-instructions').style.display = platform === 'telegram' ? 'block' : 'none';
+    document.getElementById('max-instructions').style.display = platform === 'max' ? 'block' : 'none';
+
+    // Clear pending channels
+    document.getElementById('pendingChannels').style.display = 'none';
+    document.getElementById('pendingChannelsList').innerHTML = '';
+
+    // Stop any existing polling
+    if (maxPollingInterval) {
+        clearInterval(maxPollingInterval);
+        maxPollingInterval = null;
+    }
+}
+
+// Discover MAX channels
+async function discoverMaxChannels() {
+    const statusEl = document.getElementById('discoverStatus');
+    const btn = document.getElementById('discoverMaxChannelsBtn');
+
+    btn.disabled = true;
+    statusEl.textContent = 'Поиск...';
+
+    try {
+        const response = await fetch(API_BASE + '/max/discover');
+        const data = await response.json();
+
+        if (data.success) {
+            if (data.discovered && data.discovered.length > 0) {
+                showDiscoveredChannels(data.discovered);
+                statusEl.textContent = `Найдено: ${data.discovered.length}`;
+                // Reload channels list
+                loadChannels();
+            } else {
+                statusEl.textContent = 'Новых каналов не найдено';
+            }
+        } else {
+            statusEl.textContent = data.error || 'Ошибка поиска';
+        }
+    } catch (error) {
+        console.error('Error discovering MAX channels:', error);
+        statusEl.textContent = 'Ошибка подключения';
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+// Show discovered MAX channels
+function showDiscoveredChannels(discovered) {
+    const container = document.getElementById('pendingChannels');
+    const list = document.getElementById('pendingChannelsList');
+
+    list.innerHTML = discovered.map(ch => `
+        <div class="pending-channel-item">
+            <div class="pending-channel-info">
+                <span class="pending-channel-name">💬 ${escapeHtml(ch.title)}</span>
+                <span class="pending-channel-id">ID: ${ch.chat_id}</span>
+            </div>
+            <span class="badge active">✓ Добавлен</span>
+        </div>
+    `).join('');
+
+    container.style.display = 'block';
+}
+
+// Start polling for MAX channels (called when MAX tab is selected)
+function startMaxChannelPolling() {
+    if (maxPollingInterval) {
+        clearInterval(maxPollingInterval);
+    }
+
+    // Poll every 5 seconds
+    maxPollingInterval = setInterval(async () => {
+        if (selectedPlatform !== 'max') {
+            clearInterval(maxPollingInterval);
+            maxPollingInterval = null;
+            return;
+        }
+
+        try {
+            const response = await fetch(API_BASE + '/max/discover');
+            const data = await response.json();
+
+            if (data.success && data.discovered && data.discovered.length > 0) {
+                showDiscoveredChannels(data.discovered);
+                loadChannels();
+            }
+        } catch (error) {
+            // Silent fail for polling
+        }
+    }, 5000);
 }
 
 function openChannelSettings(trackingCode) {
@@ -379,13 +495,26 @@ function renderLinks(links) {
 
     noLinksState.style.display = 'none';
 
+    // Get selected channel to determine platform
+    const selectedChannel = channels.find(c => c.tracking_code === currentChannel);
+    const channelPlatform = selectedChannel?.platform || 'telegram';
+
     linksList.innerHTML = links.map(link => {
-        const fullUrl = `https://t.me/PKmarketingBot/subscribe?startapp=${link.short_code}`;
+        // Generate URL based on channel platform
+        let fullUrl;
+        if (channelPlatform === 'max') {
+            fullUrl = `https://max.ru/app/PKmarketingBot?startapp=${link.short_code}`;
+        } else {
+            fullUrl = `https://t.me/PKmarketingBot/subscribe?startapp=${link.short_code}`;
+        }
+
+        const platformIcon = channelPlatform === 'max' ? '💬' : '📱';
+
         return `
             <div class="link-card">
                 <div class="link-header">
                     <div>
-                        <div class="link-name">${escapeHtml(link.name)}</div>
+                        <div class="link-name">${escapeHtml(link.name)} <span class="link-platform-badge">${platformIcon}</span></div>
                         <div class="link-utm">${link.utm_source}${link.utm_medium ? ' / ' + link.utm_medium : ''}${link.utm_campaign ? ' / ' + link.utm_campaign : ''}</div>
                     </div>
                     <button class="btn btn-outline btn-small btn-danger" onclick="deleteLink('${link.id}')">

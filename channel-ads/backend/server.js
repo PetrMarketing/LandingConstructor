@@ -7,6 +7,7 @@ const path = require('path');
 
 const { initDatabase } = require('./config/database');
 const { initBot, getWebhookCallback } = require('./bot');
+const { getMaxApi } = require('./services/maxApi');
 
 // Initialize database
 initDatabase();
@@ -94,6 +95,30 @@ app.listen(PORT, async () => {
         // Start polling in development
         bot.start();
         console.log('Bot started in polling mode');
+    }
+
+    // Set up MAX webhook (if configured)
+    const maxApi = getMaxApi();
+    if (maxApi && process.env.NODE_ENV === 'production' && process.env.APP_URL) {
+        try {
+            const webhookUrl = `${process.env.APP_URL}/api/max/webhook`;
+            const result = await maxApi.subscribeWebhook(webhookUrl, [
+                'bot_added',
+                'bot_removed',
+                'chat_member_joined',
+                'message_created'
+            ]);
+
+            if (result.success) {
+                console.log('MAX webhook registered:', webhookUrl);
+            } else {
+                console.error('Failed to register MAX webhook:', result.error);
+            }
+        } catch (e) {
+            console.error('Failed to set MAX webhook:', e.message);
+        }
+    } else if (maxApi) {
+        console.log('MAX bot configured (webhook not set in dev mode)');
     }
 });
 

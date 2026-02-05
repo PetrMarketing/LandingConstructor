@@ -292,6 +292,11 @@ body {
     color: #3b82f6;
 }
 
+.badge.telegram {
+    background: rgba(34, 160, 217, 0.2);
+    color: #22a0d9;
+}
+
 .channel-actions {
     display: flex;
     gap: 10px;
@@ -652,6 +657,72 @@ tr:hover td {
 .instruction-box p {
     color: var(--text-secondary);
     line-height: 1.6;
+}
+
+/* ===== Platform Selector ===== */
+.platform-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.platform-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px 15px;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.platform-btn:hover {
+    border-color: var(--text-secondary);
+}
+
+.platform-btn.active {
+    border-color: var(--accent);
+    background: rgba(139, 92, 246, 0.1);
+}
+
+.platform-icon {
+    font-size: 2rem;
+}
+
+.platform-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.platform-btn.active .platform-name {
+    color: var(--accent);
+}
+
+/* MAX Discover Section */
+.max-discover-section {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.discover-status {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Link Platform Badge */
+.link-platform-badge {
+    font-size: 0.85rem;
+    margin-left: 5px;
 }
 
 /* ===== Pending Channels ===== */
