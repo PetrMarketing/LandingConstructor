@@ -3,10 +3,10 @@ const rateLimit = require('express-rate-limit');
 const router = express.Router();
 const aiController = require('../controllers/aiController');
 
-// Rate limit: 5 requests per 15 minutes
+// Rate limit: 20 requests per 15 minutes
 const aiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 5,
+    max: 20,
     message: {
         success: false,
         error: 'Слишком много запросов. Попробуйте через 15 минут.'
@@ -24,7 +24,10 @@ router.get('/status', (req, res) => {
     });
 });
 
-// POST /api/ai/generate-landing
+// POST /api/ai/generate-landing — start generation job
 router.post('/generate-landing', aiLimiter, aiController.generateLanding);
+
+// GET /api/ai/result/:jobId — poll for result
+router.get('/result/:jobId', aiController.getResult);
 
 module.exports = router;
