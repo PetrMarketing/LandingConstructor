@@ -1,15 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { getDb } = require('../config/database');
-const { verifyTelegramAuth } = require('../middleware/auth');
 
 // Получить все ссылки канала
-router.get('/:trackingCode', verifyTelegramAuth, (req, res) => {
+router.get('/:trackingCode', (req, res) => {
     const db = getDb();
 
     const channel = db.prepare(`
-        SELECT id FROM channels WHERE tracking_code = ? AND owner_id = ?
-    `).get(req.params.trackingCode, req.user.id);
+        SELECT id FROM channels WHERE tracking_code = ?
+    `).get(req.params.trackingCode);
 
     if (!channel) {
         return res.status(404).json({ success: false, error: 'Канал не найден' });
@@ -30,13 +29,13 @@ router.get('/:trackingCode', verifyTelegramAuth, (req, res) => {
 });
 
 // Создать новую ссылку
-router.post('/:trackingCode', verifyTelegramAuth, (req, res) => {
+router.post('/:trackingCode', (req, res) => {
     const { name, utm_source, utm_medium, utm_campaign, utm_content, utm_term } = req.body;
     const db = getDb();
 
     const channel = db.prepare(`
-        SELECT id, username FROM channels WHERE tracking_code = ? AND owner_id = ?
-    `).get(req.params.trackingCode, req.user.id);
+        SELECT id, username FROM channels WHERE tracking_code = ?
+    `).get(req.params.trackingCode);
 
     if (!channel) {
         return res.status(404).json({ success: false, error: 'Канал не найден' });
@@ -57,7 +56,7 @@ router.post('/:trackingCode', verifyTelegramAuth, (req, res) => {
     const link = db.prepare('SELECT * FROM tracking_links WHERE id = ?').get(result.lastInsertRowid);
 
     // Формируем полный URL
-    const botUsername = process.env.BOT_USERNAME || 'your_bot';
+    const botUsername = process.env.BOT_USERNAME || 'PKmarketingBot';
     const miniAppName = process.env.MINIAPP_NAME || 'subscribe';
     const fullUrl = `https://t.me/${botUsername}/${miniAppName}?startapp=${shortCode}`;
 
@@ -71,12 +70,12 @@ router.post('/:trackingCode', verifyTelegramAuth, (req, res) => {
 });
 
 // Удалить ссылку
-router.delete('/:trackingCode/:linkId', verifyTelegramAuth, (req, res) => {
+router.delete('/:trackingCode/:linkId', (req, res) => {
     const db = getDb();
 
     const channel = db.prepare(`
-        SELECT id FROM channels WHERE tracking_code = ? AND owner_id = ?
-    `).get(req.params.trackingCode, req.user.id);
+        SELECT id FROM channels WHERE tracking_code = ?
+    `).get(req.params.trackingCode);
 
     if (!channel) {
         return res.status(404).json({ success: false, error: 'Канал не найден' });
