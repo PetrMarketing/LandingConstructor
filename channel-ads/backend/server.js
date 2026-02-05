@@ -52,16 +52,12 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// Serve frontend
+// Serve frontend static files
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-// SPA fallback
-app.get('*', (req, res) => {
-    if (!req.path.startsWith('/api')) {
-        res.sendFile(path.join(__dirname, '../frontend/index.html'));
-    } else {
-        res.status(404).json({ success: false, error: 'Endpoint not found' });
-    }
+// 404 for API routes
+app.use('/api/*', (req, res) => {
+    res.status(404).json({ success: false, error: 'Endpoint not found' });
 });
 
 // Error handler
