@@ -66,6 +66,11 @@ function initModals() {
     document.getElementById('closeLinkCreatedBtn').addEventListener('click', () => closeModal('linkCreatedModal'));
     document.getElementById('copyLinkBtn').addEventListener('click', copyCreatedLink);
 
+    // Link Settings Modal
+    document.getElementById('closeLinkSettingsModal').addEventListener('click', () => closeModal('linkSettingsModal'));
+    document.getElementById('cancelLinkSettingsBtn').addEventListener('click', () => closeModal('linkSettingsModal'));
+    document.getElementById('saveLinkSettingsBtn').addEventListener('click', saveLinkSettings);
+
     // Channel selects
     document.getElementById('linksChannelSelect').addEventListener('change', onLinksChannelChange);
     document.getElementById('statsChannelSelect').addEventListener('change', onStatsChannelChange);
@@ -522,9 +527,14 @@ function renderLinks(links) {
                         <div class="link-utm">${link.utm_source ? link.utm_source : ''}${link.utm_medium ? ' / ' + link.utm_medium : ''}${link.utm_campaign ? ' / ' + link.utm_campaign : ''}</div>
                         ${ymInfo}
                     </div>
-                    <button class="btn btn-outline btn-small btn-danger" onclick="deleteLink('${link.id}')">
-                        🗑️ Удалить
-                    </button>
+                    <div class="link-actions">
+                        <button class="btn btn-outline btn-small" onclick="openLinkSettings('${link.id}', '${link.short_code}', '${escapeHtml(link.ym_counter_id || '')}', '${escapeHtml(link.ym_goal_name || '')}')">
+                            ⚙️
+                        </button>
+                        <button class="btn btn-outline btn-small btn-danger" onclick="deleteLink('${link.id}')">
+                            🗑️
+                        </button>
+                    </div>
                 </div>
                 <div class="link-stats">
                     <div class="link-stat">
@@ -554,8 +564,6 @@ function openCreateLinkModal() {
     document.getElementById('linkUtmSource').value = '';
     document.getElementById('linkUtmMedium').value = '';
     document.getElementById('linkUtmCampaign').value = '';
-    document.getElementById('linkYmCounterId').value = '';
-    document.getElementById('linkYmGoalName').value = '';
     openModal('createLinkModal');
 }
 
@@ -564,8 +572,6 @@ async function createLink() {
     const utm_source = document.getElementById('linkUtmSource').value.trim();
     const utm_medium = document.getElementById('linkUtmMedium').value.trim();
     const utm_campaign = document.getElementById('linkUtmCampaign').value.trim();
-    const ym_counter_id = document.getElementById('linkYmCounterId').value.trim();
-    const ym_goal_name = document.getElementById('linkYmGoalName').value.trim();
 
     if (!name) {
         showToast('Заполните название ссылки', 'error');
@@ -579,7 +585,7 @@ async function createLink() {
                 'Content-Type': 'application/json',
                 ...getAuthHeaders()
             },
-            body: JSON.stringify({ name, utm_source, utm_medium, utm_campaign, ym_counter_id, ym_goal_name })
+            body: JSON.stringify({ name, utm_source, utm_medium, utm_campaign })
         });
 
         const data = await response.json();
@@ -628,6 +634,57 @@ async function deleteLink(linkId) {
 function copyCreatedLink() {
     const url = document.getElementById('createdLinkUrl').value;
     copyToClipboard(url);
+}
+
+// ===== Link Settings =====
+function openLinkSettings(linkId, shortCode, ymCounterId, ymGoalName) {
+    document.getElementById('editLinkId').value = linkId;
+
+    // Build the URL for display
+    const selectedChannel = channels.find(c => c.tracking_code === currentChannel);
+    const channelPlatform = selectedChannel?.platform || 'telegram';
+    let fullUrl;
+    if (channelPlatform === 'max') {
+        fullUrl = `https://max.ru/app/PKmarketingBot?startapp=${shortCode}`;
+    } else {
+        fullUrl = `https://t.me/PKmarketingBot/subscribe?startapp=${shortCode}`;
+    }
+    document.getElementById('editLinkUrl').value = fullUrl;
+
+    document.getElementById('editYmCounterId').value = ymCounterId || '';
+    document.getElementById('editYmGoalName').value = ymGoalName || '';
+
+    openModal('linkSettingsModal');
+}
+
+async function saveLinkSettings() {
+    const linkId = document.getElementById('editLinkId').value;
+    const ym_counter_id = document.getElementById('editYmCounterId').value.trim();
+    const ym_goal_name = document.getElementById('editYmGoalName').value.trim();
+
+    try {
+        const response = await fetch(API_BASE + '/links/' + currentChannel + '/' + linkId, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                ...getAuthHeaders()
+            },
+            body: JSON.stringify({ ym_counter_id, ym_goal_name })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            closeModal('linkSettingsModal');
+            loadLinks();
+            showToast('Настройки ссылки сохранены');
+        } else {
+            showToast(data.error || 'Ошибка сохранения', 'error');
+        }
+    } catch (error) {
+        console.error('Error saving link settings:', error);
+        showToast('Ошибка сохранения', 'error');
+    }
 }
 
 // ===== Stats =====

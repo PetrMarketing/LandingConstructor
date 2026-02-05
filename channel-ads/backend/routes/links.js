@@ -90,6 +90,31 @@ router.post('/:trackingCode', (req, res) => {
     });
 });
 
+// Обновить настройки ссылки (Яндекс Метрика)
+router.put('/:trackingCode/:linkId', (req, res) => {
+    const { ym_counter_id, ym_goal_name } = req.body;
+    const db = getDb();
+
+    const channel = db.prepare(`
+        SELECT id FROM channels WHERE tracking_code = ?
+    `).get(req.params.trackingCode);
+
+    if (!channel) {
+        return res.status(404).json({ success: false, error: 'Канал не найден' });
+    }
+
+    const result = db.prepare(`
+        UPDATE tracking_links SET ym_counter_id = ?, ym_goal_name = ?
+        WHERE id = ? AND channel_id = ?
+    `).run(ym_counter_id || null, ym_goal_name || null, req.params.linkId, channel.id);
+
+    if (result.changes === 0) {
+        return res.status(404).json({ success: false, error: 'Ссылка не найдена' });
+    }
+
+    res.json({ success: true, message: 'Настройки ссылки сохранены' });
+});
+
 // Удалить ссылку
 router.delete('/:trackingCode/:linkId', (req, res) => {
     const db = getDb();

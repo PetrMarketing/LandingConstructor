@@ -719,6 +719,12 @@ tr:hover td {
     color: var(--text-secondary);
 }
 
+/* Link Actions */
+.link-actions {
+    display: flex;
+    gap: 6px;
+}
+
 /* Link Platform Badge */
 .link-platform-badge {
     font-size: 0.85rem;
