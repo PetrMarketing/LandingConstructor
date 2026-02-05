@@ -46,7 +46,7 @@ function generateTrackingUrl(shortCode, platform) {
 
 // Создать новую ссылку
 router.post('/:trackingCode', (req, res) => {
-    const { name, utm_source, utm_medium, utm_campaign, utm_content, utm_term } = req.body;
+    const { name, utm_source, utm_medium, utm_campaign, utm_content, utm_term, ym_counter_id, ym_goal_name } = req.body;
     const db = getDb();
 
     const channel = db.prepare(`
@@ -57,17 +57,22 @@ router.post('/:trackingCode', (req, res) => {
         return res.status(404).json({ success: false, error: 'Канал не найден' });
     }
 
-    if (!name || !utm_source) {
-        return res.status(400).json({ success: false, error: 'Укажите название и utm_source' });
+    if (!name) {
+        return res.status(400).json({ success: false, error: 'Укажите название ссылки' });
     }
 
     // Генерируем короткий код
     const shortCode = generateShortCode();
 
     const result = db.prepare(`
-        INSERT INTO tracking_links (channel_id, name, utm_source, utm_medium, utm_campaign, utm_content, utm_term, short_code)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(channel.id, name, utm_source, utm_medium || null, utm_campaign || null, utm_content || null, utm_term || null, shortCode);
+        INSERT INTO tracking_links (channel_id, name, utm_source, utm_medium, utm_campaign, utm_content, utm_term, ym_counter_id, ym_goal_name, short_code)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+        channel.id, name,
+        utm_source || null, utm_medium || null, utm_campaign || null, utm_content || null, utm_term || null,
+        ym_counter_id || null, ym_goal_name || null,
+        shortCode
+    );
 
     const link = db.prepare('SELECT * FROM tracking_links WHERE id = ?').get(result.lastInsertRowid);
 

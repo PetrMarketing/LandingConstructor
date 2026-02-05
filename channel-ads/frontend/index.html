@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Реклама канала</title>
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
     <div class="app-container">
@@ -280,6 +280,22 @@
                     <input type="text" id="linkUtmCampaign" placeholder="winter_sale, promo_january">
                     <div class="form-hint">Название кампании</div>
                 </div>
+
+                <div class="divider"></div>
+
+                <h4 class="settings-section-title">Яндекс Метрика</h4>
+
+                <div class="form-group">
+                    <label>Номер счётчика Яндекс Метрики</label>
+                    <input type="text" id="linkYmCounterId" placeholder="12345678">
+                    <div class="form-hint">Счётчик будет встроен в Mini App для этой ссылки</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Название цели (JS-событие)</label>
+                    <input type="text" id="linkYmGoalName" placeholder="subscribe_channel">
+                    <div class="form-hint">Цель сработает при нажатии на кнопку подписки</div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline" id="cancelLinkBtn">Отмена</button>
@@ -313,6 +329,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=2"></script>
+    <script src="script.js?v=3"></script>
 </body>
 </html>

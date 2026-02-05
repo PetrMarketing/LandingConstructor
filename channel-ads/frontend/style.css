@@ -725,6 +725,13 @@ tr:hover td {
     margin-left: 5px;
 }
 
+/* Link YM Info */
+.link-ym-info {
+    font-size: 0.8rem;
+    color: var(--warning);
+    margin-top: 4px;
+}
+
 /* ===== Pending Channels ===== */
 .pending-channels {
     background: rgba(16, 185, 129, 0.1);

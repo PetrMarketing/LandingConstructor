@@ -160,6 +160,26 @@ function runMigrations(db) {
         }
     }
 
+    // Add ym_counter_id to tracking_links (per-link Yandex Metrika counter)
+    try {
+        db.exec(`ALTER TABLE tracking_links ADD COLUMN ym_counter_id TEXT`);
+        console.log('Migration: Added ym_counter_id column to tracking_links');
+    } catch (e) {
+        if (!e.message.includes('duplicate column')) {
+            console.error('Migration error (tracking_links.ym_counter_id):', e.message);
+        }
+    }
+
+    // Add ym_goal_name to tracking_links (JS goal event name)
+    try {
+        db.exec(`ALTER TABLE tracking_links ADD COLUMN ym_goal_name TEXT`);
+        console.log('Migration: Added ym_goal_name column to tracking_links');
+    } catch (e) {
+        if (!e.message.includes('duplicate column')) {
+            console.error('Migration error (tracking_links.ym_goal_name):', e.message);
+        }
+    }
+
     // Add index for platform filtering
     try {
         db.exec(`CREATE INDEX IF NOT EXISTS idx_channels_platform ON channels(platform)`);

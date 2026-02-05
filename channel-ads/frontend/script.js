@@ -510,12 +510,17 @@ function renderLinks(links) {
 
         const platformIcon = channelPlatform === 'max' ? '💬' : '📱';
 
+        const ymInfo = link.ym_counter_id
+            ? `<div class="link-ym-info">📊 ЯМ: ${escapeHtml(link.ym_counter_id)}${link.ym_goal_name ? ' → ' + escapeHtml(link.ym_goal_name) : ''}</div>`
+            : '';
+
         return `
             <div class="link-card">
                 <div class="link-header">
                     <div>
                         <div class="link-name">${escapeHtml(link.name)} <span class="link-platform-badge">${platformIcon}</span></div>
-                        <div class="link-utm">${link.utm_source}${link.utm_medium ? ' / ' + link.utm_medium : ''}${link.utm_campaign ? ' / ' + link.utm_campaign : ''}</div>
+                        <div class="link-utm">${link.utm_source ? link.utm_source : ''}${link.utm_medium ? ' / ' + link.utm_medium : ''}${link.utm_campaign ? ' / ' + link.utm_campaign : ''}</div>
+                        ${ymInfo}
                     </div>
                     <button class="btn btn-outline btn-small btn-danger" onclick="deleteLink('${link.id}')">
                         🗑️ Удалить
@@ -549,6 +554,8 @@ function openCreateLinkModal() {
     document.getElementById('linkUtmSource').value = '';
     document.getElementById('linkUtmMedium').value = '';
     document.getElementById('linkUtmCampaign').value = '';
+    document.getElementById('linkYmCounterId').value = '';
+    document.getElementById('linkYmGoalName').value = '';
     openModal('createLinkModal');
 }
 
@@ -557,9 +564,11 @@ async function createLink() {
     const utm_source = document.getElementById('linkUtmSource').value.trim();
     const utm_medium = document.getElementById('linkUtmMedium').value.trim();
     const utm_campaign = document.getElementById('linkUtmCampaign').value.trim();
+    const ym_counter_id = document.getElementById('linkYmCounterId').value.trim();
+    const ym_goal_name = document.getElementById('linkYmGoalName').value.trim();
 
-    if (!name || !utm_source) {
-        showToast('Заполните название и UTM Source', 'error');
+    if (!name) {
+        showToast('Заполните название ссылки', 'error');
         return;
     }
 
@@ -570,7 +579,7 @@ async function createLink() {
                 'Content-Type': 'application/json',
                 ...getAuthHeaders()
             },
-            body: JSON.stringify({ name, utm_source, utm_medium, utm_campaign })
+            body: JSON.stringify({ name, utm_source, utm_medium, utm_campaign, ym_counter_id, ym_goal_name })
         });
 
         const data = await response.json();

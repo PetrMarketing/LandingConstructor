@@ -71,6 +71,10 @@ router.get('/info/:shortCode', (req, res) => {
         analytics: {
             yandex_metrika_id: link.yandex_metrika_id,
             vk_pixel_id: link.vk_pixel_id
+        },
+        metrika: {
+            counter_id: link.ym_counter_id || null,
+            goal_name: link.ym_goal_name || null
         }
     });
 });
