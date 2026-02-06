@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM - Управление</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --sidebar-width: 240px;
+            --header-height: 56px;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #334155;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-dark); color: var(--text-primary); }
+        .layout { display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar { width: var(--sidebar-width); background: #020617; border-right: 1px solid var(--border-color); position: fixed; height: 100vh; overflow-y: auto; }
+        .sidebar-header { padding: 16px; border-bottom: 1px solid var(--border-color); }
+        .sidebar-header h1 { font-size: 18px; display: flex; align-items: center; gap: 10px; }
+        .sidebar-header h1 i { color: var(--primary); }
+        .nav-section { padding: 16px 0; }
+        .nav-title { padding: 8px 16px; font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; color: var(--text-secondary); cursor: pointer; border-left: 3px solid transparent; }
+        .nav-item:hover { background: rgba(59,130,246,0.1); color: var(--text-primary); }
+        .nav-item.active { background: rgba(59,130,246,0.15); color: var(--primary); border-left-color: var(--primary); }
+        .nav-item i { width: 20px; text-align: center; }
+        .nav-item .badge { margin-left: auto; background: var(--primary); padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+
+        /* Main */
+        .main { flex: 1; margin-left: var(--sidebar-width); }
+        .header { height: var(--header-height); background: var(--bg-card); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; position: sticky; top: 0; z-index: 50; }
+        .header h2 { font-size: 18px; }
+        .header-actions { display: flex; gap: 12px; }
+        .content { padding: 24px; }
+
+        /* Buttons */
+        .btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+        /* Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--bg-card); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); }
+        .stat-card .value { font-size: 28px; font-weight: 600; margin-bottom: 4px; }
+        .stat-card .label { color: var(--text-secondary); font-size: 14px; }
+        .stat-card.primary .value { color: var(--primary); }
+        .stat-card.success .value { color: var(--success); }
+        .stat-card.warning .value { color: var(--warning); }
+
+        /* Table */
+        .card { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; }
+        .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+        .card-header h3 { font-size: 16px; }
+        .card-body { padding: 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 20px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { font-weight: 500; color: var(--text-secondary); font-size: 13px; background: rgba(0,0,0,0.2); }
+        tr:hover { background: rgba(59,130,246,0.05); }
+        tr:last-child td { border-bottom: none; }
+
+        /* Badges */
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; }
+        .badge-new { background: rgba(59,130,246,0.2); color: var(--primary); }
+        .badge-success { background: rgba(16,185,129,0.2); color: var(--success); }
+        .badge-warning { background: rgba(245,158,11,0.2); color: var(--warning); }
+        .badge-danger { background: rgba(239,68,68,0.2); color: var(--danger); }
+
+        /* Kanban */
+        .kanban { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 16px; }
+        .kanban-column { min-width: 300px; max-width: 300px; background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color); }
+        .kanban-header { padding: 12px 16px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+        .kanban-header h4 { font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .kanban-header .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .kanban-header .count { color: var(--text-muted); font-weight: normal; }
+        .kanban-body { padding: 12px; min-height: 200px; max-height: 500px; overflow-y: auto; }
+        .kanban-card { background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 8px; cursor: grab; }
+        .kanban-card:hover { border-color: var(--primary); }
+        .kanban-card-title { font-weight: 500; margin-bottom: 8px; }
+        .kanban-card-meta { font-size: 12px; color: var(--text-muted); display: flex; gap: 12px; }
+        .kanban-add { padding: 8px 12px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .kanban-add:hover { color: var(--primary); }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border-color); margin-bottom: 24px; }
+        .tab { padding: 12px 20px; cursor: pointer; color: var(--text-secondary); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+        .tab:hover { color: var(--text-primary); }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Search & Filters */
+        .toolbar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+        .search-box { flex: 1; min-width: 200px; position: relative; }
+        .search-box input { width: 100%; padding: 10px 16px 10px 40px; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); }
+        .search-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .filter-select { padding: 10px 16px; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); min-width: 150px; }
+
+        /* Modal */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-overlay.open { display: flex; }
+        .modal { background: var(--bg-card); border-radius: 16px; width: 100%; max-width: 500px; max-height: 90vh; overflow: hidden; }
+        .modal-header { padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+        .modal-header h3 { font-size: 18px; }
+        .modal-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 20px; }
+        .modal-body { padding: 20px; max-height: 60vh; overflow-y: auto; }
+        .modal-footer { padding: 16px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 6px; font-size: 14px; color: var(--text-secondary); }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 14px; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); }
+        .form-hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+        /* Empty state */
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+        .empty-state i { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        .empty-state h3 { margin-bottom: 8px; color: var(--text-secondary); }
+
+        /* Section visibility */
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .main { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1><i class="fas fa-chart-line"></i> CRM</h1>
+            </div>
+            <nav class="nav-section">
+                <div class="nav-title">Главное</div>
+                <div class="nav-item active" data-section="dashboard"><i class="fas fa-home"></i> Дашборд</div>
+            </nav>
+            <nav class="nav-section">
+                <div class="nav-title">Продажи</div>
+                <div class="nav-item" data-section="funnels"><i class="fas fa-filter"></i> Воронки</div>
+                <div class="nav-item" data-section="deals"><i class="fas fa-handshake"></i> Сделки</div>
+            </nav>
+            <nav class="nav-section">
+                <div class="nav-title">Клиенты</div>
+                <div class="nav-item" data-section="clients"><i class="fas fa-users"></i> Клиенты</div>
+                <div class="nav-item" data-section="segments"><i class="fas fa-layer-group"></i> Сегменты</div>
+            </nav>
+            <nav class="nav-section">
+                <div class="nav-title">Команда</div>
+                <div class="nav-item" data-section="employees"><i class="fas fa-user-tie"></i> Сотрудники</div>
+                <div class="nav-item" data-section="tasks"><i class="fas fa-tasks"></i> Задачи</div>
+            </nav>
+            <nav class="nav-section">
+                <div class="nav-title">Заказы</div>
+                <div class="nav-item" data-section="orders"><i class="fas fa-shopping-cart"></i> Заказы</div>
+                <div class="nav-item" data-section="payments"><i class="fas fa-credit-card"></i> Платежи</div>
+            </nav>
+            <nav class="nav-section">
+                <div class="nav-title">Каталог</div>
+                <div class="nav-item" data-section="services"><i class="fas fa-concierge-bell"></i> Услуги</div>
+                <div class="nav-item" data-section="courses"><i class="fas fa-graduation-cap"></i> Курсы</div>
+            </nav>
+            <nav class="nav-section">
+                <div class="nav-item" onclick="location.href='admin.html'"><i class="fas fa-arrow-left"></i> Назад в CMS</div>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main class="main">
+            <header class="header">
+                <h2 id="pageTitle">Дашборд</h2>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="mainAction" style="display:none;">
+                        <i class="fas fa-plus"></i> <span>Добавить</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Dashboard -->
+                <div class="section active" id="section-dashboard">
+                    <div class="stats-grid">
+                        <div class="stat-card primary">
+                            <div class="value" id="stat-deals">0</div>
+                            <div class="label">Активные сделки</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="value" id="stat-won">₽0</div>
+                            <div class="label">Выиграно за месяц</div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="value" id="stat-clients">0</div>
+                            <div class="label">Клиентов</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="stat-orders">0</div>
+                            <div class="label">Заказов за месяц</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Последние сделки</h3>
+                        </div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Сделка</th>
+                                        <th>Клиент</th>
+                                        <th>Сумма</th>
+                                        <th>Этап</th>
+                                        <th>Дата</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentDeals">
+                                    <tr><td colspan="5"><div class="empty-state"><i class="fas fa-handshake"></i><h3>Нет сделок</h3></div></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Funnels -->
+                <div class="section" id="section-funnels">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('funnelModal')"><i class="fas fa-plus"></i> Создать воронку</button>
+                    </div>
+                    <div id="funnelsList"></div>
+                </div>
+
+                <!-- Deals -->
+                <div class="section" id="section-deals">
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchDeals" placeholder="Поиск сделок..." oninput="filterDeals()">
+                        </div>
+                        <select class="filter-select" id="filterFunnel" onchange="loadDealsKanban()">
+                            <option value="">Все воронки</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="openModal('dealModal')"><i class="fas fa-plus"></i> Новая сделка</button>
+                    </div>
+                    <div class="kanban" id="dealsKanban"></div>
+                </div>
+
+                <!-- Clients -->
+                <div class="section" id="section-clients">
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchClients" placeholder="Поиск клиентов..." oninput="searchClients()">
+                        </div>
+                        <button class="btn btn-primary" onclick="openModal('clientModal')"><i class="fas fa-plus"></i> Добавить клиента</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Клиент</th>
+                                        <th>Контакты</th>
+                                        <th>Компания</th>
+                                        <th>Заказов</th>
+                                        <th>Сумма</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="clientsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Segments -->
+                <div class="section" id="section-segments">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('segmentModal')"><i class="fas fa-plus"></i> Создать сегмент</button>
+                    </div>
+                    <div id="segmentsList" class="stats-grid"></div>
+                </div>
+
+                <!-- Employees -->
+                <div class="section" id="section-employees">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('employeeModal')"><i class="fas fa-plus"></i> Добавить сотрудника</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Сотрудник</th>
+                                        <th>Должность</th>
+                                        <th>Email</th>
+                                        <th>Роль</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="employeesTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tasks -->
+                <div class="section" id="section-tasks">
+                    <div class="toolbar">
+                        <select class="filter-select" id="filterTaskStatus" onchange="loadTasks()">
+                            <option value="">Все задачи</option>
+                            <option value="pending">Ожидают</option>
+                            <option value="in_progress">В работе</option>
+                            <option value="completed">Завершены</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="openModal('taskModal')"><i class="fas fa-plus"></i> Создать задачу</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Задача</th>
+                                        <th>Исполнитель</th>
+                                        <th>Приоритет</th>
+                                        <th>Срок</th>
+                                        <th>Статус</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tasksTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders -->
+                <div class="section" id="section-orders">
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchOrders" placeholder="Поиск заказов..." oninput="searchOrders()">
+                        </div>
+                        <select class="filter-select" id="filterOrderStatus" onchange="loadOrders()">
+                            <option value="">Все статусы</option>
+                            <option value="new">Новые</option>
+                            <option value="processing">В обработке</option>
+                            <option value="shipped">Отправлены</option>
+                            <option value="completed">Завершены</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="openModal('orderModal')"><i class="fas fa-plus"></i> Создать заказ</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>№ заказа</th>
+                                        <th>Клиент</th>
+                                        <th>Сумма</th>
+                                        <th>Статус</th>
+                                        <th>Оплата</th>
+                                        <th>Дата</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payments -->
+                <div class="section" id="section-payments">
+                    <div class="toolbar">
+                        <select class="filter-select" id="filterPaymentStatus" onchange="loadPayments()">
+                            <option value="">Все платежи</option>
+                            <option value="completed">Успешные</option>
+                            <option value="pending">Ожидают</option>
+                            <option value="failed">Неуспешные</option>
+                        </select>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Заказ</th>
+                                        <th>Сумма</th>
+                                        <th>Метод</th>
+                                        <th>Статус</th>
+                                        <th>Дата</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="paymentsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Services -->
+                <div class="section" id="section-services">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('serviceModal')"><i class="fas fa-plus"></i> Добавить услугу</button>
+                    </div>
+                    <div id="servicesList" class="stats-grid"></div>
+                </div>
+
+                <!-- Courses -->
+                <div class="section" id="section-courses">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('courseModal')"><i class="fas fa-plus"></i> Создать курс</button>
+                    </div>
+                    <div id="coursesList" class="stats-grid"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Deal Modal -->
+    <div class="modal-overlay" id="dealModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новая сделка</h3>
+                <button class="modal-close" onclick="closeModal('dealModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название сделки *</label>
+                    <input type="text" id="dealName" placeholder="Продажа услуги">
+                </div>
+                <div class="form-group">
+                    <label>Клиент</label>
+                    <select id="dealClient"><option value="">Выберите клиента</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Сумма</label>
+                    <input type="number" id="dealAmount" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Воронка</label>
+                    <select id="dealFunnel" onchange="loadDealStages()"><option value="">Выберите воронку</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Этап</label>
+                    <select id="dealStage"><option value="">Выберите этап</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Ответственный</label>
+                    <select id="dealAssignee"><option value="">Выберите сотрудника</option></select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('dealModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveDeal()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client Modal -->
+    <div class="modal-overlay" id="clientModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новый клиент</h3>
+                <button class="modal-close" onclick="closeModal('clientModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Имя *</label>
+                    <input type="text" id="clientFirstName" placeholder="Иван">
+                </div>
+                <div class="form-group">
+                    <label>Фамилия</label>
+                    <input type="text" id="clientLastName" placeholder="Иванов">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="clientEmail" placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Телефон</label>
+                    <input type="tel" id="clientPhone" placeholder="+7 999 123-45-67">
+                </div>
+                <div class="form-group">
+                    <label>Компания</label>
+                    <input type="text" id="clientCompany" placeholder="ООО Компания">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('clientModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveClient()">Добавить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Funnel Modal -->
+    <div class="modal-overlay" id="funnelModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новая воронка</h3>
+                <button class="modal-close" onclick="closeModal('funnelModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название воронки *</label>
+                    <input type="text" id="funnelName" placeholder="Продажи B2B">
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="funnelDescription" rows="3" placeholder="Описание воронки"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('funnelModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveFunnel()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee Modal -->
+    <div class="modal-overlay" id="employeeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новый сотрудник</h3>
+                <button class="modal-close" onclick="closeModal('employeeModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Имя *</label>
+                    <input type="text" id="employeeFirstName" placeholder="Иван">
+                </div>
+                <div class="form-group">
+                    <label>Фамилия *</label>
+                    <input type="text" id="employeeLastName" placeholder="Иванов">
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="employeeEmail" placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Должность</label>
+                    <input type="text" id="employeePosition" placeholder="Менеджер">
+                </div>
+                <div class="form-group">
+                    <label>Роль</label>
+                    <select id="employeeRole">
+                        <option value="manager">Менеджер</option>
+                        <option value="admin">Администратор</option>
+                        <option value="support">Поддержка</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('employeeModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveEmployee()">Добавить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Modal -->
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новая задача</h3>
+                <button class="modal-close" onclick="closeModal('taskModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название задачи *</label>
+                    <input type="text" id="taskTitle" placeholder="Позвонить клиенту">
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="taskDescription" rows="3" placeholder="Подробности задачи"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Исполнитель</label>
+                    <select id="taskAssignee"><option value="">Выберите сотрудника</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Приоритет</label>
+                    <select id="taskPriority">
+                        <option value="normal">Обычный</option>
+                        <option value="high">Высокий</option>
+                        <option value="urgent">Срочный</option>
+                        <option value="low">Низкий</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Срок</label>
+                    <input type="date" id="taskDueDate">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('taskModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveTask()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Config
+        const API_BASE = '/api';
+        let projectId = null;
+        let funnels = [], clients = [], employees = [], deals = [], orders = [], tasks = [];
+
+        // API Helper
+        async function api(method, endpoint, data = null) {
+            const token = localStorage.getItem('cms_token');
+            const opts = {
+                method,
+                headers: { 'Content-Type': 'application/json' }
+            };
+            if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+            if (data) opts.body = JSON.stringify(data);
+
+            const res = await fetch(API_BASE + endpoint, opts);
+            return res.json();
+        }
+
+        // Init
+        async function init() {
+            // Get project from localStorage or redirect to login
+            const projects = JSON.parse(localStorage.getItem('cms_projects') || '[]');
+            if (projects.length === 0) {
+                alert('Сначала войдите в систему');
+                location.href = 'admin.html';
+                return;
+            }
+            projectId = projects[0].id;
+
+            setupNavigation();
+            await loadAllData();
+            renderDashboard();
+        }
+
+        async function loadAllData() {
+            await Promise.all([
+                loadFunnels(),
+                loadClients(),
+                loadEmployees(),
+                loadOrders()
+            ]);
+        }
+
+        // Navigation
+        function setupNavigation() {
+            document.querySelectorAll('.nav-item[data-section]').forEach(item => {
+                item.addEventListener('click', () => switchSection(item.dataset.section));
+            });
+        }
+
+        function switchSection(section) {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.querySelector(`.nav-item[data-section="${section}"]`)?.classList.add('active');
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section-' + section)?.classList.add('active');
+
+            const titles = {
+                dashboard: 'Дашборд', funnels: 'Воронки продаж', deals: 'Сделки',
+                clients: 'Клиенты', segments: 'Сегменты', employees: 'Сотрудники',
+                tasks: 'Задачи', orders: 'Заказы', payments: 'Платежи',
+                services: 'Услуги', courses: 'Курсы'
+            };
+            document.getElementById('pageTitle').textContent = titles[section] || section;
+
+            // Load section-specific data
+            if (section === 'deals') loadDealsKanban();
+            if (section === 'tasks') loadTasks();
+            if (section === 'orders') loadOrders();
+        }
+
+        // Modal
+        function openModal(id) { document.getElementById(id).classList.add('open'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+        // Funnels
+        async function loadFunnels() {
+            const res = await api('GET', `/funnels/${projectId}`);
+            if (res.success) {
+                funnels = res.funnels;
+                renderFunnels();
+                updateFunnelSelects();
+            }
+        }
+
+        function renderFunnels() {
+            const el = document.getElementById('funnelsList');
+            if (!funnels.length) {
+                el.innerHTML = '<div class="empty-state"><i class="fas fa-filter"></i><h3>Нет воронок</h3><p>Создайте первую воронку продаж</p></div>';
+                return;
+            }
+
+            el.innerHTML = funnels.map(f => `
+                <div class="card" style="margin-bottom: 16px;">
+                    <div class="card-header">
+                        <h3>${escapeHtml(f.name)}</h3>
+                        <div>
+                            <span class="badge badge-new">${f.stages?.length || 0} этапов</span>
+                            <span class="badge">${f.deals_count || 0} сделок</span>
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding: 16px;">
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            ${(f.stages || []).map(s => `
+                                <div style="padding: 8px 16px; background: ${s.color}20; border-radius: 8px; border-left: 3px solid ${s.color};">
+                                    <div style="font-weight: 500;">${escapeHtml(s.name)}</div>
+                                    <div style="font-size: 12px; color: var(--text-muted);">${s.deals_count || 0} сделок</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function saveFunnel() {
+            const name = document.getElementById('funnelName').value;
+            const description = document.getElementById('funnelDescription').value;
+
+            if (!name) return alert('Введите название воронки');
+
+            const res = await api('POST', `/funnels/${projectId}`, { name, description });
+            if (res.success) {
+                closeModal('funnelModal');
+                document.getElementById('funnelName').value = '';
+                document.getElementById('funnelDescription').value = '';
+                loadFunnels();
+            } else {
+                alert(res.error || 'Ошибка создания воронки');
+            }
+        }
+
+        function updateFunnelSelects() {
+            const options = '<option value="">Выберите воронку</option>' + funnels.map(f => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join('');
+            document.getElementById('filterFunnel').innerHTML = '<option value="">Все воронки</option>' + funnels.map(f => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join('');
+            document.getElementById('dealFunnel').innerHTML = options;
+        }
+
+        function loadDealStages() {
+            const funnelId = document.getElementById('dealFunnel').value;
+            const funnel = funnels.find(f => f.id === funnelId);
+            const stages = funnel?.stages || [];
+            document.getElementById('dealStage').innerHTML = '<option value="">Выберите этап</option>' + stages.map(s => `<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
+        }
+
+        // Deals Kanban
+        async function loadDealsKanban() {
+            const funnelId = document.getElementById('filterFunnel').value;
+            if (!funnelId && funnels.length) {
+                document.getElementById('filterFunnel').value = funnels[0].id;
+            }
+            const selectedFunnelId = document.getElementById('filterFunnel').value || funnels[0]?.id;
+            if (!selectedFunnelId) return;
+
+            const res = await api('GET', `/funnels/${projectId}/${selectedFunnelId}`);
+            if (res.success) {
+                renderKanban(res.funnel);
+            }
+        }
+
+        function renderKanban(funnel) {
+            const kanban = document.getElementById('dealsKanban');
+            kanban.innerHTML = (funnel.stages || []).map(stage => `
+                <div class="kanban-column" data-stage="${stage.id}">
+                    <div class="kanban-header">
+                        <h4><span class="dot" style="background: ${stage.color}"></span> ${escapeHtml(stage.name)} <span class="count">(${stage.deals?.length || 0})</span></h4>
+                    </div>
+                    <div class="kanban-body" ondragover="event.preventDefault()" ondrop="dropDeal(event, '${stage.id}')">
+                        ${(stage.deals || []).map(deal => `
+                            <div class="kanban-card" draggable="true" ondragstart="dragDeal(event, '${deal.id}')" data-deal="${deal.id}">
+                                <div class="kanban-card-title">${escapeHtml(deal.name)}</div>
+                                <div class="kanban-card-meta">
+                                    <span><i class="fas fa-ruble-sign"></i> ${formatMoney(deal.amount)}</span>
+                                    ${deal.client_first_name ? `<span><i class="fas fa-user"></i> ${escapeHtml(deal.client_first_name)}</span>` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="kanban-add" onclick="quickAddDeal('${stage.id}')">
+                        <i class="fas fa-plus"></i> Добавить сделку
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        let draggedDealId = null;
+        function dragDeal(e, dealId) { draggedDealId = dealId; }
+        async function dropDeal(e, stageId) {
+            e.preventDefault();
+            if (!draggedDealId) return;
+
+            await api('POST', `/funnels/${projectId}/deals/${draggedDealId}/move`, { stage_id: stageId });
+            draggedDealId = null;
+            loadDealsKanban();
+        }
+
+        async function saveDeal() {
+            const name = document.getElementById('dealName').value;
+            const client_id = document.getElementById('dealClient').value;
+            const amount = document.getElementById('dealAmount').value;
+            const funnel_id = document.getElementById('dealFunnel').value;
+            const stage_id = document.getElementById('dealStage').value;
+            const assigned_to = document.getElementById('dealAssignee').value;
+
+            if (!name) return alert('Введите название сделки');
+
+            const res = await api('POST', `/funnels/${projectId}/deals`, {
+                name, client_id: client_id || null, amount: parseFloat(amount) || 0,
+                funnel_id: funnel_id || null, stage_id: stage_id || null,
+                assigned_to: assigned_to || null
+            });
+
+            if (res.success) {
+                closeModal('dealModal');
+                ['dealName', 'dealClient', 'dealAmount', 'dealFunnel', 'dealStage', 'dealAssignee'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                loadDealsKanban();
+                loadFunnels();
+            } else {
+                alert(res.error || 'Ошибка создания сделки');
+            }
+        }
+
+        // Clients
+        async function loadClients() {
+            const res = await api('GET', `/clients/${projectId}`);
+            if (res.success) {
+                clients = res.clients;
+                renderClients();
+                updateClientSelects();
+            }
+        }
+
+        function renderClients() {
+            const tbody = document.getElementById('clientsTable');
+            if (!clients.length) {
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-users"></i><h3>Нет клиентов</h3></div></td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = clients.map(c => `
+                <tr>
+                    <td><strong>${escapeHtml(c.first_name || '')} ${escapeHtml(c.last_name || '')}</strong></td>
+                    <td>
+                        ${c.email ? `<div>${escapeHtml(c.email)}</div>` : ''}
+                        ${c.phone ? `<div style="color: var(--text-muted)">${escapeHtml(c.phone)}</div>` : ''}
+                    </td>
+                    <td>${escapeHtml(c.company || '-')}</td>
+                    <td>${c.total_orders || 0}</td>
+                    <td>${formatMoney(c.total_spent || 0)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline" onclick="editClient('${c.id}')"><i class="fas fa-edit"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function saveClient() {
+            const first_name = document.getElementById('clientFirstName').value;
+            const last_name = document.getElementById('clientLastName').value;
+            const email = document.getElementById('clientEmail').value;
+            const phone = document.getElementById('clientPhone').value;
+            const company = document.getElementById('clientCompany').value;
+
+            if (!first_name) return alert('Введите имя клиента');
+
+            const res = await api('POST', `/clients/${projectId}`, { first_name, last_name, email, phone, company });
+            if (res.success) {
+                closeModal('clientModal');
+                ['clientFirstName', 'clientLastName', 'clientEmail', 'clientPhone', 'clientCompany'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                loadClients();
+            } else {
+                alert(res.error || 'Ошибка добавления клиента');
+            }
+        }
+
+        function updateClientSelects() {
+            const options = '<option value="">Выберите клиента</option>' + clients.map(c => `<option value="${c.id}">${escapeHtml(c.first_name || '')} ${escapeHtml(c.last_name || '')} ${c.company ? '(' + escapeHtml(c.company) + ')' : ''}</option>`).join('');
+            document.getElementById('dealClient').innerHTML = options;
+        }
+
+        // Employees
+        async function loadEmployees() {
+            const res = await api('GET', `/employees/${projectId}`);
+            if (res.success) {
+                employees = res.employees;
+                renderEmployees();
+                updateEmployeeSelects();
+            }
+        }
+
+        function renderEmployees() {
+            const tbody = document.getElementById('employeesTable');
+            if (!employees.length) {
+                tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><i class="fas fa-user-tie"></i><h3>Нет сотрудников</h3></div></td></tr>';
+                return;
+            }
+
+            const roles = { admin: 'Админ', manager: 'Менеджер', support: 'Поддержка' };
+            tbody.innerHTML = employees.map(e => `
+                <tr>
+                    <td><strong>${escapeHtml(e.first_name)} ${escapeHtml(e.last_name)}</strong></td>
+                    <td>${escapeHtml(e.position || '-')}</td>
+                    <td>${escapeHtml(e.email)}</td>
+                    <td><span class="badge badge-new">${roles[e.role] || e.role}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline" onclick="editEmployee('${e.id}')"><i class="fas fa-edit"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function saveEmployee() {
+            const first_name = document.getElementById('employeeFirstName').value;
+            const last_name = document.getElementById('employeeLastName').value;
+            const email = document.getElementById('employeeEmail').value;
+            const position = document.getElementById('employeePosition').value;
+            const role = document.getElementById('employeeRole').value;
+
+            if (!first_name || !last_name || !email) return alert('Заполните обязательные поля');
+
+            const res = await api('POST', `/employees/${projectId}`, { first_name, last_name, email, position, role });
+            if (res.success) {
+                closeModal('employeeModal');
+                ['employeeFirstName', 'employeeLastName', 'employeeEmail', 'employeePosition'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                loadEmployees();
+            } else {
+                alert(res.error || 'Ошибка добавления сотрудника');
+            }
+        }
+
+        function updateEmployeeSelects() {
+            const options = '<option value="">Выберите сотрудника</option>' + employees.map(e => `<option value="${e.id}">${escapeHtml(e.first_name)} ${escapeHtml(e.last_name)}</option>`).join('');
+            document.getElementById('dealAssignee').innerHTML = options;
+            document.getElementById('taskAssignee').innerHTML = options;
+        }
+
+        // Tasks
+        async function loadTasks() {
+            const status = document.getElementById('filterTaskStatus').value;
+            const params = status ? `?status=${status}` : '';
+            const res = await api('GET', `/employees/${projectId}/tasks/list${params}`);
+            if (res.success) {
+                tasks = res.tasks;
+                renderTasks();
+            }
+        }
+
+        function renderTasks() {
+            const tbody = document.getElementById('tasksTable');
+            if (!tasks.length) {
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-tasks"></i><h3>Нет задач</h3></div></td></tr>';
+                return;
+            }
+
+            const priorities = { low: ['Низкий', 'badge'], normal: ['Обычный', 'badge badge-new'], high: ['Высокий', 'badge badge-warning'], urgent: ['Срочный', 'badge badge-danger'] };
+            const statuses = { pending: ['Ожидает', 'badge'], in_progress: ['В работе', 'badge badge-warning'], completed: ['Готово', 'badge badge-success'] };
+
+            tbody.innerHTML = tasks.map(t => `
+                <tr>
+                    <td><strong>${escapeHtml(t.title)}</strong></td>
+                    <td>${t.assignee_first_name ? escapeHtml(t.assignee_first_name + ' ' + (t.assignee_last_name || '')) : '-'}</td>
+                    <td><span class="${priorities[t.priority]?.[1] || 'badge'}">${priorities[t.priority]?.[0] || t.priority}</span></td>
+                    <td>${t.due_date ? new Date(t.due_date).toLocaleDateString('ru') : '-'}</td>
+                    <td><span class="${statuses[t.status]?.[1] || 'badge'}">${statuses[t.status]?.[0] || t.status}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline" onclick="toggleTaskStatus('${t.id}', '${t.status}')">
+                            <i class="fas fa-${t.status === 'completed' ? 'undo' : 'check'}"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function saveTask() {
+            const title = document.getElementById('taskTitle').value;
+            const description = document.getElementById('taskDescription').value;
+            const assignee_id = document.getElementById('taskAssignee').value;
+            const priority = document.getElementById('taskPriority').value;
+            const due_date = document.getElementById('taskDueDate').value;
+
+            if (!title) return alert('Введите название задачи');
+
+            const res = await api('POST', `/employees/${projectId}/tasks`, {
+                title, description, assignee_id: assignee_id || null, priority, due_date: due_date || null
+            });
+
+            if (res.success) {
+                closeModal('taskModal');
+                ['taskTitle', 'taskDescription', 'taskAssignee', 'taskDueDate'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                loadTasks();
+            } else {
+                alert(res.error || 'Ошибка создания задачи');
+            }
+        }
+
+        async function toggleTaskStatus(id, current) {
+            const newStatus = current === 'completed' ? 'pending' : 'completed';
+            await api('PUT', `/employees/${projectId}/tasks/${id}`, { status: newStatus });
+            loadTasks();
+        }
+
+        // Orders
+        async function loadOrders() {
+            const status = document.getElementById('filterOrderStatus')?.value;
+            const params = status ? `?status=${status}` : '';
+            const res = await api('GET', `/orders/${projectId}${params}`);
+            if (res.success) {
+                orders = res.orders;
+                renderOrders();
+            }
+        }
+
+        function renderOrders() {
+            const tbody = document.getElementById('ordersTable');
+            if (!orders.length) {
+                tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-shopping-cart"></i><h3>Нет заказов</h3></div></td></tr>';
+                return;
+            }
+
+            const statuses = { new: ['Новый', 'badge badge-new'], processing: ['В обработке', 'badge badge-warning'], shipped: ['Отправлен', 'badge badge-new'], completed: ['Завершён', 'badge badge-success'], cancelled: ['Отменён', 'badge badge-danger'] };
+            const paymentStatuses = { pending: ['Ожидает', 'badge badge-warning'], paid: ['Оплачен', 'badge badge-success'], refunded: ['Возврат', 'badge badge-danger'] };
+
+            tbody.innerHTML = orders.map(o => `
+                <tr>
+                    <td><strong>${escapeHtml(o.order_number)}</strong></td>
+                    <td>${escapeHtml(o.customer_name || o.customer_email || '-')}</td>
+                    <td>${formatMoney(o.total)}</td>
+                    <td><span class="${statuses[o.status]?.[1] || 'badge'}">${statuses[o.status]?.[0] || o.status}</span></td>
+                    <td><span class="${paymentStatuses[o.payment_status]?.[1] || 'badge'}">${paymentStatuses[o.payment_status]?.[0] || o.payment_status}</span></td>
+                    <td>${new Date(o.created_at).toLocaleDateString('ru')}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline" onclick="viewOrder('${o.id}')"><i class="fas fa-eye"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Dashboard
+        function renderDashboard() {
+            document.getElementById('stat-deals').textContent = funnels.reduce((sum, f) => sum + (f.deals_count || 0), 0);
+            document.getElementById('stat-clients').textContent = clients.length;
+            document.getElementById('stat-orders').textContent = orders.length;
+
+            const wonAmount = funnels.reduce((sum, f) => sum + (f.won_amount || 0), 0);
+            document.getElementById('stat-won').textContent = formatMoney(wonAmount);
+
+            // Recent deals
+            const recentDeals = [];
+            funnels.forEach(f => {
+                (f.stages || []).forEach(s => {
+                    (s.deals || []).forEach(d => recentDeals.push({ ...d, stage_name: s.name, funnel_name: f.name }));
+                });
+            });
+
+            const tbody = document.getElementById('recentDeals');
+            if (!recentDeals.length) {
+                tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><i class="fas fa-handshake"></i><h3>Нет сделок</h3></div></td></tr>';
+            } else {
+                tbody.innerHTML = recentDeals.slice(0, 10).map(d => `
+                    <tr>
+                        <td><strong>${escapeHtml(d.name)}</strong></td>
+                        <td>${d.client_first_name ? escapeHtml(d.client_first_name) : '-'}</td>
+                        <td>${formatMoney(d.amount)}</td>
+                        <td><span class="badge badge-new">${escapeHtml(d.stage_name || '-')}</span></td>
+                        <td>${new Date(d.created_at).toLocaleDateString('ru')}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // Helpers
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function formatMoney(amount) {
+            return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(amount || 0);
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>
