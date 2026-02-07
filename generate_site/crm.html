@@ -4532,22 +4532,30 @@ XL"></textarea>
             }
 
             // === Tags ===
-            const tagsTable = document.getElementById('tagsTable');
-            if (tagsTable) {
-                tagsTable.innerHTML = `
-                    <tr><td><span class="badge" style="background:#3b82f6;">VIP</span></td><td>1</td><td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td></tr>
-                    <tr><td><span class="badge" style="background:#10b981;">Постоянный</span></td><td>1</td><td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td></tr>
-                    <tr><td><span class="badge" style="background:#f59e0b;">Новый</span></td><td>1</td><td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td></tr>
-                    <tr><td><span class="badge" style="background:#8b5cf6;">Лид</span></td><td>1</td><td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td></tr>
-                    <tr><td><span class="badge" style="background:#06b6d4;">Активный</span></td><td>1</td><td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td></tr>
-                `;
+            const tagsList = document.getElementById('tagsList');
+            if (tagsList) {
+                tagsList.innerHTML = [
+                    { name: 'VIP', color: '#3b82f6', count: 1 },
+                    { name: 'Постоянный', color: '#10b981', count: 1 },
+                    { name: 'Новый', color: '#f59e0b', count: 1 },
+                    { name: 'Лид', color: '#8b5cf6', count: 1 },
+                    { name: 'Активный', color: '#06b6d4', count: 1 }
+                ].map(t => `
+                    <div class="stat-card" style="text-align:center;">
+                        <span class="badge" style="background:${t.color};font-size:14px;padding:6px 16px;">${t.name}</span>
+                        <div class="label" style="margin-top:8px;">${t.count} клиент</div>
+                    </div>
+                `).join('');
             }
 
             // === Brands ===
-            const brandsTable = document.getElementById('brandsTable');
-            if (brandsTable) {
-                brandsTable.innerHTML = `
-                    <tr><td><strong>StudyKit</strong></td><td>Учебные материалы и рабочие тетради</td><td>1</td><td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td></tr>
+            const brandsList = document.getElementById('brandsList');
+            if (brandsList) {
+                brandsList.innerHTML = `
+                    <div class="stat-card">
+                        <div class="value" style="font-size:18px;">StudyKit</div>
+                        <div class="label">Учебные материалы · 1 товар</div>
+                    </div>
                 `;
             }
 
@@ -4611,23 +4619,20 @@ XL"></textarea>
             }
 
             // === Goals ===
-            const goalsTable = document.getElementById('goalsTable');
-            if (goalsTable) {
-                goalsTable.innerHTML = `
-                    <tr>
-                        <td><strong>Выручка за февраль</strong></td>
-                        <td>${formatMoney(500000)}</td>
-                        <td>
-                            <div style="display:flex;align-items:center;gap:8px;">
-                                <div style="width:80px;background:#334155;border-radius:4px;height:8px;">
-                                    <div style="width:35%;height:100%;background:var(--primary);border-radius:4px;"></div>
-                                </div>
-                                <span>35%</span>
-                            </div>
-                        </td>
-                        <td>${today}</td>
-                        <td><span class="badge badge-warning">В процессе</span></td>
-                    </tr>
+            const goalsList = document.getElementById('goalsList');
+            if (goalsList) {
+                goalsList.innerHTML = `
+                    <div class="stat-card">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                            <strong>Выручка за февраль</strong>
+                            <span class="badge badge-warning">В процессе</span>
+                        </div>
+                        <div class="value">${formatMoney(176000)} <span style="font-size:14px;color:var(--text-muted);">/ ${formatMoney(500000)}</span></div>
+                        <div style="margin-top:10px;background:#334155;border-radius:4px;height:8px;">
+                            <div style="width:35%;height:100%;background:var(--primary);border-radius:4px;"></div>
+                        </div>
+                        <div class="label" style="margin-top:8px;">35% выполнено · до ${new Date(now.getFullYear(), now.getMonth() + 1, 0).toLocaleDateString('ru')}</div>
+                    </div>
                 `;
             }
 
@@ -4671,15 +4676,20 @@ XL"></textarea>
             }
 
             // === Lead Distribution ===
-            const leadDistTable = document.getElementById('leadDistributionTable');
-            if (leadDistTable) {
-                leadDistTable.innerHTML = `
+            const leadQueueTable = document.getElementById('leadQueueTable');
+            if (leadQueueTable) {
+                leadQueueTable.innerHTML = `
                     <tr>
-                        <td><strong>Равномерное распределение</strong></td>
-                        <td>round_robin</td>
-                        <td>Мария Волкова, Алексей Смирнов</td>
-                        <td><span class="badge badge-success">Активно</span></td>
-                        <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
+                        <td><strong>Мария Волкова</strong></td>
+                        <td>3</td>
+                        <td>Сайт, Instagram</td>
+                        <td><span class="badge badge-success">Онлайн</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Алексей Смирнов</strong></td>
+                        <td>2</td>
+                        <td>Вебинар, Рекомендация</td>
+                        <td><span class="badge badge-success">Онлайн</span></td>
                     </tr>
                 `;
             }
@@ -4705,34 +4715,26 @@ XL"></textarea>
                 `;
             }
 
-            // === Product Filters ===
-            const filtersTable = document.getElementById('productFiltersTable');
-            if (filtersTable) {
-                filtersTable.innerHTML = `
-                    <tr>
-                        <td><strong>Тип товара</strong></td>
-                        <td>select</td>
-                        <td>Физический, Цифровой, Онлайн</td>
-                        <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Ценовой диапазон</strong></td>
-                        <td>range</td>
-                        <td>0 — 100 000</td>
-                        <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
-                    </tr>
-                `;
-            }
+            // === Product Filters (stored in localStorage) ===
+            productFilters = [
+                { id: 'demo-pf1', name: 'Тип товара', values: ['Физический', 'Цифровой', 'Онлайн'], multiple: false },
+                { id: 'demo-pf2', name: 'Ценовой диапазон', values: ['До 5 000', '5 000 — 15 000', 'Больше 15 000'], multiple: false }
+            ];
+            localStorage.setItem(`filters_${projectId}`, JSON.stringify(productFilters));
+            if (typeof renderProductFilters === 'function') renderProductFilters();
 
-            // === Categories Table ===
-            const catTable = document.getElementById('categoriesTable');
-            if (catTable && typeof categories !== 'undefined') {
-                catTable.innerHTML = categories.map(c => `
-                    <tr>
-                        <td><strong>${escapeHtml(c.name)}</strong></td>
-                        <td>${c.products_count || 0}</td>
-                        <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
-                    </tr>
+            // === Categories ===
+            const categoriesTree = document.getElementById('categoriesTree');
+            if (categoriesTree && typeof categories !== 'undefined') {
+                categoriesTree.innerHTML = categories.map(c => `
+                    <div style="padding:12px;background:var(--bg-input);border-radius:8px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+                        <div>
+                            <i class="fas fa-folder" style="color:var(--primary);margin-right:8px;"></i>
+                            <strong>${escapeHtml(c.name)}</strong>
+                            <span style="color:var(--text-muted);font-size:12px;margin-left:8px;">${c.products_count || 0} товаров</span>
+                        </div>
+                        <button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button>
+                    </div>
                 `).join('');
             }
 
@@ -4958,6 +4960,18 @@ XL"></textarea>
             await api('POST', `/funnels/${projectId}/deals/${draggedDealId}/move`, { stage_id: stageId });
             draggedDealId = null;
             loadDealsKanban();
+        }
+
+        function quickAddDeal(stageId) {
+            document.getElementById('dealEditId').value = '';
+            const funnelId = document.getElementById('filterFunnel').value || funnels[0]?.id;
+            document.getElementById('dealFunnel').value = funnelId;
+            loadDealStages();
+            setTimeout(() => {
+                document.getElementById('dealStage').value = stageId;
+            }, 100);
+            document.getElementById('dealModalTitle').textContent = 'Новая сделка';
+            openModal('dealModal');
         }
 
         let currentDealData = null;
@@ -6554,14 +6568,11 @@ XL"></textarea>
             }
         }
 
-        function openDealDetails(dealId) {
-            // TODO: Open deal detail modal
-            console.log('Open deal:', dealId);
-        }
-
         function openOrderDetails(orderId) {
-            // TODO: Open order detail modal
-            console.log('Open order:', orderId);
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                toast(`Заказ ${order.order_number}: ${formatMoney(order.total)} — ${order.status}`, 'info');
+            }
         }
 
         async function loadAIInsights() {
@@ -8446,6 +8457,19 @@ XL"></textarea>
         function toggleCustomFilter() {
             const isCustom = document.getElementById('filterType').value === 'custom';
             document.getElementById('customFilterName').style.display = isCustom ? 'block' : 'none';
+        }
+
+        function openFilterEditor(filterId) {
+            const filter = productFilters.find(f => f.id === filterId);
+            if (filter) {
+                document.getElementById('filterType').value = 'custom';
+                toggleCustomFilter();
+                const nameEl = document.getElementById('filterCustomName');
+                if (nameEl) nameEl.value = filter.name || '';
+                document.getElementById('filterValues').value = (filter.values || []).join('\n');
+                document.getElementById('filterMultiple').checked = filter.multiple || false;
+            }
+            openModal('productFilterModal');
         }
 
         function saveProductFilter() {
