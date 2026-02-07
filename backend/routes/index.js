@@ -32,6 +32,9 @@ const menusRoutes = require('./menus');
 const themesRoutes = require('./themes');
 const automationsRoutes = require('./automations');
 
+// E-commerce Extensions
+const ecommerceRoutes = require('./ecommerce');
+
 // API routes - Auth & Core
 router.use('/auth', authRoutes);
 router.use('/users', usersRoutes);
@@ -62,6 +65,9 @@ router.use('/analytics', analyticsRoutes);
 router.use('/menus', menusRoutes);
 router.use('/themes', themesRoutes);
 router.use('/automations', automationsRoutes);
+
+// E-commerce extensions (brands, promo codes, collections, related products)
+router.use('/ecommerce', ecommerceRoutes);
 
 // Health check
 router.get('/health', (req, res) => {

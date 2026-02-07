@@ -1018,6 +1018,160 @@ function createCMSTables(db) {
     `);
 
     // ============================================================
+    // E-COMMERCE EXTENSIONS (InSales-like features)
+    // ============================================================
+
+    // Бренды/производители
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS brands (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            slug TEXT,
+            logo TEXT,
+            description TEXT,
+            website TEXT,
+            is_active INTEGER DEFAULT 1,
+            sort_order INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Промокоды и скидки
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS promo_codes (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            code TEXT NOT NULL,
+            type TEXT DEFAULT 'percent',
+            value REAL NOT NULL,
+            min_order_amount REAL DEFAULT 0,
+            max_uses INTEGER,
+            uses_count INTEGER DEFAULT 0,
+            per_client_limit INTEGER DEFAULT 1,
+            applies_to TEXT DEFAULT 'all',
+            product_ids TEXT DEFAULT '[]',
+            category_ids TEXT DEFAULT '[]',
+            start_date TEXT,
+            end_date TEXT,
+            is_active INTEGER DEFAULT 1,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            UNIQUE(project_id, code)
+        )
+    `);
+
+    // Использование промокодов
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS promo_code_uses (
+            id TEXT PRIMARY KEY,
+            promo_code_id TEXT NOT NULL,
+            order_id TEXT,
+            client_id TEXT,
+            discount_amount REAL,
+            used_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (promo_code_id) REFERENCES promo_codes(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Связанные товары (upsells, cross-sells)
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS related_products (
+            id TEXT PRIMARY KEY,
+            product_id TEXT NOT NULL,
+            related_product_id TEXT NOT NULL,
+            relation_type TEXT DEFAULT 'related',
+            sort_order INTEGER DEFAULT 0,
+            FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+            FOREIGN KEY (related_product_id) REFERENCES products(id) ON DELETE CASCADE,
+            UNIQUE(product_id, related_product_id, relation_type)
+        )
+    `);
+
+    // Коллекции товаров (подборки)
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS collections (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            slug TEXT,
+            description TEXT,
+            image TEXT,
+            type TEXT DEFAULT 'manual',
+            rules TEXT DEFAULT '[]',
+            is_active INTEGER DEFAULT 1,
+            sort_order INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Товары в коллекциях
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS collection_products (
+            id TEXT PRIMARY KEY,
+            collection_id TEXT NOT NULL,
+            product_id TEXT NOT NULL,
+            sort_order INTEGER DEFAULT 0,
+            FOREIGN KEY (collection_id) REFERENCES collections(id) ON DELETE CASCADE,
+            FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+            UNIQUE(collection_id, product_id)
+        )
+    `);
+
+    // Уведомления о низком остатке
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS stock_alerts (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            product_id TEXT NOT NULL,
+            variant_id TEXT,
+            threshold INTEGER DEFAULT 5,
+            is_active INTEGER DEFAULT 1,
+            last_alert_at TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Расширение таблицы products (миграция)
+    try {
+        db.exec(`ALTER TABLE products ADD COLUMN brand_id TEXT`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE products ADD COLUMN meta_title TEXT`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE products ADD COLUMN meta_description TEXT`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE products ADD COLUMN url_slug TEXT`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE products ADD COLUMN weight REAL`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE products ADD COLUMN length REAL`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE products ADD COLUMN width REAL`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE products ADD COLUMN height REAL`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE products ADD COLUMN cost_price REAL`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE products ADD COLUMN barcode TEXT`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE products ADD COLUMN min_stock_alert INTEGER DEFAULT 5`);
+    } catch (e) { /* column exists */ }
+
+    // ============================================================
     // INDEXES FOR CMS TABLES
     // ============================================================
     db.exec(`

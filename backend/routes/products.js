@@ -117,7 +117,11 @@ router.post('/:projectId', (req, res) => {
         const id = uuidv4();
         const {
             name, sku, description, price, old_price, cost_price,
-            category_id, images, attributes, stock, is_active
+            category_id, brand_id, images, attributes, stock, is_active,
+            // SEO fields
+            meta_title, meta_description, url_slug,
+            // Physical dimensions
+            weight, length, width, height, barcode, min_stock_alert
         } = req.body;
 
         if (!name) {
@@ -127,13 +131,16 @@ router.post('/:projectId', (req, res) => {
         db.prepare(`
             INSERT INTO products (
                 id, project_id, name, sku, description, price, old_price, cost_price,
-                category_id, images, attributes, stock, is_active
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                category_id, brand_id, images, attributes, stock, is_active,
+                meta_title, meta_description, url_slug, weight, length, width, height, barcode, min_stock_alert
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).run(
             id, req.params.projectId, name, sku, description,
-            price || 0, old_price, cost_price, category_id,
+            price || 0, old_price, cost_price, category_id, brand_id,
             JSON.stringify(images || []), JSON.stringify(attributes || {}),
-            stock || 0, is_active !== false ? 1 : 0
+            stock || 0, is_active !== false ? 1 : 0,
+            meta_title, meta_description, url_slug || name.toLowerCase().replace(/\s+/g, '-'),
+            weight, length, width, height, barcode, min_stock_alert || 5
         );
 
         const product = db.prepare('SELECT * FROM products WHERE id = ?').get(id);
@@ -158,7 +165,9 @@ router.put('/:projectId/:productId', (req, res) => {
         const db = getDb();
         const {
             name, sku, description, price, old_price, cost_price,
-            category_id, images, attributes, stock, is_active
+            category_id, brand_id, images, attributes, stock, is_active,
+            meta_title, meta_description, url_slug,
+            weight, length, width, height, barcode, min_stock_alert
         } = req.body;
 
         db.prepare(`
@@ -170,17 +179,29 @@ router.put('/:projectId/:productId', (req, res) => {
                 old_price = COALESCE(?, old_price),
                 cost_price = COALESCE(?, cost_price),
                 category_id = COALESCE(?, category_id),
+                brand_id = COALESCE(?, brand_id),
                 images = COALESCE(?, images),
                 attributes = COALESCE(?, attributes),
                 stock = COALESCE(?, stock),
                 is_active = COALESCE(?, is_active),
+                meta_title = COALESCE(?, meta_title),
+                meta_description = COALESCE(?, meta_description),
+                url_slug = COALESCE(?, url_slug),
+                weight = COALESCE(?, weight),
+                length = COALESCE(?, length),
+                width = COALESCE(?, width),
+                height = COALESCE(?, height),
+                barcode = COALESCE(?, barcode),
+                min_stock_alert = COALESCE(?, min_stock_alert),
                 updated_at = CURRENT_TIMESTAMP
             WHERE id = ? AND project_id = ?
         `).run(
-            name, sku, description, price, old_price, cost_price, category_id,
+            name, sku, description, price, old_price, cost_price, category_id, brand_id,
             images ? JSON.stringify(images) : null,
             attributes ? JSON.stringify(attributes) : null,
             stock, is_active !== undefined ? (is_active ? 1 : 0) : null,
+            meta_title, meta_description, url_slug,
+            weight, length, width, height, barcode, min_stock_alert,
             req.params.productId, req.params.projectId
         );
 
