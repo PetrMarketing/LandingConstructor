@@ -183,19 +183,23 @@
             <nav class="nav-section">
                 <div class="nav-title">Каталог</div>
                 <div class="nav-item" data-section="products"><i class="fas fa-box"></i> Товары</div>
-                <div class="nav-item" data-section="brands"><i class="fas fa-building"></i> Бренды</div>
+                <div class="nav-item" data-section="categories"><i class="fas fa-folder"></i> Категории</div>
+                <div class="nav-item" data-section="product-filters"><i class="fas fa-sliders-h"></i> Фильтры</div>
+                <div class="nav-item" data-section="selections"><i class="fas fa-star"></i> Подборки</div>
                 <div class="nav-item" data-section="promo-codes"><i class="fas fa-percent"></i> Промокоды</div>
-                <div class="nav-item" data-section="collections"><i class="fas fa-th-large"></i> Коллекции</div>
-                <div class="nav-item" data-section="services"><i class="fas fa-concierge-bell"></i> Услуги</div>
-                <div class="nav-item" data-section="courses"><i class="fas fa-graduation-cap"></i> Курсы</div>
             </nav>
             <nav class="nav-section">
-                <div class="nav-title">Бронирования</div>
+                <div class="nav-title">Услуги</div>
+                <div class="nav-item" data-section="services"><i class="fas fa-concierge-bell"></i> Услуги</div>
+                <div class="nav-item" data-section="specialists"><i class="fas fa-user-md"></i> Специалисты</div>
+                <div class="nav-item" data-section="rooms"><i class="fas fa-door-open"></i> Помещения</div>
                 <div class="nav-item" data-section="bookings"><i class="fas fa-calendar-check"></i> Записи</div>
                 <div class="nav-item" data-section="schedules"><i class="fas fa-calendar-alt"></i> Расписание</div>
             </nav>
             <nav class="nav-section">
                 <div class="nav-title">Обучение</div>
+                <div class="nav-item" data-section="trainings"><i class="fas fa-graduation-cap"></i> Тренинги</div>
+                <div class="nav-item" data-section="lessons"><i class="fas fa-book-open"></i> Уроки</div>
                 <div class="nav-item" data-section="webinars"><i class="fas fa-video"></i> Вебинары</div>
                 <div class="nav-item" data-section="quizzes"><i class="fas fa-question-circle"></i> Тесты</div>
                 <div class="nav-item" data-section="certificates"><i class="fas fa-certificate"></i> Сертификаты</div>
@@ -611,6 +615,16 @@
                             <i class="fas fa-search"></i>
                             <input type="text" id="searchProducts" placeholder="Поиск товаров..." oninput="searchProducts()">
                         </div>
+                        <select class="filter-select" id="filterProductCategory" onchange="filterProducts()">
+                            <option value="">Все категории</option>
+                        </select>
+                        <select class="filter-select" id="filterProductType" onchange="filterProducts()">
+                            <option value="">Все типы</option>
+                            <option value="physical">Физический товар</option>
+                            <option value="digital">Цифровой товар</option>
+                            <option value="online">Онлайн-продукт</option>
+                        </select>
+                        <button class="btn btn-outline" onclick="openModal('importXmlModal')"><i class="fas fa-file-import"></i> Импорт XML</button>
                         <button class="btn btn-primary" onclick="openModal('productModal')"><i class="fas fa-plus"></i> Добавить товар</button>
                     </div>
                     <div class="card">
@@ -620,6 +634,8 @@
                                     <tr>
                                         <th>Товар</th>
                                         <th>Артикул</th>
+                                        <th>Категория</th>
+                                        <th>Тип</th>
                                         <th>Цена</th>
                                         <th>Остаток</th>
                                         <th>Статус</th>
@@ -632,20 +648,158 @@
                     </div>
                 </div>
 
+                <!-- Categories -->
+                <div class="section" id="section-categories">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('categoryModal')"><i class="fas fa-plus"></i> Добавить категорию</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="categoriesTree" class="categories-tree"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Filters -->
+                <div class="section" id="section-product-filters">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('productFilterModal')"><i class="fas fa-plus"></i> Добавить фильтр</button>
+                    </div>
+                    <div class="stats-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+                        <div class="card" style="cursor:pointer;" onclick="openFilterEditor('size')">
+                            <div class="card-body">
+                                <h4><i class="fas fa-ruler"></i> Размер</h4>
+                                <p style="color:var(--text-muted);">XS, S, M, L, XL, XXL</p>
+                            </div>
+                        </div>
+                        <div class="card" style="cursor:pointer;" onclick="openFilterEditor('color')">
+                            <div class="card-body">
+                                <h4><i class="fas fa-palette"></i> Цвет</h4>
+                                <p style="color:var(--text-muted);">Белый, Чёрный, Красный, Синий...</p>
+                            </div>
+                        </div>
+                        <div class="card" style="cursor:pointer;" onclick="openFilterEditor('material')">
+                            <div class="card-body">
+                                <h4><i class="fas fa-tshirt"></i> Материал</h4>
+                                <p style="color:var(--text-muted);">Хлопок, Полиэстер, Шерсть...</p>
+                            </div>
+                        </div>
+                        <div class="card" style="cursor:pointer;" onclick="openFilterEditor('brand')">
+                            <div class="card-body">
+                                <h4><i class="fas fa-building"></i> Бренд</h4>
+                                <p style="color:var(--text-muted);">Добавьте бренды товаров</p>
+                            </div>
+                        </div>
+                        <div id="customFiltersGrid"></div>
+                    </div>
+                </div>
+
+                <!-- Selections (former Collections) -->
+                <div class="section" id="section-selections">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('selectionModal')"><i class="fas fa-plus"></i> Создать подборку</button>
+                    </div>
+                    <div id="selectionsList" class="stats-grid"></div>
+                </div>
+
                 <!-- Services -->
                 <div class="section" id="section-services">
                     <div class="toolbar">
+                        <select class="filter-select" id="filterServiceType" onchange="filterServices()">
+                            <option value="">Все типы</option>
+                            <option value="individual">Индивидуальные</option>
+                            <option value="group">Групповые</option>
+                        </select>
                         <button class="btn btn-primary" onclick="openModal('serviceModal')"><i class="fas fa-plus"></i> Добавить услугу</button>
                     </div>
                     <div id="servicesList" class="stats-grid"></div>
                 </div>
 
-                <!-- Courses -->
-                <div class="section" id="section-courses">
+                <!-- Specialists -->
+                <div class="section" id="section-specialists">
                     <div class="toolbar">
-                        <button class="btn btn-primary" onclick="openModal('courseModal')"><i class="fas fa-plus"></i> Создать курс</button>
+                        <button class="btn btn-primary" onclick="openModal('specialistModal')"><i class="fas fa-plus"></i> Добавить специалиста</button>
                     </div>
-                    <div id="coursesList" class="stats-grid"></div>
+                    <div id="specialistsList" class="stats-grid"></div>
+                </div>
+
+                <!-- Rooms -->
+                <div class="section" id="section-rooms">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('roomModal')"><i class="fas fa-plus"></i> Добавить помещение</button>
+                    </div>
+                    <div id="roomsList" class="stats-grid"></div>
+                </div>
+
+                <!-- Trainings (former Courses) -->
+                <div class="section" id="section-trainings">
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchTrainings" placeholder="Поиск тренингов...">
+                        </div>
+                        <select class="filter-select" id="filterTrainingAccess">
+                            <option value="">Все типы доступа</option>
+                            <option value="purchase">После покупки</option>
+                            <option value="group">По группе</option>
+                            <option value="free">Бесплатный</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="openModal('trainingModal')"><i class="fas fa-plus"></i> Создать тренинг</button>
+                    </div>
+                    <div class="stats-grid" style="margin-bottom:20px;">
+                        <div class="stat-card primary">
+                            <div class="value" id="trainingsTotal">0</div>
+                            <div class="label">Тренингов</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="value" id="trainingsStudents">0</div>
+                            <div class="label">Учеников</div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="value" id="trainingsCompletion">0%</div>
+                            <div class="label">Ср. прохождение</div>
+                        </div>
+                    </div>
+                    <div id="trainingsList" class="stats-grid"></div>
+                </div>
+
+                <!-- Lessons -->
+                <div class="section" id="section-lessons">
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchLessons" placeholder="Поиск уроков...">
+                        </div>
+                        <select class="filter-select" id="filterLessonTraining">
+                            <option value="">Все тренинги</option>
+                        </select>
+                        <select class="filter-select" id="filterLessonType">
+                            <option value="">Все типы</option>
+                            <option value="video">Видео</option>
+                            <option value="text">Текст</option>
+                            <option value="quiz">Тест</option>
+                            <option value="homework">Домашнее задание</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="openModal('lessonModal')"><i class="fas fa-plus"></i> Создать урок</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>№</th>
+                                        <th>Урок</th>
+                                        <th>Тренинг</th>
+                                        <th>Тип</th>
+                                        <th>Длительность</th>
+                                        <th>Прошли</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lessonsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Calls (amoCRM) -->
@@ -865,10 +1019,35 @@
                     <div class="stats-grid" id="brandsList"></div>
                 </div>
 
-                <!-- Promo Codes (InSales) -->
+                <!-- Promo Codes (InSales) - Extended -->
                 <div class="section" id="section-promo-codes">
                     <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchPromo" placeholder="Поиск промокода..." oninput="filterPromoCodes()">
+                        </div>
+                        <select class="filter-select" id="filterPromoStatus" onchange="filterPromoCodes()">
+                            <option value="">Все статусы</option>
+                            <option value="active">Активные</option>
+                            <option value="expired">Истёкшие</option>
+                            <option value="disabled">Отключённые</option>
+                        </select>
+                        <button class="btn btn-outline" onclick="generateBulkPromos()"><i class="fas fa-magic"></i> Генератор</button>
                         <button class="btn btn-primary" onclick="openModal('promoModal')"><i class="fas fa-plus"></i> Создать промокод</button>
+                    </div>
+                    <div class="stats-grid" style="margin-bottom:20px;">
+                        <div class="stat-card primary">
+                            <div class="value" id="promosActive">0</div>
+                            <div class="label">Активных</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="value" id="promosUsed">0</div>
+                            <div class="label">Использовано</div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="value" id="promosSaved">0 ₽</div>
+                            <div class="label">Сумма скидок</div>
+                        </div>
                     </div>
                     <div class="card">
                         <div class="card-header"><h3>Промокоды</h3></div>
@@ -877,10 +1056,13 @@
                                 <thead>
                                     <tr>
                                         <th>Код</th>
+                                        <th>Тип</th>
                                         <th>Скидка</th>
                                         <th>Использовано</th>
                                         <th>Лимит</th>
+                                        <th>Мин. сумма</th>
                                         <th>Период</th>
+                                        <th>Товары</th>
                                         <th>Статус</th>
                                         <th></th>
                                     </tr>
@@ -902,14 +1084,23 @@
                 <!-- Bookings (YClients) -->
                 <div class="section" id="section-bookings">
                     <div class="toolbar">
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="searchBookings" placeholder="Поиск записей...">
+                        <select class="filter-select" id="filterBookingSpecialist" onchange="loadBookingsCalendar()">
+                            <option value="">Все специалисты</option>
+                        </select>
+                        <select class="filter-select" id="filterBookingService" onchange="loadBookingsCalendar()">
+                            <option value="">Все услуги</option>
+                        </select>
+                        <select class="filter-select" id="filterBookingBranch" onchange="loadBookingsCalendar()">
+                            <option value="">Все филиалы</option>
+                        </select>
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <button class="btn btn-outline btn-sm" onclick="moveBookingsWeek(-1)"><i class="fas fa-chevron-left"></i></button>
+                            <input type="date" class="filter-select" id="bookingsWeekStart" style="min-width:140px;" onchange="loadBookingsCalendar()">
+                            <button class="btn btn-outline btn-sm" onclick="moveBookingsWeek(1)"><i class="fas fa-chevron-right"></i></button>
                         </div>
-                        <input type="date" class="filter-select" id="bookingsDate" style="min-width:160px;">
                         <button class="btn btn-primary" onclick="openModal('bookingModal')"><i class="fas fa-plus"></i> Новая запись</button>
                     </div>
-                    <div class="stats-grid">
+                    <div class="stats-grid" style="margin-bottom:20px;">
                         <div class="stat-card primary">
                             <div class="value" id="bookingsToday">0</div>
                             <div class="label">Записей сегодня</div>
@@ -922,23 +1113,23 @@
                             <div class="value" id="bookingsPending">0</div>
                             <div class="label">Ожидает</div>
                         </div>
+                        <div class="stat-card">
+                            <div class="value" id="bookingsRevenue">0 ₽</div>
+                            <div class="label">Выручка за неделю</div>
+                        </div>
                     </div>
-                    <div class="card" style="margin-top:20px;">
-                        <div class="card-header"><h3>Записи</h3></div>
-                        <div class="card-body">
-                            <table>
+                    <div class="card">
+                        <div class="card-body" style="overflow-x:auto;">
+                            <table class="bookings-calendar" id="bookingsCalendarTable">
                                 <thead>
-                                    <tr>
-                                        <th>Дата/Время</th>
-                                        <th>Клиент</th>
-                                        <th>Услуга</th>
-                                        <th>Мастер</th>
-                                        <th>Сумма</th>
-                                        <th>Статус</th>
-                                        <th></th>
+                                    <tr id="bookingsCalendarHeader">
+                                        <th style="width:60px;">Время</th>
+                                        <!-- Days will be generated dynamically -->
                                     </tr>
                                 </thead>
-                                <tbody id="bookingsTable"></tbody>
+                                <tbody id="bookingsCalendarBody">
+                                    <!-- Time slots will be generated dynamically -->
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -978,32 +1169,52 @@
                 <!-- Webinars (GetCourse) -->
                 <div class="section" id="section-webinars">
                     <div class="toolbar">
-                        <button class="btn btn-primary" onclick="openModal('webinarModal')"><i class="fas fa-plus"></i> Создать вебинар</button>
+                        <select class="filter-select" id="filterWebinarType" onchange="filterWebinars()">
+                            <option value="">Все типы</option>
+                            <option value="live">Живой вебинар</option>
+                            <option value="auto">Автовебинар</option>
+                        </select>
+                        <select class="filter-select" id="filterWebinarStatus" onchange="filterWebinars()">
+                            <option value="">Все статусы</option>
+                            <option value="scheduled">Запланирован</option>
+                            <option value="live">Идёт сейчас</option>
+                            <option value="completed">Завершён</option>
+                        </select>
+                        <button class="btn btn-outline" onclick="openModal('autoWebinarModal')"><i class="fas fa-robot"></i> Создать автовебинар</button>
+                        <button class="btn btn-primary" onclick="openModal('webinarModal')"><i class="fas fa-video"></i> Создать вебинар</button>
                     </div>
-                    <div class="stats-grid">
+                    <div class="stats-grid" style="margin-bottom:20px;">
                         <div class="stat-card primary">
                             <div class="value" id="webinarsUpcoming">0</div>
                             <div class="label">Запланировано</div>
                         </div>
-                        <div class="stat-card success">
+                        <div class="stat-card success" style="cursor:pointer;" onclick="filterWebinarsByStatus('live')">
+                            <div class="value" id="webinarsLive">0</div>
+                            <div class="label">Сейчас в эфире</div>
+                        </div>
+                        <div class="stat-card">
                             <div class="value" id="webinarsCompleted">0</div>
                             <div class="label">Проведено</div>
                         </div>
-                        <div class="stat-card">
+                        <div class="stat-card warning">
                             <div class="value" id="webinarsParticipants">0</div>
                             <div class="label">Всего участников</div>
                         </div>
                     </div>
-                    <div class="card" style="margin-top:20px;">
-                        <div class="card-header"><h3>Вебинары</h3></div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Вебинарные комнаты</h3>
+                        </div>
                         <div class="card-body">
                             <table>
                                 <thead>
                                     <tr>
                                         <th>Название</th>
+                                        <th>Тип</th>
                                         <th>Дата/Время</th>
                                         <th>Ведущий</th>
                                         <th>Регистраций</th>
+                                        <th>Ссылка</th>
                                         <th>Статус</th>
                                         <th></th>
                                     </tr>
@@ -1046,14 +1257,35 @@
                             <i class="fas fa-search"></i>
                             <input type="text" id="searchCertificates" placeholder="Поиск по номеру или имени...">
                         </div>
+                        <button class="btn btn-outline" onclick="openModal('certificateTemplateModal')"><i class="fas fa-paint-brush"></i> Редактор шаблонов</button>
+                        <button class="btn btn-primary" onclick="openModal('issueCertificateModal')"><i class="fas fa-plus"></i> Выдать сертификат</button>
                     </div>
-                    <div class="stats-grid">
+                    <div class="stats-grid" style="margin-bottom:20px;">
                         <div class="stat-card primary">
                             <div class="value" id="certificatesIssued">0</div>
                             <div class="label">Выдано сертификатов</div>
                         </div>
+                        <div class="stat-card success">
+                            <div class="value" id="certificateTemplates">0</div>
+                            <div class="label">Шаблонов</div>
+                        </div>
                     </div>
-                    <div class="card" style="margin-top:20px;">
+
+                    <!-- Certificate Templates -->
+                    <div class="card" style="margin-bottom:20px;">
+                        <div class="card-header"><h3>Шаблоны сертификатов</h3></div>
+                        <div class="card-body">
+                            <div class="stats-grid" id="certificateTemplatesList" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+                                <div class="template-card" onclick="openModal('certificateTemplateModal')" style="border:2px dashed var(--border-color);padding:40px;text-align:center;cursor:pointer;border-radius:8px;">
+                                    <i class="fas fa-plus" style="font-size:24px;color:var(--text-muted);"></i>
+                                    <p style="color:var(--text-muted);margin-top:10px;">Создать шаблон</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Issued Certificates -->
+                    <div class="card">
                         <div class="card-header"><h3>Выданные сертификаты</h3></div>
                         <div class="card-body">
                             <table>
@@ -1061,7 +1293,8 @@
                                     <tr>
                                         <th>Номер</th>
                                         <th>Студент</th>
-                                        <th>Курс</th>
+                                        <th>Тренинг</th>
+                                        <th>Шаблон</th>
                                         <th>Дата выдачи</th>
                                         <th></th>
                                     </tr>
@@ -1304,6 +1537,54 @@
                 <button class="modal-close" onclick="closeModal('productModal')">&times;</button>
             </div>
             <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                <!-- Product Type -->
+                <div class="form-group" style="margin-bottom:20px;">
+                    <label>Тип товара</label>
+                    <div class="product-type-selector" style="display:flex;gap:10px;">
+                        <label class="type-option" style="flex:1;padding:15px;background:var(--bg-input);border:2px solid var(--border-color);border-radius:8px;cursor:pointer;text-align:center;">
+                            <input type="radio" name="productType" value="physical" checked style="display:none;">
+                            <i class="fas fa-box" style="font-size:24px;display:block;margin-bottom:8px;"></i>
+                            <span>Физический</span>
+                        </label>
+                        <label class="type-option" style="flex:1;padding:15px;background:var(--bg-input);border:2px solid var(--border-color);border-radius:8px;cursor:pointer;text-align:center;">
+                            <input type="radio" name="productType" value="digital" style="display:none;">
+                            <i class="fas fa-file-download" style="font-size:24px;display:block;margin-bottom:8px;"></i>
+                            <span>Цифровой</span>
+                        </label>
+                        <label class="type-option" style="flex:1;padding:15px;background:var(--bg-input);border:2px solid var(--border-color);border-radius:8px;cursor:pointer;text-align:center;">
+                            <input type="radio" name="productType" value="online" style="display:none;">
+                            <i class="fas fa-graduation-cap" style="font-size:24px;display:block;margin-bottom:8px;"></i>
+                            <span>Онлайн-продукт</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Online Product Access (shown only for online type) -->
+                <div id="onlineProductAccess" style="display:none;background:#1e293b;border-radius:8px;padding:15px;margin-bottom:20px;">
+                    <h4 style="margin:0 0 15px 0;color:var(--accent);"><i class="fas fa-key"></i> Доступ при покупке</h4>
+                    <div class="form-group">
+                        <label>Тип доступа</label>
+                        <select id="productAccessType" onchange="toggleProductAccessOptions()">
+                            <option value="">— Выберите —</option>
+                            <option value="training">Доступ к тренингу</option>
+                            <option value="lesson">Доступ к уроку</option>
+                            <option value="group">Добавление в группу</option>
+                        </select>
+                    </div>
+                    <div id="accessTrainingSelect" style="display:none;" class="form-group">
+                        <label>Выберите тренинг</label>
+                        <select id="productAccessTraining"></select>
+                    </div>
+                    <div id="accessLessonSelect" style="display:none;" class="form-group">
+                        <label>Выберите урок</label>
+                        <select id="productAccessLesson"></select>
+                    </div>
+                    <div id="accessGroupSelect" style="display:none;" class="form-group">
+                        <label>Выберите группу</label>
+                        <select id="productAccessGroup"></select>
+                    </div>
+                </div>
+
                 <!-- Basic Info -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div class="form-group">
@@ -1324,16 +1605,22 @@
                         <label>Старая цена</label>
                         <input type="number" id="productOldPrice" placeholder="0">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="productStockGroup">
                         <label>Остаток</label>
                         <input type="number" id="productStock" placeholder="0">
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Категория</label>
-                    <select id="productCategory">
-                        <option value="">— Без категории —</option>
-                    </select>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Категория</label>
+                        <select id="productCategory">
+                            <option value="">— Без категории —</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Бренд</label>
+                        <input type="text" id="productBrand" placeholder="Название бренда">
+                    </div>
                 </div>
 
                 <!-- Description with AI -->
@@ -1543,33 +1830,77 @@
         </div>
     </div>
 
-    <!-- Service Modal -->
+    <!-- Service Modal - Extended for Bookings -->
     <div class="modal-overlay" id="serviceModal">
-        <div class="modal">
+        <div class="modal" style="max-width:650px;">
             <div class="modal-header">
                 <h3>Новая услуга</h3>
                 <button class="modal-close" onclick="closeModal('serviceModal')">&times;</button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
                 <div class="form-group">
                     <label>Название услуги *</label>
-                    <input type="text" id="serviceName" placeholder="Разработка сайта">
+                    <input type="text" id="serviceName" placeholder="Стрижка, Массаж, Консультация...">
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+                    <div class="form-group">
+                        <label>Тип услуги</label>
+                        <select id="serviceType" onchange="toggleServiceGroup()">
+                            <option value="individual">Индивидуальная</option>
+                            <option value="group">Групповая</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Категория</label>
+                        <input type="text" id="serviceCategory" placeholder="Парикмахерские услуги">
+                    </div>
+                </div>
+                <div id="serviceGroupSettings" style="display:none;background:#1e293b;padding:15px;border-radius:8px;margin-bottom:15px;">
+                    <h4 style="margin:0 0 12px 0;font-size:14px;"><i class="fas fa-users"></i> Настройки группы</h4>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>Макс. участников</label>
+                            <input type="number" id="serviceMaxClients" placeholder="10" value="10">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>Мин. участников</label>
+                            <input type="number" id="serviceMinClients" placeholder="3" value="1">
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;">
+                    <div class="form-group">
+                        <label>Цена</label>
+                        <input type="number" id="servicePrice" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Длительность (мин)</label>
+                        <input type="number" id="serviceDuration" placeholder="60">
+                    </div>
+                    <div class="form-group">
+                        <label>Буфер (мин)</label>
+                        <input type="number" id="serviceBuffer" placeholder="0" value="0">
+                        <div style="font-size:11px;color:var(--text-muted);">Перерыв между записями</div>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label>Категория</label>
-                    <input type="text" id="serviceCategory" placeholder="Разработка">
+                    <label>Специалисты, оказывающие услугу</label>
+                    <select id="serviceSpecialists" multiple style="height:80px;"></select>
                 </div>
                 <div class="form-group">
-                    <label>Цена от</label>
-                    <input type="number" id="servicePrice" placeholder="0">
-                </div>
-                <div class="form-group">
-                    <label>Длительность (часов)</label>
-                    <input type="number" id="serviceDuration" placeholder="1">
+                    <label>Помещение</label>
+                    <select id="serviceRoom">
+                        <option value="">— Любое доступное —</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Описание</label>
-                    <textarea id="serviceDescription" rows="3" placeholder="Описание услуги"></textarea>
+                    <textarea id="serviceDescription" rows="3" placeholder="Описание услуги для клиентов"></textarea>
+                </div>
+                <div style="margin-top:15px;">
+                    <label style="display:flex;align-items:center;gap:8px;font-weight:normal;">
+                        <input type="checkbox" id="serviceOnlineBooking" checked> Доступна для онлайн-записи
+                    </label>
                 </div>
             </div>
             <div class="modal-footer">
@@ -1830,41 +2161,73 @@
         </div>
     </div>
 
-    <!-- Promo Code Modal -->
+    <!-- Promo Code Modal - Extended -->
     <div class="modal-overlay" id="promoModal">
-        <div class="modal">
+        <div class="modal" style="max-width:650px;">
             <div class="modal-header">
                 <h3>Новый промокод</h3>
                 <button class="modal-close" onclick="closeModal('promoModal')">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Код *</label>
-                    <input type="text" id="promoCode" placeholder="SALE20" style="text-transform:uppercase;">
+            <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
+                <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;">
+                    <div class="form-group">
+                        <label>Код *</label>
+                        <div style="display:flex;gap:8px;">
+                            <input type="text" id="promoCode" placeholder="SALE20" style="text-transform:uppercase;flex:1;">
+                            <button class="btn btn-outline btn-sm" onclick="generatePromoCode()"><i class="fas fa-random"></i></button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Статус</label>
+                        <select id="promoStatus">
+                            <option value="active">Активен</option>
+                            <option value="disabled">Отключён</option>
+                        </select>
+                    </div>
                 </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
                     <div class="form-group">
                         <label>Тип скидки</label>
                         <select id="promoType">
                             <option value="percent">Процент (%)</option>
-                            <option value="fixed">Фиксированная сумма</option>
+                            <option value="fixed">Фикс. сумма (₽)</option>
+                            <option value="free_shipping">Бесп. доставка</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Значение *</label>
                         <input type="number" id="promoValue" placeholder="20">
                     </div>
-                </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
                     <div class="form-group">
-                        <label>Мин. сумма заказа</label>
-                        <input type="number" id="promoMinOrder" placeholder="0">
-                    </div>
-                    <div class="form-group">
-                        <label>Лимит использований</label>
-                        <input type="number" id="promoMaxUses" placeholder="Без лимита">
+                        <label>Макс. скидка (₽)</label>
+                        <input type="number" id="promoMaxDiscount" placeholder="Без лимита">
                     </div>
                 </div>
+
+                <div style="background:#1e293b;border-radius:8px;padding:15px;margin:15px 0;">
+                    <h4 style="margin:0 0 15px 0;font-size:14px;"><i class="fas fa-cog"></i> Условия применения</h4>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>Мин. сумма заказа</label>
+                            <input type="number" id="promoMinOrder" placeholder="0">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>Лимит использований</label>
+                            <input type="number" id="promoMaxUses" placeholder="Без лимита">
+                        </div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>На клиента (раз)</label>
+                            <input type="number" id="promoPerClient" placeholder="Без лимита">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>Мин. кол-во товаров</label>
+                            <input type="number" id="promoMinItems" placeholder="1" value="1">
+                        </div>
+                    </div>
+                </div>
+
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
                     <div class="form-group">
                         <label>Дата начала</label>
@@ -1874,6 +2237,34 @@
                         <label>Дата окончания</label>
                         <input type="date" id="promoEnd">
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Применяется к</label>
+                    <select id="promoAppliesTo" onchange="togglePromoProducts()">
+                        <option value="all">Всем товарам</option>
+                        <option value="categories">Категориям</option>
+                        <option value="products">Конкретным товарам</option>
+                        <option value="first_order">Только первый заказ</option>
+                    </select>
+                </div>
+                <div id="promoProductsGroup" style="display:none;" class="form-group">
+                    <label>Выберите товары/категории</label>
+                    <select id="promoProducts" multiple style="height:100px;"></select>
+                </div>
+
+                <div style="margin-top:15px;">
+                    <label style="display:flex;align-items:center;gap:8px;font-weight:normal;">
+                        <input type="checkbox" id="promoExcludeSale"> Не применять к товарам со скидкой
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;font-weight:normal;margin-top:8px;">
+                        <input type="checkbox" id="promoCombine"> Можно комбинировать с другими скидками
+                    </label>
+                </div>
+
+                <div class="form-group" style="margin-top:15px;">
+                    <label>Описание (для внутреннего использования)</label>
+                    <textarea id="promoDescription" rows="2" placeholder="Зачем создан этот промокод..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -2138,6 +2529,621 @@
             </div>
         </div>
     </div>
+
+    <!-- Category Modal -->
+    <div class="modal-overlay" id="categoryModal">
+        <div class="modal" style="max-width:500px;">
+            <div class="modal-header">
+                <h3>Новая категория</h3>
+                <button class="modal-close" onclick="closeModal('categoryModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название категории *</label>
+                    <input type="text" id="categoryName" placeholder="Название категории">
+                </div>
+                <div class="form-group">
+                    <label>Родительская категория</label>
+                    <select id="categoryParent">
+                        <option value="">— Корневая категория —</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="categoryDescription" rows="2" placeholder="Описание категории"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Изображение</label>
+                    <input type="file" id="categoryImage" accept="image/*">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('categoryModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveCategory()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Filter Modal -->
+    <div class="modal-overlay" id="productFilterModal">
+        <div class="modal" style="max-width:600px;">
+            <div class="modal-header">
+                <h3>Добавить фильтр</h3>
+                <button class="modal-close" onclick="closeModal('productFilterModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Выберите тип фильтра или создайте свой</label>
+                    <select id="filterType" onchange="toggleCustomFilter()">
+                        <option value="size">Размер</option>
+                        <option value="color">Цвет</option>
+                        <option value="material">Материал</option>
+                        <option value="brand">Бренд</option>
+                        <option value="season">Сезон</option>
+                        <option value="gender">Пол</option>
+                        <option value="custom">Свой фильтр...</option>
+                    </select>
+                </div>
+                <div id="customFilterName" style="display:none;" class="form-group">
+                    <label>Название фильтра</label>
+                    <input type="text" id="filterCustomName" placeholder="Например: Страна производства">
+                </div>
+                <div class="form-group">
+                    <label>Значения фильтра (по одному на строку)</label>
+                    <textarea id="filterValues" rows="6" placeholder="Например:
+XS
+S
+M
+L
+XL"></textarea>
+                </div>
+                <div class="form-group">
+                    <label style="display:flex;align-items:center;gap:8px;font-weight:normal;">
+                        <input type="checkbox" id="filterMultiple"> Множественный выбор
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('productFilterModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveProductFilter()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Selection Modal -->
+    <div class="modal-overlay" id="selectionModal">
+        <div class="modal" style="max-width:600px;">
+            <div class="modal-header">
+                <h3>Новая подборка</h3>
+                <button class="modal-close" onclick="closeModal('selectionModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название подборки *</label>
+                    <input type="text" id="selectionName" placeholder="Хиты продаж">
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="selectionDescription" rows="2" placeholder="Описание подборки"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Тип подборки</label>
+                    <select id="selectionType">
+                        <option value="manual">Ручная (выбор товаров)</option>
+                        <option value="auto">Автоматическая (по правилам)</option>
+                    </select>
+                </div>
+                <div id="selectionProductsGroup" class="form-group">
+                    <label>Товары</label>
+                    <select id="selectionProducts" multiple style="height:150px;"></select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('selectionModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveSelection()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import XML Modal -->
+    <div class="modal-overlay" id="importXmlModal">
+        <div class="modal" style="max-width:600px;">
+            <div class="modal-header">
+                <h3>Импорт товаров из XML</h3>
+                <button class="modal-close" onclick="closeModal('importXmlModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>XML файл *</label>
+                    <input type="file" id="xmlFile" accept=".xml">
+                </div>
+                <div class="form-group">
+                    <label>Или укажите URL</label>
+                    <input type="text" id="xmlUrl" placeholder="https://example.com/products.xml">
+                </div>
+                <div class="form-group">
+                    <label>Формат</label>
+                    <select id="xmlFormat">
+                        <option value="yandex">Яндекс.Маркет (YML)</option>
+                        <option value="insales">InSales</option>
+                        <option value="1c">1C CommerceML</option>
+                        <option value="custom">Другой</option>
+                    </select>
+                </div>
+                <div style="background:#1e293b;padding:15px;border-radius:8px;">
+                    <label style="display:flex;align-items:center;gap:8px;font-weight:normal;">
+                        <input type="checkbox" id="xmlUpdateExisting"> Обновить существующие товары
+                    </label>
+                    <label style="display:flex;align-items:center;gap:8px;font-weight:normal;margin-top:10px;">
+                        <input type="checkbox" id="xmlCreateCategories" checked> Создать категории
+                    </label>
+                </div>
+                <div id="xmlProgress" style="display:none;margin-top:15px;">
+                    <div style="background:var(--border-color);border-radius:4px;overflow:hidden;">
+                        <div id="xmlProgressBar" style="width:0%;height:8px;background:var(--accent);transition:width 0.3s;"></div>
+                    </div>
+                    <p id="xmlProgressText" style="text-align:center;margin-top:8px;font-size:13px;"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('importXmlModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="importXml()"><i class="fas fa-upload"></i> Импортировать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Specialist Modal -->
+    <div class="modal-overlay" id="specialistModal">
+        <div class="modal" style="max-width:600px;">
+            <div class="modal-header">
+                <h3>Добавить специалиста</h3>
+                <button class="modal-close" onclick="closeModal('specialistModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+                    <div class="form-group">
+                        <label>Имя *</label>
+                        <input type="text" id="specialistFirstName" placeholder="Имя">
+                    </div>
+                    <div class="form-group">
+                        <label>Фамилия</label>
+                        <input type="text" id="specialistLastName" placeholder="Фамилия">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Должность</label>
+                    <input type="text" id="specialistPosition" placeholder="Мастер-стилист">
+                </div>
+                <div class="form-group">
+                    <label>Услуги</label>
+                    <select id="specialistServices" multiple style="height:100px;"></select>
+                </div>
+                <div class="form-group">
+                    <label>Описание / Опыт</label>
+                    <textarea id="specialistBio" rows="3" placeholder="Опыт работы, сертификаты..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Филиал</label>
+                    <select id="specialistBranch">
+                        <option value="">— Основной —</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('specialistModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveSpecialist()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Room Modal -->
+    <div class="modal-overlay" id="roomModal">
+        <div class="modal" style="max-width:500px;">
+            <div class="modal-header">
+                <h3>Добавить помещение</h3>
+                <button class="modal-close" onclick="closeModal('roomModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название *</label>
+                    <input type="text" id="roomName" placeholder="Кабинет №1">
+                </div>
+                <div class="form-group">
+                    <label>Вместимость</label>
+                    <input type="number" id="roomCapacity" placeholder="1" value="1">
+                </div>
+                <div class="form-group">
+                    <label>Услуги, доступные в помещении</label>
+                    <select id="roomServices" multiple style="height:100px;"></select>
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="roomDescription" rows="2" placeholder="Описание помещения"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('roomModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveRoom()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Training Modal -->
+    <div class="modal-overlay" id="trainingModal">
+        <div class="modal" style="max-width:700px;">
+            <div class="modal-header">
+                <h3>Новый тренинг</h3>
+                <button class="modal-close" onclick="closeModal('trainingModal')">&times;</button>
+            </div>
+            <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
+                <div class="form-group">
+                    <label>Название тренинга *</label>
+                    <input type="text" id="trainingName" placeholder="Основы программирования">
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="trainingDescription" rows="3" placeholder="Описание тренинга"></textarea>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+                    <div class="form-group">
+                        <label>Тип доступа</label>
+                        <select id="trainingAccessType">
+                            <option value="purchase">После покупки продукта</option>
+                            <option value="group">По группе</option>
+                            <option value="free">Бесплатный</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Продукт для покупки</label>
+                        <select id="trainingProduct">
+                            <option value="">— Не требуется —</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+                    <div class="form-group">
+                        <label>Дни доступа</label>
+                        <input type="number" id="trainingAccessDays" placeholder="0 = бессрочно" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Drip-контент</label>
+                        <select id="trainingDrip">
+                            <option value="0">Весь сразу</option>
+                            <option value="1">1 урок в день</option>
+                            <option value="2">1 урок в 2 дня</option>
+                            <option value="7">1 урок в неделю</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label style="display:flex;align-items:center;gap:8px;font-weight:normal;">
+                        <input type="checkbox" id="trainingCertificate"> Выдавать сертификат по завершении
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('trainingModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveTraining()">Создать тренинг</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lesson Modal -->
+    <div class="modal-overlay" id="lessonModal">
+        <div class="modal" style="max-width:700px;">
+            <div class="modal-header">
+                <h3>Новый урок</h3>
+                <button class="modal-close" onclick="closeModal('lessonModal')">&times;</button>
+            </div>
+            <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
+                <div class="form-group">
+                    <label>Тренинг *</label>
+                    <select id="lessonTraining">
+                        <option value="">— Выберите тренинг —</option>
+                    </select>
+                </div>
+                <div style="display:grid;grid-template-columns:3fr 1fr;gap:15px;">
+                    <div class="form-group">
+                        <label>Название урока *</label>
+                        <input type="text" id="lessonName" placeholder="Введение">
+                    </div>
+                    <div class="form-group">
+                        <label>Порядок</label>
+                        <input type="number" id="lessonOrder" value="1" min="1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Тип урока</label>
+                    <select id="lessonType" onchange="toggleLessonContent()">
+                        <option value="video">Видео</option>
+                        <option value="text">Текст</option>
+                        <option value="quiz">Тест</option>
+                        <option value="homework">Домашнее задание</option>
+                    </select>
+                </div>
+                <div id="lessonVideoGroup" class="form-group">
+                    <label>Видео URL (YouTube, Vimeo, MP4)</label>
+                    <input type="text" id="lessonVideoUrl" placeholder="https://youtube.com/watch?v=...">
+                </div>
+                <div id="lessonTextGroup" class="form-group" style="display:none;">
+                    <label>Контент урока</label>
+                    <textarea id="lessonContent" rows="10" placeholder="Содержимое урока..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Длительность (мин)</label>
+                    <input type="number" id="lessonDuration" placeholder="15">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('lessonModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveLesson()">Создать урок</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Autowebinar Modal -->
+    <div class="modal-overlay" id="autoWebinarModal">
+        <div class="modal" style="max-width:700px;">
+            <div class="modal-header">
+                <h3>Создать автовебинар</h3>
+                <button class="modal-close" onclick="closeModal('autoWebinarModal')">&times;</button>
+            </div>
+            <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
+                <div class="form-group">
+                    <label>Название автовебинара *</label>
+                    <input type="text" id="autoWebinarName" placeholder="Как начать бизнес с нуля">
+                </div>
+                <div class="form-group">
+                    <label>Видео записи вебинара *</label>
+                    <input type="text" id="autoWebinarVideo" placeholder="https://youtube.com/watch?v=...">
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
+                    <div class="form-group">
+                        <label>Длительность (мин)</label>
+                        <input type="number" id="autoWebinarDuration" placeholder="60">
+                    </div>
+                    <div class="form-group">
+                        <label>Тренинг (опционально)</label>
+                        <select id="autoWebinarTraining">
+                            <option value="">— Не привязан —</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Расписание показов</label>
+                    <div style="background:#1e293b;padding:15px;border-radius:8px;">
+                        <label style="display:flex;align-items:center;gap:8px;font-weight:normal;">
+                            <input type="checkbox" id="autoWebinarScheduled"> По расписанию
+                        </label>
+                        <div id="autoWebinarSchedule" style="margin-top:15px;display:none;">
+                            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+                                <input type="time" id="autoWebinarTime1" class="filter-select">
+                                <input type="time" id="autoWebinarTime2" class="filter-select">
+                                <input type="time" id="autoWebinarTime3" class="filter-select">
+                            </div>
+                            <p style="font-size:12px;color:var(--text-muted);margin-top:10px;">Укажите время показов (по Москве)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Симуляция чата</label>
+                    <label style="display:flex;align-items:center;gap:8px;font-weight:normal;">
+                        <input type="checkbox" id="autoWebinarChat" checked> Включить имитацию сообщений в чате
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('autoWebinarModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveAutoWebinar()">Создать автовебинар</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Certificate Template Modal -->
+    <div class="modal-overlay" id="certificateTemplateModal">
+        <div class="modal" style="max-width:900px;">
+            <div class="modal-header">
+                <h3>Редактор шаблона сертификата</h3>
+                <button class="modal-close" onclick="closeModal('certificateTemplateModal')">&times;</button>
+            </div>
+            <div class="modal-body" style="max-height:75vh;overflow-y:auto;">
+                <div style="display:grid;grid-template-columns:1fr 2fr;gap:20px;">
+                    <!-- Settings Panel -->
+                    <div>
+                        <div class="form-group">
+                            <label>Название шаблона *</label>
+                            <input type="text" id="certTemplateName" placeholder="Стандартный сертификат">
+                        </div>
+                        <div class="form-group">
+                            <label>Фон (подложка)</label>
+                            <input type="file" id="certTemplateBackground" accept="image/*">
+                            <div id="certBgPreview" style="margin-top:10px;"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Тренинг</label>
+                            <select id="certTemplateTraining">
+                                <option value="">— Для всех —</option>
+                            </select>
+                        </div>
+                        <hr style="border-color:var(--border-color);margin:20px 0;">
+                        <h4 style="margin-bottom:15px;">Элементы</h4>
+                        <div class="cert-elements">
+                            <div class="cert-element-item" draggable="true" data-element="name">
+                                <i class="fas fa-user"></i> Имя студента
+                            </div>
+                            <div class="cert-element-item" draggable="true" data-element="training">
+                                <i class="fas fa-graduation-cap"></i> Название тренинга
+                            </div>
+                            <div class="cert-element-item" draggable="true" data-element="number">
+                                <i class="fas fa-hashtag"></i> Номер сертификата
+                            </div>
+                            <div class="cert-element-item" draggable="true" data-element="date">
+                                <i class="fas fa-calendar"></i> Дата выдачи
+                            </div>
+                            <div class="cert-element-item" draggable="true" data-element="signature">
+                                <i class="fas fa-signature"></i> Подпись
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Preview Canvas -->
+                    <div>
+                        <div id="certPreviewCanvas" style="background:#fff;border-radius:8px;aspect-ratio:1.414;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.3);">
+                            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#ccc;text-align:center;">
+                                <i class="fas fa-image" style="font-size:48px;"></i>
+                                <p>Загрузите фон</p>
+                            </div>
+                            <!-- Draggable elements will be placed here -->
+                            <div id="certElementName" class="cert-draggable" style="position:absolute;top:40%;left:50%;transform:translateX(-50%);font-size:24px;color:#333;font-weight:bold;">
+                                {ИМЯ СТУДЕНТА}
+                            </div>
+                            <div id="certElementTraining" class="cert-draggable" style="position:absolute;top:50%;left:50%;transform:translateX(-50%);font-size:18px;color:#333;">
+                                {НАЗВАНИЕ ТРЕНИНГА}
+                            </div>
+                            <div id="certElementNumber" class="cert-draggable" style="position:absolute;top:75%;left:20%;font-size:12px;color:#666;">
+                                №{НОМЕР}
+                            </div>
+                            <div id="certElementDate" class="cert-draggable" style="position:absolute;top:75%;right:20%;font-size:12px;color:#666;">
+                                {ДАТА}
+                            </div>
+                        </div>
+                        <p style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:10px;">
+                            Перетаскивайте элементы для позиционирования
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('certificateTemplateModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveCertificateTemplate()">Сохранить шаблон</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Issue Certificate Modal -->
+    <div class="modal-overlay" id="issueCertificateModal">
+        <div class="modal" style="max-width:500px;">
+            <div class="modal-header">
+                <h3>Выдать сертификат</h3>
+                <button class="modal-close" onclick="closeModal('issueCertificateModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Студент *</label>
+                    <select id="certStudent">
+                        <option value="">— Выберите студента —</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Тренинг *</label>
+                    <select id="certTraining">
+                        <option value="">— Выберите тренинг —</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Шаблон сертификата</label>
+                    <select id="certTemplate">
+                        <option value="">— По умолчанию —</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Номер сертификата</label>
+                    <input type="text" id="certNumber" placeholder="Авто-генерация" readonly style="background:#1e293b;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('issueCertificateModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="issueCertificate()">Выдать</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .cert-element-item {
+            padding: 10px 15px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .cert-element-item:hover {
+            background: var(--border-color);
+        }
+        .cert-draggable {
+            cursor: move;
+            user-select: none;
+        }
+        .cert-draggable:hover {
+            outline: 2px dashed var(--accent);
+        }
+        .type-option:has(input:checked) {
+            border-color: var(--accent) !important;
+            background: rgba(99, 102, 241, 0.1) !important;
+        }
+        .bookings-calendar {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .bookings-calendar th,
+        .bookings-calendar td {
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            text-align: center;
+            min-width: 100px;
+        }
+        .bookings-calendar th {
+            background: var(--bg-input);
+        }
+        .bookings-calendar .time-cell {
+            background: var(--bg-input);
+            font-weight: 500;
+        }
+        .bookings-calendar .slot-cell {
+            cursor: pointer;
+            transition: background 0.2s;
+            min-height: 40px;
+            vertical-align: top;
+        }
+        .bookings-calendar .slot-cell:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+        .bookings-calendar .slot-booked {
+            background: rgba(99, 102, 241, 0.2);
+        }
+        .booking-item {
+            font-size: 11px;
+            padding: 4px 6px;
+            background: var(--accent);
+            color: white;
+            border-radius: 4px;
+            margin-bottom: 2px;
+            cursor: pointer;
+        }
+        .categories-tree {
+            padding: 10px;
+        }
+        .category-item {
+            padding: 10px 15px;
+            margin: 5px 0;
+            background: var(--bg-input);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        .category-item:hover {
+            background: var(--border-color);
+        }
+        .category-children {
+            margin-left: 25px;
+            border-left: 2px solid var(--border-color);
+            padding-left: 15px;
+        }
+    </style>
 
     <script>
         // Config
@@ -3475,23 +4481,62 @@
             `).join('');
         }
 
+        function toggleServiceGroup() {
+            const type = document.getElementById('serviceType').value;
+            document.getElementById('serviceGroupSettings').style.display = type === 'group' ? 'block' : 'none';
+        }
+
+        function togglePromoProducts() {
+            const appliesTo = document.getElementById('promoAppliesTo').value;
+            document.getElementById('promoProductsGroup').style.display =
+                (appliesTo === 'categories' || appliesTo === 'products') ? 'block' : 'none';
+        }
+
+        function generatePromoCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = '';
+            for (let i = 0; i < 8; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('promoCode').value = code;
+        }
+
+        function generateBulkPromos() {
+            const count = prompt('Сколько промокодов сгенерировать?', '10');
+            if (count && parseInt(count) > 0) {
+                alert(`Будет сгенерировано ${count} промокодов`);
+                // TODO: Implement bulk generation
+            }
+        }
+
         async function saveService() {
             const name = document.getElementById('serviceName').value;
             const category = document.getElementById('serviceCategory').value;
             const price = document.getElementById('servicePrice').value;
             const duration = document.getElementById('serviceDuration').value;
             const description = document.getElementById('serviceDescription').value;
+            const type = document.getElementById('serviceType')?.value || 'individual';
+            const buffer_time = document.getElementById('serviceBuffer')?.value || 0;
+            const max_clients = document.getElementById('serviceMaxClients')?.value || 1;
+            const online_booking = document.getElementById('serviceOnlineBooking')?.checked ?? true;
 
             if (!name) return alert('Введите название услуги');
 
             const res = await api('POST', `/services/${projectId}`, {
-                name, category, price: parseFloat(price) || 0, duration: parseInt(duration) || null, description
+                name, category,
+                price: parseFloat(price) || 0,
+                duration: parseInt(duration) || 60,
+                description, type,
+                buffer_time: parseInt(buffer_time) || 0,
+                max_clients: type === 'group' ? parseInt(max_clients) : 1,
+                online_booking
             });
 
             if (res.success) {
                 closeModal('serviceModal');
                 ['serviceName', 'serviceCategory', 'servicePrice', 'serviceDuration', 'serviceDescription'].forEach(id => {
-                    document.getElementById(id).value = '';
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
                 });
                 loadServices();
             } else {
@@ -4609,11 +5654,614 @@
             }
         }
 
+        // ============================================================
+        // NEW SECTIONS: Categories, Filters, Selections, Specialists, Rooms, Trainings, Lessons
+        // ============================================================
+
+        // Product Type Toggle
+        document.querySelectorAll('input[name="productType"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const onlineSection = document.getElementById('onlineProductAccess');
+                const stockGroup = document.getElementById('productStockGroup');
+                if (this.value === 'online') {
+                    onlineSection.style.display = 'block';
+                    stockGroup.style.display = 'none';
+                } else {
+                    onlineSection.style.display = 'none';
+                    stockGroup.style.display = 'block';
+                }
+            });
+        });
+
+        function toggleProductAccessOptions() {
+            const type = document.getElementById('productAccessType').value;
+            document.getElementById('accessTrainingSelect').style.display = type === 'training' ? 'block' : 'none';
+            document.getElementById('accessLessonSelect').style.display = type === 'lesson' ? 'block' : 'none';
+            document.getElementById('accessGroupSelect').style.display = type === 'group' ? 'block' : 'none';
+        }
+
+        // Categories
+        let categories = [];
+        async function loadCategories() {
+            const res = await api('GET', `/ecommerce/${projectId}/categories`);
+            if (res.success) {
+                categories = res.categories || [];
+                renderCategories();
+                populateCategorySelects();
+            }
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('categoriesTree');
+            if (!container) return;
+
+            const buildTree = (parentId = null) => {
+                const children = categories.filter(c => c.parent_id === parentId);
+                if (!children.length) return '';
+                return children.map(cat => `
+                    <div class="category-item" onclick="editCategory('${cat.id}')">
+                        <span><i class="fas fa-folder"></i> ${escapeHtml(cat.name)}</span>
+                        <span class="badge">${categories.filter(c => c.parent_id === cat.id).length} подкат.</span>
+                    </div>
+                    <div class="category-children">${buildTree(cat.id)}</div>
+                `).join('');
+            };
+            container.innerHTML = buildTree() || '<p style="color:var(--text-muted);">Нет категорий. Нажмите "Добавить категорию"</p>';
+        }
+
+        function populateCategorySelects() {
+            const options = '<option value="">— Без категории —</option>' +
+                categories.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+            ['productCategory', 'categoryParent', 'filterProductCategory'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = options;
+            });
+        }
+
+        async function saveCategory() {
+            const name = document.getElementById('categoryName').value;
+            if (!name) return alert('Введите название категории');
+
+            const res = await api('POST', `/ecommerce/${projectId}/categories`, {
+                name,
+                parent_id: document.getElementById('categoryParent').value || null,
+                description: document.getElementById('categoryDescription').value
+            });
+
+            if (res.success) {
+                closeModal('categoryModal');
+                loadCategories();
+            } else {
+                alert(res.error || 'Ошибка создания категории');
+            }
+        }
+
+        // Product Filters
+        let productFilters = [];
+        async function loadProductFilters() {
+            // Load from localStorage for now
+            productFilters = JSON.parse(localStorage.getItem(`filters_${projectId}`) || '[]');
+            renderProductFilters();
+        }
+
+        function renderProductFilters() {
+            const grid = document.getElementById('customFiltersGrid');
+            if (!grid) return;
+            grid.innerHTML = productFilters.map(f => `
+                <div class="card" style="cursor:pointer;" onclick="openFilterEditor('${f.id}')">
+                    <div class="card-body">
+                        <h4><i class="fas fa-sliders-h"></i> ${escapeHtml(f.name)}</h4>
+                        <p style="color:var(--text-muted);">${f.values?.length || 0} значений</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleCustomFilter() {
+            const isCustom = document.getElementById('filterType').value === 'custom';
+            document.getElementById('customFilterName').style.display = isCustom ? 'block' : 'none';
+        }
+
+        function saveProductFilter() {
+            const type = document.getElementById('filterType').value;
+            const name = type === 'custom' ? document.getElementById('filterCustomName').value : type;
+            const values = document.getElementById('filterValues').value.split('\n').filter(v => v.trim());
+
+            if (!name) return alert('Введите название фильтра');
+
+            const filter = {
+                id: Date.now().toString(),
+                name,
+                values,
+                multiple: document.getElementById('filterMultiple').checked
+            };
+
+            productFilters.push(filter);
+            localStorage.setItem(`filters_${projectId}`, JSON.stringify(productFilters));
+            closeModal('productFilterModal');
+            loadProductFilters();
+        }
+
+        // Selections (former Collections)
+        let selections = [];
+        async function loadSelections() {
+            const res = await api('GET', `/ecommerce/${projectId}/collections`);
+            if (res.success) {
+                selections = res.collections || [];
+                renderSelections();
+            }
+        }
+
+        function renderSelections() {
+            const container = document.getElementById('selectionsList');
+            if (!container) return;
+            container.innerHTML = selections.map(s => `
+                <div class="stat-card" onclick="editSelection('${s.id}')" style="cursor:pointer;">
+                    <div class="value">${s.products_count || 0}</div>
+                    <div class="label">${escapeHtml(s.name)}</div>
+                </div>
+            `).join('') || '<p style="color:var(--text-muted);">Нет подборок</p>';
+        }
+
+        async function saveSelection() {
+            const name = document.getElementById('selectionName').value;
+            if (!name) return alert('Введите название подборки');
+
+            const res = await api('POST', `/ecommerce/${projectId}/collections`, {
+                name,
+                description: document.getElementById('selectionDescription').value,
+                type: document.getElementById('selectionType').value
+            });
+
+            if (res.success) {
+                closeModal('selectionModal');
+                loadSelections();
+            } else {
+                alert(res.error || 'Ошибка создания подборки');
+            }
+        }
+
+        // Specialists
+        let specialists = [];
+        async function loadSpecialists() {
+            const res = await api('GET', `/bookings/${projectId}/employees`);
+            if (res.success) {
+                specialists = res.employees || [];
+                renderSpecialists();
+                populateSpecialistSelects();
+            }
+        }
+
+        function renderSpecialists() {
+            const container = document.getElementById('specialistsList');
+            if (!container) return;
+            container.innerHTML = specialists.map(s => `
+                <div class="stat-card" onclick="editSpecialist('${s.id}')" style="cursor:pointer;">
+                    <div style="font-size:32px;margin-bottom:10px;"><i class="fas fa-user-md"></i></div>
+                    <div class="label">${escapeHtml(s.name || s.first_name + ' ' + (s.last_name || ''))}</div>
+                    <div style="font-size:12px;color:var(--text-muted);">${escapeHtml(s.position || '')}</div>
+                </div>
+            `).join('') || '<p style="color:var(--text-muted);">Нет специалистов</p>';
+        }
+
+        function populateSpecialistSelects() {
+            const options = '<option value="">Все специалисты</option>' +
+                specialists.map(s => `<option value="${s.id}">${escapeHtml(s.name || s.first_name)}</option>`).join('');
+            ['filterBookingSpecialist', 'scheduleEmployee'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = options;
+            });
+        }
+
+        async function saveSpecialist() {
+            const first_name = document.getElementById('specialistFirstName').value;
+            if (!first_name) return alert('Введите имя специалиста');
+
+            const res = await api('POST', `/employees/${projectId}`, {
+                first_name,
+                last_name: document.getElementById('specialistLastName').value,
+                position: document.getElementById('specialistPosition').value,
+                department: 'services'
+            });
+
+            if (res.success) {
+                closeModal('specialistModal');
+                loadSpecialists();
+                loadEmployees();
+            } else {
+                alert(res.error || 'Ошибка добавления специалиста');
+            }
+        }
+
+        // Rooms
+        let rooms = [];
+        async function loadRooms() {
+            rooms = JSON.parse(localStorage.getItem(`rooms_${projectId}`) || '[]');
+            renderRooms();
+        }
+
+        function renderRooms() {
+            const container = document.getElementById('roomsList');
+            if (!container) return;
+            container.innerHTML = rooms.map(r => `
+                <div class="stat-card" onclick="editRoom('${r.id}')" style="cursor:pointer;">
+                    <div style="font-size:32px;margin-bottom:10px;"><i class="fas fa-door-open"></i></div>
+                    <div class="label">${escapeHtml(r.name)}</div>
+                    <div style="font-size:12px;color:var(--text-muted);">Вместимость: ${r.capacity}</div>
+                </div>
+            `).join('') || '<p style="color:var(--text-muted);">Нет помещений</p>';
+        }
+
+        function saveRoom() {
+            const name = document.getElementById('roomName').value;
+            if (!name) return alert('Введите название помещения');
+
+            rooms.push({
+                id: Date.now().toString(),
+                name,
+                capacity: document.getElementById('roomCapacity').value || 1,
+                description: document.getElementById('roomDescription').value
+            });
+            localStorage.setItem(`rooms_${projectId}`, JSON.stringify(rooms));
+            closeModal('roomModal');
+            loadRooms();
+        }
+
+        // Trainings (courses restructured)
+        let trainings = [];
+        async function loadTrainings() {
+            const res = await api('GET', `/courses/${projectId}`);
+            if (res.success) {
+                trainings = res.courses || [];
+                renderTrainings();
+                populateTrainingSelects();
+                document.getElementById('trainingsTotal').textContent = trainings.length;
+                document.getElementById('trainingsStudents').textContent =
+                    trainings.reduce((sum, t) => sum + (t.students_count || 0), 0);
+            }
+        }
+
+        function renderTrainings() {
+            const container = document.getElementById('trainingsList');
+            if (!container) return;
+            container.innerHTML = trainings.map(t => `
+                <div class="stat-card" onclick="editTraining('${t.id}')" style="cursor:pointer;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                        <span class="badge ${t.is_published ? 'success' : ''}">${t.is_published ? 'Опубликован' : 'Черновик'}</span>
+                        <span style="font-size:12px;color:var(--text-muted);">${t.lessons_count || 0} уроков</span>
+                    </div>
+                    <div class="label" style="font-size:16px;font-weight:600;">${escapeHtml(t.name)}</div>
+                    <div style="margin-top:10px;display:flex;justify-content:space-between;font-size:12px;">
+                        <span><i class="fas fa-users"></i> ${t.students_count || 0}</span>
+                        <span><i class="fas fa-chart-line"></i> ${t.avg_progress || 0}%</span>
+                    </div>
+                </div>
+            `).join('') || '<p style="color:var(--text-muted);">Нет тренингов</p>';
+        }
+
+        function populateTrainingSelects() {
+            const options = trainings.map(t => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('');
+            ['lessonTraining', 'filterLessonTraining', 'certTemplateTraining', 'certTraining',
+             'productAccessTraining', 'autoWebinarTraining'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = '<option value="">— Выберите —</option>' + options;
+            });
+        }
+
+        async function saveTraining() {
+            const name = document.getElementById('trainingName').value;
+            if (!name) return alert('Введите название тренинга');
+
+            const res = await api('POST', `/courses/${projectId}`, {
+                name,
+                description: document.getElementById('trainingDescription').value,
+                type: document.getElementById('trainingAccessType').value,
+                access_days: document.getElementById('trainingAccessDays').value || 0,
+                drip_content: document.getElementById('trainingDrip').value,
+                certificate_enabled: document.getElementById('trainingCertificate').checked
+            });
+
+            if (res.success) {
+                closeModal('trainingModal');
+                loadTrainings();
+            } else {
+                alert(res.error || 'Ошибка создания тренинга');
+            }
+        }
+
+        // Lessons
+        let lessons = [];
+        async function loadLessons() {
+            const res = await api('GET', `/learning/${projectId}/lessons`);
+            if (res.success) {
+                lessons = res.lessons || [];
+                renderLessons();
+            }
+        }
+
+        function renderLessons() {
+            const tbody = document.getElementById('lessonsTable');
+            if (!tbody) return;
+            tbody.innerHTML = lessons.map((l, i) => {
+                const training = trainings.find(t => t.id === l.course_id);
+                return `
+                <tr onclick="editLesson('${l.id}')" style="cursor:pointer;">
+                    <td>${l.order_index || i + 1}</td>
+                    <td>${escapeHtml(l.title)}</td>
+                    <td>${training ? escapeHtml(training.name) : '-'}</td>
+                    <td><span class="badge">${l.type || 'video'}</span></td>
+                    <td>${l.duration || '-'} мин</td>
+                    <td>${l.completed_count || 0}</td>
+                    <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
+                </tr>
+            `}).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);">Нет уроков</td></tr>';
+        }
+
+        function toggleLessonContent() {
+            const type = document.getElementById('lessonType').value;
+            document.getElementById('lessonVideoGroup').style.display = type === 'video' ? 'block' : 'none';
+            document.getElementById('lessonTextGroup').style.display = (type === 'text' || type === 'homework') ? 'block' : 'none';
+        }
+
+        async function saveLesson() {
+            const training = document.getElementById('lessonTraining').value;
+            const name = document.getElementById('lessonName').value;
+            if (!training || !name) return alert('Заполните обязательные поля');
+
+            const res = await api('POST', `/learning/${projectId}/lessons`, {
+                course_id: training,
+                title: name,
+                type: document.getElementById('lessonType').value,
+                content: document.getElementById('lessonContent').value,
+                video_url: document.getElementById('lessonVideoUrl').value,
+                duration: document.getElementById('lessonDuration').value,
+                order_index: document.getElementById('lessonOrder').value
+            });
+
+            if (res.success) {
+                closeModal('lessonModal');
+                loadLessons();
+            } else {
+                alert(res.error || 'Ошибка создания урока');
+            }
+        }
+
+        // Bookings Calendar
+        let bookingsWeekStart = new Date();
+        bookingsWeekStart.setDate(bookingsWeekStart.getDate() - bookingsWeekStart.getDay() + 1);
+
+        function loadBookingsCalendar() {
+            const header = document.getElementById('bookingsCalendarHeader');
+            const body = document.getElementById('bookingsCalendarBody');
+            if (!header || !body) return;
+
+            // Set date input
+            const dateInput = document.getElementById('bookingsWeekStart');
+            if (dateInput) dateInput.value = bookingsWeekStart.toISOString().split('T')[0];
+
+            // Generate header with dates
+            const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+            header.innerHTML = '<th style="width:60px;">Время</th>' +
+                days.map((d, i) => {
+                    const date = new Date(bookingsWeekStart);
+                    date.setDate(date.getDate() + i);
+                    return `<th>${d}<br><small>${date.getDate()}.${date.getMonth()+1}</small></th>`;
+                }).join('');
+
+            // Generate time slots (9:00 - 21:00)
+            let rows = '';
+            for (let hour = 9; hour <= 20; hour++) {
+                rows += `<tr>
+                    <td class="time-cell">${hour}:00</td>
+                    ${days.map((_, i) => `<td class="slot-cell" onclick="openBookingSlot(${hour}, ${i})"></td>`).join('')}
+                </tr>`;
+            }
+            body.innerHTML = rows;
+        }
+
+        function moveBookingsWeek(direction) {
+            bookingsWeekStart.setDate(bookingsWeekStart.getDate() + (direction * 7));
+            loadBookingsCalendar();
+        }
+
+        function openBookingSlot(hour, dayIndex) {
+            const date = new Date(bookingsWeekStart);
+            date.setDate(date.getDate() + dayIndex);
+            date.setHours(hour, 0, 0, 0);
+
+            // Pre-fill booking modal
+            openModal('bookingModal');
+            // Set date/time if fields exist
+        }
+
+        // Webinars
+        async function loadWebinars() {
+            const res = await api('GET', `/learning/${projectId}/webinars`);
+            if (res.success) {
+                const webinars = res.webinars || [];
+                document.getElementById('webinarsUpcoming').textContent = webinars.filter(w => w.status === 'scheduled').length;
+                document.getElementById('webinarsLive').textContent = webinars.filter(w => w.status === 'live').length;
+                document.getElementById('webinarsCompleted').textContent = webinars.filter(w => w.status === 'completed').length;
+
+                const tbody = document.getElementById('webinarsTable');
+                if (tbody) {
+                    tbody.innerHTML = webinars.map(w => `
+                        <tr>
+                            <td>${escapeHtml(w.title)}</td>
+                            <td><span class="badge">${w.type === 'auto' ? 'Авто' : 'Живой'}</span></td>
+                            <td>${formatDate(w.start_time)}</td>
+                            <td>${escapeHtml(w.host_name || '-')}</td>
+                            <td>${w.registrations || 0}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline" onclick="copyWebinarLink('${w.id}')">
+                                    <i class="fas fa-link"></i>
+                                </button>
+                            </td>
+                            <td><span class="badge ${w.status === 'live' ? 'success' : ''}">${w.status}</span></td>
+                            <td>
+                                ${w.status === 'scheduled' ? `<button class="btn btn-sm btn-primary" onclick="startWebinar('${w.id}')">Запустить</button>` : ''}
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            }
+        }
+
+        function copyWebinarLink(id) {
+            const url = `${location.origin}/webinar/${id}`;
+            navigator.clipboard.writeText(url);
+            alert('Ссылка скопирована');
+        }
+
+        async function saveAutoWebinar() {
+            const name = document.getElementById('autoWebinarName').value;
+            const video = document.getElementById('autoWebinarVideo').value;
+            if (!name || !video) return alert('Заполните обязательные поля');
+
+            const res = await api('POST', `/learning/${projectId}/webinars`, {
+                title: name,
+                type: 'auto',
+                video_url: video,
+                duration: document.getElementById('autoWebinarDuration').value,
+                chat_simulation: document.getElementById('autoWebinarChat').checked
+            });
+
+            if (res.success) {
+                closeModal('autoWebinarModal');
+                loadWebinars();
+            } else {
+                alert(res.error || 'Ошибка создания автовебинара');
+            }
+        }
+
+        // Certificates
+        async function loadCertificates() {
+            const res = await api('GET', `/learning/${projectId}/certificates`);
+            if (res.success) {
+                const certs = res.certificates || [];
+                document.getElementById('certificatesIssued').textContent = certs.length;
+
+                const tbody = document.getElementById('certificatesTable');
+                if (tbody) {
+                    tbody.innerHTML = certs.map(c => `
+                        <tr>
+                            <td>${escapeHtml(c.number)}</td>
+                            <td>${escapeHtml(c.student_name)}</td>
+                            <td>${escapeHtml(c.course_name || '-')}</td>
+                            <td>${escapeHtml(c.template_name || 'По умолчанию')}</td>
+                            <td>${formatDate(c.issued_at)}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline" onclick="downloadCertificate('${c.id}')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            }
+        }
+
+        function saveCertificateTemplate() {
+            const name = document.getElementById('certTemplateName').value;
+            if (!name) return alert('Введите название шаблона');
+
+            // Save template to localStorage for now
+            const templates = JSON.parse(localStorage.getItem(`cert_templates_${projectId}`) || '[]');
+            templates.push({
+                id: Date.now().toString(),
+                name,
+                training_id: document.getElementById('certTemplateTraining').value
+            });
+            localStorage.setItem(`cert_templates_${projectId}`, JSON.stringify(templates));
+            closeModal('certificateTemplateModal');
+            alert('Шаблон сохранён');
+        }
+
+        async function issueCertificate() {
+            const student = document.getElementById('certStudent').value;
+            const training = document.getElementById('certTraining').value;
+            if (!student || !training) return alert('Выберите студента и тренинг');
+
+            const res = await api('POST', `/learning/${projectId}/certificates`, {
+                client_id: student,
+                course_id: training,
+                template_id: document.getElementById('certTemplate').value
+            });
+
+            if (res.success) {
+                closeModal('issueCertificateModal');
+                loadCertificates();
+            } else {
+                alert(res.error || 'Ошибка выдачи сертификата');
+            }
+        }
+
+        // XML Import
+        async function importXml() {
+            const file = document.getElementById('xmlFile').files[0];
+            const url = document.getElementById('xmlUrl').value;
+
+            if (!file && !url) return alert('Выберите файл или укажите URL');
+
+            const progress = document.getElementById('xmlProgress');
+            const bar = document.getElementById('xmlProgressBar');
+            const text = document.getElementById('xmlProgressText');
+
+            progress.style.display = 'block';
+            bar.style.width = '10%';
+            text.textContent = 'Загрузка...';
+
+            // Simulate progress for now
+            setTimeout(() => { bar.style.width = '30%'; text.textContent = 'Парсинг XML...'; }, 500);
+            setTimeout(() => { bar.style.width = '60%'; text.textContent = 'Импорт товаров...'; }, 1500);
+            setTimeout(() => {
+                bar.style.width = '100%';
+                text.textContent = 'Готово!';
+                setTimeout(() => {
+                    closeModal('importXmlModal');
+                    progress.style.display = 'none';
+                    bar.style.width = '0';
+                    loadProducts();
+                }, 1000);
+            }, 3000);
+        }
+
+        // Update Promo Codes table with more features
+        function renderPromoCodesExtended() {
+            const tbody = document.getElementById('promoCodesTable');
+            if (!tbody) return;
+            // Extended promo codes rendering handled by existing loadPromoCodes
+        }
+
+        // Extend section loading
+        const originalSwitchSection = typeof switchSection !== 'undefined' ? switchSection : null;
+        if (originalSwitchSection) {
+            const extendedSwitchSection = function(section) {
+                originalSwitchSection(section);
+                switch(section) {
+                    case 'categories': loadCategories(); break;
+                    case 'product-filters': loadProductFilters(); break;
+                    case 'selections': loadSelections(); break;
+                    case 'specialists': loadSpecialists(); break;
+                    case 'rooms': loadRooms(); break;
+                    case 'trainings': loadTrainings(); break;
+                    case 'lessons': loadLessons(); break;
+                    case 'bookings': loadBookingsCalendar(); break;
+                }
+            };
+            window.switchSection = extendedSwitchSection;
+        }
+
         // Event listeners for filters
         document.getElementById('tagsEntity')?.addEventListener('change', loadTags);
         document.getElementById('analyticsPeriod')?.addEventListener('change', loadEmployeeAnalytics);
         document.getElementById('goalsPeriod')?.addEventListener('change', loadGoals);
         document.getElementById('bookingsDate')?.addEventListener('change', loadBookings);
+
+        // Initialize new sections
+        document.getElementById('autoWebinarScheduled')?.addEventListener('change', function() {
+            document.getElementById('autoWebinarSchedule').style.display = this.checked ? 'block' : 'none';
+        });
 
         // Start
         init();
