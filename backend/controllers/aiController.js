@@ -128,11 +128,12 @@ exports.editBlock = async (req, res) => {
 
         const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
-        // If no API key, return guidance for local processing
-        if (!OPENROUTER_API_KEY) {
+        // If no API key or placeholder, use local processing
+        if (!OPENROUTER_API_KEY || OPENROUTER_API_KEY.includes('placeholder') || OPENROUTER_API_KEY.length < 20) {
             return res.json({
                 success: true,
-                response: 'AI сервис недоступен. Используйте локальные команды для редактирования.',
+                useLocal: true,
+                response: null,
                 changes: null
             });
         }
@@ -205,9 +206,11 @@ exports.editBlock = async (req, res) => {
 
     } catch (error) {
         console.error('[AI Edit Block] Error:', error.message);
+        // On error, tell frontend to use local processing
         res.json({
             success: true,
-            response: 'Не удалось обработать запрос через AI. Попробуйте более простую команду.',
+            useLocal: true,
+            response: null,
             changes: null
         });
     }

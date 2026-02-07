@@ -3245,6 +3245,13 @@ async function sendAIChatMessage() {
             // Apply changes to element
             applyAIChangesToElement(data.changes);
             addAIChatMessage(data.response || 'Готово! Изменения применены к блоку.');
+        } else if (data.useLocal) {
+            // Backend says to use local processing
+            const result = processAIRequestLocally(message);
+            addAIChatMessage(result.response);
+            if (result.changes) {
+                applyAIChangesToElement(result.changes);
+            }
         } else if (data.response) {
             addAIChatMessage(data.response);
         } else {
