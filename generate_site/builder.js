@@ -1,5 +1,10 @@
 // ===== Landing Page Builder =====
 
+// API Configuration - use Python backend with OpenRouter key
+const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? 'http://localhost:8000'
+    : 'https://ai-tools-backend-d3zr.onrender.com';
+
 // Get page ID from URL
 const urlParams = new URLSearchParams(window.location.search);
 const currentPageId = urlParams.get('id');

@@ -204,6 +204,83 @@ async def chat(request: ChatRequest):
         data = response.json()
         return {"success": True, "content": data["choices"][0]["message"]["content"]}
 
+class EditBlockRequest(BaseModel):
+    message: str
+    element: dict
+    projectId: Optional[str] = None
+
+@app.post("/api/ai/edit-block")
+async def edit_block(request: EditBlockRequest):
+    """AI-assisted block editing for landing page builder"""
+    if not OPENROUTER_API_KEY:
+        return {"success": True, "useLocal": True, "response": None, "changes": None}
+
+    element = request.element
+    edit_prompt = f"""Ты — ассистент редактирования блоков в конструкторе лендингов.
+
+Текущий блок:
+- Тип: {element.get('type', 'unknown')}
+- Название: {element.get('label', 'Блок')}
+- Контент: {json.dumps(element.get('content', {}), ensure_ascii=False)}
+- Стили: {json.dumps(element.get('styles', {}), ensure_ascii=False)}
+
+Пользователь просит: "{request.message}"
+
+Отвечай ТОЛЬКО валидным JSON:
+{{
+  "response": "Краткое описание что сделано",
+  "changes": {{
+    "content": {{ ... новые значения контента ... }},
+    "styles": {{ ... новые стили CSS ... }}
+  }}
+}}
+
+Правила:
+- Если нужно изменить только контент - не включай styles
+- Если нужно изменить только стили - не включай content
+- Если запрос непонятен, changes = null и объясни в response
+- Стили в формате CSS (camelCase): backgroundColor, fontSize, padding и т.д.
+- Цвета в hex формате: #ffffff"""
+
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                    "HTTP-Referer": "https://ai-tools-backend-d3zr.onrender.com",
+                    "X-Title": "Landing Page Builder"
+                },
+                json={
+                    "model": "google/gemini-2.0-flash-001",
+                    "messages": [{"role": "user", "content": edit_prompt}],
+                    "response_format": {"type": "json_object"},
+                    "temperature": 0.5,
+                    "max_tokens": 1000
+                }
+            )
+
+            if response.status_code != 200:
+                return {"success": True, "useLocal": True, "response": None, "changes": None}
+
+            data = response.json()
+            content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+
+            if not content:
+                return {"success": True, "useLocal": True, "response": None, "changes": None}
+
+            parsed = json.loads(content)
+            return {
+                "success": True,
+                "response": parsed.get("response", "Изменения применены."),
+                "changes": parsed.get("changes")
+            }
+
+    except Exception as e:
+        print(f"[AI Edit Block] Error: {e}")
+        return {"success": True, "useLocal": True, "response": None, "changes": None}
+
 @app.post("/api/chat/stream")
 async def chat_stream(request: ChatRequest):
     """Streaming chat endpoint using Server-Sent Events"""
