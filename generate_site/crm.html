@@ -216,27 +216,69 @@
                             <div class="value" id="stat-orders">0</div>
                             <div class="label">Заказов за месяц</div>
                         </div>
+                        <div class="stat-card">
+                            <div class="value" id="stat-tasks">0</div>
+                            <div class="label">Задач в работе</div>
+                        </div>
+                        <div class="stat-card" style="border-left: 3px solid var(--danger);">
+                            <div class="value" id="stat-overdue" style="color: var(--danger);">0</div>
+                            <div class="label">Просрочено</div>
+                        </div>
                     </div>
 
-                    <div class="card">
+                    <!-- AI Insights -->
+                    <div class="card" style="margin-bottom: 24px;">
                         <div class="card-header">
-                            <h3>Последние сделки</h3>
+                            <h3><i class="fas fa-robot" style="color: var(--primary); margin-right: 8px;"></i>AI-рекомендации</h3>
+                            <button class="btn btn-sm btn-outline" onclick="loadAIInsights()"><i class="fas fa-sync"></i></button>
                         </div>
-                        <div class="card-body">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Сделка</th>
-                                        <th>Клиент</th>
-                                        <th>Сумма</th>
-                                        <th>Этап</th>
-                                        <th>Дата</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="recentDeals">
-                                    <tr><td colspan="5"><div class="empty-state"><i class="fas fa-handshake"></i><h3>Нет сделок</h3></div></td></tr>
-                                </tbody>
-                            </table>
+                        <div class="card-body" style="padding: 16px;">
+                            <div id="aiInsights" class="stats-grid" style="gap: 12px;"></div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Последние сделки</h3>
+                            </div>
+                            <div class="card-body">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Сделка</th>
+                                            <th>Клиент</th>
+                                            <th>Сумма</th>
+                                            <th>Этап</th>
+                                            <th>Дата</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentDeals">
+                                        <tr><td colspan="5"><div class="empty-state"><i class="fas fa-handshake"></i><h3>Нет сделок</h3></div></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Последние заказы</h3>
+                            </div>
+                            <div class="card-body">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Заказ</th>
+                                            <th>Сумма</th>
+                                            <th>Статус</th>
+                                            <th>Дата</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentOrders">
+                                        <tr><td colspan="4"><div class="empty-state"><i class="fas fa-shopping-cart"></i><h3>Нет заказов</h3></div></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1409,13 +1451,22 @@
         }
 
         // Dashboard
-        function renderDashboard() {
+        async function renderDashboard() {
             document.getElementById('stat-deals').textContent = funnels.reduce((sum, f) => sum + (f.deals_count || 0), 0);
             document.getElementById('stat-clients').textContent = clients.length;
             document.getElementById('stat-orders').textContent = orders.length;
 
             const wonAmount = funnels.reduce((sum, f) => sum + (f.won_amount || 0), 0);
             document.getElementById('stat-won').textContent = formatMoney(wonAmount);
+
+            // Load additional stats
+            try {
+                const statsRes = await api('GET', `/analytics/${projectId}/dashboard`);
+                if (statsRes.success) {
+                    document.getElementById('stat-tasks').textContent = statsRes.stats.tasks?.total || 0;
+                    document.getElementById('stat-overdue').textContent = statsRes.stats.overdueTasks?.total || 0;
+                }
+            } catch (e) { console.log('Stats load failed', e); }
 
             // Recent deals
             const recentDeals = [];
@@ -1429,7 +1480,7 @@
             if (!recentDeals.length) {
                 tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><i class="fas fa-handshake"></i><h3>Нет сделок</h3></div></td></tr>';
             } else {
-                tbody.innerHTML = recentDeals.slice(0, 10).map(d => `
+                tbody.innerHTML = recentDeals.slice(0, 5).map(d => `
                     <tr>
                         <td><strong>${escapeHtml(d.name)}</strong></td>
                         <td>${d.client_first_name ? escapeHtml(d.client_first_name) : '-'}</td>
@@ -1438,6 +1489,57 @@
                         <td>${new Date(d.created_at).toLocaleDateString('ru')}</td>
                     </tr>
                 `).join('');
+            }
+
+            // Recent orders
+            const ordersBody = document.getElementById('recentOrders');
+            if (ordersBody) {
+                const statuses = { new: ['Новый', 'badge badge-new'], processing: ['В работе', 'badge badge-warning'], shipped: ['Отправлен', 'badge badge-new'], completed: ['Готов', 'badge badge-success'] };
+                if (!orders.length) {
+                    ordersBody.innerHTML = '<tr><td colspan="4"><div class="empty-state"><i class="fas fa-shopping-cart"></i><h3>Нет заказов</h3></div></td></tr>';
+                } else {
+                    ordersBody.innerHTML = orders.slice(0, 5).map(o => `
+                        <tr>
+                            <td><strong>${escapeHtml(o.order_number)}</strong></td>
+                            <td>${formatMoney(o.total)}</td>
+                            <td><span class="${statuses[o.status]?.[1] || 'badge'}">${statuses[o.status]?.[0] || o.status}</span></td>
+                            <td>${new Date(o.created_at).toLocaleDateString('ru')}</td>
+                        </tr>
+                    `).join('');
+                }
+            }
+
+            // Load AI insights
+            loadAIInsights();
+        }
+
+        async function loadAIInsights() {
+            const container = document.getElementById('aiInsights');
+            if (!container) return;
+
+            container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Анализ данных...</div>';
+
+            try {
+                const res = await api('GET', `/analytics/${projectId}/ai-insights`);
+                if (res.success && res.insights.length > 0) {
+                    const icons = { success: 'check-circle', warning: 'exclamation-triangle', danger: 'times-circle', info: 'info-circle' };
+                    const colors = { success: 'var(--success)', warning: 'var(--warning)', danger: 'var(--danger)', info: 'var(--primary)' };
+
+                    container.innerHTML = res.insights.map(i => `
+                        <div style="background: var(--bg-dark); padding: 16px; border-radius: 8px; border-left: 3px solid ${colors[i.type]};">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <i class="fas fa-${icons[i.type]}" style="color: ${colors[i.type]};"></i>
+                                <strong>${escapeHtml(i.title)}</strong>
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 13px; margin: 0;">${escapeHtml(i.description)}</p>
+                            ${i.action ? `<button class="btn btn-sm btn-outline" style="margin-top: 12px;" onclick="alert('${escapeHtml(i.action)}')">${escapeHtml(i.action)}</button>` : ''}
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted);"><i class="fas fa-check-circle" style="color: var(--success);"></i> Все показатели в норме</div>';
+                }
+            } catch (e) {
+                container.innerHTML = '<div style="grid-column: 1/-1; color: var(--text-muted);">Не удалось загрузить рекомендации</div>';
             }
         }
 

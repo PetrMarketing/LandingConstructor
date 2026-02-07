@@ -26,6 +26,12 @@ const dealsRoutes = require('./deals');
 const paymentsRoutes = require('./payments');
 const interactionsRoutes = require('./interactions');
 
+// Site & Design Routes
+const analyticsRoutes = require('./analytics');
+const menusRoutes = require('./menus');
+const themesRoutes = require('./themes');
+const automationsRoutes = require('./automations');
+
 // API routes - Auth & Core
 router.use('/auth', authRoutes);
 router.use('/users', usersRoutes);
@@ -50,6 +56,12 @@ router.use('/tasks', tasksRoutes);
 router.use('/deals', dealsRoutes);
 router.use('/payments', paymentsRoutes);
 router.use('/interactions', interactionsRoutes);
+
+// Site & Design routes
+router.use('/analytics', analyticsRoutes);
+router.use('/menus', menusRoutes);
+router.use('/themes', themesRoutes);
+router.use('/automations', automationsRoutes);
 
 // Health check
 router.get('/health', (req, res) => {
