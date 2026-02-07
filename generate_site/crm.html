@@ -176,6 +176,7 @@
             </nav>
             <nav class="nav-section">
                 <div class="nav-title">Каталог</div>
+                <div class="nav-item" data-section="products"><i class="fas fa-box"></i> Товары</div>
                 <div class="nav-item" data-section="services"><i class="fas fa-concierge-bell"></i> Услуги</div>
                 <div class="nav-item" data-section="courses"><i class="fas fa-graduation-cap"></i> Курсы</div>
             </nav>
@@ -417,6 +418,34 @@
                     </div>
                 </div>
 
+                <!-- Products -->
+                <div class="section" id="section-products">
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchProducts" placeholder="Поиск товаров..." oninput="searchProducts()">
+                        </div>
+                        <button class="btn btn-primary" onclick="openModal('productModal')"><i class="fas fa-plus"></i> Добавить товар</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Товар</th>
+                                        <th>Артикул</th>
+                                        <th>Цена</th>
+                                        <th>Остаток</th>
+                                        <th>Статус</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Services -->
                 <div class="section" id="section-services">
                     <div class="toolbar">
@@ -618,11 +647,51 @@
         </div>
     </div>
 
+    <!-- Product Modal -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новый товар</h3>
+                <button class="modal-close" onclick="closeModal('productModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название товара *</label>
+                    <input type="text" id="productName" placeholder="Название товара">
+                </div>
+                <div class="form-group">
+                    <label>Артикул (SKU)</label>
+                    <input type="text" id="productSku" placeholder="ART-001">
+                </div>
+                <div class="form-group">
+                    <label>Цена *</label>
+                    <input type="number" id="productPrice" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Старая цена</label>
+                    <input type="number" id="productOldPrice" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Остаток на складе</label>
+                    <input type="number" id="productStock" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="productDescription" rows="3" placeholder="Описание товара"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('productModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveProduct()">Добавить</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Config
         const API_BASE = '/api';
         let projectId = null;
-        let funnels = [], clients = [], employees = [], deals = [], orders = [], tasks = [];
+        let funnels = [], clients = [], employees = [], deals = [], orders = [], tasks = [], products = [];
 
         // API Helper
         async function api(method, endpoint, data = null) {
@@ -651,7 +720,14 @@
 
             setupNavigation();
             await loadAllData();
-            renderDashboard();
+
+            // Handle hash-based navigation from admin.html
+            const hash = location.hash.replace('#', '');
+            if (hash && document.getElementById('section-' + hash)) {
+                switchSection(hash);
+            } else {
+                renderDashboard();
+            }
         }
 
         async function loadAllData() {
@@ -659,7 +735,8 @@
                 loadFunnels(),
                 loadClients(),
                 loadEmployees(),
-                loadOrders()
+                loadOrders(),
+                loadProducts()
             ]);
         }
 
@@ -680,7 +757,7 @@
                 dashboard: 'Дашборд', funnels: 'Воронки продаж', deals: 'Сделки',
                 clients: 'Клиенты', segments: 'Сегменты', employees: 'Сотрудники',
                 tasks: 'Задачи', orders: 'Заказы', payments: 'Платежи',
-                services: 'Услуги', courses: 'Курсы'
+                products: 'Товары', services: 'Услуги', courses: 'Курсы'
             };
             document.getElementById('pageTitle').textContent = titles[section] || section;
 
@@ -688,6 +765,7 @@
             if (section === 'deals') loadDealsKanban();
             if (section === 'tasks') loadTasks();
             if (section === 'orders') loadOrders();
+            if (section === 'products') loadProducts();
         }
 
         // Modal
@@ -1062,6 +1140,90 @@
                     </td>
                 </tr>
             `).join('');
+        }
+
+        // Products
+        async function loadProducts() {
+            const res = await api('GET', `/products/${projectId}`);
+            if (res.success) {
+                products = res.products || [];
+            }
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const tbody = document.getElementById('productsTable');
+            if (!products.length) {
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-box"></i><h3>Нет товаров</h3><p>Добавьте первый товар</p></div></td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = products.map(p => `
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; background: var(--bg-input); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-box" style="color: var(--text-muted);"></i>
+                            </div>
+                            <strong>${escapeHtml(p.name)}</strong>
+                        </div>
+                    </td>
+                    <td>${escapeHtml(p.sku || '-')}</td>
+                    <td>${formatMoney(p.price)}</td>
+                    <td>${p.stock || 0}</td>
+                    <td><span class="badge ${p.is_active ? 'badge-success' : 'badge-danger'}">${p.is_active ? 'Активен' : 'Скрыт'}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-outline btn-danger" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function saveProduct() {
+            const name = document.getElementById('productName').value;
+            const sku = document.getElementById('productSku').value;
+            const price = document.getElementById('productPrice').value;
+            const old_price = document.getElementById('productOldPrice').value;
+            const stock = document.getElementById('productStock').value;
+            const description = document.getElementById('productDescription').value;
+
+            if (!name || !price) return alert('Заполните название и цену');
+
+            const res = await api('POST', `/products/${projectId}`, {
+                name, sku, price: parseFloat(price), old_price: parseFloat(old_price) || null,
+                stock: parseInt(stock) || 0, description, is_active: true
+            });
+
+            if (res.success) {
+                closeModal('productModal');
+                ['productName', 'productSku', 'productPrice', 'productOldPrice', 'productStock', 'productDescription'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                loadProducts();
+            } else {
+                alert(res.error || 'Ошибка добавления товара');
+            }
+        }
+
+        async function deleteProduct(id) {
+            if (!confirm('Удалить товар?')) return;
+            await api('DELETE', `/products/${projectId}/${id}`);
+            loadProducts();
+        }
+
+        function searchProducts() {
+            // Simple client-side filter
+            const query = document.getElementById('searchProducts').value.toLowerCase();
+            const filtered = products.filter(p =>
+                p.name.toLowerCase().includes(query) ||
+                (p.sku && p.sku.toLowerCase().includes(query))
+            );
+            // Re-render with filtered list
+            const originalProducts = products;
+            products = filtered;
+            renderProducts();
+            products = originalProducts;
         }
 
         // Dashboard
