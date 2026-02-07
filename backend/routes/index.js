@@ -35,6 +35,9 @@ const automationsRoutes = require('./automations');
 // E-commerce Extensions
 const ecommerceRoutes = require('./ecommerce');
 
+// Booking System (YClients-like)
+const bookingsRoutes = require('./bookings');
+
 // API routes - Auth & Core
 router.use('/auth', authRoutes);
 router.use('/users', usersRoutes);
@@ -68,6 +71,9 @@ router.use('/automations', automationsRoutes);
 
 // E-commerce extensions (brands, promo codes, collections, related products)
 router.use('/ecommerce', ecommerceRoutes);
+
+// Booking system (appointments, schedules, visits)
+router.use('/bookings', bookingsRoutes);
 
 // Health check
 router.get('/health', (req, res) => {

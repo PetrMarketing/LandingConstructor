@@ -1136,6 +1136,108 @@ function createCMSTables(db) {
         )
     `);
 
+    // ============================================================
+    // BOOKING SYSTEM (YClients-like features)
+    // ============================================================
+
+    // Расписание сотрудников
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS employee_schedules (
+            id TEXT PRIMARY KEY,
+            employee_id TEXT NOT NULL,
+            day_of_week INTEGER NOT NULL,
+            start_time TEXT NOT NULL,
+            end_time TEXT NOT NULL,
+            is_working INTEGER DEFAULT 1,
+            break_start TEXT,
+            break_end TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE,
+            UNIQUE(employee_id, day_of_week)
+        )
+    `);
+
+    // Записи на услуги
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS bookings (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            client_id TEXT,
+            employee_id TEXT,
+            service_id TEXT NOT NULL,
+            booking_date TEXT NOT NULL,
+            start_time TEXT NOT NULL,
+            end_time TEXT NOT NULL,
+            status TEXT DEFAULT 'pending',
+            client_name TEXT,
+            client_phone TEXT,
+            client_email TEXT,
+            comment TEXT,
+            source TEXT DEFAULT 'website',
+            price REAL,
+            paid_amount REAL DEFAULT 0,
+            cancelled_reason TEXT,
+            reminder_sent INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE SET NULL,
+            FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE SET NULL,
+            FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Напоминания о записи
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS booking_reminders (
+            id TEXT PRIMARY KEY,
+            booking_id TEXT NOT NULL,
+            type TEXT DEFAULT 'sms',
+            send_at TEXT NOT NULL,
+            message TEXT,
+            status TEXT DEFAULT 'pending',
+            sent_at TEXT,
+            error TEXT,
+            FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Исключения в расписании (отпуск, больничный)
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS schedule_exceptions (
+            id TEXT PRIMARY KEY,
+            employee_id TEXT NOT NULL,
+            date TEXT NOT NULL,
+            type TEXT DEFAULT 'day_off',
+            reason TEXT,
+            start_time TEXT,
+            end_time TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
+        )
+    `);
+
+    // История посещений клиента
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS client_visits (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            client_id TEXT NOT NULL,
+            booking_id TEXT,
+            service_id TEXT,
+            employee_id TEXT,
+            visit_date TEXT NOT NULL,
+            status TEXT DEFAULT 'completed',
+            notes TEXT,
+            rating INTEGER,
+            feedback TEXT,
+            amount_paid REAL,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
+        )
+    `);
+
     // Расширение таблицы products (миграция)
     try {
         db.exec(`ALTER TABLE products ADD COLUMN brand_id TEXT`);
