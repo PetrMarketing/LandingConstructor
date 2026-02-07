@@ -66,7 +66,7 @@ router.get('/:projectId', (req, res) => {
         }
 
         if (has_orders === '1') {
-            query += ` AND EXISTS (SELECT 1 FROM orders WHERE client_id = c.id)`;
+            query += ` AND EXISTS (SELECT 1 FROM orders WHERE customer_id = c.id)`;
         }
 
         if (has_deals === '1') {
@@ -153,7 +153,7 @@ router.get('/:projectId', (req, res) => {
             countParams.push(service_id);
         }
         if (has_orders === '1') {
-            countQuery += ` AND EXISTS (SELECT 1 FROM orders WHERE client_id = c.id)`;
+            countQuery += ` AND EXISTS (SELECT 1 FROM orders WHERE customer_id = c.id)`;
         }
         if (has_deals === '1') {
             countQuery += ` AND EXISTS (SELECT 1 FROM deals WHERE client_id = c.id)`;
