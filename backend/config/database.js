@@ -1238,6 +1238,195 @@ function createCMSTables(db) {
         )
     `);
 
+    // ============================================================
+    // COURSE EXTENSIONS (GetCourse-like features)
+    // ============================================================
+
+    // Доступы к курсам (подписки/покупки)
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS course_access (
+            id TEXT PRIMARY KEY,
+            course_id TEXT NOT NULL,
+            client_id TEXT NOT NULL,
+            access_type TEXT DEFAULT 'full',
+            source TEXT DEFAULT 'purchase',
+            order_id TEXT,
+            starts_at TEXT,
+            expires_at TEXT,
+            is_active INTEGER DEFAULT 1,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+            FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
+            UNIQUE(course_id, client_id)
+        )
+    `);
+
+    // Домашние задания
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS homework (
+            id TEXT PRIMARY KEY,
+            lesson_id TEXT NOT NULL,
+            course_id TEXT NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT,
+            instructions TEXT,
+            deadline_days INTEGER,
+            max_score INTEGER DEFAULT 100,
+            is_required INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (lesson_id) REFERENCES course_lessons(id) ON DELETE CASCADE,
+            FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Ответы на домашние задания
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS homework_submissions (
+            id TEXT PRIMARY KEY,
+            homework_id TEXT NOT NULL,
+            client_id TEXT NOT NULL,
+            content TEXT,
+            attachments TEXT DEFAULT '[]',
+            status TEXT DEFAULT 'submitted',
+            score INTEGER,
+            feedback TEXT,
+            reviewed_by TEXT,
+            submitted_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            reviewed_at TEXT,
+            FOREIGN KEY (homework_id) REFERENCES homework(id) ON DELETE CASCADE,
+            FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Тесты/квизы
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS quizzes (
+            id TEXT PRIMARY KEY,
+            lesson_id TEXT,
+            course_id TEXT NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT,
+            time_limit_minutes INTEGER,
+            passing_score INTEGER DEFAULT 70,
+            attempts_allowed INTEGER DEFAULT 3,
+            shuffle_questions INTEGER DEFAULT 0,
+            show_answers INTEGER DEFAULT 1,
+            is_required INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (lesson_id) REFERENCES course_lessons(id) ON DELETE SET NULL,
+            FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Вопросы теста
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS quiz_questions (
+            id TEXT PRIMARY KEY,
+            quiz_id TEXT NOT NULL,
+            question_type TEXT DEFAULT 'single',
+            question_text TEXT NOT NULL,
+            options TEXT DEFAULT '[]',
+            correct_answer TEXT,
+            explanation TEXT,
+            points INTEGER DEFAULT 1,
+            sort_order INTEGER DEFAULT 0,
+            FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Результаты тестов
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS quiz_attempts (
+            id TEXT PRIMARY KEY,
+            quiz_id TEXT NOT NULL,
+            client_id TEXT NOT NULL,
+            answers TEXT DEFAULT '{}',
+            score INTEGER,
+            max_score INTEGER,
+            percent INTEGER,
+            passed INTEGER DEFAULT 0,
+            started_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            completed_at TEXT,
+            time_spent_seconds INTEGER,
+            FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
+            FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Вебинары/эфиры
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS webinars (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            course_id TEXT,
+            title TEXT NOT NULL,
+            description TEXT,
+            host_id TEXT,
+            scheduled_at TEXT NOT NULL,
+            duration_minutes INTEGER DEFAULT 60,
+            timezone TEXT DEFAULT 'Europe/Moscow',
+            platform TEXT DEFAULT 'zoom',
+            join_url TEXT,
+            recording_url TEXT,
+            status TEXT DEFAULT 'scheduled',
+            max_participants INTEGER,
+            reminder_sent INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE SET NULL,
+            FOREIGN KEY (host_id) REFERENCES employees(id) ON DELETE SET NULL
+        )
+    `);
+
+    // Регистрации на вебинары
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS webinar_registrations (
+            id TEXT PRIMARY KEY,
+            webinar_id TEXT NOT NULL,
+            client_id TEXT,
+            client_name TEXT,
+            client_email TEXT,
+            attended INTEGER DEFAULT 0,
+            attended_minutes INTEGER,
+            registered_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (webinar_id) REFERENCES webinars(id) ON DELETE CASCADE,
+            FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE SET NULL
+        )
+    `);
+
+    // Шаблоны сертификатов
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS certificate_templates (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            design TEXT DEFAULT 'default',
+            background_image TEXT,
+            text_template TEXT,
+            fields TEXT DEFAULT '[]',
+            is_default INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Выданные сертификаты
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS certificates (
+            id TEXT PRIMARY KEY,
+            template_id TEXT,
+            course_id TEXT NOT NULL,
+            client_id TEXT NOT NULL,
+            certificate_number TEXT UNIQUE,
+            issued_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            pdf_url TEXT,
+            verification_code TEXT,
+            FOREIGN KEY (template_id) REFERENCES certificate_templates(id) ON DELETE SET NULL,
+            FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+            FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
+        )
+    `);
+
     // Расширение таблицы products (миграция)
     try {
         db.exec(`ALTER TABLE products ADD COLUMN brand_id TEXT`);

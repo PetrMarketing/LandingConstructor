@@ -38,6 +38,9 @@ const ecommerceRoutes = require('./ecommerce');
 // Booking System (YClients-like)
 const bookingsRoutes = require('./bookings');
 
+// Learning Management (GetCourse-like)
+const learningRoutes = require('./learning');
+
 // API routes - Auth & Core
 router.use('/auth', authRoutes);
 router.use('/users', usersRoutes);
@@ -74,6 +77,9 @@ router.use('/ecommerce', ecommerceRoutes);
 
 // Booking system (appointments, schedules, visits)
 router.use('/bookings', bookingsRoutes);
+
+// Learning management (access, homework, quizzes, webinars, certificates)
+router.use('/learning', learningRoutes);
 
 // Health check
 router.get('/health', (req, res) => {
