@@ -1461,6 +1461,134 @@ function createCMSTables(db) {
     try {
         db.exec(`ALTER TABLE products ADD COLUMN min_stock_alert INTEGER DEFAULT 5`);
     } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE products ADD COLUMN compare_at_price REAL`);
+    } catch (e) { /* column exists */ }
+
+    // Расширение таблицы services (YClients-like)
+    try {
+        db.exec(`ALTER TABLE services ADD COLUMN buffer_time INTEGER DEFAULT 0`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE services ADD COLUMN max_clients INTEGER DEFAULT 1`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE services ADD COLUMN online_booking INTEGER DEFAULT 1`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE services ADD COLUMN category TEXT`);
+    } catch (e) { /* column exists */ }
+
+    // Расширение таблицы courses (GetCourse-like)
+    try {
+        db.exec(`ALTER TABLE courses ADD COLUMN type TEXT DEFAULT 'course'`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE courses ADD COLUMN access_days INTEGER`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE courses ADD COLUMN drip_content INTEGER DEFAULT 0`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE courses ADD COLUMN certificate_enabled INTEGER DEFAULT 0`);
+    } catch (e) { /* column exists */ }
+
+    // Отзывы на товары (product_reviews)
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS product_reviews (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            product_id TEXT NOT NULL,
+            client_id TEXT,
+            client_name TEXT,
+            rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+            title TEXT,
+            content TEXT,
+            pros TEXT,
+            cons TEXT,
+            images TEXT DEFAULT '[]',
+            is_verified INTEGER DEFAULT 0,
+            is_approved INTEGER DEFAULT 0,
+            admin_reply TEXT,
+            admin_reply_at TEXT,
+            helpful_count INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+            FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE SET NULL
+        )
+    `);
+
+    // Слоты времени (для более гибкого управления расписанием)
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS time_slots (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            employee_id TEXT,
+            service_id TEXT,
+            date TEXT NOT NULL,
+            start_time TEXT NOT NULL,
+            end_time TEXT NOT NULL,
+            status TEXT DEFAULT 'available',
+            booking_id TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE,
+            FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE SET NULL,
+            FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE SET NULL
+        )
+    `);
+
+    // Связь сотрудник-услуга (какие услуги может оказывать сотрудник)
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS service_employees (
+            id TEXT PRIMARY KEY,
+            service_id TEXT NOT NULL,
+            employee_id TEXT NOT NULL,
+            price_override REAL,
+            duration_override INTEGER,
+            is_active INTEGER DEFAULT 1,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE,
+            FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE,
+            UNIQUE(service_id, employee_id)
+        )
+    `);
+
+    // История бронирований (для аналитики и отчетов)
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS booking_history (
+            id TEXT PRIMARY KEY,
+            booking_id TEXT NOT NULL,
+            action TEXT NOT NULL,
+            old_status TEXT,
+            new_status TEXT,
+            employee_id TEXT,
+            comment TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
+            FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE SET NULL
+        )
+    `);
+
+    // Прогресс по урокам (для каждого урока отдельно)
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS lesson_progress (
+            id TEXT PRIMARY KEY,
+            lesson_id TEXT NOT NULL,
+            client_id TEXT NOT NULL,
+            status TEXT DEFAULT 'not_started',
+            progress_percent INTEGER DEFAULT 0,
+            last_position INTEGER DEFAULT 0,
+            completed_at TEXT,
+            time_spent_seconds INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (lesson_id) REFERENCES course_lessons(id) ON DELETE CASCADE,
+            FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
+            UNIQUE(lesson_id, client_id)
+        )
+    `)
 
     // ============================================================
     // AMO CRM-LIKE FEATURES
@@ -1809,6 +1937,22 @@ function createCMSTables(db) {
         CREATE INDEX IF NOT EXISTS idx_tags_entity ON tags(entity_type);
 
         CREATE INDEX IF NOT EXISTS idx_loss_reasons_project ON loss_reasons(project_id);
+
+        CREATE INDEX IF NOT EXISTS idx_product_reviews_project ON product_reviews(project_id);
+        CREATE INDEX IF NOT EXISTS idx_product_reviews_product ON product_reviews(product_id);
+        CREATE INDEX IF NOT EXISTS idx_product_reviews_client ON product_reviews(client_id);
+
+        CREATE INDEX IF NOT EXISTS idx_time_slots_project ON time_slots(project_id);
+        CREATE INDEX IF NOT EXISTS idx_time_slots_employee ON time_slots(employee_id);
+        CREATE INDEX IF NOT EXISTS idx_time_slots_date ON time_slots(date);
+
+        CREATE INDEX IF NOT EXISTS idx_service_employees_service ON service_employees(service_id);
+        CREATE INDEX IF NOT EXISTS idx_service_employees_employee ON service_employees(employee_id);
+
+        CREATE INDEX IF NOT EXISTS idx_booking_history_booking ON booking_history(booking_id);
+
+        CREATE INDEX IF NOT EXISTS idx_lesson_progress_lesson ON lesson_progress(lesson_id);
+        CREATE INDEX IF NOT EXISTS idx_lesson_progress_client ON lesson_progress(client_id);
     `);
 
     console.log('CMS extension tables created');
