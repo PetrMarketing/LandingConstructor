@@ -1493,6 +1493,20 @@ function createCMSTables(db) {
         db.exec(`ALTER TABLE courses ADD COLUMN certificate_enabled INTEGER DEFAULT 0`);
     } catch (e) { /* column exists */ }
 
+    // Migrations: regulations new columns
+    try {
+        db.exec(`ALTER TABLE regulations ADD COLUMN description TEXT DEFAULT ''`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE regulations ADD COLUMN content TEXT DEFAULT '[]'`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE regulations ADD COLUMN access TEXT DEFAULT '[]'`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE regulations ADD COLUMN access_all INTEGER DEFAULT 1`);
+    } catch (e) { /* column exists */ }
+
     // Отзывы на товары (product_reviews)
     db.exec(`
         CREATE TABLE IF NOT EXISTS product_reviews (
@@ -1629,15 +1643,19 @@ function createCMSTables(db) {
             id TEXT PRIMARY KEY,
             project_id TEXT NOT NULL,
             name TEXT NOT NULL,
+            description TEXT DEFAULT '',
             entity_type TEXT DEFAULT 'deal',
             funnel_id TEXT,
             stage_id TEXT,
-            condition_type TEXT NOT NULL,
-            condition_value INTEGER NOT NULL,
+            condition_type TEXT DEFAULT '',
+            condition_value INTEGER DEFAULT 0,
             condition_unit TEXT DEFAULT 'hours',
-            action_type TEXT NOT NULL,
+            action_type TEXT DEFAULT '',
             action_config TEXT DEFAULT '{}',
             notification_employees TEXT DEFAULT '[]',
+            content TEXT DEFAULT '[]',
+            access TEXT DEFAULT '[]',
+            access_all INTEGER DEFAULT 1,
             is_active INTEGER DEFAULT 1,
             priority INTEGER DEFAULT 0,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP,

@@ -4451,8 +4451,14 @@ XL"></textarea>
             if (token) opts.headers['Authorization'] = 'Bearer ' + token;
             if (data) opts.body = JSON.stringify(data);
 
-            const res = await fetch(API_BASE + endpoint, opts);
-            return res.json();
+            try {
+                const res = await fetch(API_BASE + endpoint, opts);
+                const json = await res.json();
+                return json;
+            } catch (err) {
+                console.error('API error:', method, endpoint, err);
+                return { success: false, error: 'Ошибка сети: сервер не отвечает' };
+            }
         }
 
         // Init

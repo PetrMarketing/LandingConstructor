@@ -46,7 +46,10 @@ router.get('/:projectId', (req, res) => {
             regulations: regulations.map(r => ({
                 ...r,
                 action_config: JSON.parse(r.action_config || '{}'),
-                notification_employees: JSON.parse(r.notification_employees || '[]')
+                notification_employees: JSON.parse(r.notification_employees || '[]'),
+                content: r.content ? (typeof r.content === 'string' ? JSON.parse(r.content) : r.content) : [],
+                access: r.access ? (typeof r.access === 'string' ? JSON.parse(r.access) : r.access) : [],
+                access_all: r.access_all !== undefined ? !!r.access_all : true
             }))
         });
     } catch (error) {
@@ -102,68 +105,56 @@ router.post('/:projectId', (req, res) => {
         const db = getDb();
         const id = uuidv4();
         const {
-            name, entity_type, funnel_id, stage_id, condition_type, condition_value,
-            condition_unit, action_type, action_config, notification_employees, priority
+            name, description, entity_type, funnel_id, stage_id, condition_type, condition_value,
+            condition_unit, action_type, action_config, notification_employees, priority,
+            content, access, access_all, updated_at
         } = req.body;
 
-        if (!name || !condition_type || !condition_value || !action_type) {
+        if (!name) {
             return res.status(400).json({
                 success: false,
-                error: 'Название, условие и действие обязательны'
+                error: 'Название обязательно'
             });
         }
 
-        // Validate condition_type
-        const validConditions = [
-            'time_in_stage',      // Время нахождения на этапе
-            'time_since_created', // Время с момента создания
-            'time_since_updated', // Время с последнего обновления
-            'no_tasks',           // Нет задач
-            'no_activity',        // Нет активности
-            'overdue_task'        // Просроченная задача
-        ];
+        // Document-style regulation (Notion-like editor)
+        if (content !== undefined) {
+            db.prepare(`
+                INSERT INTO regulations (
+                    id, project_id, name, description, content, access, access_all,
+                    condition_type, condition_value, action_type, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, '', 0, '', ?)
+            `).run(
+                id, req.params.projectId, name, description || '',
+                typeof content === 'string' ? content : JSON.stringify(content || []),
+                typeof access === 'string' ? access : JSON.stringify(access || []),
+                access_all !== undefined ? (access_all ? 1 : 0) : 1,
+                updated_at || new Date().toISOString()
+            );
+        } else {
+            // SLA-style regulation (legacy)
+            if (!condition_type || !condition_value || !action_type) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Название, условие и действие обязательны'
+                });
+            }
 
-        if (!validConditions.includes(condition_type)) {
-            return res.status(400).json({
-                success: false,
-                error: `Неверный тип условия. Допустимые: ${validConditions.join(', ')}`
-            });
+            db.prepare(`
+                INSERT INTO regulations (
+                    id, project_id, name, entity_type, funnel_id, stage_id,
+                    condition_type, condition_value, condition_unit, action_type,
+                    action_config, notification_employees, priority
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `).run(
+                id, req.params.projectId, name, entity_type || 'deal',
+                funnel_id, stage_id, condition_type, condition_value,
+                condition_unit || 'hours', action_type,
+                JSON.stringify(action_config || {}),
+                JSON.stringify(notification_employees || []),
+                priority || 0
+            );
         }
-
-        // Validate action_type
-        const validActions = [
-            'notify_employee',    // Уведомить сотрудника
-            'notify_manager',     // Уведомить руководителя
-            'create_task',        // Создать задачу
-            'move_stage',         // Переместить на этап
-            'change_responsible', // Сменить ответственного
-            'add_tag',           // Добавить тег
-            'send_email',        // Отправить email
-            'send_sms',          // Отправить SMS
-            'webhook'            // Вызвать webhook
-        ];
-
-        if (!validActions.includes(action_type)) {
-            return res.status(400).json({
-                success: false,
-                error: `Неверный тип действия. Допустимые: ${validActions.join(', ')}`
-            });
-        }
-
-        db.prepare(`
-            INSERT INTO regulations (
-                id, project_id, name, entity_type, funnel_id, stage_id,
-                condition_type, condition_value, condition_unit, action_type,
-                action_config, notification_employees, priority
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `).run(
-            id, req.params.projectId, name, entity_type || 'deal',
-            funnel_id, stage_id, condition_type, condition_value,
-            condition_unit || 'hours', action_type,
-            JSON.stringify(action_config || {}),
-            JSON.stringify(notification_employees || []),
-            priority || 0
-        );
 
         const regulation = db.prepare('SELECT * FROM regulations WHERE id = ?').get(id);
 
@@ -186,34 +177,57 @@ router.put('/:projectId/:regulationId', (req, res) => {
     try {
         const db = getDb();
         const {
-            name, entity_type, funnel_id, stage_id, condition_type, condition_value,
-            condition_unit, action_type, action_config, notification_employees, priority, is_active
+            name, description, entity_type, funnel_id, stage_id, condition_type, condition_value,
+            condition_unit, action_type, action_config, notification_employees, priority, is_active,
+            content, access, access_all, updated_at
         } = req.body;
 
-        db.prepare(`
-            UPDATE regulations SET
-                name = COALESCE(?, name),
-                entity_type = COALESCE(?, entity_type),
-                funnel_id = COALESCE(?, funnel_id),
-                stage_id = COALESCE(?, stage_id),
-                condition_type = COALESCE(?, condition_type),
-                condition_value = COALESCE(?, condition_value),
-                condition_unit = COALESCE(?, condition_unit),
-                action_type = COALESCE(?, action_type),
-                action_config = COALESCE(?, action_config),
-                notification_employees = COALESCE(?, notification_employees),
-                priority = COALESCE(?, priority),
-                is_active = COALESCE(?, is_active),
-                updated_at = CURRENT_TIMESTAMP
-            WHERE id = ? AND project_id = ?
-        `).run(
-            name, entity_type, funnel_id, stage_id, condition_type, condition_value,
-            condition_unit, action_type,
-            action_config ? JSON.stringify(action_config) : null,
-            notification_employees ? JSON.stringify(notification_employees) : null,
-            priority, is_active !== undefined ? (is_active ? 1 : 0) : null,
-            req.params.regulationId, req.params.projectId
-        );
+        // Document-style update
+        if (content !== undefined) {
+            db.prepare(`
+                UPDATE regulations SET
+                    name = COALESCE(?, name),
+                    description = COALESCE(?, description),
+                    content = ?,
+                    access = ?,
+                    access_all = ?,
+                    updated_at = COALESCE(?, CURRENT_TIMESTAMP)
+                WHERE id = ? AND project_id = ?
+            `).run(
+                name, description || '',
+                typeof content === 'string' ? content : JSON.stringify(content || []),
+                typeof access === 'string' ? access : JSON.stringify(access || []),
+                access_all !== undefined ? (access_all ? 1 : 0) : 1,
+                updated_at || new Date().toISOString(),
+                req.params.regulationId, req.params.projectId
+            );
+        } else {
+            // SLA-style update
+            db.prepare(`
+                UPDATE regulations SET
+                    name = COALESCE(?, name),
+                    entity_type = COALESCE(?, entity_type),
+                    funnel_id = COALESCE(?, funnel_id),
+                    stage_id = COALESCE(?, stage_id),
+                    condition_type = COALESCE(?, condition_type),
+                    condition_value = COALESCE(?, condition_value),
+                    condition_unit = COALESCE(?, condition_unit),
+                    action_type = COALESCE(?, action_type),
+                    action_config = COALESCE(?, action_config),
+                    notification_employees = COALESCE(?, notification_employees),
+                    priority = COALESCE(?, priority),
+                    is_active = COALESCE(?, is_active),
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = ? AND project_id = ?
+            `).run(
+                name, entity_type, funnel_id, stage_id, condition_type, condition_value,
+                condition_unit, action_type,
+                action_config ? JSON.stringify(action_config) : null,
+                notification_employees ? JSON.stringify(notification_employees) : null,
+                priority, is_active !== undefined ? (is_active ? 1 : 0) : null,
+                req.params.regulationId, req.params.projectId
+            );
+        }
 
         const regulation = db.prepare('SELECT * FROM regulations WHERE id = ?').get(req.params.regulationId);
 
