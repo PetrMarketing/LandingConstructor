@@ -4286,6 +4286,488 @@ XL"></textarea>
             populateSelects();
             loadServicesForBooking();
             loadCoursesForModals();
+
+            // Seed demo data if everything is empty (first launch)
+            if (!funnels.length && !clients.length && !products.length) {
+                seedDemoData();
+            }
+        }
+
+        // ===== Demo / Template Data =====
+        function seedDemoData() {
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const yesterday = new Date(now - 86400000).toISOString().split('T')[0];
+            const weekAgo = new Date(now - 7 * 86400000).toISOString().split('T')[0];
+            const monthAgo = new Date(now - 30 * 86400000).toISOString().split('T')[0];
+
+            // === Funnels ===
+            funnels = [{
+                id: 'demo-f1', name: 'Основная воронка продаж',
+                stages: [
+                    { id: 'demo-s1', name: 'Новая заявка', color: '#3b82f6', order_index: 0, deals_count: 3 },
+                    { id: 'demo-s2', name: 'Квалификация', color: '#f59e0b', order_index: 1, deals_count: 2 },
+                    { id: 'demo-s3', name: 'Предложение', color: '#8b5cf6', order_index: 2, deals_count: 1 },
+                    { id: 'demo-s4', name: 'Переговоры', color: '#06b6d4', order_index: 3, deals_count: 1 },
+                    { id: 'demo-s5', name: 'Закрыто (выигрыш)', color: '#10b981', order_index: 4, deals_count: 2 }
+                ],
+                deals_count: 9
+            }, {
+                id: 'demo-f2', name: 'Вебинарная воронка',
+                stages: [
+                    { id: 'demo-s6', name: 'Регистрация', color: '#3b82f6', order_index: 0, deals_count: 5 },
+                    { id: 'demo-s7', name: 'Посетил', color: '#f59e0b', order_index: 1, deals_count: 3 },
+                    { id: 'demo-s8', name: 'Оставил заявку', color: '#10b981', order_index: 2, deals_count: 1 }
+                ],
+                deals_count: 9
+            }];
+
+            // === Clients ===
+            clients = [
+                { id: 'demo-c1', first_name: 'Анна', last_name: 'Петрова', email: 'anna@example.com', phone: '+7 916 123-45-67', company: 'ООО "Рассвет"', source: 'Сайт', tags: '["VIP","Постоянный"]', total_spent: 185000, total_orders: 5, courses_count: 2, bookings_count: 3, created_at: monthAgo },
+                { id: 'demo-c2', first_name: 'Дмитрий', last_name: 'Козлов', email: 'dmitry.k@example.com', phone: '+7 926 987-65-43', company: 'ИП Козлов', source: 'Instagram', tags: '["Новый"]', total_spent: 42000, total_orders: 2, courses_count: 1, bookings_count: 1, created_at: weekAgo },
+                { id: 'demo-c3', first_name: 'Елена', last_name: 'Сидорова', email: 'elena.s@example.com', phone: '+7 903 555-12-34', company: 'Фриланс', source: 'Рекомендация', tags: '["Активный"]', total_spent: 67500, total_orders: 3, courses_count: 1, bookings_count: 0, created_at: monthAgo },
+                { id: 'demo-c4', first_name: 'Максим', last_name: 'Иванов', email: 'max.ivanov@example.com', phone: '+7 977 333-44-55', company: 'TechStart', source: 'Вебинар', tags: '["Лид"]', total_spent: 0, total_orders: 0, courses_count: 0, bookings_count: 0, created_at: yesterday }
+            ];
+
+            // === Employees ===
+            employees = [
+                { id: 'demo-e1', name: 'Мария Волкова', role: 'Менеджер', email: 'maria@company.com', phone: '+7 916 100-00-01', avatar: null },
+                { id: 'demo-e2', name: 'Алексей Смирнов', role: 'Руководитель отдела', email: 'alexey@company.com', phone: '+7 916 100-00-02', avatar: null },
+                { id: 'demo-e3', name: 'Ольга Кузнецова', role: 'Специалист поддержки', email: 'olga@company.com', phone: '+7 916 100-00-03', avatar: null }
+            ];
+
+            // === Deals ===
+            deals = [
+                { id: 'demo-d1', name: 'Разработка сайта для "Рассвет"', amount: 150000, stage_id: 'demo-s3', stage_name: 'Предложение', funnel_id: 'demo-f1', client_id: 'demo-c1', client_name: 'Анна Петрова', probability: 70, created_at: weekAgo },
+                { id: 'demo-d2', name: 'Консультация по маркетингу', amount: 35000, stage_id: 'demo-s2', stage_name: 'Квалификация', funnel_id: 'demo-f1', client_id: 'demo-c2', client_name: 'Дмитрий Козлов', probability: 40, created_at: yesterday },
+                { id: 'demo-d3', name: 'Внедрение CRM для TechStart', amount: 250000, stage_id: 'demo-s1', stage_name: 'Новая заявка', funnel_id: 'demo-f1', client_id: 'demo-c4', client_name: 'Максим Иванов', probability: 20, created_at: today },
+                { id: 'demo-d4', name: 'Курс по SMM — Сидорова', amount: 15000, stage_id: 'demo-s5', stage_name: 'Закрыто (выигрыш)', funnel_id: 'demo-f1', client_id: 'demo-c3', client_name: 'Елена Сидорова', probability: 100, created_at: monthAgo }
+            ];
+
+            // === Orders ===
+            orders = [
+                { id: 'demo-o1', order_number: 'ORD-2026-001', client_id: 'demo-c1', client_name: 'Анна Петрова', total: 45000, status: 'completed', payment_status: 'paid', created_at: monthAgo },
+                { id: 'demo-o2', order_number: 'ORD-2026-002', client_id: 'demo-c3', client_name: 'Елена Сидорова', total: 15000, status: 'completed', payment_status: 'paid', created_at: weekAgo },
+                { id: 'demo-o3', order_number: 'ORD-2026-003', client_id: 'demo-c2', client_name: 'Дмитрий Козлов', total: 27000, status: 'processing', payment_status: 'pending', created_at: yesterday },
+                { id: 'demo-o4', order_number: 'ORD-2026-004', client_id: 'demo-c1', client_name: 'Анна Петрова', total: 89000, status: 'new', payment_status: 'pending', created_at: today }
+            ];
+
+            // === Products ===
+            products = [
+                { id: 'demo-p1', name: 'Курс "Основы маркетинга"', sku: 'CRS-MRK-01', price: 15000, old_price: 25000, stock: 999, is_active: true, product_type: 'online', brand: null, images: [], variants: [], description: 'Полный курс по основам интернет-маркетинга' },
+                { id: 'demo-p2', name: 'Рабочая тетрадь к курсу', sku: 'WB-MRK-01', price: 1500, old_price: null, stock: 45, is_active: true, product_type: 'physical', brand: 'StudyKit', images: [], variants: [{ name: 'A4', sku_suffix: '-A4', price_modifier: 0, stock: 30 }, { name: 'A5', sku_suffix: '-A5', price_modifier: -200, stock: 15 }] },
+                { id: 'demo-p3', name: 'Шаблоны для соцсетей (100 шт)', sku: 'TPL-SOC-100', price: 3900, old_price: 5900, stock: 999, is_active: true, product_type: 'digital', brand: null, images: [], variants: [] },
+                { id: 'demo-p4', name: 'Персональная консультация 1 час', sku: 'CONS-1H', price: 7500, old_price: null, stock: 10, is_active: true, product_type: 'online', brand: null, images: [], variants: [] }
+            ];
+
+            // === Tasks ===
+            tasks = [
+                { id: 'demo-t1', title: 'Подготовить КП для "Рассвет"', description: 'Коммерческое предложение на разработку сайта', assigned_to: 'demo-e1', assigned_name: 'Мария Волкова', due_date: today, status: 'in_progress', priority: 'high' },
+                { id: 'demo-t2', title: 'Обзвонить новые лиды', description: 'Связаться с лидами за последнюю неделю', assigned_to: 'demo-e1', assigned_name: 'Мария Волкова', due_date: today, status: 'pending', priority: 'medium' },
+                { id: 'demo-t3', title: 'Обновить контент на сайте', description: 'Обновить раздел "О нас" и портфолио', assigned_to: 'demo-e3', assigned_name: 'Ольга Кузнецова', due_date: yesterday, status: 'completed', priority: 'low' }
+            ];
+
+            // Render all primary sections
+            renderFunnels();
+            updateFunnelSelects();
+            renderClients(clients);
+            renderProducts();
+            renderOrders();
+            renderTasks();
+            populateSelects();
+
+            // === Services (YClients) ===
+            if (typeof services !== 'undefined') {
+                services = [
+                    { id: 'demo-sv1', name: 'Стрижка женская', price: 2500, duration: 60, category: 'Парикмахерские услуги', is_active: true },
+                    { id: 'demo-sv2', name: 'Маникюр классический', price: 1800, duration: 45, category: 'Ногтевой сервис', is_active: true },
+                    { id: 'demo-sv3', name: 'Массаж спины', price: 3500, duration: 60, category: 'Массаж', is_active: true }
+                ];
+            }
+
+            // === Specialists ===
+            if (typeof specialists !== 'undefined') {
+                specialists = [
+                    { id: 'demo-sp1', first_name: 'Ирина', last_name: 'Белова', specialization: 'Стилист-парикмахер', phone: '+7 900 111-22-33', experience: '8 лет' },
+                    { id: 'demo-sp2', first_name: 'Наталья', last_name: 'Морозова', specialization: 'Мастер маникюра', phone: '+7 900 444-55-66', experience: '5 лет' }
+                ];
+            }
+
+            // === Rooms ===
+            if (typeof rooms !== 'undefined') {
+                rooms = [
+                    { id: 'demo-r1', name: 'Кабинет №1 (VIP)', capacity: 1, equipment: 'Зеркало, кресло, мойка' },
+                    { id: 'demo-r2', name: 'Кабинет №2', capacity: 2, equipment: 'Стол, лампа' }
+                ];
+                localStorage.setItem(`rooms_${projectId}`, JSON.stringify(rooms));
+            }
+
+            // === Trainings ===
+            trainings = [
+                { id: 'demo-tr1', name: 'Основы интернет-маркетинга', description: 'Полный курс для начинающих маркетологов', lessons_count: 12, students_count: 28, avg_progress: 65, is_published: true, type: 'purchase', certificate_enabled: true },
+                { id: 'demo-tr2', name: 'Продвинутый SMM', description: 'Стратегии продвижения в социальных сетях', lessons_count: 8, students_count: 15, avg_progress: 42, is_published: true, type: 'purchase', certificate_enabled: true },
+                { id: 'demo-tr3', name: 'Email-маркетинг (черновик)', description: 'Курс в разработке', lessons_count: 3, students_count: 0, avg_progress: 0, is_published: false, type: 'free', certificate_enabled: false }
+            ];
+            renderTrainings();
+            populateTrainingSelects();
+            document.getElementById('trainingsTotal').textContent = trainings.length;
+            document.getElementById('trainingsStudents').textContent = trainings.reduce((s, t) => s + (t.students_count || 0), 0);
+
+            // === Lessons ===
+            lessons = [
+                { id: 'demo-l1', title: 'Введение в маркетинг', course_id: 'demo-tr1', type: 'video', duration: 25, completed_count: 28, order_index: 1 },
+                { id: 'demo-l2', title: 'Целевая аудитория', course_id: 'demo-tr1', type: 'video', duration: 35, completed_count: 24, order_index: 2 },
+                { id: 'demo-l3', title: 'Каналы продвижения', course_id: 'demo-tr1', type: 'video', duration: 40, completed_count: 20, order_index: 3 },
+                { id: 'demo-l4', title: 'Домашнее задание: анализ ЦА', course_id: 'demo-tr1', type: 'homework', duration: 0, completed_count: 18, order_index: 4 },
+                { id: 'demo-l5', title: 'Стратегия контента для Instagram', course_id: 'demo-tr2', type: 'video', duration: 45, completed_count: 15, order_index: 1 },
+                { id: 'demo-l6', title: 'Reels и короткие видео', course_id: 'demo-tr2', type: 'video', duration: 30, completed_count: 12, order_index: 2 }
+            ];
+            renderLessons();
+
+            // === Webinars ===
+            webinars = [
+                { id: 'demo-w1', title: 'Бесплатный вебинар: Как запустить рекламу', type: 'live', scheduled_at: new Date(now.getTime() + 3 * 86400000).toISOString(), host_name: 'Алексей Смирнов', registrations: 47, registrations_count: 47, attendees_count: 0, status: 'scheduled', platform: 'zoom', duration_minutes: 90, description: 'Разберём запуск первой рекламной кампании' },
+                { id: 'demo-w2', title: 'Автовебинар: 5 шагов к продажам', type: 'auto', scheduled_at: null, host_name: 'Мария Волкова', registrations: 120, registrations_count: 120, attendees_count: 85, status: 'completed', platform: 'youtube', duration_minutes: 60, description: 'Автоматический вебинар для новых лидов', recording_url: 'https://youtube.com/watch?v=example' }
+            ];
+            renderWebinars(webinars);
+            document.getElementById('webinarsUpcoming').textContent = webinars.filter(w => w.status === 'scheduled').length;
+            document.getElementById('webinarsLive').textContent = webinars.filter(w => w.status === 'live').length;
+            document.getElementById('webinarsCompleted').textContent = webinars.filter(w => w.status === 'completed').length;
+            document.getElementById('webinarsParticipants').textContent = webinars.reduce((s, w) => s + (w.registrations_count || 0), 0);
+
+            // === Bookings ===
+            const tomorrow = new Date(now.getTime() + 86400000).toISOString().split('T')[0];
+            calendarBookings = [
+                { id: 'demo-b1', booking_date: today, start_time: '10:00', client_name: 'Анна Петрова', client_phone: '+7 916 123-45-67', service_name: 'Стрижка женская', employee_name: 'Ирина Белова', price: 2500, status: 'confirmed', duration: 60 },
+                { id: 'demo-b2', booking_date: today, start_time: '14:00', client_name: 'Елена Сидорова', client_phone: '+7 903 555-12-34', service_name: 'Маникюр классический', employee_name: 'Наталья Морозова', price: 1800, status: 'pending', duration: 45 },
+                { id: 'demo-b3', booking_date: tomorrow, start_time: '11:00', client_name: 'Дмитрий Козлов', client_phone: '+7 926 987-65-43', service_name: 'Массаж спины', employee_name: 'Ирина Белова', price: 3500, status: 'confirmed', duration: 60 }
+            ];
+            document.getElementById('bookingsToday').textContent = calendarBookings.filter(b => b.booking_date === today).length;
+            document.getElementById('bookingsConfirmed').textContent = calendarBookings.filter(b => b.status === 'confirmed').length;
+            document.getElementById('bookingsPending').textContent = calendarBookings.filter(b => b.status === 'pending').length;
+            document.getElementById('bookingsRevenue').textContent = formatMoney(calendarBookings.reduce((s, b) => s + (b.price || 0), 0));
+
+            // === Certificates ===
+            certificates = [
+                { id: 'demo-cert1', certificate_number: 'CERT-2026-0001', client_name: 'Анна Петрова', course_name: 'Основы интернет-маркетинга', template_name: 'По умолчанию', issued_at: weekAgo },
+                { id: 'demo-cert2', certificate_number: 'CERT-2026-0002', client_name: 'Елена Сидорова', course_name: 'Основы интернет-маркетинга', template_name: 'По умолчанию', issued_at: yesterday }
+            ];
+            renderCertificates(certificates);
+            document.getElementById('certificatesIssued').textContent = certificates.length;
+
+            // Render services, specialists, rooms
+            if (typeof renderServices === 'function' && services.length) renderServices();
+            if (typeof renderSpecialists === 'function' && specialists.length) renderSpecialists();
+            if (typeof renderRooms === 'function' && rooms.length) renderRooms();
+            if (typeof renderSegments === 'function' && segments.length) renderSegments();
+
+            // === Categories ===
+            if (typeof categories !== 'undefined') {
+                categories = [
+                    { id: 'demo-cat1', name: 'Онлайн-курсы', products_count: 1 },
+                    { id: 'demo-cat2', name: 'Учебные материалы', products_count: 1 },
+                    { id: 'demo-cat3', name: 'Шаблоны и ресурсы', products_count: 1 },
+                    { id: 'demo-cat4', name: 'Консультации', products_count: 1 }
+                ];
+            }
+
+            // === Segments ===
+            if (typeof segments !== 'undefined') {
+                segments = [
+                    { id: 'demo-seg1', name: 'VIP клиенты', conditions: 'total_spent > 100000', clients_count: 1 },
+                    { id: 'demo-seg2', name: 'Новые за неделю', conditions: 'created_at > 7_days', clients_count: 2 }
+                ];
+            }
+
+            // === Promo Codes (rendered via loadPromoCodes) ===
+            const promoTable = document.getElementById('promoCodesTable');
+            if (promoTable) {
+                promoTable.innerHTML = `
+                    <tr>
+                        <td><strong>WELCOME20</strong></td>
+                        <td>percent</td>
+                        <td>20%</td>
+                        <td>0 / 100</td>
+                        <td>${weekAgo} — ${new Date(now.getTime() + 30 * 86400000).toISOString().split('T')[0]}</td>
+                        <td><span class="badge badge-success">Активен</span></td>
+                        <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>STUDENT500</strong></td>
+                        <td>fixed</td>
+                        <td>${formatMoney(500)}</td>
+                        <td>12 / 50</td>
+                        <td>${monthAgo} — ${today}</td>
+                        <td><span class="badge badge-warning">Скоро истечёт</span></td>
+                        <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
+                    </tr>
+                `;
+            }
+
+            // === Integrations ===
+            const intTable = document.getElementById('integrationsTable');
+            if (intTable) {
+                intTable.innerHTML = `
+                    <tr>
+                        <td><strong>Telegram бот</strong></td>
+                        <td>Telegram</td>
+                        <td>23</td>
+                        <td>${yesterday}</td>
+                        <td><span class="badge badge-success">Активна</span></td>
+                        <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Форма на сайте</strong></td>
+                        <td>Веб-форма</td>
+                        <td>56</td>
+                        <td>${today}</td>
+                        <td><span class="badge badge-success">Активна</span></td>
+                        <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
+                    </tr>
+                `;
+                document.getElementById('integrationsActive').textContent = 2;
+                document.getElementById('integrationsWebhooks').textContent = 0;
+                document.getElementById('integrationsForms').textContent = 1;
+            }
+
+            // === Tags ===
+            const tagsTable = document.getElementById('tagsTable');
+            if (tagsTable) {
+                tagsTable.innerHTML = `
+                    <tr><td><span class="badge" style="background:#3b82f6;">VIP</span></td><td>1</td><td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td></tr>
+                    <tr><td><span class="badge" style="background:#10b981;">Постоянный</span></td><td>1</td><td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td></tr>
+                    <tr><td><span class="badge" style="background:#f59e0b;">Новый</span></td><td>1</td><td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td></tr>
+                    <tr><td><span class="badge" style="background:#8b5cf6;">Лид</span></td><td>1</td><td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td></tr>
+                    <tr><td><span class="badge" style="background:#06b6d4;">Активный</span></td><td>1</td><td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td></tr>
+                `;
+            }
+
+            // === Brands ===
+            const brandsTable = document.getElementById('brandsTable');
+            if (brandsTable) {
+                brandsTable.innerHTML = `
+                    <tr><td><strong>StudyKit</strong></td><td>Учебные материалы и рабочие тетради</td><td>1</td><td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td></tr>
+                `;
+            }
+
+            // === Collections / Selections ===
+            const collectionsEl = document.getElementById('collectionsList');
+            if (collectionsEl) {
+                collectionsEl.innerHTML = `
+                    <div class="stat-card" style="cursor:pointer;">
+                        <div class="value" style="font-size:18px;">Лучшее для новичков</div>
+                        <div class="label">3 товара · Опубликовано</div>
+                    </div>
+                    <div class="stat-card" style="cursor:pointer;">
+                        <div class="value" style="font-size:18px;">Скидки недели</div>
+                        <div class="label">2 товара · Черновик</div>
+                    </div>
+                `;
+            }
+
+            // === Schedules ===
+            const schedTable = document.getElementById('schedulesTable');
+            if (schedTable) {
+                schedTable.innerHTML = `
+                    <tr>
+                        <td><strong>Ирина Белова</strong></td>
+                        <td><span class="badge badge-success">9-18</span></td>
+                        <td><span class="badge badge-success">9-18</span></td>
+                        <td><span class="badge badge-success">9-18</span></td>
+                        <td><span class="badge badge-success">9-18</span></td>
+                        <td><span class="badge badge-success">9-18</span></td>
+                        <td><span class="badge badge-success">10-16</span></td>
+                        <td><span class="badge">Вых</span></td>
+                        <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Наталья Морозова</strong></td>
+                        <td><span class="badge badge-success">10-19</span></td>
+                        <td><span class="badge">Вых</span></td>
+                        <td><span class="badge badge-success">10-19</span></td>
+                        <td><span class="badge">Вых</span></td>
+                        <td><span class="badge badge-success">10-19</span></td>
+                        <td><span class="badge badge-success">10-17</span></td>
+                        <td><span class="badge">Вых</span></td>
+                        <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
+                    </tr>
+                `;
+            }
+
+            // === Quizzes ===
+            const quizTable = document.getElementById('quizzesTable');
+            if (quizTable) {
+                quizTable.innerHTML = `
+                    <tr>
+                        <td><strong>Тест: Основы маркетинга</strong></td>
+                        <td>Основы интернет-маркетинга</td>
+                        <td>15</td>
+                        <td>24</td>
+                        <td>78%</td>
+                        <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
+                    </tr>
+                `;
+            }
+
+            // === Goals ===
+            const goalsTable = document.getElementById('goalsTable');
+            if (goalsTable) {
+                goalsTable.innerHTML = `
+                    <tr>
+                        <td><strong>Выручка за февраль</strong></td>
+                        <td>${formatMoney(500000)}</td>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <div style="width:80px;background:#334155;border-radius:4px;height:8px;">
+                                    <div style="width:35%;height:100%;background:var(--primary);border-radius:4px;"></div>
+                                </div>
+                                <span>35%</span>
+                            </div>
+                        </td>
+                        <td>${today}</td>
+                        <td><span class="badge badge-warning">В процессе</span></td>
+                    </tr>
+                `;
+            }
+
+            // === Calls ===
+            const callsTable = document.getElementById('callsTable');
+            if (callsTable) {
+                callsTable.innerHTML = `
+                    <tr>
+                        <td><i class="fas fa-phone-alt" style="color:var(--success);"></i> Исходящий</td>
+                        <td>Анна Петрова</td>
+                        <td>+7 916 123-45-67</td>
+                        <td>5:23</td>
+                        <td>Мария Волкова</td>
+                        <td>${today} 10:30</td>
+                        <td><span class="badge badge-success">Отвечен</span></td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-phone-alt" style="color:var(--primary);transform:rotate(180deg);"></i> Входящий</td>
+                        <td>Дмитрий Козлов</td>
+                        <td>+7 926 987-65-43</td>
+                        <td>2:45</td>
+                        <td>Мария Волкова</td>
+                        <td>${yesterday} 15:10</td>
+                        <td><span class="badge badge-success">Отвечен</span></td>
+                    </tr>
+                `;
+            }
+
+            // === Regulations ===
+            const regsTable = document.getElementById('regulationsTable');
+            if (regsTable) {
+                regsTable.innerHTML = `
+                    <tr>
+                        <td><strong>Ответ на заявку</strong></td>
+                        <td>Ответить клиенту в течение 15 минут</td>
+                        <td>15 мин</td>
+                        <td><span class="badge badge-success">Активен</span></td>
+                        <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
+                    </tr>
+                `;
+            }
+
+            // === Lead Distribution ===
+            const leadDistTable = document.getElementById('leadDistributionTable');
+            if (leadDistTable) {
+                leadDistTable.innerHTML = `
+                    <tr>
+                        <td><strong>Равномерное распределение</strong></td>
+                        <td>round_robin</td>
+                        <td>Мария Волкова, Алексей Смирнов</td>
+                        <td><span class="badge badge-success">Активно</span></td>
+                        <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
+                    </tr>
+                `;
+            }
+
+            // === Employee Analytics ===
+            const empAnalytics = document.getElementById('employeeAnalyticsTable');
+            if (empAnalytics) {
+                empAnalytics.innerHTML = `
+                    <tr>
+                        <td><strong>Мария Волкова</strong></td>
+                        <td>12</td>
+                        <td>${formatMoney(320000)}</td>
+                        <td>45</td>
+                        <td>92%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Алексей Смирнов</strong></td>
+                        <td>8</td>
+                        <td>${formatMoney(480000)}</td>
+                        <td>23</td>
+                        <td>87%</td>
+                    </tr>
+                `;
+            }
+
+            // === Product Filters ===
+            const filtersTable = document.getElementById('productFiltersTable');
+            if (filtersTable) {
+                filtersTable.innerHTML = `
+                    <tr>
+                        <td><strong>Тип товара</strong></td>
+                        <td>select</td>
+                        <td>Физический, Цифровой, Онлайн</td>
+                        <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ценовой диапазон</strong></td>
+                        <td>range</td>
+                        <td>0 — 100 000</td>
+                        <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
+                    </tr>
+                `;
+            }
+
+            // === Categories Table ===
+            const catTable = document.getElementById('categoriesTable');
+            if (catTable && typeof categories !== 'undefined') {
+                catTable.innerHTML = categories.map(c => `
+                    <tr>
+                        <td><strong>${escapeHtml(c.name)}</strong></td>
+                        <td>${c.products_count || 0}</td>
+                        <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
+                    </tr>
+                `).join('');
+            }
+
+            // === Payments ===
+            const paymentsTable = document.getElementById('paymentsTable');
+            if (paymentsTable) {
+                paymentsTable.innerHTML = `
+                    <tr>
+                        <td>PAY-001</td>
+                        <td>ORD-2026-001</td>
+                        <td>Анна Петрова</td>
+                        <td>${formatMoney(45000)}</td>
+                        <td><span class="badge">Карта</span></td>
+                        <td><span class="badge badge-success">Оплачено</span></td>
+                        <td>${formatDate(monthAgo)}</td>
+                    </tr>
+                    <tr>
+                        <td>PAY-002</td>
+                        <td>ORD-2026-002</td>
+                        <td>Елена Сидорова</td>
+                        <td>${formatMoney(15000)}</td>
+                        <td><span class="badge">ЮKassa</span></td>
+                        <td><span class="badge badge-success">Оплачено</span></td>
+                        <td>${formatDate(weekAgo)}</td>
+                    </tr>
+                `;
+            }
+
+            // Update dashboard stats
+            document.getElementById('totalClients')?.setAttribute('data-value', clients.length);
+            if (document.getElementById('totalClients')) document.getElementById('totalClients').textContent = clients.length;
+            if (document.getElementById('totalDeals')) document.getElementById('totalDeals').textContent = deals.length;
+            if (document.getElementById('totalRevenue')) document.getElementById('totalRevenue').textContent = formatMoney(orders.reduce((s, o) => s + (o.total || 0), 0));
+
+            toast('Загружены демо-данные для ознакомления', 'info', 5000);
         }
 
         // Navigation
