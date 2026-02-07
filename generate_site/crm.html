@@ -1499,6 +1499,526 @@
         </div>
     </div>
 
+    <!-- Regulation Modal (SLA) -->
+    <div class="modal-overlay" id="regulationModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новый регламент</h3>
+                <button class="modal-close" onclick="closeModal('regulationModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название *</label>
+                    <input type="text" id="regulationName" placeholder="Ответ на заявку">
+                </div>
+                <div class="form-group">
+                    <label>Воронка</label>
+                    <select id="regulationFunnel"><option value="">Все воронки</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Условие срабатывания</label>
+                    <select id="regulationCondition">
+                        <option value="time_in_stage">Время на этапе</option>
+                        <option value="no_activity">Нет активности</option>
+                        <option value="no_tasks">Нет задач</option>
+                    </select>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group">
+                        <label>Значение *</label>
+                        <input type="number" id="regulationValue" placeholder="24" value="24">
+                    </div>
+                    <div class="form-group">
+                        <label>Единица</label>
+                        <select id="regulationUnit">
+                            <option value="hours">Часов</option>
+                            <option value="minutes">Минут</option>
+                            <option value="days">Дней</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Действие</label>
+                    <select id="regulationAction">
+                        <option value="notify">Уведомить менеджера</option>
+                        <option value="create_task">Создать задачу</option>
+                        <option value="move_stage">Переместить на этап</option>
+                        <option value="add_tag">Добавить тег</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('regulationModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveRegulation()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Goal Modal (KPI) -->
+    <div class="modal-overlay" id="goalModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новая цель</h3>
+                <button class="modal-close" onclick="closeModal('goalModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Сотрудник</label>
+                    <select id="goalEmployee"><option value="">Общая цель (все)</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Метрика *</label>
+                    <select id="goalMetric">
+                        <option value="revenue">Выручка</option>
+                        <option value="deals_won">Закрытых сделок</option>
+                        <option value="calls">Звонков</option>
+                        <option value="conversion_rate">Конверсия %</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Целевое значение *</label>
+                    <input type="number" id="goalTarget" placeholder="100000">
+                </div>
+                <div class="form-group">
+                    <label>Период</label>
+                    <select id="goalPeriodType">
+                        <option value="month">Месяц</option>
+                        <option value="quarter">Квартал</option>
+                        <option value="year">Год</option>
+                    </select>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group">
+                        <label>Начало</label>
+                        <input type="date" id="goalStart">
+                    </div>
+                    <div class="form-group">
+                        <label>Конец</label>
+                        <input type="date" id="goalEnd">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('goalModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveGoal()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Distribution Settings Modal -->
+    <div class="modal-overlay" id="distributionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Настройки распределения</h3>
+                <button class="modal-close" onclick="closeModal('distributionModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Воронка</label>
+                    <select id="distFunnel"><option value="">Все воронки</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Тип распределения</label>
+                    <select id="distType">
+                        <option value="round_robin">По очереди (Round Robin)</option>
+                        <option value="load_balanced">По нагрузке</option>
+                        <option value="random">Случайно</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Таймаут ответа (минут)</label>
+                    <input type="number" id="distTimeout" value="30" placeholder="30">
+                </div>
+                <div class="form-group">
+                    <label>Макс. лидов на сотрудника</label>
+                    <input type="number" id="distMaxLeads" placeholder="Без лимита">
+                </div>
+                <div class="form-group">
+                    <label><input type="checkbox" id="distAutoReassign" checked> Авто-переназначение при таймауте</label>
+                </div>
+                <div class="form-group">
+                    <label><input type="checkbox" id="distWorkingHours" checked> Только в рабочее время</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('distributionModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveDistributionSettings()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tag Modal -->
+    <div class="modal-overlay" id="tagModal">
+        <div class="modal" style="max-width:400px;">
+            <div class="modal-header">
+                <h3>Новый тег</h3>
+                <button class="modal-close" onclick="closeModal('tagModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название *</label>
+                    <input type="text" id="tagName" placeholder="VIP клиент">
+                </div>
+                <div class="form-group">
+                    <label>Цвет</label>
+                    <input type="color" id="tagColor" value="#3b82f6" style="width:100%;height:40px;border:none;border-radius:8px;cursor:pointer;">
+                </div>
+                <div class="form-group">
+                    <label>Для сущности</label>
+                    <select id="tagEntityType">
+                        <option value="deal">Сделки</option>
+                        <option value="client">Клиенты</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('tagModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveTag()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Brand Modal -->
+    <div class="modal-overlay" id="brandModal">
+        <div class="modal" style="max-width:400px;">
+            <div class="modal-header">
+                <h3>Новый бренд</h3>
+                <button class="modal-close" onclick="closeModal('brandModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название *</label>
+                    <input type="text" id="brandName" placeholder="Nike">
+                </div>
+                <div class="form-group">
+                    <label>Логотип (URL)</label>
+                    <input type="text" id="brandLogo" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Сайт</label>
+                    <input type="text" id="brandWebsite" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="brandDescription" rows="2" placeholder="Описание бренда"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('brandModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveBrand()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Promo Code Modal -->
+    <div class="modal-overlay" id="promoModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новый промокод</h3>
+                <button class="modal-close" onclick="closeModal('promoModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Код *</label>
+                    <input type="text" id="promoCode" placeholder="SALE20" style="text-transform:uppercase;">
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group">
+                        <label>Тип скидки</label>
+                        <select id="promoType">
+                            <option value="percent">Процент (%)</option>
+                            <option value="fixed">Фиксированная сумма</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Значение *</label>
+                        <input type="number" id="promoValue" placeholder="20">
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group">
+                        <label>Мин. сумма заказа</label>
+                        <input type="number" id="promoMinOrder" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Лимит использований</label>
+                        <input type="number" id="promoMaxUses" placeholder="Без лимита">
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group">
+                        <label>Дата начала</label>
+                        <input type="date" id="promoStart">
+                    </div>
+                    <div class="form-group">
+                        <label>Дата окончания</label>
+                        <input type="date" id="promoEnd">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('promoModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="savePromoCode()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Collection Modal -->
+    <div class="modal-overlay" id="collectionModal">
+        <div class="modal" style="max-width:400px;">
+            <div class="modal-header">
+                <h3>Новая коллекция</h3>
+                <button class="modal-close" onclick="closeModal('collectionModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название *</label>
+                    <input type="text" id="collectionName" placeholder="Новинки сезона">
+                </div>
+                <div class="form-group">
+                    <label>Изображение (URL)</label>
+                    <input type="text" id="collectionImage" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Тип</label>
+                    <select id="collectionType">
+                        <option value="manual">Ручная (выбираю товары)</option>
+                        <option value="auto">Автоматическая (по правилам)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="collectionDescription" rows="2" placeholder="Описание коллекции"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('collectionModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveCollection()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div class="modal-overlay" id="bookingModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новая запись</h3>
+                <button class="modal-close" onclick="closeModal('bookingModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Услуга *</label>
+                    <select id="bookingService"><option value="">Выберите услугу</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Мастер</label>
+                    <select id="bookingEmployee"><option value="">Любой свободный</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Клиент</label>
+                    <select id="bookingClient"><option value="">Выберите или создайте</option></select>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group">
+                        <label>Дата *</label>
+                        <input type="date" id="bookingDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Время *</label>
+                        <input type="time" id="bookingTime">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Имя клиента (если новый)</label>
+                    <input type="text" id="bookingClientName" placeholder="Иван Иванов">
+                </div>
+                <div class="form-group">
+                    <label>Телефон клиента</label>
+                    <input type="tel" id="bookingClientPhone" placeholder="+7 999 123-45-67">
+                </div>
+                <div class="form-group">
+                    <label>Комментарий</label>
+                    <textarea id="bookingComment" rows="2" placeholder="Примечание к записи"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('bookingModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveBooking()">Записать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Modal -->
+    <div class="modal-overlay" id="scheduleModal">
+        <div class="modal" style="max-width:600px;">
+            <div class="modal-header">
+                <h3>Расписание сотрудника</h3>
+                <button class="modal-close" onclick="closeModal('scheduleModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Сотрудник *</label>
+                    <select id="scheduleEmployee"><option value="">Выберите сотрудника</option></select>
+                </div>
+                <div style="margin-top:16px;">
+                    <table style="width:100%;font-size:13px;">
+                        <tr><th>День</th><th>Работает</th><th>Начало</th><th>Конец</th></tr>
+                        <tr><td>Понедельник</td><td><input type="checkbox" id="schedMon" checked></td><td><input type="time" id="schedMonStart" value="09:00" style="width:100px;"></td><td><input type="time" id="schedMonEnd" value="18:00" style="width:100px;"></td></tr>
+                        <tr><td>Вторник</td><td><input type="checkbox" id="schedTue" checked></td><td><input type="time" id="schedTueStart" value="09:00" style="width:100px;"></td><td><input type="time" id="schedTueEnd" value="18:00" style="width:100px;"></td></tr>
+                        <tr><td>Среда</td><td><input type="checkbox" id="schedWed" checked></td><td><input type="time" id="schedWedStart" value="09:00" style="width:100px;"></td><td><input type="time" id="schedWedEnd" value="18:00" style="width:100px;"></td></tr>
+                        <tr><td>Четверг</td><td><input type="checkbox" id="schedThu" checked></td><td><input type="time" id="schedThuStart" value="09:00" style="width:100px;"></td><td><input type="time" id="schedThuEnd" value="18:00" style="width:100px;"></td></tr>
+                        <tr><td>Пятница</td><td><input type="checkbox" id="schedFri" checked></td><td><input type="time" id="schedFriStart" value="09:00" style="width:100px;"></td><td><input type="time" id="schedFriEnd" value="18:00" style="width:100px;"></td></tr>
+                        <tr><td>Суббота</td><td><input type="checkbox" id="schedSat"></td><td><input type="time" id="schedSatStart" value="10:00" style="width:100px;"></td><td><input type="time" id="schedSatEnd" value="16:00" style="width:100px;"></td></tr>
+                        <tr><td>Воскресенье</td><td><input type="checkbox" id="schedSun"></td><td><input type="time" id="schedSunStart" value="10:00" style="width:100px;"></td><td><input type="time" id="schedSunEnd" value="16:00" style="width:100px;"></td></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('scheduleModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveSchedule()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Webinar Modal -->
+    <div class="modal-overlay" id="webinarModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новый вебинар</h3>
+                <button class="modal-close" onclick="closeModal('webinarModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название *</label>
+                    <input type="text" id="webinarTitle" placeholder="Вебинар по продажам">
+                </div>
+                <div class="form-group">
+                    <label>Курс (опционально)</label>
+                    <select id="webinarCourse"><option value="">Без курса</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Ведущий</label>
+                    <select id="webinarHost"><option value="">Выберите ведущего</option></select>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group">
+                        <label>Дата и время *</label>
+                        <input type="datetime-local" id="webinarDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Длительность (мин)</label>
+                        <input type="number" id="webinarDuration" value="60" placeholder="60">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Платформа</label>
+                    <select id="webinarPlatform">
+                        <option value="zoom">Zoom</option>
+                        <option value="youtube">YouTube Live</option>
+                        <option value="custom">Своя ссылка</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="webinarDescription" rows="3" placeholder="О чём вебинар"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('webinarModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveWebinar()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Modal -->
+    <div class="modal-overlay" id="quizModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новый тест</h3>
+                <button class="modal-close" onclick="closeModal('quizModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название *</label>
+                    <input type="text" id="quizTitle" placeholder="Тест по модулю 1">
+                </div>
+                <div class="form-group">
+                    <label>Курс *</label>
+                    <select id="quizCourse"><option value="">Выберите курс</option></select>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="form-group">
+                        <label>Проходной балл (%)</label>
+                        <input type="number" id="quizPassingScore" value="70" placeholder="70">
+                    </div>
+                    <div class="form-group">
+                        <label>Лимит времени (мин)</label>
+                        <input type="number" id="quizTimeLimit" placeholder="Без лимита">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Попыток</label>
+                    <input type="number" id="quizAttempts" value="3" placeholder="3">
+                </div>
+                <div class="form-group">
+                    <label><input type="checkbox" id="quizShuffle"> Перемешивать вопросы</label>
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="quizDescription" rows="2" placeholder="Инструкция к тесту"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('quizModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveQuiz()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Integration Modal -->
+    <div class="modal-overlay" id="integrationModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новая интеграция</h3>
+                <button class="modal-close" onclick="closeModal('integrationModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название *</label>
+                    <input type="text" id="integrationName" placeholder="Форма с сайта">
+                </div>
+                <div class="form-group">
+                    <label>Тип *</label>
+                    <select id="integrationType" onchange="toggleIntegrationFields()">
+                        <option value="web_form">Веб-форма</option>
+                        <option value="webhook">Входящий вебхук</option>
+                        <option value="widget">Виджет на сайт</option>
+                        <option value="telegram">Telegram бот</option>
+                        <option value="email">Email парсинг</option>
+                    </select>
+                </div>
+                <div class="form-group" id="integrationFunnelGroup">
+                    <label>Воронка для лидов</label>
+                    <select id="integrationFunnel"><option value="">По умолчанию</option></select>
+                </div>
+                <div class="form-group" id="integrationUrlGroup" style="display:none;">
+                    <label>URL для отправки данных</label>
+                    <input type="text" id="integrationUrl" readonly style="background:#1e293b;">
+                    <div class="form-hint">Скопируйте этот URL в настройки вашей формы</div>
+                </div>
+                <div class="form-group" id="integrationWidgetGroup" style="display:none;">
+                    <label>Код виджета</label>
+                    <textarea id="integrationWidget" rows="4" readonly style="background:#1e293b;font-family:monospace;font-size:12px;"></textarea>
+                    <div class="form-hint">Вставьте этот код на ваш сайт перед &lt;/body&gt;</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('integrationModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveIntegration()">Создать</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Config
         const API_BASE = '/api';
@@ -1530,6 +2050,21 @@
             }
             projectId = projects[0].id;
 
+            // Set default dates
+            const today = new Date().toISOString().split('T')[0];
+            const dateInputs = ['bookingsDate', 'bookingDate', 'goalStart', 'promoStart'];
+            dateInputs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && !el.value) el.value = today;
+            });
+
+            // Set default end dates (end of month)
+            const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split('T')[0];
+            ['goalEnd', 'promoEnd'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && !el.value) el.value = endOfMonth;
+            });
+
             setupNavigation();
             await loadAllData();
 
@@ -1552,6 +2087,9 @@
                 loadSegments()
             ]);
             updateOrderClientSelect();
+            populateSelects();
+            loadServicesForBooking();
+            loadCoursesForModals();
         }
 
         // Navigation
@@ -3223,6 +3761,401 @@
             if (!confirm('Удалить интеграцию?')) return;
             await api('DELETE', `/integrations/${projectId}/${id}`);
             loadIntegrations();
+        }
+
+        // ============================================================
+        // Save Functions for All Modals
+        // ============================================================
+
+        // Save Regulation (SLA)
+        async function saveRegulation() {
+            const name = document.getElementById('regulationName').value;
+            const funnel_id = document.getElementById('regulationFunnel').value;
+            const condition_type = document.getElementById('regulationCondition').value;
+            const condition_value = document.getElementById('regulationValue').value;
+            const condition_unit = document.getElementById('regulationUnit').value;
+            const action_type = document.getElementById('regulationAction').value;
+
+            if (!name || !condition_value) return alert('Заполните обязательные поля');
+
+            const res = await api('POST', `/regulations/${projectId}`, {
+                name, funnel_id: funnel_id || null, condition_type,
+                condition_value: parseInt(condition_value), condition_unit, action_type
+            });
+
+            if (res.success) {
+                closeModal('regulationModal');
+                document.getElementById('regulationName').value = '';
+                document.getElementById('regulationValue').value = '24';
+                loadRegulations();
+            } else {
+                alert(res.error || 'Ошибка создания регламента');
+            }
+        }
+
+        // Save Goal (KPI)
+        async function saveGoal() {
+            const employee_id = document.getElementById('goalEmployee').value;
+            const metric_type = document.getElementById('goalMetric').value;
+            const target_value = document.getElementById('goalTarget').value;
+            const period_type = document.getElementById('goalPeriodType').value;
+            const period_start = document.getElementById('goalStart').value;
+            const period_end = document.getElementById('goalEnd').value;
+
+            if (!target_value) return alert('Введите целевое значение');
+
+            // Default dates for period
+            let start = period_start, end = period_end;
+            if (!start || !end) {
+                const now = new Date();
+                if (period_type === 'month') {
+                    start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+                    end = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+                } else if (period_type === 'quarter') {
+                    const q = Math.floor(now.getMonth() / 3);
+                    start = new Date(now.getFullYear(), q * 3, 1).toISOString().split('T')[0];
+                    end = new Date(now.getFullYear(), q * 3 + 3, 0).toISOString().split('T')[0];
+                } else {
+                    start = new Date(now.getFullYear(), 0, 1).toISOString().split('T')[0];
+                    end = new Date(now.getFullYear(), 11, 31).toISOString().split('T')[0];
+                }
+            }
+
+            const res = await api('POST', `/goals/${projectId}`, {
+                employee_id: employee_id || null, metric_type,
+                target_value: parseFloat(target_value), period_type, period_start: start, period_end: end
+            });
+
+            if (res.success) {
+                closeModal('goalModal');
+                document.getElementById('goalTarget').value = '';
+                loadGoals();
+            } else {
+                alert(res.error || 'Ошибка создания цели');
+            }
+        }
+
+        // Save Distribution Settings
+        async function saveDistributionSettings() {
+            const funnel_id = document.getElementById('distFunnel').value;
+            const distribution_type = document.getElementById('distType').value;
+            const response_timeout_minutes = document.getElementById('distTimeout').value;
+            const max_leads_per_employee = document.getElementById('distMaxLeads').value;
+            const auto_reassign = document.getElementById('distAutoReassign').checked ? 1 : 0;
+            const working_hours_only = document.getElementById('distWorkingHours').checked ? 1 : 0;
+
+            const res = await api('POST', `/lead-distribution/${projectId}/settings`, {
+                funnel_id: funnel_id || null, distribution_type,
+                response_timeout_minutes: parseInt(response_timeout_minutes) || 30,
+                max_leads_per_employee: max_leads_per_employee ? parseInt(max_leads_per_employee) : null,
+                auto_reassign, working_hours_only
+            });
+
+            if (res.success) {
+                closeModal('distributionModal');
+                loadLeadDistribution();
+                alert('Настройки сохранены');
+            } else {
+                alert(res.error || 'Ошибка сохранения');
+            }
+        }
+
+        // Save Tag
+        async function saveTag() {
+            const name = document.getElementById('tagName').value;
+            const color = document.getElementById('tagColor').value;
+            const entity_type = document.getElementById('tagEntityType').value;
+
+            if (!name) return alert('Введите название тега');
+
+            const res = await api('POST', `/tags/${projectId}`, { name, color, entity_type });
+
+            if (res.success) {
+                closeModal('tagModal');
+                document.getElementById('tagName').value = '';
+                loadTags();
+            } else {
+                alert(res.error || 'Ошибка создания тега');
+            }
+        }
+
+        // Save Brand
+        async function saveBrand() {
+            const name = document.getElementById('brandName').value;
+            const logo = document.getElementById('brandLogo').value;
+            const website = document.getElementById('brandWebsite').value;
+            const description = document.getElementById('brandDescription').value;
+
+            if (!name) return alert('Введите название бренда');
+
+            const res = await api('POST', `/ecommerce/${projectId}/brands`, { name, logo, website, description });
+
+            if (res.success) {
+                closeModal('brandModal');
+                ['brandName', 'brandLogo', 'brandWebsite', 'brandDescription'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                loadBrands();
+            } else {
+                alert(res.error || 'Ошибка создания бренда');
+            }
+        }
+
+        // Save Promo Code
+        async function savePromoCode() {
+            const code = document.getElementById('promoCode').value.toUpperCase();
+            const type = document.getElementById('promoType').value;
+            const value = document.getElementById('promoValue').value;
+            const min_order_amount = document.getElementById('promoMinOrder').value;
+            const max_uses = document.getElementById('promoMaxUses').value;
+            const start_date = document.getElementById('promoStart').value;
+            const end_date = document.getElementById('promoEnd').value;
+
+            if (!code || !value) return alert('Введите код и значение скидки');
+
+            const res = await api('POST', `/ecommerce/${projectId}/promo-codes`, {
+                code, type, value: parseFloat(value),
+                min_order_amount: parseFloat(min_order_amount) || 0,
+                max_uses: max_uses ? parseInt(max_uses) : null,
+                start_date: start_date || null, end_date: end_date || null
+            });
+
+            if (res.success) {
+                closeModal('promoModal');
+                ['promoCode', 'promoValue', 'promoMinOrder', 'promoMaxUses', 'promoStart', 'promoEnd'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                loadPromoCodes();
+            } else {
+                alert(res.error || 'Ошибка создания промокода');
+            }
+        }
+
+        // Save Collection
+        async function saveCollection() {
+            const name = document.getElementById('collectionName').value;
+            const image = document.getElementById('collectionImage').value;
+            const type = document.getElementById('collectionType').value;
+            const description = document.getElementById('collectionDescription').value;
+
+            if (!name) return alert('Введите название коллекции');
+
+            const res = await api('POST', `/ecommerce/${projectId}/collections`, { name, image, type, description });
+
+            if (res.success) {
+                closeModal('collectionModal');
+                ['collectionName', 'collectionImage', 'collectionDescription'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                loadCollections();
+            } else {
+                alert(res.error || 'Ошибка создания коллекции');
+            }
+        }
+
+        // Save Booking
+        async function saveBooking() {
+            const service_id = document.getElementById('bookingService').value;
+            const employee_id = document.getElementById('bookingEmployee').value;
+            const client_id = document.getElementById('bookingClient').value;
+            const booking_date = document.getElementById('bookingDate').value;
+            const start_time = document.getElementById('bookingTime').value;
+            const client_name = document.getElementById('bookingClientName').value;
+            const client_phone = document.getElementById('bookingClientPhone').value;
+            const comment = document.getElementById('bookingComment').value;
+
+            if (!service_id || !booking_date || !start_time) {
+                return alert('Выберите услугу, дату и время');
+            }
+
+            const res = await api('POST', `/bookings/${projectId}`, {
+                service_id, employee_id: employee_id || null, client_id: client_id || null,
+                booking_date, start_time, client_name, client_phone, comment
+            });
+
+            if (res.success) {
+                closeModal('bookingModal');
+                ['bookingDate', 'bookingTime', 'bookingClientName', 'bookingClientPhone', 'bookingComment'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                loadBookings();
+            } else {
+                alert(res.error || 'Ошибка создания записи');
+            }
+        }
+
+        // Save Schedule
+        async function saveSchedule() {
+            const employee_id = document.getElementById('scheduleEmployee').value;
+            if (!employee_id) return alert('Выберите сотрудника');
+
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const schedules = [];
+
+            days.forEach((day, index) => {
+                const is_working = document.getElementById('sched' + day).checked ? 1 : 0;
+                const start_time = document.getElementById('sched' + day + 'Start').value;
+                const end_time = document.getElementById('sched' + day + 'End').value;
+                schedules.push({ day_of_week: index + 1, is_working, start_time, end_time });
+            });
+
+            const res = await api('POST', `/bookings/${projectId}/schedules`, {
+                employee_id, schedules
+            });
+
+            if (res.success) {
+                closeModal('scheduleModal');
+                loadSchedules();
+            } else {
+                alert(res.error || 'Ошибка сохранения расписания');
+            }
+        }
+
+        // Save Webinar
+        async function saveWebinar() {
+            const title = document.getElementById('webinarTitle').value;
+            const course_id = document.getElementById('webinarCourse').value;
+            const host_id = document.getElementById('webinarHost').value;
+            const scheduled_at = document.getElementById('webinarDate').value;
+            const duration_minutes = document.getElementById('webinarDuration').value;
+            const platform = document.getElementById('webinarPlatform').value;
+            const description = document.getElementById('webinarDescription').value;
+
+            if (!title || !scheduled_at) return alert('Введите название и дату');
+
+            const res = await api('POST', `/learning/${projectId}/webinars`, {
+                title, course_id: course_id || null, host_id: host_id || null,
+                scheduled_at, duration_minutes: parseInt(duration_minutes) || 60, platform, description
+            });
+
+            if (res.success) {
+                closeModal('webinarModal');
+                ['webinarTitle', 'webinarDate', 'webinarDescription'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                loadWebinars();
+            } else {
+                alert(res.error || 'Ошибка создания вебинара');
+            }
+        }
+
+        // Save Quiz
+        async function saveQuiz() {
+            const title = document.getElementById('quizTitle').value;
+            const course_id = document.getElementById('quizCourse').value;
+            const passing_score = document.getElementById('quizPassingScore').value;
+            const time_limit_minutes = document.getElementById('quizTimeLimit').value;
+            const attempts_allowed = document.getElementById('quizAttempts').value;
+            const shuffle_questions = document.getElementById('quizShuffle').checked ? 1 : 0;
+            const description = document.getElementById('quizDescription').value;
+
+            if (!title || !course_id) return alert('Введите название и выберите курс');
+
+            const res = await api('POST', `/learning/${projectId}/quizzes`, {
+                title, course_id, passing_score: parseInt(passing_score) || 70,
+                time_limit_minutes: time_limit_minutes ? parseInt(time_limit_minutes) : null,
+                attempts_allowed: parseInt(attempts_allowed) || 3, shuffle_questions, description
+            });
+
+            if (res.success) {
+                closeModal('quizModal');
+                document.getElementById('quizTitle').value = '';
+                document.getElementById('quizDescription').value = '';
+                loadQuizzes();
+            } else {
+                alert(res.error || 'Ошибка создания теста');
+            }
+        }
+
+        // Save Integration
+        async function saveIntegration() {
+            const name = document.getElementById('integrationName').value;
+            const type = document.getElementById('integrationType').value;
+            const funnel_id = document.getElementById('integrationFunnel').value;
+
+            if (!name) return alert('Введите название интеграции');
+
+            const res = await api('POST', `/integrations/${projectId}`, {
+                name, type, settings: { funnel_id: funnel_id || null }
+            });
+
+            if (res.success) {
+                closeModal('integrationModal');
+                document.getElementById('integrationName').value = '';
+                loadIntegrations();
+
+                // Show webhook URL or widget code for user
+                if (res.integration) {
+                    if (type === 'webhook' || type === 'web_form') {
+                        alert('Интеграция создана!\n\nURL для отправки данных:\n' + window.location.origin + '/api/integrations/' + projectId + '/incoming/' + res.integration.id);
+                    } else if (type === 'widget') {
+                        alert('Интеграция создана!\n\nКод виджета доступен в настройках интеграции.');
+                    }
+                }
+            } else {
+                alert(res.error || 'Ошибка создания интеграции');
+            }
+        }
+
+        // Toggle integration fields based on type
+        function toggleIntegrationFields() {
+            const type = document.getElementById('integrationType').value;
+            document.getElementById('integrationUrlGroup').style.display = (type === 'webhook' || type === 'web_form') ? 'block' : 'none';
+            document.getElementById('integrationWidgetGroup').style.display = type === 'widget' ? 'block' : 'none';
+        }
+
+        // ============================================================
+        // Populate Select Dropdowns
+        // ============================================================
+
+        function populateSelects() {
+            // Funnels
+            const funnelOptions = '<option value="">Все воронки</option>' + funnels.map(f => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join('');
+            ['regulationFunnel', 'distFunnel', 'integrationFunnel'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = funnelOptions;
+            });
+
+            // Employees
+            const empOptions = '<option value="">Выберите сотрудника</option>' + employees.map(e => `<option value="${e.id}">${escapeHtml(e.first_name)} ${escapeHtml(e.last_name || '')}</option>`).join('');
+            ['goalEmployee', 'bookingEmployee', 'scheduleEmployee', 'webinarHost'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = (id === 'goalEmployee' ? '<option value="">Общая цель (все)</option>' : '<option value="">Выберите</option>') +
+                    employees.map(e => `<option value="${e.id}">${escapeHtml(e.first_name)} ${escapeHtml(e.last_name || '')}</option>`).join('');
+            });
+
+            // Clients
+            const clientOptions = '<option value="">Выберите клиента</option>' + clients.map(c => `<option value="${c.id}">${escapeHtml(c.first_name)} ${escapeHtml(c.last_name || '')}</option>`).join('');
+            ['bookingClient'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = clientOptions;
+            });
+        }
+
+        // Load services for booking modal
+        async function loadServicesForBooking() {
+            const res = await api('GET', `/services/${projectId}`);
+            if (res.success) {
+                const el = document.getElementById('bookingService');
+                if (el) {
+                    el.innerHTML = '<option value="">Выберите услугу</option>' +
+                        (res.services || []).map(s => `<option value="${s.id}">${escapeHtml(s.name)} - ${formatMoney(s.price || 0)}</option>`).join('');
+                }
+            }
+        }
+
+        // Load courses for quiz/webinar modals
+        async function loadCoursesForModals() {
+            const res = await api('GET', `/courses/${projectId}`);
+            if (res.success) {
+                const courseOptions = '<option value="">Выберите курс</option>' +
+                    (res.courses || []).map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+                ['quizCourse', 'webinarCourse'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerHTML = id === 'webinarCourse' ? '<option value="">Без курса</option>' +
+                        (res.courses || []).map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('') : courseOptions;
+                });
+            }
         }
 
         // Event listeners for filters
