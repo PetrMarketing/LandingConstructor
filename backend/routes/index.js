@@ -19,6 +19,13 @@ const coursesRoutes = require('./courses');
 const formsRoutes = require('./forms');
 const settingsRoutes = require('./settings');
 
+// Extended CRM Routes
+const segmentsRoutes = require('./segments');
+const tasksRoutes = require('./tasks');
+const dealsRoutes = require('./deals');
+const paymentsRoutes = require('./payments');
+const interactionsRoutes = require('./interactions');
+
 // API routes - Auth & Core
 router.use('/auth', authRoutes);
 router.use('/users', usersRoutes);
@@ -36,6 +43,13 @@ router.use('/services', servicesRoutes);
 router.use('/courses', coursesRoutes);
 router.use('/forms', formsRoutes);
 router.use('/settings', settingsRoutes);
+
+// Extended CRM routes
+router.use('/segments', segmentsRoutes);
+router.use('/tasks', tasksRoutes);
+router.use('/deals', dealsRoutes);
+router.use('/payments', paymentsRoutes);
+router.use('/interactions', interactionsRoutes);
 
 // Health check
 router.get('/health', (req, res) => {

@@ -687,6 +687,182 @@
         </div>
     </div>
 
+    <!-- Segment Modal -->
+    <div class="modal-overlay" id="segmentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новый сегмент</h3>
+                <button class="modal-close" onclick="closeModal('segmentModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название сегмента *</label>
+                    <input type="text" id="segmentName" placeholder="VIP клиенты">
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="segmentDescription" rows="2" placeholder="Описание сегмента"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Цвет</label>
+                    <input type="color" id="segmentColor" value="#6366f1">
+                </div>
+                <div class="form-group">
+                    <label>Динамический сегмент</label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
+                        <input type="checkbox" id="segmentDynamic"> Автоматически добавлять клиентов по правилам
+                    </label>
+                </div>
+                <div id="segmentRulesContainer" style="display: none;">
+                    <label>Правила</label>
+                    <div class="form-group" style="display: flex; gap: 8px;">
+                        <select id="ruleField" style="flex: 1;">
+                            <option value="total_orders">Количество заказов</option>
+                            <option value="total_spent">Сумма покупок</option>
+                            <option value="last_order_days">Дней с последнего заказа</option>
+                            <option value="loyalty_points">Бонусные баллы</option>
+                        </select>
+                        <select id="ruleOperator" style="width: 100px;">
+                            <option value="gt">Больше</option>
+                            <option value="lt">Меньше</option>
+                            <option value="eq">Равно</option>
+                        </select>
+                        <input type="number" id="ruleValue" placeholder="Значение" style="width: 100px;">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('segmentModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveSegment()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Modal -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новый заказ</h3>
+                <button class="modal-close" onclick="closeModal('orderModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Клиент *</label>
+                    <select id="orderClient"><option value="">Выберите клиента</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Сумма заказа *</label>
+                    <input type="number" id="orderAmount" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Статус</label>
+                    <select id="orderStatus">
+                        <option value="new">Новый</option>
+                        <option value="processing">В обработке</option>
+                        <option value="shipped">Отправлен</option>
+                        <option value="completed">Завершен</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Статус оплаты</label>
+                    <select id="orderPaymentStatus">
+                        <option value="pending">Ожидает оплаты</option>
+                        <option value="paid">Оплачен</option>
+                        <option value="partial">Частично оплачен</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Адрес доставки</label>
+                    <textarea id="orderAddress" rows="2" placeholder="Адрес доставки"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Комментарий</label>
+                    <textarea id="orderNotes" rows="2" placeholder="Примечания к заказу"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('orderModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveOrder()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Modal -->
+    <div class="modal-overlay" id="serviceModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новая услуга</h3>
+                <button class="modal-close" onclick="closeModal('serviceModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название услуги *</label>
+                    <input type="text" id="serviceName" placeholder="Разработка сайта">
+                </div>
+                <div class="form-group">
+                    <label>Категория</label>
+                    <input type="text" id="serviceCategory" placeholder="Разработка">
+                </div>
+                <div class="form-group">
+                    <label>Цена от</label>
+                    <input type="number" id="servicePrice" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Длительность (часов)</label>
+                    <input type="number" id="serviceDuration" placeholder="1">
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="serviceDescription" rows="3" placeholder="Описание услуги"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('serviceModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveService()">Добавить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Modal -->
+    <div class="modal-overlay" id="courseModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новый курс</h3>
+                <button class="modal-close" onclick="closeModal('courseModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название курса *</label>
+                    <input type="text" id="courseName" placeholder="Курс по маркетингу">
+                </div>
+                <div class="form-group">
+                    <label>Цена</label>
+                    <input type="number" id="coursePrice" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Уровень</label>
+                    <select id="courseLevel">
+                        <option value="beginner">Начинающий</option>
+                        <option value="intermediate">Средний</option>
+                        <option value="advanced">Продвинутый</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Длительность (часов)</label>
+                    <input type="number" id="courseDuration" placeholder="10">
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="courseDescription" rows="3" placeholder="Описание курса"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('courseModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveCourse()">Создать</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Config
         const API_BASE = '/api';
@@ -736,8 +912,10 @@
                 loadClients(),
                 loadEmployees(),
                 loadOrders(),
-                loadProducts()
+                loadProducts(),
+                loadSegments()
             ]);
+            updateOrderClientSelect();
         }
 
         // Navigation
@@ -766,6 +944,10 @@
             if (section === 'tasks') loadTasks();
             if (section === 'orders') loadOrders();
             if (section === 'products') loadProducts();
+            if (section === 'segments') loadSegments();
+            if (section === 'services') loadServices();
+            if (section === 'courses') loadCourses();
+            if (section === 'payments') loadPayments();
         }
 
         // Modal
@@ -1267,6 +1449,296 @@
 
         function formatMoney(amount) {
             return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(amount || 0);
+        }
+
+        // Orders additional functions
+        async function saveOrder() {
+            const client_id = document.getElementById('orderClient').value;
+            const total_amount = document.getElementById('orderAmount').value;
+            const status = document.getElementById('orderStatus').value;
+            const payment_status = document.getElementById('orderPaymentStatus').value;
+            const shipping_address = document.getElementById('orderAddress').value;
+            const notes = document.getElementById('orderNotes').value;
+
+            if (!client_id || !total_amount) return alert('Заполните клиента и сумму');
+
+            const res = await api('POST', `/orders/${projectId}`, {
+                client_id, total_amount: parseFloat(total_amount), status, payment_status, shipping_address, notes
+            });
+
+            if (res.success) {
+                closeModal('orderModal');
+                ['orderAmount', 'orderAddress', 'orderNotes'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                loadOrders();
+            } else {
+                alert(res.error || 'Ошибка создания заказа');
+            }
+        }
+
+        function viewOrder(id) {
+            const order = orders.find(o => o.id === id);
+            if (!order) return;
+            alert(`Заказ: ${order.order_number}\nСумма: ${formatMoney(order.total)}\nСтатус: ${order.status}\nОплата: ${order.payment_status}`);
+        }
+
+        function searchOrders() {
+            const query = document.getElementById('searchOrders').value.toLowerCase();
+            const filtered = orders.filter(o =>
+                (o.order_number && o.order_number.toLowerCase().includes(query)) ||
+                (o.customer_name && o.customer_name.toLowerCase().includes(query)) ||
+                (o.customer_email && o.customer_email.toLowerCase().includes(query))
+            );
+            const originalOrders = orders;
+            orders = filtered;
+            renderOrders();
+            orders = originalOrders;
+        }
+
+        // Segments
+        let segments = [];
+
+        async function loadSegments() {
+            const res = await api('GET', `/segments/${projectId}`);
+            if (res.success) {
+                segments = res.segments;
+                renderSegments();
+            }
+        }
+
+        function renderSegments() {
+            const container = document.getElementById('segmentsList');
+            if (!segments.length) {
+                container.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;"><i class="fas fa-layer-group"></i><h3>Нет сегментов</h3><p>Создайте первый сегмент для группировки клиентов</p></div>';
+                return;
+            }
+
+            container.innerHTML = segments.map(s => `
+                <div class="stat-card" style="border-left: 4px solid ${s.color || '#6366f1'};">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                        <h4>${escapeHtml(s.name)}</h4>
+                        <button class="btn btn-sm btn-outline btn-danger" onclick="deleteSegment('${s.id}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                    <div class="value" style="font-size: 24px;">${s.members_count || 0}</div>
+                    <div class="label">клиентов</div>
+                    ${s.is_dynamic ? '<span class="badge badge-new" style="margin-top: 8px;">Динамический</span>' : ''}
+                </div>
+            `).join('');
+        }
+
+        async function saveSegment() {
+            const name = document.getElementById('segmentName').value;
+            const description = document.getElementById('segmentDescription').value;
+            const color = document.getElementById('segmentColor').value;
+            const is_dynamic = document.getElementById('segmentDynamic').checked;
+
+            if (!name) return alert('Введите название сегмента');
+
+            let rules = [];
+            if (is_dynamic) {
+                const field = document.getElementById('ruleField').value;
+                const operator = document.getElementById('ruleOperator').value;
+                const value = document.getElementById('ruleValue').value;
+                if (value) rules.push({ field, operator, value: parseInt(value) });
+            }
+
+            const res = await api('POST', `/segments/${projectId}`, {
+                name, description, color, is_dynamic, rules
+            });
+
+            if (res.success) {
+                closeModal('segmentModal');
+                ['segmentName', 'segmentDescription'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                document.getElementById('segmentDynamic').checked = false;
+                loadSegments();
+            } else {
+                alert(res.error || 'Ошибка создания сегмента');
+            }
+        }
+
+        async function deleteSegment(id) {
+            if (!confirm('Удалить сегмент?')) return;
+            await api('DELETE', `/segments/${projectId}/${id}`);
+            loadSegments();
+        }
+
+        // Services
+        let services = [];
+
+        async function loadServices() {
+            const res = await api('GET', `/services/${projectId}`);
+            if (res.success) {
+                services = res.services;
+                renderServices();
+            }
+        }
+
+        function renderServices() {
+            const container = document.getElementById('servicesList');
+            if (!container) return;
+            if (!services.length) {
+                container.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;"><i class="fas fa-concierge-bell"></i><h3>Нет услуг</h3><p>Добавьте первую услугу</p></div>';
+                return;
+            }
+
+            container.innerHTML = services.map(s => `
+                <div class="stat-card">
+                    <h4 style="margin-bottom: 8px;">${escapeHtml(s.name)}</h4>
+                    <div class="value primary">${formatMoney(s.price)}</div>
+                    <div class="label">${s.duration ? s.duration + ' ч' : 'Не указано'}</div>
+                    ${s.category ? '<span class="badge badge-new" style="margin-top: 8px;">' + escapeHtml(s.category) + '</span>' : ''}
+                    <div style="margin-top: 12px;">
+                        <button class="btn btn-sm btn-outline btn-danger" onclick="deleteService('${s.id}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function saveService() {
+            const name = document.getElementById('serviceName').value;
+            const category = document.getElementById('serviceCategory').value;
+            const price = document.getElementById('servicePrice').value;
+            const duration = document.getElementById('serviceDuration').value;
+            const description = document.getElementById('serviceDescription').value;
+
+            if (!name) return alert('Введите название услуги');
+
+            const res = await api('POST', `/services/${projectId}`, {
+                name, category, price: parseFloat(price) || 0, duration: parseInt(duration) || null, description
+            });
+
+            if (res.success) {
+                closeModal('serviceModal');
+                ['serviceName', 'serviceCategory', 'servicePrice', 'serviceDuration', 'serviceDescription'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                loadServices();
+            } else {
+                alert(res.error || 'Ошибка добавления услуги');
+            }
+        }
+
+        async function deleteService(id) {
+            if (!confirm('Удалить услугу?')) return;
+            await api('DELETE', `/services/${projectId}/${id}`);
+            loadServices();
+        }
+
+        // Courses
+        let courses = [];
+
+        async function loadCourses() {
+            const res = await api('GET', `/courses/${projectId}`);
+            if (res.success) {
+                courses = res.courses;
+                renderCourses();
+            }
+        }
+
+        function renderCourses() {
+            const container = document.getElementById('coursesList');
+            if (!container) return;
+            if (!courses.length) {
+                container.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;"><i class="fas fa-graduation-cap"></i><h3>Нет курсов</h3><p>Создайте первый курс</p></div>';
+                return;
+            }
+
+            const levels = { beginner: 'Начинающий', intermediate: 'Средний', advanced: 'Продвинутый' };
+
+            container.innerHTML = courses.map(c => `
+                <div class="stat-card">
+                    <h4 style="margin-bottom: 8px;">${escapeHtml(c.name)}</h4>
+                    <div class="value success">${formatMoney(c.price)}</div>
+                    <div class="label">${c.duration ? c.duration + ' ч' : 'Не указано'}</div>
+                    <span class="badge badge-new" style="margin-top: 8px;">${levels[c.level] || c.level}</span>
+                    <div style="margin-top: 12px;">
+                        <button class="btn btn-sm btn-outline" onclick="editCourse('${c.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-outline btn-danger" onclick="deleteCourse('${c.id}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function saveCourse() {
+            const name = document.getElementById('courseName').value;
+            const price = document.getElementById('coursePrice').value;
+            const level = document.getElementById('courseLevel').value;
+            const duration = document.getElementById('courseDuration').value;
+            const description = document.getElementById('courseDescription').value;
+
+            if (!name) return alert('Введите название курса');
+
+            const res = await api('POST', `/courses/${projectId}`, {
+                name, price: parseFloat(price) || 0, level, duration: parseInt(duration) || null, description
+            });
+
+            if (res.success) {
+                closeModal('courseModal');
+                ['courseName', 'coursePrice', 'courseDuration', 'courseDescription'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                loadCourses();
+            } else {
+                alert(res.error || 'Ошибка создания курса');
+            }
+        }
+
+        function editCourse(id) {
+            alert('Редактирование курса: ' + id);
+        }
+
+        async function deleteCourse(id) {
+            if (!confirm('Удалить курс?')) return;
+            await api('DELETE', `/courses/${projectId}/${id}`);
+            loadCourses();
+        }
+
+        // Payments
+        let payments = [];
+
+        async function loadPayments() {
+            const status = document.getElementById('filterPaymentStatus')?.value;
+            const params = status ? `?status=${status}` : '';
+            const res = await api('GET', `/payments/${projectId}${params}`);
+            if (res.success) {
+                payments = res.payments;
+                renderPayments();
+            }
+        }
+
+        function renderPayments() {
+            const tbody = document.getElementById('paymentsTable');
+            if (!tbody) return;
+            if (!payments.length) {
+                tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><i class="fas fa-credit-card"></i><h3>Нет платежей</h3></div></td></tr>';
+                return;
+            }
+
+            const statuses = { pending: ['Ожидает', 'badge badge-warning'], completed: ['Успешно', 'badge badge-success'], failed: ['Ошибка', 'badge badge-danger'], refunded: ['Возврат', 'badge badge-danger'] };
+
+            tbody.innerHTML = payments.map(p => `
+                <tr>
+                    <td><strong>${p.id.slice(0, 8)}</strong></td>
+                    <td>${p.order_number || '-'}</td>
+                    <td>${formatMoney(p.amount)}</td>
+                    <td><span class="${statuses[p.status]?.[1] || 'badge'}">${statuses[p.status]?.[0] || p.status}</span></td>
+                    <td>${new Date(p.created_at).toLocaleDateString('ru')}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Segment modal toggle
+        document.getElementById('segmentDynamic')?.addEventListener('change', function() {
+            document.getElementById('segmentRulesContainer').style.display = this.checked ? 'block' : 'none';
+        });
+
+        // Update select options for order modal
+        function updateOrderClientSelect() {
+            document.getElementById('orderClient').innerHTML = '<option value="">Выберите клиента</option>' +
+                clients.map(c => `<option value="${c.id}">${escapeHtml(c.first_name)} ${escapeHtml(c.last_name || '')}</option>`).join('');
         }
 
         // Start
