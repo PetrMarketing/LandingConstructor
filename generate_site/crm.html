@@ -691,43 +691,150 @@
 
     <!-- Product Modal -->
     <div class="modal-overlay" id="productModal">
-        <div class="modal">
+        <div class="modal" style="max-width: 700px;">
             <div class="modal-header">
-                <h3>Новый товар</h3>
+                <h3 id="productModalTitle">Новый товар</h3>
                 <button class="modal-close" onclick="closeModal('productModal')">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Название товара *</label>
-                    <input type="text" id="productName" placeholder="Название товара">
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                <!-- Basic Info -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Название товара *</label>
+                        <input type="text" id="productName" placeholder="Название товара">
+                    </div>
+                    <div class="form-group">
+                        <label>Артикул (SKU)</label>
+                        <input type="text" id="productSku" placeholder="ART-001">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Цена *</label>
+                        <input type="number" id="productPrice" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Старая цена</label>
+                        <input type="number" id="productOldPrice" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Остаток</label>
+                        <input type="number" id="productStock" placeholder="0">
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label>Артикул (SKU)</label>
-                    <input type="text" id="productSku" placeholder="ART-001">
+                    <label>Категория</label>
+                    <select id="productCategory">
+                        <option value="">— Без категории —</option>
+                    </select>
                 </div>
+
+                <!-- Description with AI -->
                 <div class="form-group">
-                    <label>Цена *</label>
-                    <input type="number" id="productPrice" placeholder="0">
+                    <label style="display: flex; align-items: center; justify-content: space-between;">
+                        <span>Описание</span>
+                        <button type="button" class="btn-ai-small" onclick="generateProductDescription()" title="Сгенерировать описание с помощью AI">
+                            <i class="fas fa-magic"></i> AI описание
+                        </button>
+                    </label>
+                    <textarea id="productDescription" rows="4" placeholder="Описание товара..."></textarea>
+                    <div id="productDescLoading" style="display: none; color: #f59e0b; font-size: 12px; margin-top: 5px;">
+                        <i class="fas fa-spinner fa-spin"></i> Генерация описания...
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Старая цена</label>
-                    <input type="number" id="productOldPrice" placeholder="0">
+
+                <!-- SEO Section -->
+                <div style="background: #1e293b; border-radius: 8px; padding: 15px; margin-top: 15px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                        <span style="font-weight: 600; color: #e2e8f0;"><i class="fas fa-search"></i> SEO настройки</span>
+                        <button type="button" class="btn-ai-small" onclick="generateProductMeta()" title="Сгенерировать мета-теги с помощью AI">
+                            <i class="fas fa-magic"></i> AI мета-теги
+                        </button>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label style="font-size: 12px;">Meta Title</label>
+                        <input type="text" id="productMetaTitle" placeholder="SEO заголовок (до 60 символов)" maxlength="60">
+                        <div style="font-size: 11px; color: #64748b; text-align: right;"><span id="metaTitleCount">0</span>/60</div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label style="font-size: 12px;">Meta Description</label>
+                        <textarea id="productMetaDesc" rows="2" placeholder="SEO описание (до 160 символов)" maxlength="160"></textarea>
+                        <div style="font-size: 11px; color: #64748b; text-align: right;"><span id="metaDescCount">0</span>/160</div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label style="font-size: 12px;">URL (slug)</label>
+                        <input type="text" id="productSlug" placeholder="url-tovara">
+                    </div>
+                    <div id="productMetaLoading" style="display: none; color: #f59e0b; font-size: 12px; margin-top: 10px;">
+                        <i class="fas fa-spinner fa-spin"></i> Генерация мета-тегов...
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Остаток на складе</label>
-                    <input type="number" id="productStock" placeholder="0">
+
+                <!-- Physical Properties -->
+                <div style="margin-top: 15px;">
+                    <details>
+                        <summary style="cursor: pointer; color: #94a3b8; font-size: 13px;">
+                            <i class="fas fa-ruler-combined"></i> Габариты и вес
+                        </summary>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px;">
+                            <div class="form-group">
+                                <label style="font-size: 12px;">Вес (кг)</label>
+                                <input type="number" id="productWeight" placeholder="0" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 12px;">Длина (см)</label>
+                                <input type="number" id="productLength" placeholder="0">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 12px;">Ширина (см)</label>
+                                <input type="number" id="productWidth" placeholder="0">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 12px;">Высота (см)</label>
+                                <input type="number" id="productHeight" placeholder="0">
+                            </div>
+                        </div>
+                    </details>
                 </div>
-                <div class="form-group">
-                    <label>Описание</label>
-                    <textarea id="productDescription" rows="3" placeholder="Описание товара"></textarea>
+
+                <!-- AI Card Generation Button -->
+                <div style="margin-top: 20px; padding: 15px; background: linear-gradient(135deg, #f59e0b20, #ea580c20); border: 1px solid #f59e0b40; border-radius: 8px;">
+                    <button type="button" class="btn" style="width: 100%; background: linear-gradient(135deg, #f59e0b, #ea580c); border: none;" onclick="generateProductCard()">
+                        <i class="fas fa-magic"></i> Сгенерировать карточку товара
+                    </button>
+                    <p style="font-size: 11px; color: #94a3b8; text-align: center; margin-top: 8px; margin-bottom: 0;">
+                        AI создаст изображения, описание и мета-теги
+                    </p>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline" onclick="closeModal('productModal')">Отмена</button>
-                <button class="btn btn-primary" onclick="saveProduct()">Добавить</button>
+                <button class="btn btn-primary" onclick="saveProduct()" id="productSaveBtn">Сохранить</button>
             </div>
         </div>
     </div>
+
+    <style>
+        .btn-ai-small {
+            background: linear-gradient(135deg, #f59e0b, #ea580c);
+            border: none;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-ai-small:hover {
+            opacity: 0.9;
+        }
+        .btn-ai-small:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
 
     <!-- Segment Modal -->
     <div class="modal-overlay" id="segmentModal">
@@ -1404,6 +1511,13 @@
             `).join('');
         }
 
+        // AI Backend URL
+        const AI_API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:8000'
+            : 'https://ai-tools-backend-d3zr.onrender.com';
+
+        let editingProductId = null;
+
         async function saveProduct() {
             const name = document.getElementById('productName').value;
             const sku = document.getElementById('productSku').value;
@@ -1411,22 +1525,212 @@
             const old_price = document.getElementById('productOldPrice').value;
             const stock = document.getElementById('productStock').value;
             const description = document.getElementById('productDescription').value;
+            const category_id = document.getElementById('productCategory').value;
+            const meta_title = document.getElementById('productMetaTitle').value;
+            const meta_description = document.getElementById('productMetaDesc').value;
+            const url_slug = document.getElementById('productSlug').value;
+            const weight = document.getElementById('productWeight').value;
+            const length = document.getElementById('productLength').value;
+            const width = document.getElementById('productWidth').value;
+            const height = document.getElementById('productHeight').value;
 
             if (!name || !price) return alert('Заполните название и цену');
 
-            const res = await api('POST', `/products/${projectId}`, {
+            const productData = {
                 name, sku, price: parseFloat(price), old_price: parseFloat(old_price) || null,
-                stock: parseInt(stock) || 0, description, is_active: true
-            });
+                stock: parseInt(stock) || 0, description, is_active: true,
+                category_id: category_id || null,
+                meta_title, meta_description, url_slug,
+                weight: parseFloat(weight) || null,
+                length: parseFloat(length) || null,
+                width: parseFloat(width) || null,
+                height: parseFloat(height) || null
+            };
+
+            const method = editingProductId ? 'PUT' : 'POST';
+            const url = editingProductId
+                ? `/products/${projectId}/${editingProductId}`
+                : `/products/${projectId}`;
+
+            const res = await api(method, url, productData);
 
             if (res.success) {
                 closeModal('productModal');
-                ['productName', 'productSku', 'productPrice', 'productOldPrice', 'productStock', 'productDescription'].forEach(id => {
-                    document.getElementById(id).value = '';
-                });
+                clearProductForm();
                 loadProducts();
             } else {
-                alert(res.error || 'Ошибка добавления товара');
+                alert(res.error || 'Ошибка сохранения товара');
+            }
+        }
+
+        function clearProductForm() {
+            editingProductId = null;
+            document.getElementById('productModalTitle').textContent = 'Новый товар';
+            document.getElementById('productSaveBtn').textContent = 'Сохранить';
+            ['productName', 'productSku', 'productPrice', 'productOldPrice', 'productStock',
+             'productDescription', 'productMetaTitle', 'productMetaDesc', 'productSlug',
+             'productWeight', 'productLength', 'productWidth', 'productHeight'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            document.getElementById('productCategory').value = '';
+            updateMetaCounters();
+        }
+
+        async function editProduct(id) {
+            const res = await api('GET', `/products/${projectId}/${id}`);
+            if (!res.success) return alert('Ошибка загрузки товара');
+
+            const p = res.product;
+            editingProductId = id;
+
+            document.getElementById('productModalTitle').textContent = 'Редактировать товар';
+            document.getElementById('productSaveBtn').textContent = 'Сохранить';
+            document.getElementById('productName').value = p.name || '';
+            document.getElementById('productSku').value = p.sku || '';
+            document.getElementById('productPrice').value = p.price || '';
+            document.getElementById('productOldPrice').value = p.old_price || '';
+            document.getElementById('productStock').value = p.stock || 0;
+            document.getElementById('productDescription').value = p.description || '';
+            document.getElementById('productCategory').value = p.category_id || '';
+            document.getElementById('productMetaTitle').value = p.meta_title || '';
+            document.getElementById('productMetaDesc').value = p.meta_description || '';
+            document.getElementById('productSlug').value = p.url_slug || '';
+            document.getElementById('productWeight').value = p.weight || '';
+            document.getElementById('productLength').value = p.length || '';
+            document.getElementById('productWidth').value = p.width || '';
+            document.getElementById('productHeight').value = p.height || '';
+
+            updateMetaCounters();
+            openModal('productModal');
+        }
+
+        function updateMetaCounters() {
+            const titleEl = document.getElementById('productMetaTitle');
+            const descEl = document.getElementById('productMetaDesc');
+            document.getElementById('metaTitleCount').textContent = titleEl?.value?.length || 0;
+            document.getElementById('metaDescCount').textContent = descEl?.value?.length || 0;
+        }
+
+        // Setup meta counter listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('productMetaTitle')?.addEventListener('input', updateMetaCounters);
+            document.getElementById('productMetaDesc')?.addEventListener('input', updateMetaCounters);
+        });
+
+        // ===== AI Generation Functions =====
+
+        async function generateProductDescription() {
+            const name = document.getElementById('productName').value;
+            if (!name) return alert('Сначала введите название товара');
+
+            const btn = event.target.closest('button');
+            const loader = document.getElementById('productDescLoading');
+
+            btn.disabled = true;
+            loader.style.display = 'block';
+
+            try {
+                const category = document.getElementById('productCategory').selectedOptions[0]?.text || '';
+                const price = document.getElementById('productPrice').value;
+
+                const response = await fetch(`${AI_API}/api/ai/product-description`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name,
+                        category: category !== '— Без категории —' ? category : null,
+                        price: parseFloat(price) || null,
+                        tone: 'professional'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.description) {
+                    document.getElementById('productDescription').value = data.description;
+                } else {
+                    alert(data.detail || 'Ошибка генерации описания');
+                }
+            } catch (error) {
+                console.error('AI Description error:', error);
+                alert('Ошибка подключения к AI сервису');
+            } finally {
+                btn.disabled = false;
+                loader.style.display = 'none';
+            }
+        }
+
+        async function generateProductMeta() {
+            const name = document.getElementById('productName').value;
+            if (!name) return alert('Сначала введите название товара');
+
+            const btn = event.target.closest('button');
+            const loader = document.getElementById('productMetaLoading');
+
+            btn.disabled = true;
+            loader.style.display = 'block';
+
+            try {
+                const category = document.getElementById('productCategory').selectedOptions[0]?.text || '';
+                const description = document.getElementById('productDescription').value;
+
+                const response = await fetch(`${AI_API}/api/ai/product-meta`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name,
+                        category: category !== '— Без категории —' ? category : null,
+                        existing_description: description || null
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('productMetaTitle').value = data.meta_title || '';
+                    document.getElementById('productMetaDesc').value = data.meta_description || '';
+
+                    // Auto-generate slug from name if not present
+                    if (!document.getElementById('productSlug').value) {
+                        document.getElementById('productSlug').value = name
+                            .toLowerCase()
+                            .replace(/[^a-zа-яё0-9\s]/gi, '')
+                            .replace(/\s+/g, '-')
+                            .substring(0, 50);
+                    }
+
+                    updateMetaCounters();
+                } else {
+                    alert(data.detail || 'Ошибка генерации мета-тегов');
+                }
+            } catch (error) {
+                console.error('AI Meta error:', error);
+                alert('Ошибка подключения к AI сервису');
+            } finally {
+                btn.disabled = false;
+                loader.style.display = 'none';
+            }
+        }
+
+        async function generateProductCard() {
+            const name = document.getElementById('productName').value;
+            if (!name) return alert('Сначала введите название товара');
+
+            try {
+                const response = await fetch(`${AI_API}/api/ai/product-card`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'placeholder') {
+                    alert(`${data.message}\n\nПланируется:\n• ${data.features_planned.join('\n• ')}`);
+                }
+            } catch (error) {
+                alert('Функция генерации карточки будет доступна в следующем обновлении');
             }
         }
 

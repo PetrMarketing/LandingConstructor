@@ -281,6 +281,165 @@ async def edit_block(request: EditBlockRequest):
         print(f"[AI Edit Block] Error: {e}")
         return {"success": True, "useLocal": True, "response": None, "changes": None}
 
+# ============================================================
+# PRODUCT AI GENERATION
+# ============================================================
+
+class ProductAIRequest(BaseModel):
+    name: str
+    category: Optional[str] = None
+    brand: Optional[str] = None
+    price: Optional[float] = None
+    features: Optional[List[str]] = []
+    target_audience: Optional[str] = None
+    tone: Optional[str] = "professional"
+    existing_description: Optional[str] = None
+
+@app.post("/api/ai/product-description")
+async def generate_product_description(request: ProductAIRequest):
+    """Generate AI product description"""
+    if not OPENROUTER_API_KEY:
+        raise HTTPException(status_code=500, detail="OPENROUTER_API_KEY не настроен")
+
+    features_text = ", ".join(request.features) if request.features else "не указаны"
+
+    prompt = f"""Ты — копирайтер интернет-магазина. Напиши продающее описание товара.
+
+Товар: {request.name}
+Категория: {request.category or 'не указана'}
+Бренд: {request.brand or 'не указан'}
+Цена: {request.price or 'не указана'} ₽
+Особенности: {features_text}
+Целевая аудитория: {request.target_audience or 'широкая аудитория'}
+Тон: {request.tone}
+
+Требования:
+- Длина: 150-300 слов
+- Структура: преимущества, применение, особенности
+- Используй эмоциональные триггеры
+- Добавь призыв к действию в конце
+- Язык: русский
+
+Ответь ТОЛЬКО текстом описания, без заголовков и markdown."""
+
+    try:
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            response = await client.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                    "HTTP-Referer": "https://ai-tools-backend-d3zr.onrender.com",
+                    "X-Title": "Product Description Generator"
+                },
+                json={
+                    "model": "google/gemini-2.0-flash-001",
+                    "messages": [{"role": "user", "content": prompt}],
+                    "temperature": 0.7,
+                    "max_tokens": 1000
+                }
+            )
+
+            if response.status_code != 200:
+                raise HTTPException(status_code=response.status_code, detail="Ошибка AI сервиса")
+
+            data = response.json()
+            description = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+
+            return {"success": True, "description": description.strip()}
+
+    except Exception as e:
+        print(f"[Product Description] Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/ai/product-meta")
+async def generate_product_meta(request: ProductAIRequest):
+    """Generate AI meta tags for product"""
+    if not OPENROUTER_API_KEY:
+        raise HTTPException(status_code=500, detail="OPENROUTER_API_KEY не настроен")
+
+    prompt = f"""Сгенерируй SEO мета-теги для товара интернет-магазина.
+
+Товар: {request.name}
+Категория: {request.category or 'не указана'}
+Бренд: {request.brand or 'не указан'}
+Описание: {request.existing_description or 'нет описания'}
+
+Ответь ТОЛЬКО в формате JSON:
+{{
+  "meta_title": "SEO заголовок до 60 символов с ключевыми словами",
+  "meta_description": "Мета описание 150-160 символов, продающее, с призывом",
+  "keywords": ["ключевое1", "ключевое2", "ключевое3"]
+}}
+
+Требования:
+- meta_title: включи название товара и категорию
+- meta_description: выгоды + призыв к покупке
+- keywords: 5-7 релевантных ключевых слов
+- Язык: русский"""
+
+    try:
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            response = await client.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                    "HTTP-Referer": "https://ai-tools-backend-d3zr.onrender.com",
+                    "X-Title": "Product Meta Generator"
+                },
+                json={
+                    "model": "google/gemini-2.0-flash-001",
+                    "messages": [{"role": "user", "content": prompt}],
+                    "response_format": {"type": "json_object"},
+                    "temperature": 0.5,
+                    "max_tokens": 500
+                }
+            )
+
+            if response.status_code != 200:
+                raise HTTPException(status_code=response.status_code, detail="Ошибка AI сервиса")
+
+            data = response.json()
+            content = data.get("choices", [{}])[0].get("message", {}).get("content", "{}")
+            meta = json.loads(content)
+
+            return {
+                "success": True,
+                "meta_title": meta.get("meta_title", ""),
+                "meta_description": meta.get("meta_description", ""),
+                "keywords": meta.get("keywords", [])
+            }
+
+    except Exception as e:
+        print(f"[Product Meta] Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class ProductCardRequest(BaseModel):
+    name: str
+    category: Optional[str] = None
+    images: Optional[List[str]] = []
+    generate_images: Optional[bool] = False
+
+@app.post("/api/ai/product-card")
+async def generate_product_card(request: ProductCardRequest):
+    """Generate complete product card with AI (placeholder for future image generation)"""
+    # This is a placeholder endpoint - image generation will be added later
+    return {
+        "success": True,
+        "status": "placeholder",
+        "message": "Генерация карточки товара будет доступна в следующем обновлении",
+        "features_planned": [
+            "Генерация изображений товара",
+            "Автоматическое удаление фона",
+            "Создание lifestyle фото",
+            "Генерация 360° превью"
+        ]
+    }
+
+
 @app.post("/api/chat/stream")
 async def chat_stream(request: ChatRequest):
     """Streaming chat endpoint using Server-Sent Events"""
