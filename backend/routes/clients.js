@@ -11,23 +11,69 @@ const { v4: uuidv4 } = require('uuid');
 router.get('/:projectId', (req, res) => {
     try {
         const db = getDb();
-        const { search, segment, tag, extended, limit = 50, offset = 0 } = req.query;
+        const {
+            search, segment, tag, extended, limit = 50, offset = 0,
+            // Cross-reference filters
+            has_active_course, completed_lesson, course_id,
+            has_booking, has_upcoming_booking, service_id,
+            has_orders, has_deals, source
+        } = req.query;
 
-        let query = `SELECT * FROM clients WHERE project_id = ?`;
+        let query = `SELECT DISTINCT c.* FROM clients c WHERE c.project_id = ?`;
         const params = [req.params.projectId];
 
         if (search) {
-            query += ` AND (email LIKE ? OR phone LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR company LIKE ?)`;
+            query += ` AND (c.email LIKE ? OR c.phone LIKE ? OR c.first_name LIKE ? OR c.last_name LIKE ? OR c.company LIKE ?)`;
             const searchTerm = `%${search}%`;
             params.push(searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
         }
 
         if (tag) {
-            query += ` AND tags LIKE ?`;
+            query += ` AND c.tags LIKE ?`;
             params.push(`%"${tag}"%`);
         }
 
-        query += ` ORDER BY created_at DESC LIMIT ? OFFSET ?`;
+        if (source) {
+            query += ` AND c.source = ?`;
+            params.push(source);
+        }
+
+        // Cross-reference filters
+        if (has_active_course === '1') {
+            query += ` AND EXISTS (SELECT 1 FROM course_access WHERE client_id = c.id AND is_active = 1)`;
+        }
+
+        if (completed_lesson === '1') {
+            query += ` AND EXISTS (SELECT 1 FROM lesson_progress WHERE client_id = c.id AND is_completed = 1)`;
+        }
+
+        if (course_id) {
+            query += ` AND EXISTS (SELECT 1 FROM course_access WHERE client_id = c.id AND course_id = ?)`;
+            params.push(course_id);
+        }
+
+        if (has_booking === '1') {
+            query += ` AND EXISTS (SELECT 1 FROM bookings WHERE client_id = c.id)`;
+        }
+
+        if (has_upcoming_booking === '1') {
+            query += ` AND EXISTS (SELECT 1 FROM bookings WHERE client_id = c.id AND booking_date >= date('now') AND status != 'cancelled')`;
+        }
+
+        if (service_id) {
+            query += ` AND EXISTS (SELECT 1 FROM bookings WHERE client_id = c.id AND service_id = ?)`;
+            params.push(service_id);
+        }
+
+        if (has_orders === '1') {
+            query += ` AND EXISTS (SELECT 1 FROM orders WHERE client_id = c.id)`;
+        }
+
+        if (has_deals === '1') {
+            query += ` AND EXISTS (SELECT 1 FROM deals WHERE client_id = c.id)`;
+        }
+
+        query += ` ORDER BY c.created_at DESC LIMIT ? OFFSET ?`;
         params.push(Number(limit), Number(offset));
 
         let clients = db.prepare(query).all(...params);
@@ -70,13 +116,47 @@ router.get('/:projectId', (req, res) => {
             });
         }
 
-        // Get total count
-        let countQuery = `SELECT COUNT(*) as total FROM clients WHERE project_id = ?`;
+        // Get total count (with same filters)
+        let countQuery = `SELECT COUNT(DISTINCT c.id) as total FROM clients c WHERE c.project_id = ?`;
         const countParams = [req.params.projectId];
         if (search) {
-            countQuery += ` AND (email LIKE ? OR phone LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR company LIKE ?)`;
+            countQuery += ` AND (c.email LIKE ? OR c.phone LIKE ? OR c.first_name LIKE ? OR c.last_name LIKE ? OR c.company LIKE ?)`;
             const searchTerm = `%${search}%`;
             countParams.push(searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
+        }
+        if (tag) {
+            countQuery += ` AND c.tags LIKE ?`;
+            countParams.push(`%"${tag}"%`);
+        }
+        if (source) {
+            countQuery += ` AND c.source = ?`;
+            countParams.push(source);
+        }
+        if (has_active_course === '1') {
+            countQuery += ` AND EXISTS (SELECT 1 FROM course_access WHERE client_id = c.id AND is_active = 1)`;
+        }
+        if (completed_lesson === '1') {
+            countQuery += ` AND EXISTS (SELECT 1 FROM lesson_progress WHERE client_id = c.id AND is_completed = 1)`;
+        }
+        if (course_id) {
+            countQuery += ` AND EXISTS (SELECT 1 FROM course_access WHERE client_id = c.id AND course_id = ?)`;
+            countParams.push(course_id);
+        }
+        if (has_booking === '1') {
+            countQuery += ` AND EXISTS (SELECT 1 FROM bookings WHERE client_id = c.id)`;
+        }
+        if (has_upcoming_booking === '1') {
+            countQuery += ` AND EXISTS (SELECT 1 FROM bookings WHERE client_id = c.id AND booking_date >= date('now') AND status != 'cancelled')`;
+        }
+        if (service_id) {
+            countQuery += ` AND EXISTS (SELECT 1 FROM bookings WHERE client_id = c.id AND service_id = ?)`;
+            countParams.push(service_id);
+        }
+        if (has_orders === '1') {
+            countQuery += ` AND EXISTS (SELECT 1 FROM orders WHERE client_id = c.id)`;
+        }
+        if (has_deals === '1') {
+            countQuery += ` AND EXISTS (SELECT 1 FROM deals WHERE client_id = c.id)`;
         }
         const { total } = db.prepare(countQuery).get(...countParams);
 
