@@ -1463,6 +1463,262 @@ function createCMSTables(db) {
     } catch (e) { /* column exists */ }
 
     // ============================================================
+    // AMO CRM-LIKE FEATURES
+    // ============================================================
+
+    // Звонки
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS calls (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            client_id TEXT,
+            employee_id TEXT,
+            deal_id TEXT,
+            direction TEXT NOT NULL DEFAULT 'outgoing',
+            phone_from TEXT,
+            phone_to TEXT,
+            status TEXT DEFAULT 'initiated',
+            duration INTEGER DEFAULT 0,
+            recording_url TEXT,
+            transcription TEXT,
+            result TEXT,
+            notes TEXT,
+            external_id TEXT,
+            started_at TEXT,
+            answered_at TEXT,
+            ended_at TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE SET NULL,
+            FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE SET NULL,
+            FOREIGN KEY (deal_id) REFERENCES deals(id) ON DELETE SET NULL
+        )
+    `);
+
+    // Регламенты (SLA для сделок)
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS regulations (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            entity_type TEXT DEFAULT 'deal',
+            funnel_id TEXT,
+            stage_id TEXT,
+            condition_type TEXT NOT NULL,
+            condition_value INTEGER NOT NULL,
+            condition_unit TEXT DEFAULT 'hours',
+            action_type TEXT NOT NULL,
+            action_config TEXT DEFAULT '{}',
+            notification_employees TEXT DEFAULT '[]',
+            is_active INTEGER DEFAULT 1,
+            priority INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            FOREIGN KEY (funnel_id) REFERENCES funnels(id) ON DELETE CASCADE,
+            FOREIGN KEY (stage_id) REFERENCES funnel_stages(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Логи срабатывания регламентов
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS regulation_logs (
+            id TEXT PRIMARY KEY,
+            regulation_id TEXT NOT NULL,
+            entity_type TEXT NOT NULL,
+            entity_id TEXT NOT NULL,
+            action_taken TEXT,
+            result TEXT,
+            executed_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (regulation_id) REFERENCES regulations(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Цели/KPI менеджеров
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS sales_goals (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            employee_id TEXT,
+            period_type TEXT DEFAULT 'month',
+            period_start TEXT NOT NULL,
+            period_end TEXT NOT NULL,
+            metric_type TEXT NOT NULL,
+            target_value REAL NOT NULL,
+            current_value REAL DEFAULT 0,
+            funnel_id TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE,
+            FOREIGN KEY (funnel_id) REFERENCES funnels(id) ON DELETE SET NULL
+        )
+    `);
+
+    // Очередь нераспределенных сделок
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS lead_queue (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            deal_id TEXT NOT NULL,
+            source TEXT,
+            priority INTEGER DEFAULT 0,
+            assigned_at TEXT,
+            assigned_to TEXT,
+            expires_at TEXT,
+            status TEXT DEFAULT 'pending',
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            FOREIGN KEY (deal_id) REFERENCES deals(id) ON DELETE CASCADE,
+            FOREIGN KEY (assigned_to) REFERENCES employees(id) ON DELETE SET NULL
+        )
+    `);
+
+    // Настройки распределения лидов
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS lead_distribution_settings (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            funnel_id TEXT,
+            distribution_type TEXT DEFAULT 'round_robin',
+            employee_ids TEXT DEFAULT '[]',
+            max_leads_per_employee INTEGER,
+            response_timeout_minutes INTEGER DEFAULT 30,
+            auto_reassign INTEGER DEFAULT 1,
+            working_hours_only INTEGER DEFAULT 1,
+            working_hours_start TEXT DEFAULT '09:00',
+            working_hours_end TEXT DEFAULT '18:00',
+            is_active INTEGER DEFAULT 1,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            FOREIGN KEY (funnel_id) REFERENCES funnels(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Комментарии к сделкам
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS deal_comments (
+            id TEXT PRIMARY KEY,
+            deal_id TEXT NOT NULL,
+            employee_id TEXT,
+            content TEXT NOT NULL,
+            attachments TEXT DEFAULT '[]',
+            is_pinned INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (deal_id) REFERENCES deals(id) ON DELETE CASCADE,
+            FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE SET NULL
+        )
+    `);
+
+    // Источники лидов
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS lead_sources (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            type TEXT NOT NULL,
+            external_id TEXT,
+            settings TEXT DEFAULT '{}',
+            stats_leads INTEGER DEFAULT 0,
+            stats_conversions INTEGER DEFAULT 0,
+            stats_revenue REAL DEFAULT 0,
+            is_active INTEGER DEFAULT 1,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Роли с детальными правами
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS employee_roles (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            slug TEXT NOT NULL,
+            description TEXT,
+            permissions TEXT DEFAULT '{}',
+            is_system INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            UNIQUE(project_id, slug)
+        )
+    `);
+
+    // Рабочее время сотрудников (для распределения лидов)
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS employee_working_hours (
+            id TEXT PRIMARY KEY,
+            employee_id TEXT NOT NULL,
+            day_of_week INTEGER NOT NULL,
+            start_time TEXT NOT NULL,
+            end_time TEXT NOT NULL,
+            is_working INTEGER DEFAULT 1,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE,
+            UNIQUE(employee_id, day_of_week)
+        )
+    `);
+
+    // Статусы сотрудников (онлайн/офлайн/занят)
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS employee_status (
+            id TEXT PRIMARY KEY,
+            employee_id TEXT NOT NULL UNIQUE,
+            status TEXT DEFAULT 'offline',
+            status_message TEXT,
+            last_activity_at TEXT,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Аналитика действий сотрудников
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS employee_activity_log (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            employee_id TEXT NOT NULL,
+            action_type TEXT NOT NULL,
+            entity_type TEXT,
+            entity_id TEXT,
+            metadata TEXT DEFAULT '{}',
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
+        )
+    `);
+
+    // Теги для сделок/клиентов (отдельная таблица для фильтрации)
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS tags (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            color TEXT,
+            entity_type TEXT DEFAULT 'deal',
+            usage_count INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+            UNIQUE(project_id, name, entity_type)
+        )
+    `);
+
+    // Потерянные причины отказа
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS loss_reasons (
+            id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            sort_order INTEGER DEFAULT 0,
+            usage_count INTEGER DEFAULT 0,
+            is_active INTEGER DEFAULT 1,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+        )
+    `);
+
+    // ============================================================
     // INDEXES FOR CMS TABLES
     // ============================================================
     db.exec(`
@@ -1520,6 +1776,39 @@ function createCMSTables(db) {
         CREATE INDEX IF NOT EXISTS idx_notifications_recipient ON notifications(recipient_type, recipient_id);
         CREATE INDEX IF NOT EXISTS idx_project_settings_project ON project_settings(project_id);
         CREATE INDEX IF NOT EXISTS idx_email_templates_project ON email_templates(project_id);
+
+        CREATE INDEX IF NOT EXISTS idx_calls_project ON calls(project_id);
+        CREATE INDEX IF NOT EXISTS idx_calls_client ON calls(client_id);
+        CREATE INDEX IF NOT EXISTS idx_calls_employee ON calls(employee_id);
+        CREATE INDEX IF NOT EXISTS idx_calls_deal ON calls(deal_id);
+        CREATE INDEX IF NOT EXISTS idx_calls_direction ON calls(direction);
+
+        CREATE INDEX IF NOT EXISTS idx_regulations_project ON regulations(project_id);
+        CREATE INDEX IF NOT EXISTS idx_regulations_funnel ON regulations(funnel_id);
+        CREATE INDEX IF NOT EXISTS idx_regulation_logs_regulation ON regulation_logs(regulation_id);
+
+        CREATE INDEX IF NOT EXISTS idx_sales_goals_project ON sales_goals(project_id);
+        CREATE INDEX IF NOT EXISTS idx_sales_goals_employee ON sales_goals(employee_id);
+        CREATE INDEX IF NOT EXISTS idx_sales_goals_period ON sales_goals(period_start, period_end);
+
+        CREATE INDEX IF NOT EXISTS idx_lead_queue_project ON lead_queue(project_id);
+        CREATE INDEX IF NOT EXISTS idx_lead_queue_deal ON lead_queue(deal_id);
+        CREATE INDEX IF NOT EXISTS idx_lead_queue_status ON lead_queue(status);
+
+        CREATE INDEX IF NOT EXISTS idx_deal_comments_deal ON deal_comments(deal_id);
+
+        CREATE INDEX IF NOT EXISTS idx_lead_sources_project ON lead_sources(project_id);
+
+        CREATE INDEX IF NOT EXISTS idx_employee_roles_project ON employee_roles(project_id);
+
+        CREATE INDEX IF NOT EXISTS idx_employee_activity_log_project ON employee_activity_log(project_id);
+        CREATE INDEX IF NOT EXISTS idx_employee_activity_log_employee ON employee_activity_log(employee_id);
+        CREATE INDEX IF NOT EXISTS idx_employee_activity_log_action ON employee_activity_log(action_type);
+
+        CREATE INDEX IF NOT EXISTS idx_tags_project ON tags(project_id);
+        CREATE INDEX IF NOT EXISTS idx_tags_entity ON tags(entity_type);
+
+        CREATE INDEX IF NOT EXISTS idx_loss_reasons_project ON loss_reasons(project_id);
     `);
 
     console.log('CMS extension tables created');

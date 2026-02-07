@@ -41,6 +41,13 @@ const bookingsRoutes = require('./bookings');
 // Learning Management (GetCourse-like)
 const learningRoutes = require('./learning');
 
+// amoCRM-like Features
+const callsRoutes = require('./calls');
+const regulationsRoutes = require('./regulations');
+const goalsRoutes = require('./goals');
+const leadDistributionRoutes = require('./lead-distribution');
+const employeeAnalyticsRoutes = require('./employee-analytics');
+
 // API routes - Auth & Core
 router.use('/auth', authRoutes);
 router.use('/users', usersRoutes);
@@ -80,6 +87,13 @@ router.use('/bookings', bookingsRoutes);
 
 // Learning management (access, homework, quizzes, webinars, certificates)
 router.use('/learning', learningRoutes);
+
+// amoCRM-like features
+router.use('/calls', callsRoutes);
+router.use('/regulations', regulationsRoutes);
+router.use('/goals', goalsRoutes);
+router.use('/lead-distribution', leadDistributionRoutes);
+router.use('/employee-analytics', employeeAnalyticsRoutes);
 
 // Health check
 router.get('/health', (req, res) => {
