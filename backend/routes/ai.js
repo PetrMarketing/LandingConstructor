@@ -30,4 +30,7 @@ router.post('/generate-landing', aiLimiter, aiController.generateLanding);
 // GET /api/ai/result/:jobId — poll for result
 router.get('/result/:jobId', aiController.getResult);
 
+// POST /api/ai/edit-block — AI-assisted block editing
+router.post('/edit-block', aiLimiter, aiController.editBlock);
+
 module.exports = router;

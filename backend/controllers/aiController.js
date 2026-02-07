@@ -117,6 +117,102 @@ exports.getResult = (req, res) => {
     res.json({ success: true, status: 'done', elements });
 };
 
+// POST /api/ai/edit-block — AI-assisted block editing
+exports.editBlock = async (req, res) => {
+    try {
+        const { message, element, projectId } = req.body;
+
+        if (!message || !element) {
+            return res.status(400).json({ success: false, error: 'Сообщение и элемент обязательны' });
+        }
+
+        const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+
+        // If no API key, return guidance for local processing
+        if (!OPENROUTER_API_KEY) {
+            return res.json({
+                success: true,
+                response: 'AI сервис недоступен. Используйте локальные команды для редактирования.',
+                changes: null
+            });
+        }
+
+        const editPrompt = `Ты — ассистент редактирования блоков в конструкторе лендингов.
+
+Текущий блок:
+- Тип: ${element.type}
+- Название: ${element.label}
+- Контент: ${JSON.stringify(element.content || {})}
+- Стили: ${JSON.stringify(element.styles || {})}
+
+Пользователь просит: "${message}"
+
+Отвечай ТОЛЬКО валидным JSON:
+{
+  "response": "Краткое описание что сделано",
+  "changes": {
+    "content": { ... новые значения контента ... },
+    "styles": { ... новые стили ... }
+  }
+}
+
+Если изменений нет, changes = null.
+Если нужно только изменить контент, styles не включай и наоборот.`;
+
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 30000);
+
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                'HTTP-Referer': process.env.APP_URL || 'http://localhost:3000',
+                'X-Title': 'Landing Page Builder'
+            },
+            body: JSON.stringify({
+                model: 'google/gemini-2.0-flash-001',
+                messages: [
+                    { role: 'user', content: editPrompt }
+                ],
+                response_format: { type: 'json_object' },
+                temperature: 0.5,
+                max_tokens: 1000
+            }),
+            signal: controller.signal
+        });
+
+        clearTimeout(timeout);
+
+        if (!response.ok) {
+            throw new Error(`API error ${response.status}`);
+        }
+
+        const data = await response.json();
+        const content = data.choices?.[0]?.message?.content;
+
+        if (!content) {
+            throw new Error('No AI response');
+        }
+
+        const parsed = JSON.parse(content);
+
+        res.json({
+            success: true,
+            response: parsed.response || 'Изменения применены.',
+            changes: parsed.changes || null
+        });
+
+    } catch (error) {
+        console.error('[AI Edit Block] Error:', error.message);
+        res.json({
+            success: true,
+            response: 'Не удалось обработать запрос через AI. Попробуйте более простую команду.',
+            changes: null
+        });
+    }
+};
+
 // Background AI generation
 async function runGeneration(jobId, params, apiKey) {
     const { niche, product, productDescription, audience, mainOffer, tone, colorScheme } = params;

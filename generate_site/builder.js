@@ -2679,6 +2679,7 @@ function renderElement(element, depth = 0) {
     const toolbar = document.createElement('div');
     toolbar.className = 'element-toolbar';
     toolbar.innerHTML = `
+        <button class="toolbar-action ai-action" data-action="ai" title="AI редактирование" style="background: linear-gradient(135deg, #f59e0b, #ea580c);"><i class="fas fa-magic"></i></button>
         <button class="toolbar-action ${element.unlocked ? 'active' : ''}" data-action="unlock" title="${element.unlocked ? 'Закрепить' : 'Свободное перемещение'}"><i class="fas fa-${element.unlocked ? 'lock-open' : 'lock'}"></i></button>
         <button class="toolbar-action" data-action="moveUp" title="Вверх"><i class="fas fa-arrow-up"></i></button>
         <button class="toolbar-action" data-action="moveDown" title="Вниз"><i class="fas fa-arrow-down"></i></button>
@@ -2738,6 +2739,7 @@ function renderElement(element, depth = 0) {
             e.stopPropagation();
             const action = btn.dataset.action;
             switch (action) {
+                case 'ai': openAIDialog(element.id); break;
                 case 'unlock': toggleUnlock(element.id); break;
                 case 'moveUp': moveElement(element.id, 'up'); break;
                 case 'moveDown': moveElement(element.id, 'down'); break;
@@ -3131,6 +3133,258 @@ function isDescendant(childId, parentId) {
 function highlightLayer(id) {
     layersContent.querySelectorAll('.layer-item').forEach(item => {
         item.classList.toggle('selected', item.dataset.id === id);
+    });
+}
+
+// ===== AI Block Dialog =====
+let aiBlockCurrentElement = null;
+const aiBlockModal = document.getElementById('aiBlockModal');
+const aiChatMessages = document.getElementById('aiChatMessages');
+const aiChatInput = document.getElementById('aiChatInput');
+const aiBlockType = document.getElementById('aiBlockType');
+
+function openAIDialog(id) {
+    const element = findElement(id);
+    if (!element) return;
+
+    aiBlockCurrentElement = element;
+    aiBlockType.textContent = element.label || element.type;
+
+    // Reset chat to initial message
+    aiChatMessages.innerHTML = `
+        <div class="ai-message assistant">
+            <div class="message-avatar"><i class="fas fa-robot"></i></div>
+            <div class="message-content">
+                Привет! Я помогу отредактировать блок "<strong>${element.label}</strong>". Опишите, что вы хотите изменить:
+                <ul style="margin: 10px 0 0 0; padding-left: 20px; opacity: 0.8;">
+                    <li>Изменить текст или заголовок</li>
+                    <li>Поменять стили и цвета</li>
+                    <li>Добавить или удалить элементы</li>
+                    <li>Улучшить контент с помощью AI</li>
+                </ul>
+            </div>
+        </div>
+    `;
+
+    aiChatInput.value = '';
+    aiBlockModal.classList.add('active');
+    aiChatInput.focus();
+}
+
+function closeAIDialog() {
+    aiBlockModal.classList.remove('active');
+    aiBlockCurrentElement = null;
+}
+
+function addAIChatMessage(text, isUser = false) {
+    const msg = document.createElement('div');
+    msg.className = `ai-message ${isUser ? 'user' : 'assistant'}`;
+    msg.innerHTML = `
+        <div class="message-avatar"><i class="fas fa-${isUser ? 'user' : 'robot'}"></i></div>
+        <div class="message-content">${text}</div>
+    `;
+    aiChatMessages.appendChild(msg);
+    aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+    return msg;
+}
+
+function addAILoadingMessage() {
+    const msg = document.createElement('div');
+    msg.className = 'ai-message assistant loading';
+    msg.id = 'aiLoadingMessage';
+    msg.innerHTML = `
+        <div class="message-avatar"><i class="fas fa-robot"></i></div>
+        <div class="message-content">
+            <div class="ai-typing-indicator">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    `;
+    aiChatMessages.appendChild(msg);
+    aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+    return msg;
+}
+
+function removeAILoadingMessage() {
+    const loading = document.getElementById('aiLoadingMessage');
+    if (loading) loading.remove();
+}
+
+async function sendAIChatMessage() {
+    const message = aiChatInput.value.trim();
+    if (!message || !aiBlockCurrentElement) return;
+
+    addAIChatMessage(message, true);
+    aiChatInput.value = '';
+    addAILoadingMessage();
+
+    try {
+        // Prepare element context for AI
+        const elementContext = {
+            type: aiBlockCurrentElement.type,
+            label: aiBlockCurrentElement.label,
+            content: aiBlockCurrentElement.content || {},
+            styles: aiBlockCurrentElement.styles || {},
+            children: aiBlockCurrentElement.children ? aiBlockCurrentElement.children.length : 0
+        };
+
+        const response = await fetch(`${API_BASE}/api/ai/edit-block`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                message,
+                element: elementContext,
+                projectId: state.projectId
+            })
+        });
+
+        const data = await response.json();
+        removeAILoadingMessage();
+
+        if (data.success && data.changes) {
+            // Apply changes to element
+            applyAIChangesToElement(data.changes);
+            addAIChatMessage(data.response || 'Готово! Изменения применены к блоку.');
+        } else if (data.response) {
+            addAIChatMessage(data.response);
+        } else {
+            addAIChatMessage('Не удалось обработать запрос. Попробуйте переформулировать.');
+        }
+    } catch (error) {
+        removeAILoadingMessage();
+        console.error('AI chat error:', error);
+
+        // Fallback: local processing
+        const result = processAIRequestLocally(message);
+        addAIChatMessage(result.response);
+        if (result.changes) {
+            applyAIChangesToElement(result.changes);
+        }
+    }
+}
+
+function processAIRequestLocally(message) {
+    const msg = message.toLowerCase();
+    const changes = {};
+    let response = '';
+
+    // Color changes
+    if (msg.includes('цвет') || msg.includes('color')) {
+        if (msg.includes('красн') || msg.includes('red')) {
+            changes.styles = { ...aiBlockCurrentElement.styles, backgroundColor: '#ef4444', color: '#ffffff' };
+            response = 'Применил красный цвет к блоку.';
+        } else if (msg.includes('син') || msg.includes('blue')) {
+            changes.styles = { ...aiBlockCurrentElement.styles, backgroundColor: '#3b82f6', color: '#ffffff' };
+            response = 'Применил синий цвет к блоку.';
+        } else if (msg.includes('зелен') || msg.includes('green')) {
+            changes.styles = { ...aiBlockCurrentElement.styles, backgroundColor: '#22c55e', color: '#ffffff' };
+            response = 'Применил зелёный цвет к блоку.';
+        } else if (msg.includes('ярк')) {
+            changes.styles = { ...aiBlockCurrentElement.styles, backgroundColor: '#f59e0b', color: '#000000' };
+            response = 'Сделал цвета ярче!';
+        } else {
+            response = 'Укажите конкретный цвет: красный, синий, зелёный и т.д.';
+        }
+    }
+    // Padding/margin
+    else if (msg.includes('отступ') || msg.includes('padding') || msg.includes('margin')) {
+        if (msg.includes('больше') || msg.includes('увелич')) {
+            changes.styles = { ...aiBlockCurrentElement.styles, padding: '40px' };
+            response = 'Увеличил отступы блока.';
+        } else if (msg.includes('меньше') || msg.includes('уменьш')) {
+            changes.styles = { ...aiBlockCurrentElement.styles, padding: '10px' };
+            response = 'Уменьшил отступы блока.';
+        } else {
+            changes.styles = { ...aiBlockCurrentElement.styles, padding: '30px' };
+            response = 'Обновил отступы блока.';
+        }
+    }
+    // Text changes
+    else if (msg.includes('текст') || msg.includes('заголов') || msg.includes('title') || msg.includes('text')) {
+        if (msg.includes('продающ') || msg.includes('selling')) {
+            if (aiBlockCurrentElement.content?.title) {
+                changes.content = { ...aiBlockCurrentElement.content, title: aiBlockCurrentElement.content.title + ' — выгодное предложение!' };
+                response = 'Сделал заголовок более продающим!';
+            } else {
+                response = 'В этом блоке нет текста для редактирования.';
+            }
+        } else if (msg.includes('сократ') || msg.includes('короче')) {
+            if (aiBlockCurrentElement.content?.text) {
+                const words = aiBlockCurrentElement.content.text.split(' ');
+                changes.content = { ...aiBlockCurrentElement.content, text: words.slice(0, Math.ceil(words.length / 2)).join(' ') + '...' };
+                response = 'Сократил текст блока.';
+            } else {
+                response = 'В этом блоке нет текста для сокращения.';
+            }
+        } else {
+            response = 'Опишите подробнее, что сделать с текстом.';
+        }
+    }
+    // Font size
+    else if (msg.includes('шрифт') || msg.includes('font') || msg.includes('размер')) {
+        if (msg.includes('больше') || msg.includes('увелич') || msg.includes('крупн')) {
+            changes.styles = { ...aiBlockCurrentElement.styles, fontSize: '24px' };
+            response = 'Увеличил размер шрифта.';
+        } else if (msg.includes('меньше') || msg.includes('уменьш')) {
+            changes.styles = { ...aiBlockCurrentElement.styles, fontSize: '14px' };
+            response = 'Уменьшил размер шрифта.';
+        } else {
+            response = 'Укажите: увеличить или уменьшить шрифт?';
+        }
+    }
+    // Default
+    else {
+        response = 'Я могу помочь с:\n• Изменением цветов (скажите "сделай красным")\n• Отступами (скажите "больше отступов")\n• Текстом (скажите "сделай текст продающим")\n• Размером шрифта (скажите "увеличь шрифт")';
+    }
+
+    return { changes: Object.keys(changes).length > 0 ? changes : null, response };
+}
+
+function applyAIChangesToElement(changes) {
+    if (!aiBlockCurrentElement) return;
+
+    const element = findElement(aiBlockCurrentElement.id);
+    if (!element) return;
+
+    if (changes.content) {
+        element.content = { ...element.content, ...changes.content };
+    }
+    if (changes.styles) {
+        element.styles = { ...element.styles, ...changes.styles };
+    }
+    if (changes.children) {
+        element.children = changes.children;
+    }
+
+    // Update reference
+    aiBlockCurrentElement = element;
+
+    // Re-render
+    savePageData();
+    renderCanvas();
+    selectElement(element.id);
+}
+
+// AI Dialog event listeners
+if (aiBlockModal) {
+    document.getElementById('aiBlockClose').addEventListener('click', closeAIDialog);
+    document.getElementById('aiChatSend').addEventListener('click', sendAIChatMessage);
+
+    aiChatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendAIChatMessage();
+    });
+
+    // Quick action buttons
+    document.querySelectorAll('.ai-quick-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            aiChatInput.value = btn.dataset.prompt;
+            sendAIChatMessage();
+        });
+    });
+
+    // Close on backdrop click
+    aiBlockModal.addEventListener('click', (e) => {
+        if (e.target === aiBlockModal) closeAIDialog();
     });
 }
 
