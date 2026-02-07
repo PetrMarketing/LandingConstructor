@@ -1534,7 +1534,7 @@
                             <input type="date" class="filter-select" id="bookingsWeekStart" style="min-width:140px;" onchange="loadBookingsCalendar()">
                             <button class="btn btn-outline btn-sm" onclick="moveBookingsWeek(1)"><i class="fas fa-chevron-right"></i></button>
                         </div>
-                        <button class="btn btn-primary" onclick="openModal('bookingModal')"><i class="fas fa-plus"></i> Новая запись</button>
+                        <button class="btn btn-primary" onclick="openNewBookingModal()"><i class="fas fa-plus"></i> Новая запись</button>
                     </div>
                     <div class="stats-grid" style="margin-bottom:20px;">
                         <div class="stat-card primary">
@@ -2299,10 +2299,11 @@
     <div class="modal-overlay" id="employeeModal">
         <div class="modal">
             <div class="modal-header">
-                <h3>Новый сотрудник</h3>
+                <h3 id="employeeModalTitle">Новый сотрудник</h3>
                 <button class="modal-close" onclick="closeModal('employeeModal')">&times;</button>
             </div>
             <div class="modal-body">
+                <input type="hidden" id="employeeEditId">
                 <div class="form-group">
                     <label>Имя *</label>
                     <input type="text" id="employeeFirstName" placeholder="Иван">
@@ -2330,7 +2331,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline" onclick="closeModal('employeeModal')">Отмена</button>
-                <button class="btn btn-primary" onclick="saveEmployee()">Добавить</button>
+                <button class="btn btn-primary" onclick="saveEmployee()" id="employeeSaveBtn">Добавить</button>
             </div>
         </div>
     </div>
@@ -2861,10 +2862,11 @@
     <div class="modal-overlay" id="courseModal">
         <div class="modal">
             <div class="modal-header">
-                <h3>Новый курс</h3>
+                <h3 id="courseModalTitle">Новый курс</h3>
                 <button class="modal-close" onclick="closeModal('courseModal')">&times;</button>
             </div>
             <div class="modal-body">
+                <input type="hidden" id="courseEditId">
                 <div class="form-group">
                     <label>Название курса *</label>
                     <input type="text" id="courseName" placeholder="Курс по маркетингу">
@@ -2892,7 +2894,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline" onclick="closeModal('courseModal')">Отмена</button>
-                <button class="btn btn-primary" onclick="saveCourse()">Создать</button>
+                <button class="btn btn-primary" onclick="saveCourse()" id="courseSaveBtn">Сохранить</button>
             </div>
         </div>
     </div>
@@ -3593,10 +3595,11 @@
     <div class="modal-overlay" id="categoryModal">
         <div class="modal" style="max-width:500px;">
             <div class="modal-header">
-                <h3>Новая категория</h3>
+                <h3 id="categoryModalTitle">Новая категория</h3>
                 <button class="modal-close" onclick="closeModal('categoryModal')">&times;</button>
             </div>
             <div class="modal-body">
+                <input type="hidden" id="categoryEditId">
                 <div class="form-group">
                     <label>Название категории *</label>
                     <input type="text" id="categoryName" placeholder="Название категории">
@@ -3673,10 +3676,11 @@ XL"></textarea>
     <div class="modal-overlay" id="selectionModal">
         <div class="modal" style="max-width:600px;">
             <div class="modal-header">
-                <h3>Новая подборка</h3>
+                <h3 id="selectionModalTitle">Новая подборка</h3>
                 <button class="modal-close" onclick="closeModal('selectionModal')">&times;</button>
             </div>
             <div class="modal-body">
+                <input type="hidden" id="selectionEditId">
                 <div class="form-group">
                     <label>Название подборки *</label>
                     <input type="text" id="selectionName" placeholder="Хиты продаж">
@@ -3755,10 +3759,11 @@ XL"></textarea>
     <div class="modal-overlay" id="specialistModal">
         <div class="modal" style="max-width:600px;">
             <div class="modal-header">
-                <h3>Добавить специалиста</h3>
+                <h3 id="specialistModalTitle">Добавить специалиста</h3>
                 <button class="modal-close" onclick="closeModal('specialistModal')">&times;</button>
             </div>
             <div class="modal-body">
+                <input type="hidden" id="specialistEditId">
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">
                     <div class="form-group">
                         <label>Имя *</label>
@@ -3799,10 +3804,11 @@ XL"></textarea>
     <div class="modal-overlay" id="roomModal">
         <div class="modal" style="max-width:500px;">
             <div class="modal-header">
-                <h3>Добавить помещение</h3>
+                <h3 id="roomModalTitle">Добавить помещение</h3>
                 <button class="modal-close" onclick="closeModal('roomModal')">&times;</button>
             </div>
             <div class="modal-body">
+                <input type="hidden" id="roomEditId">
                 <div class="form-group">
                     <label>Название *</label>
                     <input type="text" id="roomName" placeholder="Кабинет №1">
@@ -4024,10 +4030,11 @@ XL"></textarea>
     <div class="modal-overlay" id="lessonModal">
         <div class="modal" style="max-width:700px;">
             <div class="modal-header">
-                <h3>Новый урок</h3>
+                <h3 id="lessonModalTitle">Новый урок</h3>
                 <button class="modal-close" onclick="closeModal('lessonModal')">&times;</button>
             </div>
             <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
+                <input type="hidden" id="lessonEditId">
                 <div class="form-group">
                     <label>Тренинг *</label>
                     <select id="lessonTraining">
@@ -4068,7 +4075,7 @@ XL"></textarea>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline" onclick="closeModal('lessonModal')">Отмена</button>
-                <button class="btn btn-primary" onclick="saveLesson()">Создать урок</button>
+                <button class="btn btn-primary" onclick="saveLesson()" id="lessonSaveBtn">Сохранить</button>
             </div>
         </div>
     </div>
@@ -5277,18 +5284,24 @@ XL"></textarea>
                 expected_close_date: expected_close || null, source: source || null, notes: notes || null
             };
 
-            const res = editId
-                ? await api('PUT', `/funnels/${projectId}/deals/${editId}`, data)
-                : await api('POST', `/funnels/${projectId}/deals`, data);
-
-            if (res.success) {
-                closeModal('dealModal');
-                resetDealForm();
-                loadDealsKanban();
-                loadFunnels();
-                toast(editId ? 'Сделка обновлена' : 'Сделка создана', 'success');
-            } else {
-                toast(res.error || 'Ошибка сохранения сделки', 'error');
+            showLoading();
+            try {
+                const res = editId
+                    ? await api('PUT', `/funnels/${projectId}/deals/${editId}`, data)
+                    : await api('POST', `/funnels/${projectId}/deals`, data);
+                if (res.success) {
+                    closeModal('dealModal');
+                    resetDealForm();
+                    loadDealsKanban();
+                    loadFunnels();
+                    toast(editId ? 'Сделка обновлена' : 'Сделка создана', 'success');
+                } else {
+                    toast(res.error || 'Ошибка сохранения сделки', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -5795,17 +5808,23 @@ XL"></textarea>
 
             const data = { first_name, last_name, email, phone, company, source, notes };
 
-            const res = editId
-                ? await api('PUT', `/clients/${projectId}/${editId}`, data)
-                : await api('POST', `/clients/${projectId}`, data);
-
-            if (res.success) {
-                closeModal('clientModal');
-                resetClientForm();
-                loadClients();
-                toast(editId ? 'Клиент обновлён' : 'Клиент добавлен', 'success');
-            } else {
-                toast(res.error || 'Ошибка сохранения клиента', 'error');
+            showLoading();
+            try {
+                const res = editId
+                    ? await api('PUT', `/clients/${projectId}/${editId}`, data)
+                    : await api('POST', `/clients/${projectId}`, data);
+                if (res.success) {
+                    closeModal('clientModal');
+                    resetClientForm();
+                    loadClients();
+                    toast(editId ? 'Клиент обновлён' : 'Клиент добавлен', 'success');
+                } else {
+                    toast(res.error || 'Ошибка сохранения клиента', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -5830,23 +5849,29 @@ XL"></textarea>
             if (tabContent) tabContent.style.display = 'block';
         }
 
-        function editClientFromProfile() {
-            if (!currentClientData) return;
-            closeModal('clientProfileModal');
+        function editClient(id) {
+            const c = clients.find(cl => cl.id == id);
+            if (!c) return toast('Клиент не найден', 'error');
 
-            document.getElementById('clientEditId').value = currentClientData.id;
-            document.getElementById('clientFirstName').value = currentClientData.first_name || '';
-            document.getElementById('clientLastName').value = currentClientData.last_name || '';
-            document.getElementById('clientEmail').value = currentClientData.email || '';
-            document.getElementById('clientPhone').value = currentClientData.phone || '';
-            document.getElementById('clientCompany').value = currentClientData.company || '';
-            document.getElementById('clientSource').value = currentClientData.source || '';
-            document.getElementById('clientNotes').value = currentClientData.notes || '';
+            document.getElementById('clientEditId').value = c.id;
+            document.getElementById('clientFirstName').value = c.first_name || '';
+            document.getElementById('clientLastName').value = c.last_name || '';
+            document.getElementById('clientEmail').value = c.email || '';
+            document.getElementById('clientPhone').value = c.phone || '';
+            document.getElementById('clientCompany').value = c.company || '';
+            document.getElementById('clientSource').value = c.source || '';
+            document.getElementById('clientNotes').value = c.notes || '';
 
             document.getElementById('clientModalTitle').textContent = 'Редактировать клиента';
             document.getElementById('clientSaveBtn').textContent = 'Сохранить';
 
             openModal('clientModal');
+        }
+
+        function editClientFromProfile() {
+            if (!currentClientData) return;
+            closeModal('clientProfileModal');
+            editClient(currentClientData.id);
         }
 
         function createDealForClient() {
@@ -5859,6 +5884,7 @@ XL"></textarea>
         function createBookingForClient() {
             if (!currentClientData) return;
             closeModal('clientProfileModal');
+            loadServicesForBooking();
             const clientSelect = document.getElementById('bookingClient');
             if (clientSelect) clientSelect.value = currentClientData.id;
             openModal('bookingModal');
@@ -5977,7 +6003,35 @@ XL"></textarea>
             `).join('');
         }
 
+        function editEmployee(id) {
+            const e = employees.find(emp => emp.id == id);
+            if (!e) return toast('Сотрудник не найден', 'error');
+
+            document.getElementById('employeeEditId').value = e.id;
+            document.getElementById('employeeFirstName').value = e.first_name || '';
+            document.getElementById('employeeLastName').value = e.last_name || '';
+            document.getElementById('employeeEmail').value = e.email || '';
+            document.getElementById('employeePosition').value = e.position || '';
+            document.getElementById('employeeRole').value = e.role || 'manager';
+
+            document.getElementById('employeeModalTitle').textContent = 'Редактировать сотрудника';
+            document.getElementById('employeeSaveBtn').textContent = 'Сохранить';
+
+            openModal('employeeModal');
+        }
+
+        function resetEmployeeForm() {
+            document.getElementById('employeeEditId').value = '';
+            ['employeeFirstName', 'employeeLastName', 'employeeEmail', 'employeePosition'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('employeeRole').value = 'manager';
+            document.getElementById('employeeModalTitle').textContent = 'Новый сотрудник';
+            document.getElementById('employeeSaveBtn').textContent = 'Добавить';
+        }
+
         async function saveEmployee() {
+            const editId = document.getElementById('employeeEditId').value;
             const first_name = document.getElementById('employeeFirstName').value;
             const last_name = document.getElementById('employeeLastName').value;
             const email = document.getElementById('employeeEmail').value;
@@ -5986,15 +6040,24 @@ XL"></textarea>
 
             if (!first_name || !last_name || !email) return toast('Заполните обязательные поля', 'error');
 
-            const res = await api('POST', `/employees/${projectId}`, { first_name, last_name, email, position, role });
-            if (res.success) {
-                closeModal('employeeModal');
-                ['employeeFirstName', 'employeeLastName', 'employeeEmail', 'employeePosition'].forEach(id => {
-                    document.getElementById(id).value = '';
-                });
-                loadEmployees();
-            } else {
-                toast(res.error || 'Ошибка добавления сотрудника', 'error');
+            const data = { first_name, last_name, email, position, role };
+            showLoading();
+            try {
+                const res = editId
+                    ? await api('PUT', `/employees/${projectId}/${editId}`, data)
+                    : await api('POST', `/employees/${projectId}`, data);
+                if (res.success) {
+                    closeModal('employeeModal');
+                    resetEmployeeForm();
+                    loadEmployees();
+                    toast(editId ? 'Сотрудник обновлён' : 'Сотрудник добавлен', 'success');
+                } else {
+                    toast(res.error || 'Ошибка сохранения сотрудника', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -6048,27 +6111,39 @@ XL"></textarea>
             const priority = document.getElementById('taskPriority').value;
             const due_date = document.getElementById('taskDueDate').value;
 
-            if (!title) return toast('Введите название задачи');
+            if (!title) return toast('Введите название задачи', 'error');
 
-            const res = await api('POST', `/employees/${projectId}/tasks`, {
-                title, description, assignee_id: assignee_id || null, priority, due_date: due_date || null
-            });
-
-            if (res.success) {
-                closeModal('taskModal');
-                ['taskTitle', 'taskDescription', 'taskAssignee', 'taskDueDate'].forEach(id => {
-                    document.getElementById(id).value = '';
+            showLoading();
+            try {
+                const res = await api('POST', `/employees/${projectId}/tasks`, {
+                    title, description, assignee_id: assignee_id || null, priority, due_date: due_date || null
                 });
-                loadTasks();
-            } else {
-                toast(res.error || 'Ошибка создания задачи', 'error');
+                if (res.success) {
+                    closeModal('taskModal');
+                    ['taskTitle', 'taskDescription', 'taskAssignee', 'taskDueDate'].forEach(id => {
+                        document.getElementById(id).value = '';
+                    });
+                    loadTasks();
+                    toast('Задача создана', 'success');
+                } else {
+                    toast(res.error || 'Ошибка создания задачи', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
         async function toggleTaskStatus(id, current) {
             const newStatus = current === 'completed' ? 'pending' : 'completed';
-            await api('PUT', `/employees/${projectId}/tasks/${id}`, { status: newStatus });
-            loadTasks();
+            try {
+                const res = await api('PUT', `/employees/${projectId}/tasks/${id}`, { status: newStatus });
+                if (res.success) loadTasks();
+                else toast(res.error || 'Ошибка обновления задачи', 'error');
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            }
         }
 
         // Orders
@@ -6287,6 +6362,8 @@ XL"></textarea>
                 } else {
                     toast(res.error || 'Ошибка сохранения товара', 'error');
                 }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
             } finally {
                 hideLoading();
             }
@@ -6559,8 +6636,13 @@ XL"></textarea>
 
         async function deleteProduct(id) {
             if (!confirm('Удалить товар?')) return;
-            await api('DELETE', `/products/${projectId}/${id}`);
-            loadProducts();
+            showLoading();
+            try {
+                const res = await api('DELETE', `/products/${projectId}/${id}`);
+                if (res.success) { loadProducts(); toast('Товар удалён', 'success'); }
+                else toast(res.error || 'Ошибка удаления', 'error');
+            } catch (e) { toast('Ошибка сети', 'error'); }
+            finally { hideLoading(); }
         }
 
         function searchProducts() {
@@ -7058,18 +7140,25 @@ XL"></textarea>
 
             if (!client_id || !total_amount) return toast('Заполните клиента и сумму', 'error');
 
-            const res = await api('POST', `/orders/${projectId}`, {
-                client_id, total_amount: parseFloat(total_amount), status, payment_status, shipping_address, notes
-            });
-
-            if (res.success) {
-                closeModal('orderModal');
-                ['orderAmount', 'orderAddress', 'orderNotes'].forEach(id => {
-                    document.getElementById(id).value = '';
+            showLoading();
+            try {
+                const res = await api('POST', `/orders/${projectId}`, {
+                    client_id, total_amount: parseFloat(total_amount), status, payment_status, shipping_address, notes
                 });
-                loadOrders();
-            } else {
-                toast(res.error || 'Ошибка создания заказа', 'error');
+                if (res.success) {
+                    closeModal('orderModal');
+                    ['orderAmount', 'orderAddress', 'orderNotes'].forEach(id => {
+                        document.getElementById(id).value = '';
+                    });
+                    loadOrders();
+                    toast('Заказ создан', 'success');
+                } else {
+                    toast(res.error || 'Ошибка создания заказа', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -7228,28 +7317,40 @@ XL"></textarea>
                 logic = document.getElementById('segmentLogic').value;
             }
 
-            const res = await api('POST', `/segments/${projectId}`, {
-                name, description, color, is_dynamic, rules, logic
-            });
-
-            if (res.success) {
-                closeModal('segmentModal');
-                ['segmentName', 'segmentDescription'].forEach(id => {
-                    document.getElementById(id).value = '';
+            showLoading();
+            try {
+                const res = await api('POST', `/segments/${projectId}`, {
+                    name, description, color, is_dynamic, rules, logic
                 });
-                document.getElementById('segmentDynamic').checked = false;
-                document.getElementById('segmentConditions').innerHTML = '';
-                segmentConditionCount = 0;
-                loadSegments();
-            } else {
-                toast(res.error || 'Ошибка создания сегмента', 'error');
+                if (res.success) {
+                    closeModal('segmentModal');
+                    ['segmentName', 'segmentDescription'].forEach(id => {
+                        document.getElementById(id).value = '';
+                    });
+                    document.getElementById('segmentDynamic').checked = false;
+                    document.getElementById('segmentConditions').innerHTML = '';
+                    segmentConditionCount = 0;
+                    loadSegments();
+                    toast('Сегмент создан', 'success');
+                } else {
+                    toast(res.error || 'Ошибка создания сегмента', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
         async function deleteSegment(id) {
             if (!confirm('Удалить сегмент?')) return;
-            await api('DELETE', `/segments/${projectId}/${id}`);
-            loadSegments();
+            showLoading();
+            try {
+                const res = await api('DELETE', `/segments/${projectId}/${id}`);
+                if (res.success) { loadSegments(); toast('Сегмент удалён', 'success'); }
+                else toast(res.error || 'Ошибка удаления', 'error');
+            } catch (e) { toast('Ошибка сети', 'error'); }
+            finally { hideLoading(); }
         }
 
         // Services
@@ -7325,32 +7426,44 @@ XL"></textarea>
 
             if (!name) return toast('Введите название услуги');
 
-            const res = await api('POST', `/services/${projectId}`, {
-                name, category,
-                price: parseFloat(price) || 0,
-                duration: parseInt(duration) || 60,
-                description, type,
-                buffer_time: parseInt(buffer_time) || 0,
-                max_clients: type === 'group' ? parseInt(max_clients) : 1,
-                online_booking
-            });
-
-            if (res.success) {
-                closeModal('serviceModal');
-                ['serviceName', 'serviceCategory', 'servicePrice', 'serviceDuration', 'serviceDescription'].forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.value = '';
+            showLoading();
+            try {
+                const res = await api('POST', `/services/${projectId}`, {
+                    name, category,
+                    price: parseFloat(price) || 0,
+                    duration: parseInt(duration) || 60,
+                    description, type,
+                    buffer_time: parseInt(buffer_time) || 0,
+                    max_clients: type === 'group' ? parseInt(max_clients) : 1,
+                    online_booking
                 });
-                loadServices();
-            } else {
-                toast(res.error || 'Ошибка добавления услуги', 'error');
+                if (res.success) {
+                    closeModal('serviceModal');
+                    ['serviceName', 'serviceCategory', 'servicePrice', 'serviceDuration', 'serviceDescription'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.value = '';
+                    });
+                    loadServices();
+                    toast('Услуга добавлена', 'success');
+                } else {
+                    toast(res.error || 'Ошибка добавления услуги', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
         async function deleteService(id) {
             if (!confirm('Удалить услугу?')) return;
-            await api('DELETE', `/services/${projectId}/${id}`);
-            loadServices();
+            showLoading();
+            try {
+                const res = await api('DELETE', `/services/${projectId}/${id}`);
+                if (res.success) { loadServices(); toast('Услуга удалена', 'success'); }
+                else toast(res.error || 'Ошибка удаления', 'error');
+            } catch (e) { toast('Ошибка сети', 'error'); }
+            finally { hideLoading(); }
         }
 
         // Courses
@@ -7389,37 +7502,72 @@ XL"></textarea>
         }
 
         async function saveCourse() {
+            const editId = document.getElementById('courseEditId').value;
             const name = document.getElementById('courseName').value;
             const price = document.getElementById('coursePrice').value;
             const level = document.getElementById('courseLevel').value;
             const duration = document.getElementById('courseDuration').value;
             const description = document.getElementById('courseDescription').value;
 
-            if (!name) return toast('Введите название курса');
+            if (!name) return toast('Введите название курса', 'error');
 
-            const res = await api('POST', `/courses/${projectId}`, {
-                name, price: parseFloat(price) || 0, level, duration: parseInt(duration) || null, description
-            });
-
-            if (res.success) {
-                closeModal('courseModal');
-                ['courseName', 'coursePrice', 'courseDuration', 'courseDescription'].forEach(id => {
-                    document.getElementById(id).value = '';
-                });
-                loadCourses();
-            } else {
-                toast(res.error || 'Ошибка создания курса', 'error');
+            const data = { name, price: parseFloat(price) || 0, level, duration: parseInt(duration) || null, description };
+            showLoading();
+            try {
+                const res = editId
+                    ? await api('PUT', `/courses/${projectId}/${editId}`, data)
+                    : await api('POST', `/courses/${projectId}`, data);
+                if (res.success) {
+                    closeModal('courseModal');
+                    resetCourseForm();
+                    loadCourses();
+                    toast(editId ? 'Курс обновлён' : 'Курс создан', 'success');
+                } else {
+                    toast(res.error || 'Ошибка сохранения курса', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
         function editCourse(id) {
-            toast('Редактирование курса: ' + id, 'info');
+            const c = courses.find(cr => cr.id == id);
+            if (!c) return toast('Курс не найден', 'error');
+
+            document.getElementById('courseEditId').value = c.id;
+            document.getElementById('courseName').value = c.name || '';
+            document.getElementById('coursePrice').value = c.price || '';
+            document.getElementById('courseLevel').value = c.level || 'beginner';
+            document.getElementById('courseDuration').value = c.duration || '';
+            document.getElementById('courseDescription').value = c.description || '';
+
+            document.getElementById('courseModalTitle').textContent = 'Редактировать курс';
+            document.getElementById('courseSaveBtn').textContent = 'Сохранить';
+
+            openModal('courseModal');
+        }
+
+        function resetCourseForm() {
+            document.getElementById('courseEditId').value = '';
+            ['courseName', 'coursePrice', 'courseDuration', 'courseDescription'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('courseLevel').value = 'beginner';
+            document.getElementById('courseModalTitle').textContent = 'Новый курс';
+            document.getElementById('courseSaveBtn').textContent = 'Сохранить';
         }
 
         async function deleteCourse(id) {
             if (!confirm('Удалить курс?')) return;
-            await api('DELETE', `/courses/${projectId}/${id}`);
-            loadCourses();
+            showLoading();
+            try {
+                const res = await api('DELETE', `/courses/${projectId}/${id}`);
+                if (res.success) { loadCourses(); toast('Курс удалён', 'success'); }
+                else toast(res.error || 'Ошибка удаления', 'error');
+            } catch (e) { toast('Ошибка сети', 'error'); }
+            finally { hideLoading(); }
         }
 
         // Payments
@@ -7969,8 +8117,13 @@ XL"></textarea>
 
         async function deleteRegulation(id) {
             if (!await confirm('Удалить регламент?')) return;
-            await api('DELETE', `/regulations/${projectId}/${id}`);
-            loadRegulations();
+            showLoading();
+            try {
+                const res = await api('DELETE', `/regulations/${projectId}/${id}`);
+                if (res.success) { loadRegulations(); toast('Регламент удалён', 'success'); }
+                else toast(res.error || 'Ошибка удаления', 'error');
+            } catch (e) { toast('Ошибка сети', 'error'); }
+            finally { hideLoading(); }
         }
 
         // Goals (KPI)
@@ -8061,10 +8214,11 @@ XL"></textarea>
         }
 
         async function assignLead(queueId) {
-            const res = await api('POST', `/lead-distribution/${projectId}/assign`);
-            if (res.success) {
-                loadLeadDistribution();
-            }
+            try {
+                const res = await api('POST', `/lead-distribution/${projectId}/assign`);
+                if (res.success) { loadLeadDistribution(); toast('Лид назначен', 'success'); }
+                else toast(res.error || 'Ошибка назначения', 'error');
+            } catch (e) { toast('Ошибка сети', 'error'); }
         }
 
         // Tags
@@ -8093,8 +8247,13 @@ XL"></textarea>
 
         async function deleteTag(id) {
             if (!confirm('Удалить тег?')) return;
-            await api('DELETE', `/tags/${projectId}/${id}`);
-            loadTags();
+            showLoading();
+            try {
+                const res = await api('DELETE', `/tags/${projectId}/${id}`);
+                if (res.success) { loadTags(); toast('Тег удалён', 'success'); }
+                else toast(res.error || 'Ошибка удаления', 'error');
+            } catch (e) { toast('Ошибка сети', 'error'); }
+            finally { hideLoading(); }
         }
 
         // Employee Analytics
@@ -8162,8 +8321,13 @@ XL"></textarea>
 
         async function deleteBrand(id) {
             if (!confirm('Удалить бренд?')) return;
-            await api('DELETE', `/ecommerce/${projectId}/brands/${id}`);
-            loadBrands();
+            showLoading();
+            try {
+                const res = await api('DELETE', `/ecommerce/${projectId}/brands/${id}`);
+                if (res.success) { loadBrands(); toast('Бренд удалён', 'success'); }
+                else toast(res.error || 'Ошибка удаления', 'error');
+            } catch (e) { toast('Ошибка сети', 'error'); }
+            finally { hideLoading(); }
         }
 
         // Promo Codes
@@ -8195,8 +8359,13 @@ XL"></textarea>
 
         async function deletePromoCode(id) {
             if (!confirm('Удалить промокод?')) return;
-            await api('DELETE', `/ecommerce/${projectId}/promo-codes/${id}`);
-            loadPromoCodes();
+            showLoading();
+            try {
+                const res = await api('DELETE', `/ecommerce/${projectId}/promo-codes/${id}`);
+                if (res.success) { loadPromoCodes(); toast('Промокод удалён', 'success'); }
+                else toast(res.error || 'Ошибка удаления', 'error');
+            } catch (e) { toast('Ошибка сети', 'error'); }
+            finally { hideLoading(); }
         }
 
         // Collections
@@ -8225,8 +8394,13 @@ XL"></textarea>
 
         async function deleteCollection(id) {
             if (!confirm('Удалить коллекцию?')) return;
-            await api('DELETE', `/ecommerce/${projectId}/collections/${id}`);
-            loadCollections();
+            showLoading();
+            try {
+                const res = await api('DELETE', `/ecommerce/${projectId}/collections/${id}`);
+                if (res.success) { loadCollections(); toast('Коллекция удалена', 'success'); }
+                else toast(res.error || 'Ошибка удаления', 'error');
+            } catch (e) { toast('Ошибка сети', 'error'); }
+            finally { hideLoading(); }
         }
 
         // ============================================================
@@ -8275,8 +8449,13 @@ XL"></textarea>
 
         async function cancelBooking(id) {
             if (!confirm('Отменить запись?')) return;
-            await api('PUT', `/bookings/${projectId}/${id}`, { status: 'cancelled' });
-            loadBookings();
+            showLoading();
+            try {
+                const res = await api('PUT', `/bookings/${projectId}/${id}`, { status: 'cancelled' });
+                if (res.success) { loadBookings(); toast('Запись отменена', 'success'); }
+                else toast(res.error || 'Ошибка отмены', 'error');
+            } catch (e) { toast('Ошибка сети', 'error'); }
+            finally { hideLoading(); }
         }
 
         // Schedules
@@ -8504,9 +8683,13 @@ XL"></textarea>
 
         async function deleteWebinar(id) {
             if (!await confirm('Удалить вебинар?', 'Удаление')) return;
-            await api('DELETE', `/learning/${projectId}/webinars/${id}`);
-            loadWebinars();
-            toast('Вебинар удалён', 'info');
+            showLoading();
+            try {
+                const res = await api('DELETE', `/learning/${projectId}/webinars/${id}`);
+                if (res.success) { loadWebinars(); toast('Вебинар удалён', 'success'); }
+                else toast(res.error || 'Ошибка удаления', 'error');
+            } catch (e) { toast('Ошибка сети', 'error'); }
+            finally { hideLoading(); }
         }
 
         // Quizzes
@@ -8537,8 +8720,13 @@ XL"></textarea>
 
         async function deleteQuiz(id) {
             if (!confirm('Удалить тест?')) return;
-            await api('DELETE', `/learning/${projectId}/quizzes/${id}`);
-            loadQuizzes();
+            showLoading();
+            try {
+                const res = await api('DELETE', `/learning/${projectId}/quizzes/${id}`);
+                if (res.success) { loadQuizzes(); toast('Тест удалён', 'success'); }
+                else toast(res.error || 'Ошибка удаления', 'error');
+            } catch (e) { toast('Ошибка сети', 'error'); }
+            finally { hideLoading(); }
         }
 
         // Certificates
@@ -8844,8 +9032,13 @@ XL"></textarea>
 
         async function deleteIntegration(id) {
             if (!confirm('Удалить интеграцию?')) return;
-            await api('DELETE', `/integrations/${projectId}/${id}`);
-            loadIntegrations();
+            showLoading();
+            try {
+                const res = await api('DELETE', `/integrations/${projectId}/${id}`);
+                if (res.success) { loadIntegrations(); toast('Интеграция удалена', 'success'); }
+                else toast(res.error || 'Ошибка удаления', 'error');
+            } catch (e) { toast('Ошибка сети', 'error'); }
+            finally { hideLoading(); }
         }
 
         // ============================================================
@@ -8883,17 +9076,24 @@ XL"></textarea>
                 }
             }
 
-            const res = await api('POST', `/goals/${projectId}`, {
-                employee_id: employee_id || null, metric_type,
-                target_value: parseFloat(target_value), period_type, period_start: start, period_end: end
-            });
-
-            if (res.success) {
-                closeModal('goalModal');
-                document.getElementById('goalTarget').value = '';
-                loadGoals();
-            } else {
-                toast(res.error || 'Ошибка создания цели', 'error');
+            showLoading();
+            try {
+                const res = await api('POST', `/goals/${projectId}`, {
+                    employee_id: employee_id || null, metric_type,
+                    target_value: parseFloat(target_value), period_type, period_start: start, period_end: end
+                });
+                if (res.success) {
+                    closeModal('goalModal');
+                    document.getElementById('goalTarget').value = '';
+                    loadGoals();
+                    toast('Цель создана', 'success');
+                } else {
+                    toast(res.error || 'Ошибка создания цели', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -8906,19 +9106,25 @@ XL"></textarea>
             const auto_reassign = document.getElementById('distAutoReassign').checked ? 1 : 0;
             const working_hours_only = document.getElementById('distWorkingHours').checked ? 1 : 0;
 
-            const res = await api('POST', `/lead-distribution/${projectId}/settings`, {
-                funnel_id: funnel_id || null, distribution_type,
-                response_timeout_minutes: parseInt(response_timeout_minutes) || 30,
-                max_leads_per_employee: max_leads_per_employee ? parseInt(max_leads_per_employee) : null,
-                auto_reassign, working_hours_only
-            });
-
-            if (res.success) {
-                closeModal('distributionModal');
-                loadLeadDistribution();
-                toast('Настройки сохранены', 'success');
-            } else {
-                toast(res.error || 'Ошибка сохранения', 'error');
+            showLoading();
+            try {
+                const res = await api('POST', `/lead-distribution/${projectId}/settings`, {
+                    funnel_id: funnel_id || null, distribution_type,
+                    response_timeout_minutes: parseInt(response_timeout_minutes) || 30,
+                    max_leads_per_employee: max_leads_per_employee ? parseInt(max_leads_per_employee) : null,
+                    auto_reassign, working_hours_only
+                });
+                if (res.success) {
+                    closeModal('distributionModal');
+                    loadLeadDistribution();
+                    toast('Настройки сохранены', 'success');
+                } else {
+                    toast(res.error || 'Ошибка сохранения', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -8928,16 +9134,23 @@ XL"></textarea>
             const color = document.getElementById('tagColor').value;
             const entity_type = document.getElementById('tagEntityType').value;
 
-            if (!name) return toast('Введите название тега');
+            if (!name) return toast('Введите название тега', 'error');
 
-            const res = await api('POST', `/tags/${projectId}`, { name, color, entity_type });
-
-            if (res.success) {
-                closeModal('tagModal');
-                document.getElementById('tagName').value = '';
-                loadTags();
-            } else {
-                toast(res.error || 'Ошибка создания тега', 'error');
+            showLoading();
+            try {
+                const res = await api('POST', `/tags/${projectId}`, { name, color, entity_type });
+                if (res.success) {
+                    closeModal('tagModal');
+                    document.getElementById('tagName').value = '';
+                    loadTags();
+                    toast('Тег создан', 'success');
+                } else {
+                    toast(res.error || 'Ошибка создания тега', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -8948,18 +9161,25 @@ XL"></textarea>
             const website = document.getElementById('brandWebsite').value;
             const description = document.getElementById('brandDescription').value;
 
-            if (!name) return toast('Введите название бренда');
+            if (!name) return toast('Введите название бренда', 'error');
 
-            const res = await api('POST', `/ecommerce/${projectId}/brands`, { name, logo, website, description });
-
-            if (res.success) {
-                closeModal('brandModal');
-                ['brandName', 'brandLogo', 'brandWebsite', 'brandDescription'].forEach(id => {
-                    document.getElementById(id).value = '';
-                });
-                loadBrands();
-            } else {
-                toast(res.error || 'Ошибка создания бренда', 'error');
+            showLoading();
+            try {
+                const res = await api('POST', `/ecommerce/${projectId}/brands`, { name, logo, website, description });
+                if (res.success) {
+                    closeModal('brandModal');
+                    ['brandName', 'brandLogo', 'brandWebsite', 'brandDescription'].forEach(id => {
+                        document.getElementById(id).value = '';
+                    });
+                    loadBrands();
+                    toast('Бренд создан', 'success');
+                } else {
+                    toast(res.error || 'Ошибка создания бренда', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -8975,21 +9195,28 @@ XL"></textarea>
 
             if (!code || !value) return toast('Введите код и значение скидки', 'error');
 
-            const res = await api('POST', `/ecommerce/${projectId}/promo-codes`, {
-                code, type, value: parseFloat(value),
-                min_order_amount: parseFloat(min_order_amount) || 0,
-                max_uses: max_uses ? parseInt(max_uses) : null,
-                start_date: start_date || null, end_date: end_date || null
-            });
-
-            if (res.success) {
-                closeModal('promoModal');
-                ['promoCode', 'promoValue', 'promoMinOrder', 'promoMaxUses', 'promoStart', 'promoEnd'].forEach(id => {
-                    document.getElementById(id).value = '';
+            showLoading();
+            try {
+                const res = await api('POST', `/ecommerce/${projectId}/promo-codes`, {
+                    code, type, value: parseFloat(value),
+                    min_order_amount: parseFloat(min_order_amount) || 0,
+                    max_uses: max_uses ? parseInt(max_uses) : null,
+                    start_date: start_date || null, end_date: end_date || null
                 });
-                loadPromoCodes();
-            } else {
-                toast(res.error || 'Ошибка создания промокода', 'error');
+                if (res.success) {
+                    closeModal('promoModal');
+                    ['promoCode', 'promoValue', 'promoMinOrder', 'promoMaxUses', 'promoStart', 'promoEnd'].forEach(id => {
+                        document.getElementById(id).value = '';
+                    });
+                    loadPromoCodes();
+                    toast('Промокод создан', 'success');
+                } else {
+                    toast(res.error || 'Ошибка создания промокода', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -9000,18 +9227,25 @@ XL"></textarea>
             const type = document.getElementById('collectionType').value;
             const description = document.getElementById('collectionDescription').value;
 
-            if (!name) return toast('Введите название коллекции');
+            if (!name) return toast('Введите название коллекции', 'error');
 
-            const res = await api('POST', `/ecommerce/${projectId}/collections`, { name, image, type, description });
-
-            if (res.success) {
-                closeModal('collectionModal');
-                ['collectionName', 'collectionImage', 'collectionDescription'].forEach(id => {
-                    document.getElementById(id).value = '';
-                });
-                loadCollections();
-            } else {
-                toast(res.error || 'Ошибка создания коллекции', 'error');
+            showLoading();
+            try {
+                const res = await api('POST', `/ecommerce/${projectId}/collections`, { name, image, type, description });
+                if (res.success) {
+                    closeModal('collectionModal');
+                    ['collectionName', 'collectionImage', 'collectionDescription'].forEach(id => {
+                        document.getElementById(id).value = '';
+                    });
+                    loadCollections();
+                    toast('Коллекция создана', 'success');
+                } else {
+                    toast(res.error || 'Ошибка создания коллекции', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -9140,23 +9374,36 @@ XL"></textarea>
         async function cancelCurrentBooking() {
             if (!currentBookingData) return;
             if (!await confirm('Отменить эту запись?', 'Отмена записи')) return;
-            await api('PUT', `/bookings/${projectId}/${currentBookingData.id}`, { status: 'cancelled' });
-            closeModal('bookingDetailsModal');
-            loadBookingsCalendar();
-            toast('Запись отменена', 'info');
+            showLoading();
+            try {
+                const res = await api('PUT', `/bookings/${projectId}/${currentBookingData.id}`, { status: 'cancelled' });
+                if (res.success) {
+                    closeModal('bookingDetailsModal');
+                    loadBookingsCalendar();
+                    toast('Запись отменена', 'success');
+                } else toast(res.error || 'Ошибка отмены', 'error');
+            } catch (e) { toast('Ошибка сети', 'error'); }
+            finally { hideLoading(); }
         }
 
         async function completeCurrentBooking() {
             if (!currentBookingData) return;
-            await api('PUT', `/bookings/${projectId}/${currentBookingData.id}`, { status: 'completed' });
-            closeModal('bookingDetailsModal');
-            loadBookingsCalendar();
-            toast('Запись завершена', 'success');
+            showLoading();
+            try {
+                const res = await api('PUT', `/bookings/${projectId}/${currentBookingData.id}`, { status: 'completed' });
+                if (res.success) {
+                    closeModal('bookingDetailsModal');
+                    loadBookingsCalendar();
+                    toast('Запись завершена', 'success');
+                } else toast(res.error || 'Ошибка', 'error');
+            } catch (e) { toast('Ошибка сети', 'error'); }
+            finally { hideLoading(); }
         }
 
-        function editCurrentBooking() {
+        async function editCurrentBooking() {
             if (!currentBookingData) return;
             closeModal('bookingDetailsModal');
+            await loadServicesForBooking();
 
             const b = currentBookingData;
             document.getElementById('bookingEditId').value = b.id;
@@ -9206,15 +9453,22 @@ XL"></textarea>
                 schedules.push({ day_of_week: index + 1, is_working, start_time, end_time });
             });
 
-            const res = await api('POST', `/bookings/${projectId}/schedules`, {
-                employee_id, schedules
-            });
-
-            if (res.success) {
-                closeModal('scheduleModal');
-                loadSchedules();
-            } else {
-                toast(res.error || 'Ошибка сохранения расписания', 'error');
+            showLoading();
+            try {
+                const res = await api('POST', `/bookings/${projectId}/schedules`, {
+                    employee_id, schedules
+                });
+                if (res.success) {
+                    closeModal('scheduleModal');
+                    loadSchedules();
+                    toast('Расписание сохранено', 'success');
+                } else {
+                    toast(res.error || 'Ошибка сохранения расписания', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -9248,6 +9502,8 @@ XL"></textarea>
                 } else {
                     toast(res.error || 'Ошибка создания вебинара', 'error');
                 }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
             } finally {
                 hideLoading();
             }
@@ -9263,21 +9519,28 @@ XL"></textarea>
             const shuffle_questions = document.getElementById('quizShuffle').checked ? 1 : 0;
             const description = document.getElementById('quizDescription').value;
 
-            if (!title || !course_id) return toast('Введите название и выберите курс');
+            if (!title || !course_id) return toast('Введите название и выберите курс', 'error');
 
-            const res = await api('POST', `/learning/${projectId}/quizzes`, {
-                title, course_id, passing_score: parseInt(passing_score) || 70,
-                time_limit_minutes: time_limit_minutes ? parseInt(time_limit_minutes) : null,
-                attempts_allowed: parseInt(attempts_allowed) || 3, shuffle_questions, description
-            });
-
-            if (res.success) {
-                closeModal('quizModal');
-                document.getElementById('quizTitle').value = '';
-                document.getElementById('quizDescription').value = '';
-                loadQuizzes();
-            } else {
-                toast(res.error || 'Ошибка создания теста', 'error');
+            showLoading();
+            try {
+                const res = await api('POST', `/learning/${projectId}/quizzes`, {
+                    title, course_id, passing_score: parseInt(passing_score) || 70,
+                    time_limit_minutes: time_limit_minutes ? parseInt(time_limit_minutes) : null,
+                    attempts_allowed: parseInt(attempts_allowed) || 3, shuffle_questions, description
+                });
+                if (res.success) {
+                    closeModal('quizModal');
+                    document.getElementById('quizTitle').value = '';
+                    document.getElementById('quizDescription').value = '';
+                    loadQuizzes();
+                    toast('Тест создан', 'success');
+                } else {
+                    toast(res.error || 'Ошибка создания теста', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -9287,27 +9550,31 @@ XL"></textarea>
             const type = document.getElementById('integrationType').value;
             const funnel_id = document.getElementById('integrationFunnel').value;
 
-            if (!name) return toast('Введите название интеграции');
+            if (!name) return toast('Введите название интеграции', 'error');
 
-            const res = await api('POST', `/integrations/${projectId}`, {
-                name, type, settings: { funnel_id: funnel_id || null }
-            });
-
-            if (res.success) {
-                closeModal('integrationModal');
-                document.getElementById('integrationName').value = '';
-                loadIntegrations();
-
-                // Show webhook URL or widget code for user
-                if (res.integration) {
-                    if (type === 'webhook' || type === 'web_form') {
-                        toast('Интеграция создана!\n\nURL для отправки данных:\n' + window.location.origin + '/api/integrations/' + projectId + '/incoming/' + res.integration.id, 'success');
-                    } else if (type === 'widget') {
-                        toast('Интеграция создана!\n\nКод виджета доступен в настройках интеграции.', 'success');
+            showLoading();
+            try {
+                const res = await api('POST', `/integrations/${projectId}`, {
+                    name, type, settings: { funnel_id: funnel_id || null }
+                });
+                if (res.success) {
+                    closeModal('integrationModal');
+                    document.getElementById('integrationName').value = '';
+                    loadIntegrations();
+                    if (res.integration) {
+                        if (type === 'webhook' || type === 'web_form') {
+                            toast('Интеграция создана!\n\nURL для отправки данных:\n' + window.location.origin + '/api/integrations/' + projectId + '/incoming/' + res.integration.id, 'success');
+                        } else if (type === 'widget') {
+                            toast('Интеграция создана!\n\nКод виджета доступен в настройках интеграции.', 'success');
+                        }
                     }
+                } else {
+                    toast(res.error || 'Ошибка создания интеграции', 'error');
                 }
-            } else {
-                toast(res.error || 'Ошибка создания интеграции', 'error');
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -9380,6 +9647,12 @@ XL"></textarea>
                     }
                 }
             } catch (e) { console.log('Tags load failed', e); }
+        }
+
+        async function openNewBookingModal() {
+            resetBookingForm();
+            await loadServicesForBooking();
+            openModal('bookingModal');
         }
 
         // Load services for booking modal
@@ -9472,21 +9745,55 @@ XL"></textarea>
             });
         }
 
-        async function saveCategory() {
-            const name = document.getElementById('categoryName').value;
-            if (!name) return toast('Введите название категории');
+        function editCategory(id) {
+            const c = categories.find(cat => cat.id == id);
+            if (!c) return toast('Категория не найдена', 'error');
 
-            const res = await api('POST', `/ecommerce/${projectId}/categories`, {
+            document.getElementById('categoryEditId').value = c.id;
+            document.getElementById('categoryName').value = c.name || '';
+            document.getElementById('categoryParent').value = c.parent_id || '';
+            document.getElementById('categoryDescription').value = c.description || '';
+
+            document.getElementById('categoryModalTitle').textContent = 'Редактировать категорию';
+            openModal('categoryModal');
+        }
+
+        function resetCategoryForm() {
+            document.getElementById('categoryEditId').value = '';
+            document.getElementById('categoryName').value = '';
+            document.getElementById('categoryParent').value = '';
+            document.getElementById('categoryDescription').value = '';
+            document.getElementById('categoryModalTitle').textContent = 'Новая категория';
+        }
+
+        async function saveCategory() {
+            const editId = document.getElementById('categoryEditId').value;
+            const name = document.getElementById('categoryName').value;
+            if (!name) return toast('Введите название категории', 'error');
+
+            const data = {
                 name,
                 parent_id: document.getElementById('categoryParent').value || null,
                 description: document.getElementById('categoryDescription').value
-            });
+            };
 
-            if (res.success) {
-                closeModal('categoryModal');
-                loadCategories();
-            } else {
-                toast(res.error || 'Ошибка создания категории', 'error');
+            showLoading();
+            try {
+                const res = editId
+                    ? await api('PUT', `/ecommerce/${projectId}/categories/${editId}`, data)
+                    : await api('POST', `/ecommerce/${projectId}/categories`, data);
+                if (res.success) {
+                    closeModal('categoryModal');
+                    resetCategoryForm();
+                    loadCategories();
+                    toast(editId ? 'Категория обновлена' : 'Категория создана', 'success');
+                } else {
+                    toast(res.error || 'Ошибка сохранения категории', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -9570,21 +9877,55 @@ XL"></textarea>
             `).join('') || '<p style="color:var(--text-muted);">Нет подборок</p>';
         }
 
-        async function saveSelection() {
-            const name = document.getElementById('selectionName').value;
-            if (!name) return toast('Введите название подборки');
+        function editSelection(id) {
+            const s = selections.find(sel => sel.id == id);
+            if (!s) return toast('Подборка не найдена', 'error');
 
-            const res = await api('POST', `/ecommerce/${projectId}/collections`, {
+            document.getElementById('selectionEditId').value = s.id;
+            document.getElementById('selectionName').value = s.name || '';
+            document.getElementById('selectionDescription').value = s.description || '';
+            document.getElementById('selectionType').value = s.type || 'manual';
+
+            document.getElementById('selectionModalTitle').textContent = 'Редактировать подборку';
+            openModal('selectionModal');
+        }
+
+        function resetSelectionForm() {
+            document.getElementById('selectionEditId').value = '';
+            document.getElementById('selectionName').value = '';
+            document.getElementById('selectionDescription').value = '';
+            document.getElementById('selectionType').value = 'manual';
+            document.getElementById('selectionModalTitle').textContent = 'Новая подборка';
+        }
+
+        async function saveSelection() {
+            const editId = document.getElementById('selectionEditId').value;
+            const name = document.getElementById('selectionName').value;
+            if (!name) return toast('Введите название подборки', 'error');
+
+            const data = {
                 name,
                 description: document.getElementById('selectionDescription').value,
                 type: document.getElementById('selectionType').value
-            });
+            };
 
-            if (res.success) {
-                closeModal('selectionModal');
-                loadSelections();
-            } else {
-                toast(res.error || 'Ошибка создания подборки', 'error');
+            showLoading();
+            try {
+                const res = editId
+                    ? await api('PUT', `/ecommerce/${projectId}/collections/${editId}`, data)
+                    : await api('POST', `/ecommerce/${projectId}/collections`, data);
+                if (res.success) {
+                    closeModal('selectionModal');
+                    resetSelectionForm();
+                    loadSelections();
+                    toast(editId ? 'Подборка обновлена' : 'Подборка создана', 'success');
+                } else {
+                    toast(res.error || 'Ошибка сохранения подборки', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -9620,23 +9961,60 @@ XL"></textarea>
             });
         }
 
+        function editSpecialist(id) {
+            const s = specialists.find(sp => sp.id == id);
+            if (!s) return toast('Специалист не найден', 'error');
+
+            document.getElementById('specialistEditId').value = s.id;
+            document.getElementById('specialistFirstName').value = s.first_name || '';
+            document.getElementById('specialistLastName').value = s.last_name || '';
+            document.getElementById('specialistPosition').value = s.position || '';
+            const bioEl = document.getElementById('specialistBio');
+            if (bioEl) bioEl.value = s.bio || '';
+
+            document.getElementById('specialistModalTitle').textContent = 'Редактировать специалиста';
+            openModal('specialistModal');
+        }
+
+        function resetSpecialistForm() {
+            document.getElementById('specialistEditId').value = '';
+            ['specialistFirstName', 'specialistLastName', 'specialistPosition', 'specialistBio'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            document.getElementById('specialistModalTitle').textContent = 'Добавить специалиста';
+        }
+
         async function saveSpecialist() {
+            const editId = document.getElementById('specialistEditId').value;
             const first_name = document.getElementById('specialistFirstName').value;
             if (!first_name) return toast('Введите имя специалиста', 'error');
 
-            const res = await api('POST', `/employees/${projectId}`, {
+            const data = {
                 first_name,
                 last_name: document.getElementById('specialistLastName').value,
                 position: document.getElementById('specialistPosition').value,
                 department: 'services'
-            });
+            };
 
-            if (res.success) {
-                closeModal('specialistModal');
-                loadSpecialists();
-                loadEmployees();
-            } else {
-                toast(res.error || 'Ошибка добавления специалиста', 'error');
+            showLoading();
+            try {
+                const res = editId
+                    ? await api('PUT', `/employees/${projectId}/${editId}`, data)
+                    : await api('POST', `/employees/${projectId}`, data);
+                if (res.success) {
+                    closeModal('specialistModal');
+                    resetSpecialistForm();
+                    loadSpecialists();
+                    loadEmployees();
+                    toast(editId ? 'Специалист обновлён' : 'Специалист добавлен', 'success');
+                } else {
+                    toast(res.error || 'Ошибка сохранения специалиста', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -9659,19 +10037,50 @@ XL"></textarea>
             `).join('') || '<p style="color:var(--text-muted);">Нет помещений</p>';
         }
 
-        function saveRoom() {
-            const name = document.getElementById('roomName').value;
-            if (!name) return toast('Введите название помещения');
+        function editRoom(id) {
+            const r = rooms.find(rm => rm.id == id);
+            if (!r) return toast('Помещение не найдено', 'error');
 
-            rooms.push({
-                id: Date.now().toString(),
+            document.getElementById('roomEditId').value = r.id;
+            document.getElementById('roomName').value = r.name || '';
+            document.getElementById('roomCapacity').value = r.capacity || 1;
+            document.getElementById('roomDescription').value = r.description || '';
+
+            document.getElementById('roomModalTitle').textContent = 'Редактировать помещение';
+            openModal('roomModal');
+        }
+
+        function resetRoomForm() {
+            document.getElementById('roomEditId').value = '';
+            document.getElementById('roomName').value = '';
+            document.getElementById('roomCapacity').value = '1';
+            document.getElementById('roomDescription').value = '';
+            document.getElementById('roomModalTitle').textContent = 'Добавить помещение';
+        }
+
+        function saveRoom() {
+            const editId = document.getElementById('roomEditId').value;
+            const name = document.getElementById('roomName').value;
+            if (!name) return toast('Введите название помещения', 'error');
+
+            const data = {
                 name,
                 capacity: document.getElementById('roomCapacity').value || 1,
                 description: document.getElementById('roomDescription').value
-            });
+            };
+
+            if (editId) {
+                const idx = rooms.findIndex(r => r.id == editId);
+                if (idx !== -1) rooms[idx] = { ...rooms[idx], ...data };
+            } else {
+                rooms.push({ id: Date.now().toString(), ...data });
+            }
+
             localStorage.setItem(`rooms_${projectId}`, JSON.stringify(rooms));
             closeModal('roomModal');
+            resetRoomForm();
             loadRooms();
+            toast(editId ? 'Помещение обновлено' : 'Помещение добавлено', 'success');
         }
 
         // Trainings (courses restructured)
@@ -9940,10 +10349,15 @@ XL"></textarea>
 
         async function unenrollStudent(enrollmentId) {
             if (!await confirm('Отчислить студента с тренинга?', 'Отчисление')) return;
-
-            await api('DELETE', `/learning/${projectId}/enroll/${enrollmentId}`);
-            openTrainingDetails(currentTrainingData.id);
-            toast('Студент отчислен', 'info');
+            showLoading();
+            try {
+                const res = await api('DELETE', `/learning/${projectId}/enroll/${enrollmentId}`);
+                if (res.success) {
+                    openTrainingDetails(currentTrainingData.id);
+                    toast('Студент отчислен', 'success');
+                } else toast(res.error || 'Ошибка', 'error');
+            } catch (e) { toast('Ошибка сети', 'error'); }
+            finally { hideLoading(); }
         }
 
         async function duplicateTraining() {
@@ -10001,12 +10415,45 @@ XL"></textarea>
             document.getElementById('lessonTextGroup').style.display = (type === 'text' || type === 'homework') ? 'block' : 'none';
         }
 
+        function editLesson(id) {
+            const l = lessons.find(ls => ls.id == id);
+            if (!l) return toast('Урок не найден', 'error');
+
+            document.getElementById('lessonEditId').value = l.id;
+            document.getElementById('lessonTraining').value = l.course_id || '';
+            document.getElementById('lessonName').value = l.title || '';
+            document.getElementById('lessonType').value = l.type || 'video';
+            document.getElementById('lessonContent').value = l.content || '';
+            document.getElementById('lessonVideoUrl').value = l.video_url || '';
+            document.getElementById('lessonDuration').value = l.duration || '';
+            document.getElementById('lessonOrder').value = l.order_index || 1;
+            toggleLessonContent();
+
+            document.getElementById('lessonModalTitle').textContent = 'Редактировать урок';
+            document.getElementById('lessonSaveBtn').textContent = 'Сохранить';
+            openModal('lessonModal');
+        }
+
+        function resetLessonForm() {
+            document.getElementById('lessonEditId').value = '';
+            ['lessonName', 'lessonContent', 'lessonVideoUrl', 'lessonDuration'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('lessonTraining').value = '';
+            document.getElementById('lessonType').value = 'video';
+            document.getElementById('lessonOrder').value = '1';
+            toggleLessonContent();
+            document.getElementById('lessonModalTitle').textContent = 'Новый урок';
+            document.getElementById('lessonSaveBtn').textContent = 'Сохранить';
+        }
+
         async function saveLesson() {
+            const editId = document.getElementById('lessonEditId').value;
             const training = document.getElementById('lessonTraining').value;
             const name = document.getElementById('lessonName').value;
             if (!training || !name) return toast('Заполните обязательные поля', 'error');
 
-            const res = await api('POST', `/learning/${projectId}/lessons`, {
+            const data = {
                 course_id: training,
                 title: name,
                 type: document.getElementById('lessonType').value,
@@ -10014,13 +10461,25 @@ XL"></textarea>
                 video_url: document.getElementById('lessonVideoUrl').value,
                 duration: document.getElementById('lessonDuration').value,
                 order_index: document.getElementById('lessonOrder').value
-            });
+            };
 
-            if (res.success) {
-                closeModal('lessonModal');
-                loadLessons();
-            } else {
-                toast(res.error || 'Ошибка создания урока', 'error');
+            showLoading();
+            try {
+                const res = editId
+                    ? await api('PUT', `/learning/${projectId}/lessons/${editId}`, data)
+                    : await api('POST', `/learning/${projectId}/lessons`, data);
+                if (res.success) {
+                    closeModal('lessonModal');
+                    resetLessonForm();
+                    loadLessons();
+                    toast(editId ? 'Урок обновлён' : 'Урок создан', 'success');
+                } else {
+                    toast(res.error || 'Ошибка сохранения урока', 'error');
+                }
+            } catch (e) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -10113,8 +10572,9 @@ XL"></textarea>
             loadBookingsCalendar();
         }
 
-        function openBookingSlot(hour, dayIndex) {
+        async function openBookingSlot(hour, dayIndex) {
             resetBookingForm();
+            await loadServicesForBooking();
 
             const date = new Date(bookingsWeekStart);
             date.setDate(date.getDate() + dayIndex);
