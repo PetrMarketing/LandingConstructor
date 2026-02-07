@@ -48,15 +48,35 @@ router.get('/:projectId', (req, res) => {
         query += ` ORDER BY c.created_at DESC LIMIT ? OFFSET ?`;
         params.push(Number(limit), Number(offset));
 
-        const courses = db.prepare(query).all(...params);
+        let courses = db.prepare(query).all(...params);
+
+        // Add student stats for each course
+        courses = courses.map(c => {
+            // Count students with access
+            const studentsCount = db.prepare(`
+                SELECT COUNT(*) as count FROM course_access WHERE course_id = ? AND is_active = 1
+            `).get(c.id)?.count || 0;
+
+            // Calculate average progress
+            const progressStats = db.prepare(`
+                SELECT AVG(progress_percent) as avg_progress,
+                       SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_count
+                FROM course_progress WHERE course_id = ?
+            `).get(c.id);
+
+            return {
+                ...c,
+                students_count: studentsCount,
+                avg_progress: Math.round(progressStats?.avg_progress || 0),
+                completed_count: progressStats?.completed_count || 0,
+                what_you_learn: JSON.parse(c.what_you_learn || '[]'),
+                requirements: JSON.parse(c.requirements || '[]')
+            };
+        });
 
         res.json({
             success: true,
-            courses: courses.map(c => ({
-                ...c,
-                what_you_learn: JSON.parse(c.what_you_learn || '[]'),
-                requirements: JSON.parse(c.requirements || '[]')
-            }))
+            courses
         });
     } catch (error) {
         console.error('Get courses error:', error);

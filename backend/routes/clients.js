@@ -11,7 +11,7 @@ const { v4: uuidv4 } = require('uuid');
 router.get('/:projectId', (req, res) => {
     try {
         const db = getDb();
-        const { search, segment, tag, limit = 50, offset = 0 } = req.query;
+        const { search, segment, tag, extended, limit = 50, offset = 0 } = req.query;
 
         let query = `SELECT * FROM clients WHERE project_id = ?`;
         const params = [req.params.projectId];
@@ -30,7 +30,45 @@ router.get('/:projectId', (req, res) => {
         query += ` ORDER BY created_at DESC LIMIT ? OFFSET ?`;
         params.push(Number(limit), Number(offset));
 
-        const clients = db.prepare(query).all(...params);
+        let clients = db.prepare(query).all(...params);
+
+        // Extended mode: add cross-referenced counts
+        if (extended === '1') {
+            clients = clients.map(c => {
+                // Count courses
+                const coursesCount = db.prepare(`
+                    SELECT COUNT(*) as count FROM course_access WHERE client_id = ? AND is_active = 1
+                `).get(c.id)?.count || 0;
+
+                const completedCourses = db.prepare(`
+                    SELECT COUNT(*) as count FROM course_progress WHERE client_id = ? AND status = 'completed'
+                `).get(c.id)?.count || 0;
+
+                // Count bookings
+                const bookingsCount = db.prepare(`
+                    SELECT COUNT(*) as count FROM bookings WHERE client_id = ?
+                `).get(c.id)?.count || 0;
+
+                const upcomingBookings = db.prepare(`
+                    SELECT COUNT(*) as count FROM bookings
+                    WHERE client_id = ? AND booking_date >= date('now') AND status != 'cancelled'
+                `).get(c.id)?.count || 0;
+
+                // Count visits
+                const visitsCount = db.prepare(`
+                    SELECT COUNT(*) as count FROM client_visits WHERE client_id = ?
+                `).get(c.id)?.count || 0;
+
+                return {
+                    ...c,
+                    courses_count: coursesCount,
+                    completed_courses: completedCourses,
+                    bookings_count: bookingsCount,
+                    upcoming_bookings: upcomingBookings,
+                    visits_count: visitsCount
+                };
+            });
+        }
 
         // Get total count
         let countQuery = `SELECT COUNT(*) as total FROM clients WHERE project_id = ?`;
@@ -63,6 +101,8 @@ router.get('/:projectId', (req, res) => {
 router.get('/:projectId/:clientId', (req, res) => {
     try {
         const db = getDb();
+        const { full } = req.query;
+
         const client = db.prepare(`
             SELECT * FROM clients WHERE id = ? AND project_id = ?
         `).get(req.params.clientId, req.params.projectId);
@@ -103,16 +143,48 @@ router.get('/:projectId/:clientId', (req, res) => {
             ORDER BY created_at DESC LIMIT 50
         `).all(client.id);
 
+        // Full mode: include courses and bookings
+        let courses = [];
+        let bookings = [];
+
+        if (full === '1') {
+            // Get courses with progress
+            courses = db.prepare(`
+                SELECT c.id, c.name, c.slug,
+                       COALESCE(cp.progress_percent, 0) as progress,
+                       COALESCE(cp.status, 'not_started') as status,
+                       ca.starts_at, ca.expires_at
+                FROM course_access ca
+                JOIN courses c ON c.id = ca.course_id
+                LEFT JOIN course_progress cp ON cp.course_id = c.id AND cp.client_id = ca.client_id
+                WHERE ca.client_id = ? AND ca.is_active = 1
+                ORDER BY ca.created_at DESC
+            `).all(client.id);
+
+            // Get bookings
+            bookings = db.prepare(`
+                SELECT b.*, s.name as service_name, e.first_name as employee_name
+                FROM bookings b
+                LEFT JOIN services s ON s.id = b.service_id
+                LEFT JOIN employees e ON e.id = b.employee_id
+                WHERE b.client_id = ?
+                ORDER BY b.booking_date DESC, b.start_time DESC
+                LIMIT 20
+            `).all(client.id);
+        }
+
         res.json({
             success: true,
             client: {
                 ...client,
                 tags: JSON.parse(client.tags || '[]'),
-                custom_fields: JSON.parse(client.custom_fields || '{}')
+                custom_fields: JSON.parse(client.custom_fields || '{}'),
+                orders,
+                deals,
+                courses,
+                bookings
             },
             interactions,
-            orders,
-            deals,
             loyalty
         });
     } catch (error) {
