@@ -158,16 +158,22 @@
                 <div class="nav-title">Продажи</div>
                 <div class="nav-item" data-section="funnels"><i class="fas fa-filter"></i> Воронки</div>
                 <div class="nav-item" data-section="deals"><i class="fas fa-handshake"></i> Сделки</div>
+                <div class="nav-item" data-section="calls"><i class="fas fa-phone"></i> Звонки</div>
+                <div class="nav-item" data-section="regulations"><i class="fas fa-clock"></i> Регламенты</div>
+                <div class="nav-item" data-section="goals"><i class="fas fa-bullseye"></i> KPI/Цели</div>
+                <div class="nav-item" data-section="lead-distribution"><i class="fas fa-random"></i> Распределение</div>
             </nav>
             <nav class="nav-section">
                 <div class="nav-title">Клиенты</div>
                 <div class="nav-item" data-section="clients"><i class="fas fa-users"></i> Клиенты</div>
                 <div class="nav-item" data-section="segments"><i class="fas fa-layer-group"></i> Сегменты</div>
+                <div class="nav-item" data-section="tags"><i class="fas fa-tags"></i> Теги</div>
             </nav>
             <nav class="nav-section">
                 <div class="nav-title">Команда</div>
                 <div class="nav-item" data-section="employees"><i class="fas fa-user-tie"></i> Сотрудники</div>
                 <div class="nav-item" data-section="tasks"><i class="fas fa-tasks"></i> Задачи</div>
+                <div class="nav-item" data-section="employee-analytics"><i class="fas fa-chart-bar"></i> Аналитика</div>
             </nav>
             <nav class="nav-section">
                 <div class="nav-title">Заказы</div>
@@ -177,8 +183,26 @@
             <nav class="nav-section">
                 <div class="nav-title">Каталог</div>
                 <div class="nav-item" data-section="products"><i class="fas fa-box"></i> Товары</div>
+                <div class="nav-item" data-section="brands"><i class="fas fa-building"></i> Бренды</div>
+                <div class="nav-item" data-section="promo-codes"><i class="fas fa-percent"></i> Промокоды</div>
+                <div class="nav-item" data-section="collections"><i class="fas fa-th-large"></i> Коллекции</div>
                 <div class="nav-item" data-section="services"><i class="fas fa-concierge-bell"></i> Услуги</div>
                 <div class="nav-item" data-section="courses"><i class="fas fa-graduation-cap"></i> Курсы</div>
+            </nav>
+            <nav class="nav-section">
+                <div class="nav-title">Бронирования</div>
+                <div class="nav-item" data-section="bookings"><i class="fas fa-calendar-check"></i> Записи</div>
+                <div class="nav-item" data-section="schedules"><i class="fas fa-calendar-alt"></i> Расписание</div>
+            </nav>
+            <nav class="nav-section">
+                <div class="nav-title">Обучение</div>
+                <div class="nav-item" data-section="webinars"><i class="fas fa-video"></i> Вебинары</div>
+                <div class="nav-item" data-section="quizzes"><i class="fas fa-question-circle"></i> Тесты</div>
+                <div class="nav-item" data-section="certificates"><i class="fas fa-certificate"></i> Сертификаты</div>
+            </nav>
+            <nav class="nav-section">
+                <div class="nav-title">Настройки</div>
+                <div class="nav-item" data-section="integrations"><i class="fas fa-plug"></i> Интеграции</div>
             </nav>
             <nav class="nav-section">
                 <div class="nav-item" onclick="location.href='admin.html'"><i class="fas fa-arrow-left"></i> Назад в CMS</div>
@@ -502,6 +526,469 @@
                         <button class="btn btn-primary" onclick="openModal('courseModal')"><i class="fas fa-plus"></i> Создать курс</button>
                     </div>
                     <div id="coursesList" class="stats-grid"></div>
+                </div>
+
+                <!-- Calls (amoCRM) -->
+                <div class="section" id="section-calls">
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchCalls" placeholder="Поиск звонков...">
+                        </div>
+                        <select class="filter-select" id="callsDirection">
+                            <option value="">Все направления</option>
+                            <option value="incoming">Входящие</option>
+                            <option value="outgoing">Исходящие</option>
+                        </select>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card primary">
+                            <div class="value" id="callsTotal">0</div>
+                            <div class="label">Всего звонков</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="value" id="callsAnswered">0</div>
+                            <div class="label">Отвечено</div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="value" id="callsMissed">0</div>
+                            <div class="label">Пропущено</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="callsDuration">0:00</div>
+                            <div class="label">Ср. длительность</div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:20px;">
+                        <div class="card-header"><h3>Журнал звонков</h3></div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Дата</th>
+                                        <th>Направление</th>
+                                        <th>Клиент</th>
+                                        <th>Менеджер</th>
+                                        <th>Длительность</th>
+                                        <th>Статус</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="callsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Regulations (SLA) -->
+                <div class="section" id="section-regulations">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('regulationModal')"><i class="fas fa-plus"></i> Добавить регламент</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h3>Регламенты SLA</h3></div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Название</th>
+                                        <th>Условие</th>
+                                        <th>Действие</th>
+                                        <th>Воронка</th>
+                                        <th>Статус</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="regulationsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Goals (KPI) -->
+                <div class="section" id="section-goals">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('goalModal')"><i class="fas fa-plus"></i> Создать цель</button>
+                        <select class="filter-select" id="goalsPeriod">
+                            <option value="month">Этот месяц</option>
+                            <option value="quarter">Квартал</option>
+                            <option value="year">Год</option>
+                        </select>
+                    </div>
+                    <div class="stats-grid" id="goalsList"></div>
+                    <div class="card" style="margin-top:20px;">
+                        <div class="card-header"><h3>Лидерборд</h3></div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Сотрудник</th>
+                                        <th>Выручка</th>
+                                        <th>Сделок</th>
+                                        <th>Конверсия</th>
+                                        <th>Прогресс</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leaderboardTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lead Distribution -->
+                <div class="section" id="section-lead-distribution">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('distributionModal')"><i class="fas fa-cog"></i> Настройки</button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card primary">
+                            <div class="value" id="leadsInQueue">0</div>
+                            <div class="label">В очереди</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="value" id="leadsAssigned">0</div>
+                            <div class="label">Распределено сегодня</div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="value" id="leadsExpired">0</div>
+                            <div class="label">Просрочено</div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:20px;">
+                        <div class="card-header"><h3>Очередь лидов</h3></div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Сделка</th>
+                                        <th>Источник</th>
+                                        <th>Назначен</th>
+                                        <th>Истекает</th>
+                                        <th>Статус</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leadQueueTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tags -->
+                <div class="section" id="section-tags">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('tagModal')"><i class="fas fa-plus"></i> Создать тег</button>
+                        <select class="filter-select" id="tagsEntity">
+                            <option value="deal">Для сделок</option>
+                            <option value="client">Для клиентов</option>
+                        </select>
+                    </div>
+                    <div class="stats-grid" id="tagsList"></div>
+                </div>
+
+                <!-- Employee Analytics -->
+                <div class="section" id="section-employee-analytics">
+                    <div class="toolbar">
+                        <select class="filter-select" id="analyticsPeriod">
+                            <option value="today">Сегодня</option>
+                            <option value="week">Неделя</option>
+                            <option value="month" selected>Месяц</option>
+                        </select>
+                        <select class="filter-select" id="analyticsEmployee">
+                            <option value="">Все сотрудники</option>
+                        </select>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card primary">
+                            <div class="value" id="analyticsDeals">0</div>
+                            <div class="label">Сделок закрыто</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="value" id="analyticsRevenue">0 ₽</div>
+                            <div class="label">Выручка</div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="value" id="analyticsCalls">0</div>
+                            <div class="label">Звонков</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="analyticsConversion">0%</div>
+                            <div class="label">Конверсия</div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:20px;">
+                        <div class="card-header"><h3>Активность сотрудников</h3></div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Сотрудник</th>
+                                        <th>Статус</th>
+                                        <th>Сделок</th>
+                                        <th>Звонков</th>
+                                        <th>Конверсия</th>
+                                        <th>Последняя активность</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="employeeAnalyticsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Brands (InSales) -->
+                <div class="section" id="section-brands">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('brandModal')"><i class="fas fa-plus"></i> Добавить бренд</button>
+                    </div>
+                    <div class="stats-grid" id="brandsList"></div>
+                </div>
+
+                <!-- Promo Codes (InSales) -->
+                <div class="section" id="section-promo-codes">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('promoModal')"><i class="fas fa-plus"></i> Создать промокод</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h3>Промокоды</h3></div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Код</th>
+                                        <th>Скидка</th>
+                                        <th>Использовано</th>
+                                        <th>Лимит</th>
+                                        <th>Период</th>
+                                        <th>Статус</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="promoCodesTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Collections (InSales) -->
+                <div class="section" id="section-collections">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('collectionModal')"><i class="fas fa-plus"></i> Создать коллекцию</button>
+                    </div>
+                    <div class="stats-grid" id="collectionsList"></div>
+                </div>
+
+                <!-- Bookings (YClients) -->
+                <div class="section" id="section-bookings">
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchBookings" placeholder="Поиск записей...">
+                        </div>
+                        <input type="date" class="filter-select" id="bookingsDate" style="min-width:160px;">
+                        <button class="btn btn-primary" onclick="openModal('bookingModal')"><i class="fas fa-plus"></i> Новая запись</button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card primary">
+                            <div class="value" id="bookingsToday">0</div>
+                            <div class="label">Записей сегодня</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="value" id="bookingsConfirmed">0</div>
+                            <div class="label">Подтверждено</div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="value" id="bookingsPending">0</div>
+                            <div class="label">Ожидает</div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:20px;">
+                        <div class="card-header"><h3>Записи</h3></div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Дата/Время</th>
+                                        <th>Клиент</th>
+                                        <th>Услуга</th>
+                                        <th>Мастер</th>
+                                        <th>Сумма</th>
+                                        <th>Статус</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookingsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedules (YClients) -->
+                <div class="section" id="section-schedules">
+                    <div class="toolbar">
+                        <select class="filter-select" id="scheduleEmployee">
+                            <option value="">Все сотрудники</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="openModal('scheduleModal')"><i class="fas fa-plus"></i> Настроить расписание</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h3>Расписание сотрудников</h3></div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Сотрудник</th>
+                                        <th>Пн</th>
+                                        <th>Вт</th>
+                                        <th>Ср</th>
+                                        <th>Чт</th>
+                                        <th>Пт</th>
+                                        <th>Сб</th>
+                                        <th>Вс</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="schedulesTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Webinars (GetCourse) -->
+                <div class="section" id="section-webinars">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('webinarModal')"><i class="fas fa-plus"></i> Создать вебинар</button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card primary">
+                            <div class="value" id="webinarsUpcoming">0</div>
+                            <div class="label">Запланировано</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="value" id="webinarsCompleted">0</div>
+                            <div class="label">Проведено</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="webinarsParticipants">0</div>
+                            <div class="label">Всего участников</div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:20px;">
+                        <div class="card-header"><h3>Вебинары</h3></div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Название</th>
+                                        <th>Дата/Время</th>
+                                        <th>Ведущий</th>
+                                        <th>Регистраций</th>
+                                        <th>Статус</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="webinarsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quizzes (GetCourse) -->
+                <div class="section" id="section-quizzes">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('quizModal')"><i class="fas fa-plus"></i> Создать тест</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h3>Тесты и квизы</h3></div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Название</th>
+                                        <th>Курс</th>
+                                        <th>Вопросов</th>
+                                        <th>Попыток</th>
+                                        <th>Ср. балл</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="quizzesTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certificates (GetCourse) -->
+                <div class="section" id="section-certificates">
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchCertificates" placeholder="Поиск по номеру или имени...">
+                        </div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card primary">
+                            <div class="value" id="certificatesIssued">0</div>
+                            <div class="label">Выдано сертификатов</div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:20px;">
+                        <div class="card-header"><h3>Выданные сертификаты</h3></div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Номер</th>
+                                        <th>Студент</th>
+                                        <th>Курс</th>
+                                        <th>Дата выдачи</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="certificatesTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Integrations -->
+                <div class="section" id="section-integrations">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('integrationModal')"><i class="fas fa-plus"></i> Добавить интеграцию</button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="value" id="integrationsActive">0</div>
+                            <div class="label">Активных интеграций</div>
+                        </div>
+                        <div class="stat-card primary">
+                            <div class="value" id="integrationsWebhooks">0</div>
+                            <div class="label">Вебхуков</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="value" id="integrationsForms">0</div>
+                            <div class="label">Веб-форм</div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:20px;">
+                        <div class="card-header"><h3>Интеграции</h3></div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Название</th>
+                                        <th>Тип</th>
+                                        <th>Лидов</th>
+                                        <th>Последний запрос</th>
+                                        <th>Статус</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="integrationsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -1084,7 +1571,19 @@
                 dashboard: 'Дашборд', funnels: 'Воронки продаж', deals: 'Сделки',
                 clients: 'Клиенты', segments: 'Сегменты', employees: 'Сотрудники',
                 tasks: 'Задачи', orders: 'Заказы', payments: 'Платежи',
-                products: 'Товары', services: 'Услуги', courses: 'Курсы'
+                products: 'Товары', services: 'Услуги', courses: 'Курсы',
+                // amoCRM
+                calls: 'Звонки', regulations: 'Регламенты SLA', goals: 'KPI и Цели',
+                'lead-distribution': 'Распределение лидов', tags: 'Теги',
+                'employee-analytics': 'Аналитика сотрудников',
+                // InSales
+                brands: 'Бренды', 'promo-codes': 'Промокоды', collections: 'Коллекции',
+                // YClients
+                bookings: 'Записи на услуги', schedules: 'Расписание',
+                // GetCourse
+                webinars: 'Вебинары', quizzes: 'Тесты и квизы', certificates: 'Сертификаты',
+                // Settings
+                integrations: 'Интеграции'
             };
             document.getElementById('pageTitle').textContent = titles[section] || section;
 
@@ -1097,6 +1596,26 @@
             if (section === 'services') loadServices();
             if (section === 'courses') loadCourses();
             if (section === 'payments') loadPayments();
+            // amoCRM
+            if (section === 'calls') loadCalls();
+            if (section === 'regulations') loadRegulations();
+            if (section === 'goals') loadGoals();
+            if (section === 'lead-distribution') loadLeadDistribution();
+            if (section === 'tags') loadTags();
+            if (section === 'employee-analytics') loadEmployeeAnalytics();
+            // InSales
+            if (section === 'brands') loadBrands();
+            if (section === 'promo-codes') loadPromoCodes();
+            if (section === 'collections') loadCollections();
+            // YClients
+            if (section === 'bookings') loadBookings();
+            if (section === 'schedules') loadSchedules();
+            // GetCourse
+            if (section === 'webinars') loadWebinars();
+            if (section === 'quizzes') loadQuizzes();
+            if (section === 'certificates') loadCertificates();
+            // Settings
+            if (section === 'integrations') loadIntegrations();
         }
 
         // Modal
@@ -2146,6 +2665,571 @@
             document.getElementById('orderClient').innerHTML = '<option value="">Выберите клиента</option>' +
                 clients.map(c => `<option value="${c.id}">${escapeHtml(c.first_name)} ${escapeHtml(c.last_name || '')}</option>`).join('');
         }
+
+        // ============================================================
+        // amoCRM-like Features
+        // ============================================================
+
+        // Calls
+        async function loadCalls() {
+            const res = await api('GET', `/calls/${projectId}`);
+            if (res.success) {
+                renderCalls(res.calls || []);
+                // Update stats
+                const total = res.calls?.length || 0;
+                const answered = res.calls?.filter(c => c.status === 'completed').length || 0;
+                const missed = res.calls?.filter(c => c.status === 'missed').length || 0;
+                const avgDuration = total > 0 ? Math.round(res.calls.reduce((sum, c) => sum + (c.duration || 0), 0) / total) : 0;
+                document.getElementById('callsTotal').textContent = total;
+                document.getElementById('callsAnswered').textContent = answered;
+                document.getElementById('callsMissed').textContent = missed;
+                document.getElementById('callsDuration').textContent = formatDuration(avgDuration);
+            }
+        }
+
+        function renderCalls(calls) {
+            const tbody = document.getElementById('callsTable');
+            if (!calls.length) {
+                tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-phone"></i><h3>Нет звонков</h3></div></td></tr>';
+                return;
+            }
+            const statuses = { completed: ['Завершён', 'badge-success'], missed: ['Пропущен', 'badge-danger'], initiated: ['Инициирован', 'badge-warning'] };
+            tbody.innerHTML = calls.map(c => `
+                <tr>
+                    <td>${new Date(c.created_at).toLocaleString('ru')}</td>
+                    <td><span class="badge ${c.direction === 'incoming' ? 'badge-new' : ''}">${c.direction === 'incoming' ? '↓ Входящий' : '↑ Исходящий'}</span></td>
+                    <td>${c.client_first_name || c.phone_to || '-'}</td>
+                    <td>${c.employee_first_name || '-'}</td>
+                    <td>${formatDuration(c.duration || 0)}</td>
+                    <td><span class="badge ${statuses[c.status]?.[1] || ''}">${statuses[c.status]?.[0] || c.status}</span></td>
+                    <td>${c.recording_url ? `<button class="btn btn-sm btn-outline" onclick="window.open('${c.recording_url}')"><i class="fas fa-play"></i></button>` : ''}</td>
+                </tr>
+            `).join('');
+        }
+
+        function formatDuration(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Regulations (SLA)
+        async function loadRegulations() {
+            const res = await api('GET', `/regulations/${projectId}`);
+            if (res.success) {
+                renderRegulations(res.regulations || []);
+            }
+        }
+
+        function renderRegulations(regulations) {
+            const tbody = document.getElementById('regulationsTable');
+            if (!regulations.length) {
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-clock"></i><h3>Нет регламентов</h3><p>Создайте правила SLA для автоматизации</p></div></td></tr>';
+                return;
+            }
+            const conditions = { time_in_stage: 'Время на этапе', no_activity: 'Нет активности', no_tasks: 'Нет задач' };
+            const actions = { notify: 'Уведомление', create_task: 'Создать задачу', move_stage: 'Переместить', add_tag: 'Добавить тег' };
+            tbody.innerHTML = regulations.map(r => `
+                <tr>
+                    <td><strong>${escapeHtml(r.name)}</strong></td>
+                    <td>${conditions[r.condition_type] || r.condition_type} &gt; ${r.condition_value} ${r.condition_unit}</td>
+                    <td>${actions[r.action_type] || r.action_type}</td>
+                    <td>${r.funnel_name || 'Все'}</td>
+                    <td><span class="badge ${r.is_active ? 'badge-success' : ''}">${r.is_active ? 'Активен' : 'Выключен'}</span></td>
+                    <td><button class="btn btn-sm btn-outline" onclick="deleteRegulation('${r.id}')"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        async function deleteRegulation(id) {
+            if (!confirm('Удалить регламент?')) return;
+            await api('DELETE', `/regulations/${projectId}/${id}`);
+            loadRegulations();
+        }
+
+        // Goals (KPI)
+        async function loadGoals() {
+            const period = document.getElementById('goalsPeriod')?.value || 'month';
+            const res = await api('GET', `/goals/${projectId}?period_type=${period}`);
+            if (res.success) {
+                renderGoals(res.goals || []);
+            }
+            // Load leaderboard
+            const leaderRes = await api('GET', `/goals/${projectId}/leaderboard?metric=revenue`);
+            if (leaderRes.success) {
+                renderLeaderboard(leaderRes.leaderboard || []);
+            }
+        }
+
+        function renderGoals(goals) {
+            const el = document.getElementById('goalsList');
+            if (!goals.length) {
+                el.innerHTML = '<div class="stat-card"><div class="empty-state" style="padding:20px;"><i class="fas fa-bullseye"></i><p>Нет целей на этот период</p></div></div>';
+                return;
+            }
+            el.innerHTML = goals.map(g => {
+                const percent = g.target_value > 0 ? Math.round((g.current_value / g.target_value) * 100) : 0;
+                return `
+                    <div class="stat-card">
+                        <div class="value">${percent}%</div>
+                        <div class="label">${escapeHtml(g.employee_first_name || 'Общая цель')}</div>
+                        <div style="margin-top:10px; background:#334155; border-radius:4px; height:8px; overflow:hidden;">
+                            <div style="width:${Math.min(percent, 100)}%; height:100%; background:${percent >= 100 ? 'var(--success)' : 'var(--primary)'}"></div>
+                        </div>
+                        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">${formatMoney(g.current_value)} / ${formatMoney(g.target_value)}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderLeaderboard(leaders) {
+            const tbody = document.getElementById('leaderboardTable');
+            if (!leaders.length) {
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state" style="padding:20px;"><p>Нет данных</p></div></td></tr>';
+                return;
+            }
+            tbody.innerHTML = leaders.map((l, i) => `
+                <tr>
+                    <td><strong>${i + 1}</strong></td>
+                    <td>${escapeHtml(l.first_name)} ${escapeHtml(l.last_name || '')}</td>
+                    <td>${formatMoney(l.revenue || 0)}</td>
+                    <td>${l.deals_won || 0}</td>
+                    <td>${l.conversion || 0}%</td>
+                    <td>
+                        <div style="background:#334155; border-radius:4px; height:8px; width:100px;">
+                            <div style="width:${l.progress || 0}%; height:100%; background:var(--primary);"></div>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Lead Distribution
+        async function loadLeadDistribution() {
+            const res = await api('GET', `/lead-distribution/${projectId}/queue`);
+            if (res.success) {
+                renderLeadQueue(res.queue || []);
+                document.getElementById('leadsInQueue').textContent = res.queue?.filter(q => q.status === 'pending').length || 0;
+                document.getElementById('leadsAssigned').textContent = res.queue?.filter(q => q.status === 'assigned').length || 0;
+                document.getElementById('leadsExpired').textContent = res.queue?.filter(q => q.status === 'expired').length || 0;
+            }
+        }
+
+        function renderLeadQueue(queue) {
+            const tbody = document.getElementById('leadQueueTable');
+            if (!queue.length) {
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-random"></i><h3>Очередь пуста</h3></div></td></tr>';
+                return;
+            }
+            const statuses = { pending: ['В очереди', 'badge-warning'], assigned: ['Назначен', 'badge-success'], expired: ['Просрочен', 'badge-danger'] };
+            tbody.innerHTML = queue.map(q => `
+                <tr>
+                    <td>${escapeHtml(q.deal_name || q.deal_id)}</td>
+                    <td>${q.source || '-'}</td>
+                    <td>${q.assigned_to_name || '-'}</td>
+                    <td>${q.expires_at ? new Date(q.expires_at).toLocaleString('ru') : '-'}</td>
+                    <td><span class="badge ${statuses[q.status]?.[1] || ''}">${statuses[q.status]?.[0] || q.status}</span></td>
+                    <td><button class="btn btn-sm btn-primary" onclick="assignLead('${q.id}')"><i class="fas fa-user-plus"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        async function assignLead(queueId) {
+            const res = await api('POST', `/lead-distribution/${projectId}/assign`);
+            if (res.success) {
+                loadLeadDistribution();
+            }
+        }
+
+        // Tags
+        async function loadTags() {
+            const entityType = document.getElementById('tagsEntity')?.value || 'deal';
+            const res = await api('GET', `/tags/${projectId}?entity_type=${entityType}`);
+            if (res.success) {
+                renderTags(res.tags || []);
+            }
+        }
+
+        function renderTags(tags) {
+            const el = document.getElementById('tagsList');
+            if (!tags.length) {
+                el.innerHTML = '<div class="stat-card"><div class="empty-state" style="padding:20px;"><i class="fas fa-tags"></i><p>Нет тегов</p></div></div>';
+                return;
+            }
+            el.innerHTML = tags.map(t => `
+                <div class="stat-card" style="cursor:pointer; border-left: 4px solid ${t.color || '#94a3b8'};">
+                    <div class="value" style="font-size:18px;">${escapeHtml(t.name)}</div>
+                    <div class="label">${t.usage_count || 0} использований</div>
+                    <button class="btn btn-sm btn-outline" style="margin-top:10px;" onclick="deleteTag('${t.id}')"><i class="fas fa-trash"></i></button>
+                </div>
+            `).join('');
+        }
+
+        async function deleteTag(id) {
+            if (!confirm('Удалить тег?')) return;
+            await api('DELETE', `/tags/${projectId}/${id}`);
+            loadTags();
+        }
+
+        // Employee Analytics
+        async function loadEmployeeAnalytics() {
+            const period = document.getElementById('analyticsPeriod')?.value || 'month';
+            const res = await api('GET', `/employee-analytics/${projectId}/dashboard?period=${period}`);
+            if (res.success && res.stats) {
+                document.getElementById('analyticsDeals').textContent = res.stats.deals_closed || 0;
+                document.getElementById('analyticsRevenue').textContent = formatMoney(res.stats.revenue || 0);
+                document.getElementById('analyticsCalls').textContent = res.stats.calls || 0;
+                document.getElementById('analyticsConversion').textContent = (res.stats.conversion || 0) + '%';
+            }
+            // Load employee list
+            const empRes = await api('GET', `/employee-analytics/${projectId}/performance`);
+            if (empRes.success) {
+                renderEmployeeAnalytics(empRes.employees || []);
+            }
+        }
+
+        function renderEmployeeAnalytics(emps) {
+            const tbody = document.getElementById('employeeAnalyticsTable');
+            if (!emps.length) {
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><p>Нет данных</p></div></td></tr>';
+                return;
+            }
+            tbody.innerHTML = emps.map(e => `
+                <tr>
+                    <td>${escapeHtml(e.first_name)} ${escapeHtml(e.last_name || '')}</td>
+                    <td><span class="badge ${e.status === 'online' ? 'badge-success' : ''}">${e.status || 'offline'}</span></td>
+                    <td>${e.deals_count || 0}</td>
+                    <td>${e.calls_count || 0}</td>
+                    <td>${e.conversion || 0}%</td>
+                    <td>${e.last_activity ? new Date(e.last_activity).toLocaleString('ru') : '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        // ============================================================
+        // InSales-like Features
+        // ============================================================
+
+        // Brands
+        async function loadBrands() {
+            const res = await api('GET', `/ecommerce/${projectId}/brands`);
+            if (res.success) {
+                renderBrands(res.brands || []);
+            }
+        }
+
+        function renderBrands(brands) {
+            const el = document.getElementById('brandsList');
+            if (!brands.length) {
+                el.innerHTML = '<div class="stat-card"><div class="empty-state" style="padding:20px;"><i class="fas fa-building"></i><p>Нет брендов</p></div></div>';
+                return;
+            }
+            el.innerHTML = brands.map(b => `
+                <div class="stat-card">
+                    ${b.logo ? `<img src="${b.logo}" style="width:60px;height:60px;object-fit:contain;margin-bottom:10px;">` : '<i class="fas fa-building" style="font-size:40px;opacity:0.3;margin-bottom:10px;"></i>'}
+                    <div class="value" style="font-size:16px;">${escapeHtml(b.name)}</div>
+                    <div class="label">${b.products_count || 0} товаров</div>
+                    <button class="btn btn-sm btn-outline" style="margin-top:10px;" onclick="deleteBrand('${b.id}')"><i class="fas fa-trash"></i></button>
+                </div>
+            `).join('');
+        }
+
+        async function deleteBrand(id) {
+            if (!confirm('Удалить бренд?')) return;
+            await api('DELETE', `/ecommerce/${projectId}/brands/${id}`);
+            loadBrands();
+        }
+
+        // Promo Codes
+        async function loadPromoCodes() {
+            const res = await api('GET', `/ecommerce/${projectId}/promo-codes`);
+            if (res.success) {
+                renderPromoCodes(res.promo_codes || []);
+            }
+        }
+
+        function renderPromoCodes(codes) {
+            const tbody = document.getElementById('promoCodesTable');
+            if (!codes.length) {
+                tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-percent"></i><h3>Нет промокодов</h3></div></td></tr>';
+                return;
+            }
+            tbody.innerHTML = codes.map(c => `
+                <tr>
+                    <td><strong>${escapeHtml(c.code)}</strong></td>
+                    <td>${c.type === 'percent' ? c.value + '%' : formatMoney(c.value)}</td>
+                    <td>${c.uses_count || 0}</td>
+                    <td>${c.max_uses || '∞'}</td>
+                    <td>${c.start_date ? new Date(c.start_date).toLocaleDateString('ru') : '-'} - ${c.end_date ? new Date(c.end_date).toLocaleDateString('ru') : '∞'}</td>
+                    <td><span class="badge ${c.is_active ? 'badge-success' : ''}">${c.is_active ? 'Активен' : 'Выключен'}</span></td>
+                    <td><button class="btn btn-sm btn-outline" onclick="deletePromoCode('${c.id}')"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        async function deletePromoCode(id) {
+            if (!confirm('Удалить промокод?')) return;
+            await api('DELETE', `/ecommerce/${projectId}/promo-codes/${id}`);
+            loadPromoCodes();
+        }
+
+        // Collections
+        async function loadCollections() {
+            const res = await api('GET', `/ecommerce/${projectId}/collections`);
+            if (res.success) {
+                renderCollections(res.collections || []);
+            }
+        }
+
+        function renderCollections(collections) {
+            const el = document.getElementById('collectionsList');
+            if (!collections.length) {
+                el.innerHTML = '<div class="stat-card"><div class="empty-state" style="padding:20px;"><i class="fas fa-th-large"></i><p>Нет коллекций</p></div></div>';
+                return;
+            }
+            el.innerHTML = collections.map(c => `
+                <div class="stat-card">
+                    ${c.image ? `<img src="${c.image}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;margin-bottom:10px;">` : ''}
+                    <div class="value" style="font-size:16px;">${escapeHtml(c.name)}</div>
+                    <div class="label">${c.products_count || 0} товаров</div>
+                    <button class="btn btn-sm btn-outline" style="margin-top:10px;" onclick="deleteCollection('${c.id}')"><i class="fas fa-trash"></i></button>
+                </div>
+            `).join('');
+        }
+
+        async function deleteCollection(id) {
+            if (!confirm('Удалить коллекцию?')) return;
+            await api('DELETE', `/ecommerce/${projectId}/collections/${id}`);
+            loadCollections();
+        }
+
+        // ============================================================
+        // YClients-like Features
+        // ============================================================
+
+        // Bookings
+        async function loadBookings() {
+            const date = document.getElementById('bookingsDate')?.value || new Date().toISOString().split('T')[0];
+            const res = await api('GET', `/bookings/${projectId}?date=${date}`);
+            if (res.success) {
+                renderBookings(res.bookings || []);
+                document.getElementById('bookingsToday').textContent = res.bookings?.length || 0;
+                document.getElementById('bookingsConfirmed').textContent = res.bookings?.filter(b => b.status === 'confirmed').length || 0;
+                document.getElementById('bookingsPending').textContent = res.bookings?.filter(b => b.status === 'pending').length || 0;
+            }
+        }
+
+        function renderBookings(bookings) {
+            const tbody = document.getElementById('bookingsTable');
+            if (!bookings.length) {
+                tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-calendar-check"></i><h3>Нет записей</h3></div></td></tr>';
+                return;
+            }
+            const statuses = { pending: ['Ожидает', 'badge-warning'], confirmed: ['Подтв.', 'badge-success'], completed: ['Завершено', 'badge-success'], cancelled: ['Отменено', 'badge-danger'] };
+            tbody.innerHTML = bookings.map(b => `
+                <tr>
+                    <td>${b.booking_date} ${b.start_time}</td>
+                    <td>${escapeHtml(b.client_name || '-')}</td>
+                    <td>${escapeHtml(b.service_name || '-')}</td>
+                    <td>${escapeHtml(b.employee_name || '-')}</td>
+                    <td>${b.price ? formatMoney(b.price) : '-'}</td>
+                    <td><span class="badge ${statuses[b.status]?.[1] || ''}">${statuses[b.status]?.[0] || b.status}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline" onclick="confirmBooking('${b.id}')"><i class="fas fa-check"></i></button>
+                        <button class="btn btn-sm btn-outline" onclick="cancelBooking('${b.id}')"><i class="fas fa-times"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function confirmBooking(id) {
+            await api('PUT', `/bookings/${projectId}/${id}`, { status: 'confirmed' });
+            loadBookings();
+        }
+
+        async function cancelBooking(id) {
+            if (!confirm('Отменить запись?')) return;
+            await api('PUT', `/bookings/${projectId}/${id}`, { status: 'cancelled' });
+            loadBookings();
+        }
+
+        // Schedules
+        async function loadSchedules() {
+            const res = await api('GET', `/bookings/${projectId}/schedules`);
+            if (res.success) {
+                renderSchedules(res.schedules || []);
+            }
+        }
+
+        function renderSchedules(schedules) {
+            const tbody = document.getElementById('schedulesTable');
+            const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+            // Group by employee
+            const byEmployee = {};
+            schedules.forEach(s => {
+                if (!byEmployee[s.employee_id]) byEmployee[s.employee_id] = { name: s.employee_name, days: {} };
+                byEmployee[s.employee_id].days[s.day_of_week] = s;
+            });
+
+            if (!Object.keys(byEmployee).length) {
+                tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state"><i class="fas fa-calendar-alt"></i><h3>Нет расписаний</h3></div></td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = Object.entries(byEmployee).map(([empId, emp]) => `
+                <tr>
+                    <td>${escapeHtml(emp.name || 'Сотрудник')}</td>
+                    ${[1,2,3,4,5,6,7].map(d => {
+                        const sched = emp.days[d];
+                        return `<td style="font-size:12px;">${sched && sched.is_working ? sched.start_time + '-' + sched.end_time : '<span style="color:var(--text-muted)">-</span>'}</td>`;
+                    }).join('')}
+                    <td><button class="btn btn-sm btn-outline"><i class="fas fa-edit"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        // ============================================================
+        // GetCourse-like Features
+        // ============================================================
+
+        // Webinars
+        async function loadWebinars() {
+            const res = await api('GET', `/learning/${projectId}/webinars`);
+            if (res.success) {
+                renderWebinars(res.webinars || []);
+                document.getElementById('webinarsUpcoming').textContent = res.webinars?.filter(w => w.status === 'scheduled').length || 0;
+                document.getElementById('webinarsCompleted').textContent = res.webinars?.filter(w => w.status === 'completed').length || 0;
+                document.getElementById('webinarsParticipants').textContent = res.webinars?.reduce((sum, w) => sum + (w.registrations_count || 0), 0) || 0;
+            }
+        }
+
+        function renderWebinars(webinars) {
+            const tbody = document.getElementById('webinarsTable');
+            if (!webinars.length) {
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-video"></i><h3>Нет вебинаров</h3></div></td></tr>';
+                return;
+            }
+            const statuses = { scheduled: ['Запланирован', 'badge-warning'], live: ['В эфире', 'badge-danger'], completed: ['Завершён', 'badge-success'] };
+            tbody.innerHTML = webinars.map(w => `
+                <tr>
+                    <td><strong>${escapeHtml(w.title)}</strong></td>
+                    <td>${new Date(w.scheduled_at).toLocaleString('ru')}</td>
+                    <td>${escapeHtml(w.host_name || '-')}</td>
+                    <td>${w.registrations_count || 0}</td>
+                    <td><span class="badge ${statuses[w.status]?.[1] || ''}">${statuses[w.status]?.[0] || w.status}</span></td>
+                    <td><button class="btn btn-sm btn-outline" onclick="deleteWebinar('${w.id}')"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        async function deleteWebinar(id) {
+            if (!confirm('Удалить вебинар?')) return;
+            await api('DELETE', `/learning/${projectId}/webinars/${id}`);
+            loadWebinars();
+        }
+
+        // Quizzes
+        async function loadQuizzes() {
+            const res = await api('GET', `/learning/${projectId}/quizzes`);
+            if (res.success) {
+                renderQuizzes(res.quizzes || []);
+            }
+        }
+
+        function renderQuizzes(quizzes) {
+            const tbody = document.getElementById('quizzesTable');
+            if (!quizzes.length) {
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-question-circle"></i><h3>Нет тестов</h3></div></td></tr>';
+                return;
+            }
+            tbody.innerHTML = quizzes.map(q => `
+                <tr>
+                    <td><strong>${escapeHtml(q.title)}</strong></td>
+                    <td>${escapeHtml(q.course_name || '-')}</td>
+                    <td>${q.questions_count || 0}</td>
+                    <td>${q.attempts_count || 0}</td>
+                    <td>${q.avg_score || 0}%</td>
+                    <td><button class="btn btn-sm btn-outline" onclick="deleteQuiz('${q.id}')"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        async function deleteQuiz(id) {
+            if (!confirm('Удалить тест?')) return;
+            await api('DELETE', `/learning/${projectId}/quizzes/${id}`);
+            loadQuizzes();
+        }
+
+        // Certificates
+        async function loadCertificates() {
+            const res = await api('GET', `/learning/${projectId}/certificates`);
+            if (res.success) {
+                renderCertificates(res.certificates || []);
+                document.getElementById('certificatesIssued').textContent = res.certificates?.length || 0;
+            }
+        }
+
+        function renderCertificates(certs) {
+            const tbody = document.getElementById('certificatesTable');
+            if (!certs.length) {
+                tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><i class="fas fa-certificate"></i><h3>Нет сертификатов</h3></div></td></tr>';
+                return;
+            }
+            tbody.innerHTML = certs.map(c => `
+                <tr>
+                    <td><strong>${escapeHtml(c.certificate_number || c.id.slice(0,8))}</strong></td>
+                    <td>${escapeHtml(c.client_name || '-')}</td>
+                    <td>${escapeHtml(c.course_name || '-')}</td>
+                    <td>${new Date(c.issued_at).toLocaleDateString('ru')}</td>
+                    <td>${c.pdf_url ? `<a href="${c.pdf_url}" target="_blank" class="btn btn-sm btn-outline"><i class="fas fa-download"></i></a>` : '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        // ============================================================
+        // Integrations
+        // ============================================================
+
+        async function loadIntegrations() {
+            const res = await api('GET', `/integrations/${projectId}`);
+            if (res.success) {
+                renderIntegrations(res.integrations || []);
+                document.getElementById('integrationsActive').textContent = res.integrations?.filter(i => i.is_active).length || 0;
+                document.getElementById('integrationsWebhooks').textContent = res.integrations?.filter(i => i.type === 'webhook').length || 0;
+                document.getElementById('integrationsForms').textContent = res.integrations?.filter(i => i.type === 'web_form').length || 0;
+            }
+        }
+
+        function renderIntegrations(integrations) {
+            const tbody = document.getElementById('integrationsTable');
+            if (!integrations.length) {
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-plug"></i><h3>Нет интеграций</h3></div></td></tr>';
+                return;
+            }
+            const types = { webhook: 'Вебхук', web_form: 'Веб-форма', widget: 'Виджет', telegram: 'Telegram', email: 'Email' };
+            tbody.innerHTML = integrations.map(i => `
+                <tr>
+                    <td><strong>${escapeHtml(i.name)}</strong></td>
+                    <td>${types[i.type] || i.type}</td>
+                    <td>${i.stats_leads || 0}</td>
+                    <td>${i.last_request_at ? new Date(i.last_request_at).toLocaleString('ru') : '-'}</td>
+                    <td><span class="badge ${i.is_active ? 'badge-success' : ''}">${i.is_active ? 'Активна' : 'Выключена'}</span></td>
+                    <td><button class="btn btn-sm btn-outline" onclick="deleteIntegration('${i.id}')"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        async function deleteIntegration(id) {
+            if (!confirm('Удалить интеграцию?')) return;
+            await api('DELETE', `/integrations/${projectId}/${id}`);
+            loadIntegrations();
+        }
+
+        // Event listeners for filters
+        document.getElementById('tagsEntity')?.addEventListener('change', loadTags);
+        document.getElementById('analyticsPeriod')?.addEventListener('change', loadEmployeeAnalytics);
+        document.getElementById('goalsPeriod')?.addEventListener('change', loadGoals);
+        document.getElementById('bookingsDate')?.addEventListener('change', loadBookings);
 
         // Start
         init();
