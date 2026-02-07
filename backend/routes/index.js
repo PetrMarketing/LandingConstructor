@@ -47,6 +47,8 @@ const regulationsRoutes = require('./regulations');
 const goalsRoutes = require('./goals');
 const leadDistributionRoutes = require('./lead-distribution');
 const employeeAnalyticsRoutes = require('./employee-analytics');
+const integrationsRoutes = require('./integrations');
+const tagsRoutes = require('./tags');
 
 // API routes - Auth & Core
 router.use('/auth', authRoutes);
@@ -94,6 +96,8 @@ router.use('/regulations', regulationsRoutes);
 router.use('/goals', goalsRoutes);
 router.use('/lead-distribution', leadDistributionRoutes);
 router.use('/employee-analytics', employeeAnalyticsRoutes);
+router.use('/integrations', integrationsRoutes);
+router.use('/tags', tagsRoutes);
 
 // Health check
 router.get('/health', (req, res) => {
