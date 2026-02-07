@@ -4,6 +4,28 @@ const { getDb } = require('../config/database');
 const { v4: uuidv4 } = require('uuid');
 
 // ============================================================
+// CATEGORIES / КАТЕГОРИИ
+// ============================================================
+
+router.get('/:projectId/categories', (req, res) => {
+    try {
+        const db = getDb();
+        const categories = db.prepare(`
+            SELECT c.*,
+                (SELECT COUNT(*) FROM products WHERE category_id = c.id) as products_count
+            FROM categories c
+            WHERE c.project_id = ?
+            ORDER BY c.sort_order, c.name
+        `).all(req.params.projectId);
+
+        res.json({ success: true, categories });
+    } catch (error) {
+        console.error('Get categories error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ============================================================
 // BRANDS / ПРОИЗВОДИТЕЛИ
 // ============================================================
 

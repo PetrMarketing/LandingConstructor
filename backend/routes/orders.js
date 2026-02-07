@@ -22,10 +22,8 @@ router.get('/:projectId', (req, res) => {
         const { status, payment_status, customer_id, limit = 50, offset = 0, search } = req.query;
 
         let query = `
-            SELECT o.*,
-                e.first_name as assignee_first_name, e.last_name as assignee_last_name
+            SELECT o.*
             FROM orders o
-            LEFT JOIN employees e ON e.id = o.assigned_to
             WHERE o.project_id = ?
         `;
         const params = [req.params.projectId];
@@ -87,10 +85,8 @@ router.get('/:projectId/:orderId', (req, res) => {
     try {
         const db = getDb();
         const order = db.prepare(`
-            SELECT o.*,
-                e.first_name as assignee_first_name, e.last_name as assignee_last_name
+            SELECT o.*
             FROM orders o
-            LEFT JOIN employees e ON e.id = o.assigned_to
             WHERE o.id = ? AND o.project_id = ?
         `).get(req.params.orderId, req.params.projectId);
 
@@ -158,10 +154,10 @@ router.post('/:projectId', (req, res) => {
         const orderNumber = generateOrderNumber();
 
         const {
-            customer_id, customer_email, customer_phone, customer_name, customer_note,
-            items, discount_amount, discount_code, shipping_amount, tax_amount,
+            customer_id, customer_email, customer_phone, customer_name,
+            items, discount, shipping,
             shipping_method, shipping_address, payment_method, source,
-            utm_source, utm_medium, utm_campaign, assigned_to, internal_note
+            notes
         } = req.body;
 
         // Calculate totals
@@ -171,22 +167,21 @@ router.post('/:projectId', (req, res) => {
             subtotal += (item.price * item.quantity) - (item.discount_amount || 0);
         });
 
-        const total = subtotal - (discount_amount || 0) + (shipping_amount || 0) + (tax_amount || 0);
+        const total = subtotal - (discount || 0) + (shipping || 0);
 
         db.prepare(`
             INSERT INTO orders (
                 id, project_id, order_number, customer_id, customer_email, customer_phone,
-                customer_name, customer_note, items, subtotal, discount_amount, discount_code,
-                shipping_amount, tax_amount, total, shipping_method, shipping_address,
-                payment_method, source, utm_source, utm_medium, utm_campaign,
-                assigned_to, internal_note
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                customer_name, items, subtotal, discount,
+                shipping, total, shipping_method, shipping_address,
+                payment_method, source, notes
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).run(
             id, req.params.projectId, orderNumber, customer_id, customer_email, customer_phone,
-            customer_name, customer_note, JSON.stringify(orderItems), subtotal,
-            discount_amount || 0, discount_code, shipping_amount || 0, tax_amount || 0, total,
+            customer_name, JSON.stringify(orderItems), subtotal,
+            discount || 0, shipping || 0, total,
             shipping_method, JSON.stringify(shipping_address || {}), payment_method,
-            source || 'website', utm_source, utm_medium, utm_campaign, assigned_to, internal_note
+            source || 'website', notes
         );
 
         // Create order items
@@ -248,9 +243,9 @@ router.put('/:projectId/:orderId', (req, res) => {
     try {
         const db = getDb();
         const {
-            customer_email, customer_phone, customer_name, customer_note,
-            discount_amount, shipping_amount, shipping_method, shipping_address,
-            tracking_number, assigned_to, internal_note
+            customer_email, customer_phone, customer_name,
+            discount, shipping, shipping_method, shipping_address,
+            notes
         } = req.body;
 
         db.prepare(`
@@ -258,27 +253,24 @@ router.put('/:projectId/:orderId', (req, res) => {
                 customer_email = COALESCE(?, customer_email),
                 customer_phone = COALESCE(?, customer_phone),
                 customer_name = COALESCE(?, customer_name),
-                customer_note = COALESCE(?, customer_note),
-                discount_amount = COALESCE(?, discount_amount),
-                shipping_amount = COALESCE(?, shipping_amount),
+                discount = COALESCE(?, discount),
+                shipping = COALESCE(?, shipping),
                 shipping_method = COALESCE(?, shipping_method),
                 shipping_address = COALESCE(?, shipping_address),
-                tracking_number = COALESCE(?, tracking_number),
-                assigned_to = COALESCE(?, assigned_to),
-                internal_note = COALESCE(?, internal_note),
+                notes = COALESCE(?, notes),
                 updated_at = CURRENT_TIMESTAMP
             WHERE id = ? AND project_id = ?
         `).run(
-            customer_email, customer_phone, customer_name, customer_note,
-            discount_amount, shipping_amount, shipping_method,
+            customer_email, customer_phone, customer_name,
+            discount, shipping, shipping_method,
             shipping_address ? JSON.stringify(shipping_address) : null,
-            tracking_number, assigned_to, internal_note,
+            notes,
             req.params.orderId, req.params.projectId
         );
 
         // Recalculate total
         const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.orderId);
-        const newTotal = order.subtotal - order.discount_amount + order.shipping_amount + order.tax_amount;
+        const newTotal = order.subtotal - order.discount + order.shipping;
 
         db.prepare('UPDATE orders SET total = ? WHERE id = ?').run(newTotal, req.params.orderId);
 
@@ -306,19 +298,8 @@ router.post('/:projectId/:orderId/status', (req, res) => {
 
         const currentOrder = db.prepare('SELECT status FROM orders WHERE id = ?').get(req.params.orderId);
 
-        let updateFields = `status = ?, updated_at = CURRENT_TIMESTAMP`;
-        const params = [status];
-
-        if (status === 'shipped') {
-            updateFields += `, shipped_at = CURRENT_TIMESTAMP`;
-        } else if (status === 'delivered') {
-            updateFields += `, delivered_at = CURRENT_TIMESTAMP`;
-        } else if (status === 'completed') {
-            updateFields += `, completed_at = CURRENT_TIMESTAMP`;
-        }
-
-        params.push(req.params.orderId);
-        db.prepare(`UPDATE orders SET ${updateFields} WHERE id = ?`).run(...params);
+        db.prepare(`UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`)
+            .run(status, req.params.orderId);
 
         // Log status change
         db.prepare(`
@@ -352,10 +333,9 @@ router.post('/:projectId/:orderId/payment', (req, res) => {
             UPDATE orders SET
                 payment_status = ?,
                 payment_method = COALESCE(?, payment_method),
-                paid_at = CASE WHEN ? = 'paid' THEN CURRENT_TIMESTAMP ELSE paid_at END,
                 updated_at = CURRENT_TIMESTAMP
             WHERE id = ?
-        `).run(payment_status, payment_method, payment_status, req.params.orderId);
+        `).run(payment_status, payment_method, req.params.orderId);
 
         // Create payment record if paid
         if (payment_status === 'paid' && amount) {

@@ -93,6 +93,60 @@ router.get('/:projectId/access/:courseId/students', (req, res) => {
 });
 
 // ============================================================
+// LESSONS / УРОКИ КУРСА
+// ============================================================
+
+// Get all lessons for a project
+router.get('/:projectId/lessons', (req, res) => {
+    try {
+        const db = getDb();
+        const lessons = db.prepare(`
+            SELECT cl.*, c.name as course_name
+            FROM course_lessons cl
+            LEFT JOIN courses c ON c.id = cl.course_id
+            WHERE c.project_id = ?
+            ORDER BY c.name, cl.sort_order
+        `).all(req.params.projectId);
+
+        res.json({
+            success: true,
+            lessons: lessons.map(l => ({
+                ...l,
+                attachments: JSON.parse(l.attachments || '[]')
+            }))
+        });
+    } catch (error) {
+        console.error('Get all lessons error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Get all lessons for a course
+router.get('/:projectId/lessons/:courseId', (req, res) => {
+    try {
+        const db = getDb();
+        const lessons = db.prepare(`
+            SELECT cl.*, cm.title as module_title
+            FROM course_lessons cl
+            LEFT JOIN course_modules cm ON cm.id = cl.module_id
+            WHERE cl.course_id = ?
+            ORDER BY cm.sort_order, cl.sort_order
+        `).all(req.params.courseId);
+
+        res.json({
+            success: true,
+            lessons: lessons.map(l => ({
+                ...l,
+                attachments: JSON.parse(l.attachments || '[]')
+            }))
+        });
+    } catch (error) {
+        console.error('Get lessons error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ============================================================
 // HOMEWORK / ДОМАШНИЕ ЗАДАНИЯ
 // ============================================================
 
@@ -197,6 +251,46 @@ router.get('/:projectId/homework/:homeworkId/submissions', (req, res) => {
 // ============================================================
 // QUIZZES / ТЕСТЫ
 // ============================================================
+
+// Get all quizzes for a project
+router.get('/:projectId/quizzes', (req, res) => {
+    try {
+        const db = getDb();
+        const quizzes = db.prepare(`
+            SELECT q.*, c.name as course_name,
+                (SELECT COUNT(*) FROM quiz_questions WHERE quiz_id = q.id) as questions_count
+            FROM quizzes q
+            LEFT JOIN courses c ON c.id = q.course_id
+            WHERE c.project_id = ?
+            ORDER BY q.created_at DESC
+        `).all(req.params.projectId);
+
+        res.json({ success: true, quizzes });
+    } catch (error) {
+        console.error('Get all quizzes error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Get all quizzes for a course
+router.get('/:projectId/quizzes/course/:courseId', (req, res) => {
+    try {
+        const db = getDb();
+        const quizzes = db.prepare(`
+            SELECT q.*, cl.title as lesson_title,
+                (SELECT COUNT(*) FROM quiz_questions WHERE quiz_id = q.id) as questions_count
+            FROM quizzes q
+            LEFT JOIN course_lessons cl ON cl.id = q.lesson_id
+            WHERE q.course_id = ?
+            ORDER BY q.created_at
+        `).all(req.params.courseId);
+
+        res.json({ success: true, quizzes });
+    } catch (error) {
+        console.error('Get quizzes error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 
 // Get quiz
 router.get('/:projectId/quizzes/:quizId', (req, res) => {

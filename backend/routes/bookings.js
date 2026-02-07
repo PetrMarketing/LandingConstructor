@@ -472,6 +472,60 @@ router.delete('/:projectId/:bookingId', (req, res) => {
 // EMPLOYEE SCHEDULES
 // ============================================================
 
+// Get all schedules for project employees
+router.get('/:projectId/schedules', (req, res) => {
+    try {
+        const db = getDb();
+        const schedules = db.prepare(`
+            SELECT es.*, (e.first_name || ' ' || e.last_name) as employee_name
+            FROM employee_schedules es
+            JOIN employees e ON e.id = es.employee_id
+            WHERE e.project_id = ?
+            ORDER BY e.first_name, es.day_of_week
+        `).all(req.params.projectId);
+
+        res.json({ success: true, schedules });
+    } catch (error) {
+        console.error('Get schedules error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Get employees for booking context
+router.get('/:projectId/employees', (req, res) => {
+    try {
+        const db = getDb();
+        const { service_id } = req.query;
+
+        let query, params;
+        if (service_id) {
+            query = `
+                SELECT e.id, e.first_name, e.last_name, e.position, e.avatar_url,
+                    se.price_override, se.duration_override
+                FROM employees e
+                JOIN service_employees se ON se.employee_id = e.id AND se.service_id = ? AND se.is_active = 1
+                WHERE e.project_id = ? AND e.is_active = 1
+                ORDER BY e.first_name, e.last_name
+            `;
+            params = [service_id, req.params.projectId];
+        } else {
+            query = `
+                SELECT e.id, e.first_name, e.last_name, e.position, e.avatar_url
+                FROM employees e
+                WHERE e.project_id = ? AND e.is_active = 1
+                ORDER BY e.first_name, e.last_name
+            `;
+            params = [req.params.projectId];
+        }
+
+        const employees = db.prepare(query).all(...params);
+        res.json({ success: true, employees });
+    } catch (error) {
+        console.error('Get booking employees error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 // Get employee schedule
 router.get('/:projectId/schedules/:employeeId', (req, res) => {
     try {

@@ -20,7 +20,7 @@ router.get('/:projectId', (req, res) => {
                 c.last_name as client_last_name
             FROM payments p
             LEFT JOIN orders o ON o.id = p.order_id
-            LEFT JOIN clients c ON c.id = o.client_id
+            LEFT JOIN clients c ON c.user_id = o.customer_id
             WHERE p.project_id = ?
         `;
         const params = [req.params.projectId];
@@ -80,7 +80,7 @@ router.get('/:projectId/:paymentId', (req, res) => {
                 c.email as client_email
             FROM payments p
             LEFT JOIN orders o ON o.id = p.order_id
-            LEFT JOIN clients c ON c.id = o.client_id
+            LEFT JOIN clients c ON c.user_id = o.customer_id
             WHERE p.id = ? AND p.project_id = ?
         `).get(req.params.paymentId, req.params.projectId);
 
@@ -222,7 +222,7 @@ router.get('/:projectId/refunds/list', (req, res) => {
             FROM refunds r
             LEFT JOIN payments p ON p.id = r.payment_id
             LEFT JOIN orders o ON o.id = r.order_id
-            LEFT JOIN clients c ON c.id = o.client_id
+            LEFT JOIN clients c ON c.user_id = o.customer_id
             WHERE r.project_id = ?
         `;
         const params = [req.params.projectId];

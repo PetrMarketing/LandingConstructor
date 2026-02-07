@@ -23,7 +23,7 @@ router.get('/:projectId', (req, res) => {
             success: true,
             segments: segments.map(s => ({
                 ...s,
-                rules: JSON.parse(s.rules || '[]')
+                rules: JSON.parse(s.conditions || '[]')
             }))
         });
     } catch (error) {
@@ -57,7 +57,7 @@ router.get('/:projectId/:segmentId', (req, res) => {
             success: true,
             segment: {
                 ...segment,
-                rules: JSON.parse(segment.rules || '[]')
+                rules: JSON.parse(segment.conditions || '[]')
             },
             members
         });
@@ -72,16 +72,18 @@ router.post('/:projectId', (req, res) => {
     try {
         const db = getDb();
         const id = uuidv4();
-        const { name, description, rules, is_dynamic, color } = req.body;
+        const { name, description, rules, is_dynamic, color, logic } = req.body;
 
         if (!name) {
             return res.status(400).json({ success: false, error: 'Название сегмента обязательно' });
         }
 
+        const slug = name.toLowerCase().replace(/[^a-zа-яё0-9]+/gi, '-').replace(/^-|-$/g, '') || uuidv4().slice(0, 8);
+
         db.prepare(`
-            INSERT INTO client_segments (id, project_id, name, description, rules, is_dynamic, color)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        `).run(id, req.params.projectId, name, description, JSON.stringify(rules || []), is_dynamic ? 1 : 0, color || '#6366f1');
+            INSERT INTO client_segments (id, project_id, name, slug, description, conditions, is_dynamic, color)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `).run(id, req.params.projectId, name, slug, description, JSON.stringify(rules || []), is_dynamic ? 1 : 0, color || '#6366f1');
 
         // If dynamic segment with rules, populate members automatically
         if (is_dynamic && rules && rules.length > 0) {
@@ -94,7 +96,7 @@ router.post('/:projectId', (req, res) => {
             success: true,
             segment: {
                 ...segment,
-                rules: JSON.parse(segment.rules || '[]')
+                rules: JSON.parse(segment.conditions || '[]')
             }
         });
     } catch (error) {
@@ -113,7 +115,7 @@ router.put('/:projectId/:segmentId', (req, res) => {
             UPDATE client_segments SET
                 name = COALESCE(?, name),
                 description = COALESCE(?, description),
-                rules = COALESCE(?, rules),
+                conditions = COALESCE(?, conditions),
                 is_dynamic = COALESCE(?, is_dynamic),
                 color = COALESCE(?, color),
                 updated_at = CURRENT_TIMESTAMP
@@ -138,7 +140,7 @@ router.put('/:projectId/:segmentId', (req, res) => {
             success: true,
             segment: {
                 ...segment,
-                rules: JSON.parse(segment.rules || '[]')
+                rules: JSON.parse(segment.conditions || '[]')
             }
         });
     } catch (error) {
@@ -214,7 +216,7 @@ router.post('/:projectId/:segmentId/refresh', (req, res) => {
             return res.status(404).json({ success: false, error: 'Сегмент не найден' });
         }
 
-        const rules = JSON.parse(segment.rules || '[]');
+        const rules = JSON.parse(segment.conditions || '[]');
 
         // Clear existing members
         db.prepare('DELETE FROM client_segment_members WHERE segment_id = ?').run(req.params.segmentId);
