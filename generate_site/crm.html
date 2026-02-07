@@ -509,9 +509,7 @@
             </nav>
             <nav class="nav-section">
                 <div class="nav-title">Клиенты</div>
-                <div class="nav-item" data-section="clients"><i class="fas fa-users"></i> Клиенты</div>
-                <div class="nav-item" data-section="segments"><i class="fas fa-layer-group"></i> Сегменты</div>
-                <div class="nav-item" data-section="tags"><i class="fas fa-tags"></i> Теги</div>
+                <div class="nav-item" data-section="clients"><i class="fas fa-users"></i> Пользователи</div>
             </nav>
             <nav class="nav-section">
                 <div class="nav-title">Команда</div>
@@ -819,73 +817,106 @@
 
                 <!-- Clients -->
                 <div class="section" id="section-clients">
-                    <div class="toolbar" style="flex-wrap:wrap;">
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="searchClients" placeholder="Поиск клиентов..." oninput="filterClients()">
-                        </div>
-                        <select class="filter-select" id="filterClientTag" onchange="filterClients()">
-                            <option value="">Все теги</option>
-                        </select>
-                        <select class="filter-select" id="filterClientCourse" onchange="filterClients()">
-                            <option value="">Все курсы</option>
-                            <option value="has_course">Есть доступ к курсу</option>
-                            <option value="no_course">Нет курсов</option>
-                            <option value="completed_course">Прошёл курс</option>
-                            <option value="in_progress">Проходит курс</option>
-                        </select>
-                        <select class="filter-select" id="filterClientBooking" onchange="filterClients()">
-                            <option value="">Все записи</option>
-                            <option value="has_booking">Есть записи</option>
-                            <option value="no_booking">Нет записей</option>
-                            <option value="upcoming">Предстоящая запись</option>
-                            <option value="visited">Был на визите</option>
-                        </select>
-                        <select class="filter-select" id="filterClientOrder" onchange="filterClients()">
-                            <option value="">Все заказы</option>
-                            <option value="has_order">Есть заказы</option>
-                            <option value="no_order">Нет заказов</option>
-                            <option value="repeat">Повторные покупки</option>
-                        </select>
-                        <button class="btn btn-outline" onclick="openModal('importClientsModal')"><i class="fas fa-file-import"></i> Импорт</button>
-                        <button class="btn btn-outline" onclick="exportClients()"><i class="fas fa-download"></i> Экспорт</button>
-                        <button class="btn btn-primary" onclick="openModal('clientModal')"><i class="fas fa-plus"></i> Добавить</button>
+                    <!-- Tabs -->
+                    <div style="display:flex;gap:0;border-bottom:2px solid var(--border-color);margin-bottom:20px;">
+                        <button class="btn" onclick="switchClientsTab('users')" id="clientsTabUsers" style="border:none;border-bottom:2px solid var(--primary);margin-bottom:-2px;border-radius:0;padding:12px 20px;color:var(--primary);font-weight:600;"><i class="fas fa-users"></i> Пользователи</button>
+                        <button class="btn" onclick="switchClientsTab('segments')" id="clientsTabSegments" style="border:none;border-bottom:2px solid transparent;margin-bottom:-2px;border-radius:0;padding:12px 20px;color:var(--text-muted);"><i class="fas fa-layer-group"></i> Сегменты</button>
+                        <button class="btn" onclick="switchClientsTab('groups')" id="clientsTabGroups" style="border:none;border-bottom:2px solid transparent;margin-bottom:-2px;border-radius:0;padding:12px 20px;color:var(--text-muted);"><i class="fas fa-object-group"></i> Группы</button>
+                        <button class="btn" onclick="switchClientsTab('tags')" id="clientsTabTags" style="border:none;border-bottom:2px solid transparent;margin-bottom:-2px;border-radius:0;padding:12px 20px;color:var(--text-muted);"><i class="fas fa-tags"></i> Теги</button>
                     </div>
-                    <div class="stats-grid" style="margin-bottom:16px;">
-                        <div class="stat-card"><div class="value" id="clientsTotal">0</div><div class="label">Всего клиентов</div></div>
-                        <div class="stat-card primary"><div class="value" id="clientsWithCourses">0</div><div class="label">С курсами</div></div>
-                        <div class="stat-card success"><div class="value" id="clientsWithBookings">0</div><div class="label">С записями</div></div>
-                        <div class="stat-card warning"><div class="value" id="clientsWithOrders">0</div><div class="label">С заказами</div></div>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Клиент</th>
-                                        <th>Контакты</th>
-                                        <th>Источник</th>
-                                        <th>Теги</th>
-                                        <th>Курсы</th>
-                                        <th>Записи</th>
-                                        <th>Заказы</th>
-                                        <th>Сумма</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="clientsTable"></tbody>
-                            </table>
+
+                    <!-- Tab: Users -->
+                    <div id="clientsTabPanelUsers">
+                        <div class="toolbar" style="flex-wrap:wrap;">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchClients" placeholder="Поиск клиентов..." oninput="filterClients()">
+                            </div>
+                            <select class="filter-select" id="filterClientTag" onchange="filterClients()">
+                                <option value="">Все теги</option>
+                            </select>
+                            <select class="filter-select" id="filterClientCourse" onchange="filterClients()">
+                                <option value="">Все курсы</option>
+                                <option value="has_course">Есть доступ к курсу</option>
+                                <option value="no_course">Нет курсов</option>
+                                <option value="completed_course">Прошёл курс</option>
+                                <option value="in_progress">Проходит курс</option>
+                            </select>
+                            <select class="filter-select" id="filterClientBooking" onchange="filterClients()">
+                                <option value="">Все записи</option>
+                                <option value="has_booking">Есть записи</option>
+                                <option value="no_booking">Нет записей</option>
+                                <option value="upcoming">Предстоящая запись</option>
+                                <option value="visited">Был на визите</option>
+                            </select>
+                            <select class="filter-select" id="filterClientOrder" onchange="filterClients()">
+                                <option value="">Все заказы</option>
+                                <option value="has_order">Есть заказы</option>
+                                <option value="no_order">Нет заказов</option>
+                                <option value="repeat">Повторные покупки</option>
+                            </select>
+                            <button class="btn btn-outline" onclick="openModal('importClientsModal')"><i class="fas fa-file-import"></i> Импорт</button>
+                            <button class="btn btn-outline" onclick="exportClients()"><i class="fas fa-download"></i> Экспорт</button>
+                            <button class="btn btn-primary" onclick="openModal('clientModal')"><i class="fas fa-plus"></i> Добавить</button>
                         </div>
+                        <div class="stats-grid" style="margin-bottom:16px;">
+                            <div class="stat-card"><div class="value" id="clientsTotal">0</div><div class="label">Всего клиентов</div></div>
+                            <div class="stat-card primary"><div class="value" id="clientsWithCourses">0</div><div class="label">С курсами</div></div>
+                            <div class="stat-card success"><div class="value" id="clientsWithBookings">0</div><div class="label">С записями</div></div>
+                            <div class="stat-card warning"><div class="value" id="clientsWithOrders">0</div><div class="label">С заказами</div></div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Клиент</th>
+                                            <th>Контакты</th>
+                                            <th>Источник</th>
+                                            <th>Теги</th>
+                                            <th>Курсы</th>
+                                            <th>Записи</th>
+                                            <th>Заказы</th>
+                                            <th>Сумма</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="clientsTable"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Segments -->
+                    <div id="clientsTabPanelSegments" style="display:none;">
+                        <div class="toolbar">
+                            <button class="btn btn-primary" onclick="openModal('segmentModal')"><i class="fas fa-plus"></i> Создать сегмент</button>
+                        </div>
+                        <div id="segmentsList" class="stats-grid"></div>
+                    </div>
+
+                    <!-- Tab: Groups -->
+                    <div id="clientsTabPanelGroups" style="display:none;">
+                        <div class="toolbar">
+                            <button class="btn btn-primary" onclick="openModal('groupModal')"><i class="fas fa-plus"></i> Создать группу</button>
+                        </div>
+                        <div id="groupsList" class="stats-grid"></div>
+                    </div>
+
+                    <!-- Tab: Tags -->
+                    <div id="clientsTabPanelTags" style="display:none;">
+                        <div class="toolbar">
+                            <button class="btn btn-primary" onclick="openModal('tagModal')"><i class="fas fa-plus"></i> Создать тег</button>
+                            <select class="filter-select" id="tagsEntity" onchange="loadTags()">
+                                <option value="deal">Для сделок</option>
+                                <option value="client">Для клиентов</option>
+                            </select>
+                        </div>
+                        <div id="tagsList" class="stats-grid"></div>
                     </div>
                 </div>
 
-                <!-- Segments -->
-                <div class="section" id="section-segments">
-                    <div class="toolbar">
-                        <button class="btn btn-primary" onclick="openModal('segmentModal')"><i class="fas fa-plus"></i> Создать сегмент</button>
-                    </div>
-                    <div id="segmentsList" class="stats-grid"></div>
-                </div>
+                <!-- Segments section removed - now inside Clients tabs -->
 
                 <!-- Employees -->
                 <div class="section" id="section-employees">
@@ -1364,16 +1395,7 @@
                 </div>
 
                 <!-- Tags -->
-                <div class="section" id="section-tags">
-                    <div class="toolbar">
-                        <button class="btn btn-primary" onclick="openModal('tagModal')"><i class="fas fa-plus"></i> Создать тег</button>
-                        <select class="filter-select" id="tagsEntity">
-                            <option value="deal">Для сделок</option>
-                            <option value="client">Для клиентов</option>
-                        </select>
-                    </div>
-                    <div class="stats-grid" id="tagsList"></div>
-                </div>
+                <!-- Tags section removed - now inside Clients tabs -->
 
                 <!-- Employee Analytics -->
                 <div class="section" id="section-employee-analytics">
@@ -2674,6 +2696,34 @@
             <div class="modal-footer">
                 <button class="btn btn-outline" onclick="closeModal('segmentModal')">Отмена</button>
                 <button class="btn btn-primary" onclick="saveSegment()">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Group Modal -->
+    <div class="modal-overlay" id="groupModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Новая группа</h3>
+                <button class="modal-close" onclick="closeModal('groupModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название группы *</label>
+                    <input type="text" id="groupName" placeholder="VIP-клиенты">
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="groupDescription" rows="2" placeholder="Описание группы"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Цвет</label>
+                    <input type="color" id="groupColor" value="#6366f1">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('groupModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveClientGroup()">Создать</button>
             </div>
         </div>
     </div>
@@ -5013,39 +5063,32 @@ XL"></textarea>
 
             const titles = {
                 dashboard: 'Дашборд', funnels: 'Воронки продаж', deals: 'Сделки',
-                clients: 'Клиенты', segments: 'Сегменты', employees: 'Сотрудники',
+                clients: 'Пользователи', employees: 'Сотрудники',
                 tasks: 'Задачи', orders: 'Заказы', payments: 'Платежи',
                 products: 'Товары', services: 'Услуги', courses: 'Курсы',
-                // amoCRM
-                calls: 'Звонки', regulations: 'Регламенты SLA', goals: 'KPI и Цели',
-                'lead-distribution': 'Распределение лидов', tags: 'Теги',
+                calls: 'Звонки', regulations: 'Регламенты', goals: 'KPI и Цели',
+                'lead-distribution': 'Распределение лидов',
                 'employee-analytics': 'Аналитика сотрудников',
-                // InSales
                 brands: 'Бренды', 'promo-codes': 'Промокоды', collections: 'Коллекции',
-                // YClients
                 bookings: 'Записи на услуги', schedules: 'Расписание',
-                // GetCourse
                 webinars: 'Вебинары', quizzes: 'Тесты и квизы', certificates: 'Сертификаты',
-                // Settings
                 integrations: 'Интеграции'
             };
             document.getElementById('pageTitle').textContent = titles[section] || section;
 
             // Load section-specific data
+            if (section === 'clients') { loadSegments(); loadTags(); loadClientGroups(); }
             if (section === 'deals') loadDealsKanban();
             if (section === 'tasks') loadTasks();
             if (section === 'orders') loadOrders();
             if (section === 'products') loadProducts();
-            if (section === 'segments') loadSegments();
             if (section === 'services') loadServices();
             if (section === 'courses') loadCourses();
             if (section === 'payments') loadPayments();
-            // amoCRM
             if (section === 'calls') { loadCalls(); initUIS(); }
             if (section === 'regulations') loadRegulations();
             if (section === 'goals') loadGoals();
             if (section === 'lead-distribution') loadLeadDistribution();
-            if (section === 'tags') loadTags();
             if (section === 'employee-analytics') loadEmployeeAnalytics();
             // InSales
             if (section === 'brands') loadBrands();
@@ -5382,6 +5425,81 @@ XL"></textarea>
             if (!taskName) return;
             // TODO: Create task linked to deal
             toast('Задача добавлена', 'success');
+        }
+
+        // Clients tab switching
+        let currentClientsTab = 'users';
+        function switchClientsTab(tab) {
+            currentClientsTab = tab;
+            ['users', 'segments', 'groups', 'tags'].forEach(t => {
+                const panel = document.getElementById('clientsTabPanel' + t.charAt(0).toUpperCase() + t.slice(1));
+                const btn = document.getElementById('clientsTab' + t.charAt(0).toUpperCase() + t.slice(1));
+                if (panel) panel.style.display = t === tab ? 'block' : 'none';
+                if (btn) {
+                    btn.style.borderBottomColor = t === tab ? 'var(--primary)' : 'transparent';
+                    btn.style.color = t === tab ? 'var(--primary)' : 'var(--text-muted)';
+                    btn.style.fontWeight = t === tab ? '600' : '400';
+                }
+            });
+            if (tab === 'segments') loadSegments();
+            if (tab === 'groups') loadClientGroups();
+            if (tab === 'tags') loadTags();
+        }
+
+        // Client Groups
+        let clientGroups = JSON.parse(localStorage.getItem('client_groups') || '[]');
+
+        function loadClientGroups() {
+            renderClientGroups();
+        }
+
+        function renderClientGroups() {
+            const container = document.getElementById('groupsList');
+            if (!container) return;
+            if (!clientGroups.length) {
+                container.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><i class="fas fa-object-group"></i><h3>Нет групп</h3><p>Создайте группу для ручной организации клиентов</p></div>';
+                return;
+            }
+            container.innerHTML = clientGroups.map(g => `
+                <div class="stat-card" style="border-left:4px solid ${g.color || '#6366f1'};">
+                    <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;">
+                        <h4>${escapeHtml(g.name)}</h4>
+                        <button class="btn btn-sm btn-outline btn-danger" onclick="deleteClientGroup('${g.id}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                    <div class="value" style="font-size:24px;">${(g.members || []).length}</div>
+                    <div class="label">клиентов</div>
+                    ${g.description ? `<div style="font-size:12px;color:var(--text-muted);margin-top:4px;">${escapeHtml(g.description)}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function saveClientGroup() {
+            const name = document.getElementById('groupName').value;
+            if (!name) return toast('Введите название группы', 'error');
+
+            const group = {
+                id: Date.now().toString(),
+                name,
+                description: document.getElementById('groupDescription').value || '',
+                color: document.getElementById('groupColor').value || '#6366f1',
+                members: [],
+                created_at: new Date().toISOString()
+            };
+            clientGroups.push(group);
+            localStorage.setItem('client_groups', JSON.stringify(clientGroups));
+            closeModal('groupModal');
+            document.getElementById('groupName').value = '';
+            document.getElementById('groupDescription').value = '';
+            renderClientGroups();
+            toast('Группа создана', 'success');
+        }
+
+        function deleteClientGroup(id) {
+            if (!confirm('Удалить группу?')) return;
+            clientGroups = clientGroups.filter(g => g.id !== id);
+            localStorage.setItem('client_groups', JSON.stringify(clientGroups));
+            renderClientGroups();
+            toast('Группа удалена', 'info');
         }
 
         // Clients
