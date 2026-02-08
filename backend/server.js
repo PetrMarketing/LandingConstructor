@@ -81,7 +81,7 @@ app.use(express.static(path.join(__dirname, '../generate_site')));
 app.get('/', (req, res) => {
     res.json({
         success: true,
-        message: 'CMS API Server',
+        message: 'PK Business API Server',
         version: '1.0.0',
         endpoints: {
             health: '/api/health',
@@ -115,7 +115,7 @@ const PORT = config.PORT;
 app.listen(PORT, () => {
     console.log(`
 ╔═══════════════════════════════════════════════╗
-║           CMS Backend Server                   ║
+║         PK Business API Server                 ║
 ╠═══════════════════════════════════════════════╣
 ║  Server running on port: ${PORT}                  ║
 ║  Environment: ${config.NODE_ENV.padEnd(20)}       ║

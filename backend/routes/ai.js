@@ -24,6 +24,9 @@ router.get('/status', (req, res) => {
     });
 });
 
+// POST /api/ai/analyze-business — AI-powered business analysis for project creation
+router.post('/analyze-business', aiLimiter, aiController.analyzeBusiness);
+
 // POST /api/ai/generate-landing — start generation job
 router.post('/generate-landing', aiLimiter, aiController.generateLanding);
 

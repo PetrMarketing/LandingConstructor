@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM - Управление</title>
+    <title>PK Business - CRM</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -369,6 +369,11 @@
         .badge-success { background: rgba(16,185,129,0.2); color: var(--success); }
         .badge-warning { background: rgba(245,158,11,0.2); color: var(--warning); }
         .badge-danger { background: rgba(239,68,68,0.2); color: var(--danger); }
+        .badge-info { background: rgba(59,130,246,0.2); color: var(--info); }
+        .badge-muted { background: rgba(100,116,139,0.2); color: var(--text-muted); }
+        .specialist-services-checkboxes { max-height: 150px; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px; background: var(--bg-input); border-radius: 8px; }
+        .specialist-services-checkboxes label { display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; padding: 4px; border-radius: 4px; }
+        .specialist-services-checkboxes label:hover { background: rgba(255,255,255,0.05); }
 
         /* Kanban */
         .kanban { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 16px; }
@@ -491,8 +496,9 @@
     <div class="layout">
         <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <h1><i class="fas fa-chart-line"></i> CRM</h1>
+            <div class="sidebar-header" style="display:flex;align-items:center;justify-content:space-between;">
+                <h1><i class="fas fa-cubes"></i> PK Business</h1>
+                <button onclick="openModuleSettings()" title="Настройка модулей" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:4px 8px;border-radius:6px;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'"><i class="fas fa-cog"></i></button>
             </div>
             <nav class="nav-section">
                 <div class="nav-title">Главное</div>
@@ -500,58 +506,35 @@
             </nav>
             <nav class="nav-section">
                 <div class="nav-title">Продажи</div>
-                <div class="nav-item" data-section="funnels"><i class="fas fa-filter"></i> Воронки</div>
-                <div class="nav-item" data-section="deals"><i class="fas fa-handshake"></i> Сделки</div>
-                <div class="nav-item" data-section="calls"><i class="fas fa-phone"></i> Звонки</div>
-                <div class="nav-item" data-section="regulations"><i class="fas fa-clock"></i> Регламенты</div>
-                <div class="nav-item" data-section="goals"><i class="fas fa-bullseye"></i> KPI/Цели</div>
-                <div class="nav-item" data-section="lead-distribution"><i class="fas fa-random"></i> Распределение</div>
+                <div class="nav-item" data-section="sales"><i class="fas fa-handshake"></i> Продажи</div>
             </nav>
             <nav class="nav-section">
                 <div class="nav-title">Клиенты</div>
-                <div class="nav-item" data-section="clients"><i class="fas fa-users"></i> Пользователи</div>
+                <div class="nav-item" data-section="clients"><i class="fas fa-users"></i> Клиенты</div>
             </nav>
             <nav class="nav-section">
                 <div class="nav-title">Команда</div>
-                <div class="nav-item" data-section="employees"><i class="fas fa-user-tie"></i> Сотрудники</div>
-                <div class="nav-item" data-section="tasks"><i class="fas fa-tasks"></i> Задачи</div>
-                <div class="nav-item" data-section="employee-analytics"><i class="fas fa-chart-bar"></i> Аналитика</div>
+                <div class="nav-item" data-section="team"><i class="fas fa-user-tie"></i> Команда</div>
             </nav>
             <nav class="nav-section">
-                <div class="nav-title">Заказы</div>
-                <div class="nav-item" data-section="orders"><i class="fas fa-shopping-cart"></i> Заказы</div>
-                <div class="nav-item" data-section="payments"><i class="fas fa-credit-card"></i> Платежи</div>
-            </nav>
-            <nav class="nav-section">
-                <div class="nav-title">Каталог</div>
-                <div class="nav-item" data-section="products"><i class="fas fa-box"></i> Товары</div>
-                <div class="nav-item" data-section="categories"><i class="fas fa-folder"></i> Категории</div>
-                <div class="nav-item" data-section="product-filters"><i class="fas fa-sliders-h"></i> Фильтры</div>
-                <div class="nav-item" data-section="selections"><i class="fas fa-star"></i> Подборки</div>
-                <div class="nav-item" data-section="promo-codes"><i class="fas fa-percent"></i> Промокоды</div>
+                <div class="nav-title">Магазин</div>
+                <div class="nav-item" data-section="shop-orders"><i class="fas fa-shopping-cart"></i> Заказы</div>
+                <div class="nav-item" data-section="catalog"><i class="fas fa-box"></i> Каталог</div>
             </nav>
             <nav class="nav-section">
                 <div class="nav-title">Услуги</div>
-                <div class="nav-item" data-section="services"><i class="fas fa-concierge-bell"></i> Услуги</div>
-                <div class="nav-item" data-section="specialists"><i class="fas fa-user-md"></i> Специалисты</div>
-                <div class="nav-item" data-section="rooms"><i class="fas fa-door-open"></i> Помещения</div>
-                <div class="nav-item" data-section="bookings"><i class="fas fa-calendar-check"></i> Записи</div>
-                <div class="nav-item" data-section="schedules"><i class="fas fa-calendar-alt"></i> Расписание</div>
+                <div class="nav-item" data-section="appointments"><i class="fas fa-calendar-check"></i> Записи</div>
             </nav>
             <nav class="nav-section">
                 <div class="nav-title">Обучение</div>
-                <div class="nav-item" data-section="trainings"><i class="fas fa-graduation-cap"></i> Тренинги</div>
-                <div class="nav-item" data-section="lessons"><i class="fas fa-book-open"></i> Уроки</div>
-                <div class="nav-item" data-section="webinars"><i class="fas fa-video"></i> Вебинары</div>
-                <div class="nav-item" data-section="quizzes"><i class="fas fa-question-circle"></i> Тесты</div>
-                <div class="nav-item" data-section="certificates"><i class="fas fa-certificate"></i> Сертификаты</div>
+                <div class="nav-item" data-section="learning"><i class="fas fa-graduation-cap"></i> Обучение</div>
             </nav>
             <nav class="nav-section">
                 <div class="nav-title">Настройки</div>
                 <div class="nav-item" data-section="integrations"><i class="fas fa-plug"></i> Интеграции</div>
             </nav>
             <nav class="nav-section">
-                <div class="nav-item" onclick="location.href='admin.html'"><i class="fas fa-arrow-left"></i> Назад в CMS</div>
+                <div class="nav-item" onclick="location.href='admin.html'"><i class="fas fa-arrow-left"></i> Назад в панель</div>
             </nav>
         </aside>
 
@@ -588,7 +571,7 @@
 
                     <!-- Main Stats Row -->
                     <div class="stats-grid">
-                        <div class="stat-card primary" onclick="switchSection('deals')" style="cursor:pointer;">
+                        <div class="stat-card primary" data-module="sales" onclick="switchSection('sales')" style="cursor:pointer;">
                             <div class="value" id="stat-deals">0</div>
                             <div class="label">Активные сделки</div>
                             <div class="stat-trend up" id="trend-deals"><i class="fas fa-arrow-up"></i> +12%</div>
@@ -598,17 +581,17 @@
                             <div class="label">Выиграно</div>
                             <div class="stat-trend up" id="trend-won"><i class="fas fa-arrow-up"></i> +8%</div>
                         </div>
-                        <div class="stat-card warning" onclick="switchSection('clients')" style="cursor:pointer;">
+                        <div class="stat-card warning" data-module="clients" onclick="switchSection('clients')" style="cursor:pointer;">
                             <div class="value" id="stat-clients">0</div>
                             <div class="label">Клиентов</div>
                             <div class="stat-trend up" id="trend-clients"><i class="fas fa-arrow-up"></i> +5%</div>
                         </div>
-                        <div class="stat-card" onclick="switchSection('orders')" style="cursor:pointer;">
+                        <div class="stat-card" data-module="orders" onclick="switchSection('shop-orders')" style="cursor:pointer;">
                             <div class="value" id="stat-orders">0</div>
                             <div class="label">Заказов</div>
                             <div class="stat-trend" id="trend-orders">—</div>
                         </div>
-                        <div class="stat-card" onclick="switchSection('tasks')" style="cursor:pointer;">
+                        <div class="stat-card" data-module="team" onclick="switchSection('team'); switchSectionTab('team','tasks')" style="cursor:pointer;">
                             <div class="value" id="stat-tasks">0</div>
                             <div class="label">Задач в работе</div>
                         </div>
@@ -649,27 +632,27 @@
 
                     <!-- Extended Stats Row -->
                     <div class="stats-grid" style="margin-top:16px;">
-                        <div class="stat-card" onclick="switchSection('bookings')" style="cursor:pointer;">
+                        <div class="stat-card" data-module="bookings" onclick="switchSection('appointments')" style="cursor:pointer;">
                             <div class="value" id="stat-bookings">0</div>
                             <div class="label"><i class="fas fa-calendar-check"></i> Записей сегодня</div>
                         </div>
-                        <div class="stat-card" onclick="switchSection('courses')" style="cursor:pointer;">
+                        <div class="stat-card" data-module="learning" onclick="switchSection('learning')" style="cursor:pointer;">
                             <div class="value" id="stat-students">0</div>
                             <div class="label"><i class="fas fa-graduation-cap"></i> Студентов</div>
                         </div>
-                        <div class="stat-card" onclick="switchSection('webinars')" style="cursor:pointer;">
+                        <div class="stat-card" data-module="learning" onclick="switchSection('learning'); switchSectionTab('learning','webinars')" style="cursor:pointer;">
                             <div class="value" id="stat-webinars">0</div>
                             <div class="label"><i class="fas fa-video"></i> Вебинаров</div>
                         </div>
-                        <div class="stat-card" onclick="switchSection('calls')" style="cursor:pointer;">
+                        <div class="stat-card" data-module="sales" onclick="switchSection('sales'); switchSectionTab('sales','calls')" style="cursor:pointer;">
                             <div class="value" id="stat-calls">0</div>
                             <div class="label"><i class="fas fa-phone"></i> Звонков сегодня</div>
                         </div>
-                        <div class="stat-card" onclick="switchSection('products')" style="cursor:pointer;">
+                        <div class="stat-card" data-module="catalog" onclick="switchSection('catalog')" style="cursor:pointer;">
                             <div class="value" id="stat-products">0</div>
                             <div class="label"><i class="fas fa-box"></i> Товаров</div>
                         </div>
-                        <div class="stat-card" onclick="switchSection('promo-codes')" style="cursor:pointer;">
+                        <div class="stat-card" onclick="switchSection('catalog'); switchSectionTab('catalog','promos')" style="cursor:pointer;">
                             <div class="value" id="stat-promos">0</div>
                             <div class="label"><i class="fas fa-percent"></i> Промокодов</div>
                         </div>
@@ -690,7 +673,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3>Последние сделки</h3>
-                                <a href="#deals" onclick="switchSection('deals')" style="color:var(--primary);font-size:13px;">Все →</a>
+                                <a href="#deals" onclick="switchSection('sales')" style="color:var(--primary);font-size:13px;">Все →</a>
                             </div>
                             <div class="card-body">
                                 <table>
@@ -712,7 +695,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3>Записи на сегодня</h3>
-                                <a href="#bookings" onclick="switchSection('bookings')" style="color:var(--primary);font-size:13px;">Все →</a>
+                                <a href="#bookings" onclick="switchSection('appointments')" style="color:var(--primary);font-size:13px;">Все →</a>
                             </div>
                             <div class="card-body">
                                 <table>
@@ -736,7 +719,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3>Последние заказы</h3>
-                                <a href="#orders" onclick="switchSection('orders')" style="color:var(--primary);font-size:13px;">Все →</a>
+                                <a href="#orders" onclick="switchSection('shop-orders')" style="color:var(--primary);font-size:13px;">Все →</a>
                             </div>
                             <div class="card-body">
                                 <table>
@@ -758,7 +741,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3>Активность курсов</h3>
-                                <a href="#courses" onclick="switchSection('courses')" style="color:var(--primary);font-size:13px;">Все →</a>
+                                <a href="#courses" onclick="switchSection('learning')" style="color:var(--primary);font-size:13px;">Все →</a>
                             </div>
                             <div class="card-body">
                                 <table>
@@ -779,16 +762,35 @@
                     </div>
                 </div>
 
-                <!-- Funnels -->
-                <div class="section" id="section-funnels">
-                    <div class="toolbar">
-                        <button class="btn btn-primary" onclick="openModal('funnelModal')"><i class="fas fa-plus"></i> Создать воронку</button>
+                <!-- Sales -->
+                <div class="section" id="section-sales">
+                    <div class="section-tabs">
+                        <button class="section-tab-btn active" id="salesTab_deals" onclick="switchSectionTab('sales','deals')"><i class="fas fa-handshake"></i> Сделки</button>
+                        <button class="section-tab-btn" id="salesTab_funnels" onclick="switchSectionTab('sales','funnels')"><i class="fas fa-filter"></i> Воронки</button>
+                        <button class="section-tab-btn" id="salesTab_calls" onclick="switchSectionTab('sales','calls')"><i class="fas fa-phone"></i> Звонки</button>
+                        <button class="section-tab-btn" id="salesTab_regulations" onclick="switchSectionTab('sales','regulations')"><i class="fas fa-clock"></i> Регламенты</button>
+                        <button class="section-tab-btn" id="salesTab_goals" onclick="switchSectionTab('sales','goals')"><i class="fas fa-bullseye"></i> KPI/Цели</button>
+                        <button class="section-tab-btn" id="salesTab_distribution" onclick="switchSectionTab('sales','distribution')"><i class="fas fa-random"></i> Распределение</button>
                     </div>
-                    <div id="funnelsList"></div>
-                </div>
-
-                <!-- Deals -->
-                <div class="section" id="section-deals">
+                    <div id="salesTabPanel_deals">
+                    <div class="stats-grid" id="salesAnalyticsGrid">
+                        <div class="stat-card success">
+                            <div class="value" id="salesStat-winRate">0%</div>
+                            <div class="label">Win Rate</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="salesStat-avgTime">0 дн.</div>
+                            <div class="label">Среднее время сделки</div>
+                        </div>
+                        <div class="stat-card primary">
+                            <div class="value" id="salesStat-pipeline">₽0</div>
+                            <div class="label">В воронке</div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="value" id="salesStat-count">0</div>
+                            <div class="label">Всего сделок</div>
+                        </div>
+                    </div>
                     <div class="toolbar" style="flex-wrap:wrap;">
                         <div class="search-box">
                             <i class="fas fa-search"></i>
@@ -813,16 +815,182 @@
                         <button class="btn btn-primary" onclick="openModal('dealModal')"><i class="fas fa-plus"></i> Новая сделка</button>
                     </div>
                     <div class="kanban" id="dealsKanban"></div>
+                    </div>
+                    <div id="salesTabPanel_funnels" style="display:none;">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('funnelModal')"><i class="fas fa-plus"></i> Создать воронку</button>
+                    </div>
+                    <div id="funnelsList"></div>
+                    </div>
+                    <div id="salesTabPanel_calls" style="display:none;">
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchCalls" placeholder="Поиск звонков...">
+                        </div>
+                        <select class="filter-select" id="callsDirection">
+                            <option value="">Все направления</option>
+                            <option value="incoming">Входящие</option>
+                            <option value="outgoing">Исходящие</option>
+                        </select>
+                    </div>
+
+                    <!-- UIS Integration Settings -->
+                    <div class="card" style="margin-bottom:20px;">
+                        <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
+                            <h3><i class="fas fa-headset"></i> UIS Телефония</h3>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <span id="uisConnectionStatus" style="display:flex;align-items:center;gap:6px;font-size:12px;">
+                                    <i class="fas fa-circle" style="font-size:8px;color:var(--text-muted);"></i> Не подключено
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+                                <div class="form-group">
+                                    <label>API ключ</label>
+                                    <input type="password" id="uisApiKey" placeholder="Введите API ключ UIS">
+                                </div>
+                                <div class="form-group">
+                                    <label>Виртуальный номер</label>
+                                    <input type="text" id="uisVirtualNumber" placeholder="+7 (XXX) XXX-XX-XX">
+                                </div>
+                                <div class="form-group">
+                                    <label>Webhook URL</label>
+                                    <input type="text" id="uisWebhookUrl" readonly style="background:var(--bg-dark);font-size:11px;" value="">
+                                </div>
+                            </div>
+                            <div style="display:flex;gap:8px;margin-top:8px;">
+                                <button class="btn btn-primary btn-sm" onclick="connectUIS()"><i class="fas fa-plug"></i> Подключить</button>
+                                <button class="btn btn-outline btn-sm" onclick="disconnectUIS()" id="uisDisconnectBtn" style="display:none;"><i class="fas fa-unlink"></i> Отключить</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card primary">
+                            <div class="value" id="callsTotal">0</div>
+                            <div class="label">Всего звонков</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="value" id="callsAnswered">0</div>
+                            <div class="label">Отвечено</div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="value" id="callsMissed">0</div>
+                            <div class="label">Пропущено</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="callsDuration">0:00</div>
+                            <div class="label">Ср. длительность</div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:20px;">
+                        <div class="card-header"><h3>Журнал звонков</h3></div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Дата</th>
+                                        <th>Направление</th>
+                                        <th>Клиент</th>
+                                        <th>Менеджер</th>
+                                        <th>Длительность</th>
+                                        <th>Статус</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="callsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+                    <div id="salesTabPanel_regulations" style="display:none;">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openRegulationEditor()"><i class="fas fa-plus"></i> Новый регламент</button>
+                    </div>
+                    <div class="stats-grid" id="regulationsGrid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));">
+                        <!-- Rendered by JS -->
+                    </div>
+                    </div>
+                    <div id="salesTabPanel_goals" style="display:none;">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('goalModal')"><i class="fas fa-plus"></i> Создать цель</button>
+                        <select class="filter-select" id="goalsPeriod">
+                            <option value="month">Этот месяц</option>
+                            <option value="quarter">Квартал</option>
+                            <option value="year">Год</option>
+                        </select>
+                    </div>
+                    <div class="stats-grid" id="goalsList"></div>
+                    <div class="card" style="margin-top:20px;">
+                        <div class="card-header"><h3>Лидерборд</h3></div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Сотрудник</th>
+                                        <th>Выручка</th>
+                                        <th>Сделок</th>
+                                        <th>Конверсия</th>
+                                        <th>Прогресс</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leaderboardTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+                    <div id="salesTabPanel_distribution" style="display:none;">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('distributionModal')"><i class="fas fa-cog"></i> Настройки</button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card primary">
+                            <div class="value" id="leadsInQueue">0</div>
+                            <div class="label">В очереди</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="value" id="leadsAssigned">0</div>
+                            <div class="label">Распределено сегодня</div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="value" id="leadsExpired">0</div>
+                            <div class="label">Просрочено</div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:20px;">
+                        <div class="card-header"><h3>Очередь лидов</h3></div>
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Сделка</th>
+                                        <th>Источник</th>
+                                        <th>Назначен</th>
+                                        <th>Истекает</th>
+                                        <th>Статус</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leadQueueTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
                 </div>
+
+
 
                 <!-- Clients -->
                 <div class="section" id="section-clients">
                     <!-- Tabs -->
-                    <div style="display:flex;gap:0;border-bottom:2px solid var(--border-color);margin-bottom:20px;">
-                        <button class="btn" onclick="switchClientsTab('users')" id="clientsTabUsers" style="border:none;border-bottom:2px solid var(--primary);margin-bottom:-2px;border-radius:0;padding:12px 20px;color:var(--primary);font-weight:600;"><i class="fas fa-users"></i> Пользователи</button>
-                        <button class="btn" onclick="switchClientsTab('segments')" id="clientsTabSegments" style="border:none;border-bottom:2px solid transparent;margin-bottom:-2px;border-radius:0;padding:12px 20px;color:var(--text-muted);"><i class="fas fa-layer-group"></i> Сегменты</button>
-                        <button class="btn" onclick="switchClientsTab('groups')" id="clientsTabGroups" style="border:none;border-bottom:2px solid transparent;margin-bottom:-2px;border-radius:0;padding:12px 20px;color:var(--text-muted);"><i class="fas fa-object-group"></i> Группы</button>
-                        <button class="btn" onclick="switchClientsTab('tags')" id="clientsTabTags" style="border:none;border-bottom:2px solid transparent;margin-bottom:-2px;border-radius:0;padding:12px 20px;color:var(--text-muted);"><i class="fas fa-tags"></i> Теги</button>
+                    <div class="section-tabs">
+                        <button class="section-tab-btn active" onclick="switchClientsTab('users')" id="clientsTabUsers"><i class="fas fa-users"></i> Пользователи</button>
+                        <button class="section-tab-btn" onclick="switchClientsTab('segments')" id="clientsTabSegments"><i class="fas fa-layer-group"></i> Сегменты</button>
+                        <button class="section-tab-btn" onclick="switchClientsTab('groups')" id="clientsTabGroups"><i class="fas fa-object-group"></i> Группы</button>
+                        <button class="section-tab-btn" onclick="switchClientsTab('tags')" id="clientsTabTags"><i class="fas fa-tags"></i> Теги</button>
                     </div>
 
                     <!-- Tab: Users -->
@@ -916,10 +1084,15 @@
                     </div>
                 </div>
 
-                <!-- Segments section removed - now inside Clients tabs -->
 
-                <!-- Employees -->
-                <div class="section" id="section-employees">
+                <!-- Team -->
+                <div class="section" id="section-team">
+                    <div class="section-tabs">
+                        <button class="section-tab-btn active" id="teamTab_employees" onclick="switchSectionTab('team','employees')"><i class="fas fa-user-tie"></i> Сотрудники</button>
+                        <button class="section-tab-btn" id="teamTab_tasks" onclick="switchSectionTab('team','tasks')"><i class="fas fa-tasks"></i> Задачи</button>
+                        <button class="section-tab-btn" id="teamTab_analytics" onclick="switchSectionTab('team','analytics')"><i class="fas fa-chart-bar"></i> Аналитика</button>
+                    </div>
+                    <div id="teamTabPanel_employees">
                     <div class="toolbar">
                         <button class="btn btn-primary" onclick="openModal('employeeModal')"><i class="fas fa-plus"></i> Добавить сотрудника</button>
                     </div>
@@ -939,10 +1112,8 @@
                             </table>
                         </div>
                     </div>
-                </div>
-
-                <!-- Tasks -->
-                <div class="section" id="section-tasks">
+                    </div>
+                    <div id="teamTabPanel_tasks" style="display:none;">
                     <div class="toolbar">
                         <select class="filter-select" id="filterTaskStatus" onchange="loadTasks()">
                             <option value="">Все задачи</option>
@@ -950,455 +1121,45 @@
                             <option value="in_progress">В работе</option>
                             <option value="completed">Завершены</option>
                         </select>
+                        <div style="display:flex;gap:4px;">
+                            <button class="btn btn-sm" id="taskViewList" onclick="switchTaskView('list')" style="background:var(--primary);color:#fff;"><i class="fas fa-list"></i></button>
+                            <button class="btn btn-sm btn-outline" id="taskViewCalendar" onclick="switchTaskView('calendar')"><i class="fas fa-calendar-alt"></i></button>
+                        </div>
                         <button class="btn btn-primary" onclick="openModal('taskModal')"><i class="fas fa-plus"></i> Создать задачу</button>
                     </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Задача</th>
-                                        <th>Исполнитель</th>
-                                        <th>Приоритет</th>
-                                        <th>Срок</th>
-                                        <th>Статус</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tasksTable"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Orders -->
-                <div class="section" id="section-orders">
-                    <div class="toolbar">
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="searchOrders" placeholder="Поиск заказов..." oninput="searchOrders()">
-                        </div>
-                        <select class="filter-select" id="filterOrderStatus" onchange="loadOrders()">
-                            <option value="">Все статусы</option>
-                            <option value="new">Новые</option>
-                            <option value="processing">В обработке</option>
-                            <option value="shipped">Отправлены</option>
-                            <option value="completed">Завершены</option>
-                        </select>
-                        <button class="btn btn-primary" onclick="openModal('orderModal')"><i class="fas fa-plus"></i> Создать заказ</button>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>№ заказа</th>
-                                        <th>Клиент</th>
-                                        <th>Сумма</th>
-                                        <th>Статус</th>
-                                        <th>Оплата</th>
-                                        <th>Дата</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="ordersTable"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Payments -->
-                <div class="section" id="section-payments">
-                    <div class="toolbar">
-                        <select class="filter-select" id="filterPaymentStatus" onchange="loadPayments()">
-                            <option value="">Все платежи</option>
-                            <option value="completed">Успешные</option>
-                            <option value="pending">Ожидают</option>
-                            <option value="failed">Неуспешные</option>
-                        </select>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Заказ</th>
-                                        <th>Сумма</th>
-                                        <th>Метод</th>
-                                        <th>Статус</th>
-                                        <th>Дата</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="paymentsTable"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Products -->
-                <div class="section" id="section-products">
-                    <div class="toolbar">
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="searchProducts" placeholder="Поиск товаров..." oninput="searchProducts()">
-                        </div>
-                        <select class="filter-select" id="filterProductCategory" onchange="filterProducts()">
-                            <option value="">Все категории</option>
-                        </select>
-                        <select class="filter-select" id="filterProductType" onchange="filterProducts()">
-                            <option value="">Все типы</option>
-                            <option value="physical">Физический товар</option>
-                            <option value="digital">Цифровой товар</option>
-                            <option value="online">Онлайн-продукт</option>
-                        </select>
-                        <button class="btn btn-outline" onclick="openModal('importXmlModal')"><i class="fas fa-file-import"></i> Импорт XML</button>
-                        <button class="btn btn-primary" onclick="openModal('productModal')"><i class="fas fa-plus"></i> Добавить товар</button>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Товар</th>
-                                        <th>Артикул</th>
-                                        <th>Цена</th>
-                                        <th>Остаток</th>
-                                        <th>Статус</th>
-                                        <th>Ссылка</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="productsTable"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Categories -->
-                <div class="section" id="section-categories">
-                    <div class="toolbar">
-                        <button class="btn btn-primary" onclick="openModal('categoryModal')"><i class="fas fa-plus"></i> Добавить категорию</button>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <div id="categoriesTree" class="categories-tree"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product Filters -->
-                <div class="section" id="section-product-filters">
-                    <div class="toolbar">
-                        <button class="btn btn-primary" onclick="openModal('productFilterModal')"><i class="fas fa-plus"></i> Добавить фильтр</button>
-                    </div>
-                    <div class="stats-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
-                        <div class="card" style="cursor:pointer;" onclick="openFilterEditor('size')">
+                    <div id="tasksListView">
+                        <div class="card">
                             <div class="card-body">
-                                <h4><i class="fas fa-ruler"></i> Размер</h4>
-                                <p style="color:var(--text-muted);">XS, S, M, L, XL, XXL</p>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Задача</th>
+                                            <th>Исполнитель</th>
+                                            <th>Приоритет</th>
+                                            <th>Срок</th>
+                                            <th>Статус</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tasksTable"></tbody>
+                                </table>
                             </div>
                         </div>
-                        <div class="card" style="cursor:pointer;" onclick="openFilterEditor('color')">
+                    </div>
+                    <div id="tasksCalendarView" style="display:none;">
+                        <div class="card">
+                            <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
+                                <button class="btn btn-outline btn-sm" onclick="moveTaskCalendar(-1)"><i class="fas fa-chevron-left"></i></button>
+                                <h3 id="taskCalendarMonth"></h3>
+                                <button class="btn btn-outline btn-sm" onclick="moveTaskCalendar(1)"><i class="fas fa-chevron-right"></i></button>
+                            </div>
                             <div class="card-body">
-                                <h4><i class="fas fa-palette"></i> Цвет</h4>
-                                <p style="color:var(--text-muted);">Белый, Чёрный, Красный, Синий...</p>
-                            </div>
-                        </div>
-                        <div class="card" style="cursor:pointer;" onclick="openFilterEditor('material')">
-                            <div class="card-body">
-                                <h4><i class="fas fa-tshirt"></i> Материал</h4>
-                                <p style="color:var(--text-muted);">Хлопок, Полиэстер, Шерсть...</p>
-                            </div>
-                        </div>
-                        <div class="card" style="cursor:pointer;" onclick="openFilterEditor('brand')">
-                            <div class="card-body">
-                                <h4><i class="fas fa-building"></i> Бренд</h4>
-                                <p style="color:var(--text-muted);">Добавьте бренды товаров</p>
-                            </div>
-                        </div>
-                        <div id="customFiltersGrid"></div>
-                    </div>
-                </div>
-
-                <!-- Selections (former Collections) -->
-                <div class="section" id="section-selections">
-                    <div class="toolbar">
-                        <button class="btn btn-primary" onclick="openModal('selectionModal')"><i class="fas fa-plus"></i> Создать подборку</button>
-                    </div>
-                    <div id="selectionsList" class="stats-grid"></div>
-                </div>
-
-                <!-- Services -->
-                <div class="section" id="section-services">
-                    <div class="toolbar">
-                        <select class="filter-select" id="filterServiceType" onchange="filterServices()">
-                            <option value="">Все типы</option>
-                            <option value="individual">Индивидуальные</option>
-                            <option value="group">Групповые</option>
-                        </select>
-                        <button class="btn btn-primary" onclick="openModal('serviceModal')"><i class="fas fa-plus"></i> Добавить услугу</button>
-                    </div>
-                    <div id="servicesList" class="stats-grid"></div>
-                </div>
-
-                <!-- Specialists -->
-                <div class="section" id="section-specialists">
-                    <div class="toolbar">
-                        <button class="btn btn-primary" onclick="openModal('specialistModal')"><i class="fas fa-plus"></i> Добавить специалиста</button>
-                    </div>
-                    <div id="specialistsList" class="stats-grid"></div>
-                </div>
-
-                <!-- Rooms -->
-                <div class="section" id="section-rooms">
-                    <div class="toolbar">
-                        <button class="btn btn-primary" onclick="openModal('roomModal')"><i class="fas fa-plus"></i> Добавить помещение</button>
-                    </div>
-                    <div id="roomsList" class="stats-grid"></div>
-                </div>
-
-                <!-- Trainings (former Courses) -->
-                <div class="section" id="section-trainings">
-                    <div class="toolbar">
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="searchTrainings" placeholder="Поиск тренингов...">
-                        </div>
-                        <select class="filter-select" id="filterTrainingAccess">
-                            <option value="">Все типы доступа</option>
-                            <option value="purchase">После покупки</option>
-                            <option value="group">По группе</option>
-                            <option value="free">Бесплатный</option>
-                        </select>
-                        <button class="btn btn-primary" onclick="openModal('trainingModal')"><i class="fas fa-plus"></i> Создать тренинг</button>
-                    </div>
-                    <div class="stats-grid" style="margin-bottom:20px;">
-                        <div class="stat-card primary">
-                            <div class="value" id="trainingsTotal">0</div>
-                            <div class="label">Тренингов</div>
-                        </div>
-                        <div class="stat-card success">
-                            <div class="value" id="trainingsStudents">0</div>
-                            <div class="label">Учеников</div>
-                        </div>
-                        <div class="stat-card warning">
-                            <div class="value" id="trainingsCompletion">0%</div>
-                            <div class="label">Ср. прохождение</div>
-                        </div>
-                    </div>
-                    <div id="trainingsList" class="stats-grid"></div>
-                </div>
-
-                <!-- Lessons -->
-                <div class="section" id="section-lessons">
-                    <div class="toolbar">
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="searchLessons" placeholder="Поиск уроков...">
-                        </div>
-                        <select class="filter-select" id="filterLessonTraining">
-                            <option value="">Все тренинги</option>
-                        </select>
-                        <select class="filter-select" id="filterLessonType">
-                            <option value="">Все типы</option>
-                            <option value="video">Видео</option>
-                            <option value="text">Текст</option>
-                            <option value="quiz">Тест</option>
-                            <option value="homework">Домашнее задание</option>
-                        </select>
-                        <button class="btn btn-primary" onclick="openModal('lessonModal')"><i class="fas fa-plus"></i> Создать урок</button>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>№</th>
-                                        <th>Урок</th>
-                                        <th>Тренинг</th>
-                                        <th>Тип</th>
-                                        <th>Длительность</th>
-                                        <th>Прошли</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="lessonsTable"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Calls (amoCRM) -->
-                <div class="section" id="section-calls">
-                    <div class="toolbar">
-                        <div class="search-box">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="searchCalls" placeholder="Поиск звонков...">
-                        </div>
-                        <select class="filter-select" id="callsDirection">
-                            <option value="">Все направления</option>
-                            <option value="incoming">Входящие</option>
-                            <option value="outgoing">Исходящие</option>
-                        </select>
-                    </div>
-
-                    <!-- UIS Integration Settings -->
-                    <div class="card" style="margin-bottom:20px;">
-                        <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;">
-                            <h3><i class="fas fa-headset"></i> UIS Телефония</h3>
-                            <div style="display:flex;align-items:center;gap:8px;">
-                                <span id="uisConnectionStatus" style="display:flex;align-items:center;gap:6px;font-size:12px;">
-                                    <i class="fas fa-circle" style="font-size:8px;color:var(--text-muted);"></i> Не подключено
-                                </span>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
-                                <div class="form-group">
-                                    <label>API ключ</label>
-                                    <input type="password" id="uisApiKey" placeholder="Введите API ключ UIS">
-                                </div>
-                                <div class="form-group">
-                                    <label>Виртуальный номер</label>
-                                    <input type="text" id="uisVirtualNumber" placeholder="+7 (XXX) XXX-XX-XX">
-                                </div>
-                                <div class="form-group">
-                                    <label>Webhook URL</label>
-                                    <input type="text" id="uisWebhookUrl" readonly style="background:var(--bg-dark);font-size:11px;" value="">
-                                </div>
-                            </div>
-                            <div style="display:flex;gap:8px;margin-top:8px;">
-                                <button class="btn btn-primary btn-sm" onclick="connectUIS()"><i class="fas fa-plug"></i> Подключить</button>
-                                <button class="btn btn-outline btn-sm" onclick="disconnectUIS()" id="uisDisconnectBtn" style="display:none;"><i class="fas fa-unlink"></i> Отключить</button>
+                                <div id="taskCalendarGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;"></div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="stats-grid">
-                        <div class="stat-card primary">
-                            <div class="value" id="callsTotal">0</div>
-                            <div class="label">Всего звонков</div>
-                        </div>
-                        <div class="stat-card success">
-                            <div class="value" id="callsAnswered">0</div>
-                            <div class="label">Отвечено</div>
-                        </div>
-                        <div class="stat-card warning">
-                            <div class="value" id="callsMissed">0</div>
-                            <div class="label">Пропущено</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="value" id="callsDuration">0:00</div>
-                            <div class="label">Ср. длительность</div>
-                        </div>
                     </div>
-                    <div class="card" style="margin-top:20px;">
-                        <div class="card-header"><h3>Журнал звонков</h3></div>
-                        <div class="card-body">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Дата</th>
-                                        <th>Направление</th>
-                                        <th>Клиент</th>
-                                        <th>Менеджер</th>
-                                        <th>Длительность</th>
-                                        <th>Статус</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="callsTable"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Regulations -->
-                <div class="section" id="section-regulations">
-                    <div class="toolbar">
-                        <button class="btn btn-primary" onclick="openRegulationEditor()"><i class="fas fa-plus"></i> Новый регламент</button>
-                    </div>
-                    <div class="stats-grid" id="regulationsGrid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));">
-                        <!-- Rendered by JS -->
-                    </div>
-                </div>
-
-                <!-- Goals (KPI) -->
-                <div class="section" id="section-goals">
-                    <div class="toolbar">
-                        <button class="btn btn-primary" onclick="openModal('goalModal')"><i class="fas fa-plus"></i> Создать цель</button>
-                        <select class="filter-select" id="goalsPeriod">
-                            <option value="month">Этот месяц</option>
-                            <option value="quarter">Квартал</option>
-                            <option value="year">Год</option>
-                        </select>
-                    </div>
-                    <div class="stats-grid" id="goalsList"></div>
-                    <div class="card" style="margin-top:20px;">
-                        <div class="card-header"><h3>Лидерборд</h3></div>
-                        <div class="card-body">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Сотрудник</th>
-                                        <th>Выручка</th>
-                                        <th>Сделок</th>
-                                        <th>Конверсия</th>
-                                        <th>Прогресс</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="leaderboardTable"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Lead Distribution -->
-                <div class="section" id="section-lead-distribution">
-                    <div class="toolbar">
-                        <button class="btn btn-primary" onclick="openModal('distributionModal')"><i class="fas fa-cog"></i> Настройки</button>
-                    </div>
-                    <div class="stats-grid">
-                        <div class="stat-card primary">
-                            <div class="value" id="leadsInQueue">0</div>
-                            <div class="label">В очереди</div>
-                        </div>
-                        <div class="stat-card success">
-                            <div class="value" id="leadsAssigned">0</div>
-                            <div class="label">Распределено сегодня</div>
-                        </div>
-                        <div class="stat-card warning">
-                            <div class="value" id="leadsExpired">0</div>
-                            <div class="label">Просрочено</div>
-                        </div>
-                    </div>
-                    <div class="card" style="margin-top:20px;">
-                        <div class="card-header"><h3>Очередь лидов</h3></div>
-                        <div class="card-body">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Сделка</th>
-                                        <th>Источник</th>
-                                        <th>Назначен</th>
-                                        <th>Истекает</th>
-                                        <th>Статус</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="leadQueueTable"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tags -->
-                <!-- Tags section removed - now inside Clients tabs -->
-
-                <!-- Employee Analytics -->
-                <div class="section" id="section-employee-analytics">
+                    <div id="teamTabPanel_analytics" style="display:none;">
                     <div class="toolbar">
                         <select class="filter-select" id="analyticsPeriod">
                             <option value="today">Сегодня</option>
@@ -1445,18 +1206,147 @@
                             </table>
                         </div>
                     </div>
-                </div>
-
-                <!-- Brands (InSales) -->
-                <div class="section" id="section-brands">
-                    <div class="toolbar">
-                        <button class="btn btn-primary" onclick="openModal('brandModal')"><i class="fas fa-plus"></i> Добавить бренд</button>
                     </div>
-                    <div class="stats-grid" id="brandsList"></div>
                 </div>
 
-                <!-- Promo Codes (InSales) - Extended -->
-                <div class="section" id="section-promo-codes">
+
+                <!-- Orders -->
+                <div class="section" id="section-shop-orders">
+                    <div class="section-tabs">
+                        <button class="section-tab-btn active" id="ordersTab_orders" onclick="switchSectionTab('orders','orders')"><i class="fas fa-shopping-cart"></i> Заказы</button>
+                        <button class="section-tab-btn" id="ordersTab_payments" onclick="switchSectionTab('orders','payments')"><i class="fas fa-credit-card"></i> Платежи</button>
+                    </div>
+                    <div id="ordersTabPanel_orders">
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchOrders" placeholder="Поиск заказов..." oninput="searchOrders()">
+                        </div>
+                        <select class="filter-select" id="filterOrderStatus" onchange="loadOrders()">
+                            <option value="">Все статусы</option>
+                            <option value="new">Новый</option>
+                            <option value="processing">В обработке</option>
+                            <option value="confirmed">Согласован</option>
+                            <option value="assembled">Собран</option>
+                            <option value="shipped">Отправлен</option>
+                            <option value="delivered">Доставлен</option>
+                            <option value="cancelled">Отменён</option>
+                            <option value="refund">Возврат</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="openModal('orderModal')"><i class="fas fa-plus"></i> Создать заказ</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>№ заказа</th>
+                                        <th>Клиент</th>
+                                        <th>Сумма</th>
+                                        <th>Статус</th>
+                                        <th>Оплата</th>
+                                        <th>Дата</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+                    <div id="ordersTabPanel_payments" style="display:none;">
+                    <div class="toolbar">
+                        <select class="filter-select" id="filterPaymentStatus" onchange="loadPayments()">
+                            <option value="">Все платежи</option>
+                            <option value="completed">Успешные</option>
+                            <option value="pending">Ожидают</option>
+                            <option value="failed">Неуспешные</option>
+                        </select>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Заказ</th>
+                                        <th>Сумма</th>
+                                        <th>Метод</th>
+                                        <th>Статус</th>
+                                        <th>Дата</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="paymentsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+
+                <!-- Catalog -->
+                <div class="section" id="section-catalog">
+                    <div class="section-tabs">
+                        <button class="section-tab-btn active" id="catalogTab_products" onclick="switchSectionTab('catalog','products')"><i class="fas fa-box"></i> Товары</button>
+                        <button class="section-tab-btn" id="catalogTab_categories" onclick="switchSectionTab('catalog','categories')"><i class="fas fa-folder"></i> Категории</button>
+                        <button class="section-tab-btn" id="catalogTab_selections" onclick="switchSectionTab('catalog','selections')"><i class="fas fa-star"></i> Подборки</button>
+                        <button class="section-tab-btn" id="catalogTab_promos" onclick="switchSectionTab('catalog','promos')"><i class="fas fa-percent"></i> Промокоды</button>
+                        <button class="section-tab-btn" id="catalogTab_filters" onclick="switchSectionTab('catalog','filters')"><i class="fas fa-sliders-h"></i> Фильтры</button>
+                    </div>
+                    <div id="catalogTabPanel_products">
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchProducts" placeholder="Поиск товаров..." oninput="searchProducts()">
+                        </div>
+                        <select class="filter-select" id="filterProductCategory" onchange="filterProducts()">
+                            <option value="">Все категории</option>
+                        </select>
+                        <select class="filter-select" id="filterProductType" onchange="filterProducts()">
+                            <option value="">Все типы</option>
+                            <option value="physical">Физический товар</option>
+                            <option value="digital">Цифровой товар</option>
+                            <option value="online">Онлайн-продукт</option>
+                        </select>
+                        <button class="btn btn-outline" onclick="openModal('importXmlModal')"><i class="fas fa-file-import"></i> Импорт XML</button>
+                        <button class="btn btn-primary" onclick="openModal('productModal')"><i class="fas fa-plus"></i> Добавить товар</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Товар</th>
+                                        <th>Артикул</th>
+                                        <th>Цена</th>
+                                        <th>Остаток</th>
+                                        <th>Статус</th>
+                                        <th>Ссылка</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+                    <div id="catalogTabPanel_categories" style="display:none;">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('categoryModal')"><i class="fas fa-plus"></i> Добавить категорию</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="categoriesTree" class="categories-tree"></div>
+                        </div>
+                    </div>
+                    </div>
+                    <div id="catalogTabPanel_selections" style="display:none;">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('selectionModal')"><i class="fas fa-plus"></i> Создать подборку</button>
+                    </div>
+                    <div id="selectionsList" class="stats-grid"></div>
+                    </div>
+                    <div id="catalogTabPanel_promos" style="display:none;">
                     <div class="toolbar">
                         <div class="search-box">
                             <i class="fas fa-search"></i>
@@ -1507,18 +1397,52 @@
                             </table>
                         </div>
                     </div>
-                </div>
-
-                <!-- Collections (InSales) -->
-                <div class="section" id="section-collections">
-                    <div class="toolbar">
-                        <button class="btn btn-primary" onclick="openModal('collectionModal')"><i class="fas fa-plus"></i> Создать коллекцию</button>
                     </div>
-                    <div class="stats-grid" id="collectionsList"></div>
+                    <div id="catalogTabPanel_filters" style="display:none;">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('productFilterModal')"><i class="fas fa-plus"></i> Добавить фильтр</button>
+                    </div>
+                    <div class="stats-grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+                        <div class="card" style="cursor:pointer;" onclick="openFilterEditor('size')">
+                            <div class="card-body">
+                                <h4><i class="fas fa-ruler"></i> Размер</h4>
+                                <p style="color:var(--text-muted);">XS, S, M, L, XL, XXL</p>
+                            </div>
+                        </div>
+                        <div class="card" style="cursor:pointer;" onclick="openFilterEditor('color')">
+                            <div class="card-body">
+                                <h4><i class="fas fa-palette"></i> Цвет</h4>
+                                <p style="color:var(--text-muted);">Белый, Чёрный, Красный, Синий...</p>
+                            </div>
+                        </div>
+                        <div class="card" style="cursor:pointer;" onclick="openFilterEditor('material')">
+                            <div class="card-body">
+                                <h4><i class="fas fa-tshirt"></i> Материал</h4>
+                                <p style="color:var(--text-muted);">Хлопок, Полиэстер, Шерсть...</p>
+                            </div>
+                        </div>
+                        <div class="card" style="cursor:pointer;" onclick="openFilterEditor('brand')">
+                            <div class="card-body">
+                                <h4><i class="fas fa-building"></i> Бренд</h4>
+                                <p style="color:var(--text-muted);">Добавьте бренды товаров</p>
+                            </div>
+                        </div>
+                        <div id="customFiltersGrid"></div>
+                    </div>
+                    </div>
                 </div>
 
-                <!-- Bookings (YClients) -->
-                <div class="section" id="section-bookings">
+
+                <!-- Appointments -->
+                <div class="section" id="section-appointments">
+                    <div class="section-tabs">
+                        <button class="section-tab-btn active" id="bookingsTab_calendar" onclick="switchSectionTab('bookings','calendar')"><i class="fas fa-calendar-check"></i> Календарь</button>
+                        <button class="section-tab-btn" id="bookingsTab_services" onclick="switchSectionTab('bookings','services')"><i class="fas fa-concierge-bell"></i> Услуги</button>
+                        <button class="section-tab-btn" id="bookingsTab_specialists" onclick="switchSectionTab('bookings','specialists')"><i class="fas fa-user-md"></i> Специалисты</button>
+                        <button class="section-tab-btn" id="bookingsTab_rooms" onclick="switchSectionTab('bookings','rooms')"><i class="fas fa-door-open"></i> Помещения</button>
+                        <button class="section-tab-btn" id="bookingsTab_schedules" onclick="switchSectionTab('bookings','schedules')"><i class="fas fa-calendar-alt"></i> Расписание</button>
+                    </div>
+                    <div id="bookingsTabPanel_calendar">
                     <div class="toolbar">
                         <select class="filter-select" id="filterBookingSpecialist" onchange="loadBookingsCalendar()">
                             <option value="">Все специалисты</option>
@@ -1569,10 +1493,31 @@
                             </table>
                         </div>
                     </div>
-                </div>
-
-                <!-- Schedules (YClients) -->
-                <div class="section" id="section-schedules">
+                    </div>
+                    <div id="bookingsTabPanel_services" style="display:none;">
+                    <div class="toolbar">
+                        <select class="filter-select" id="filterServiceType" onchange="filterServices()">
+                            <option value="">Все типы</option>
+                            <option value="individual">Индивидуальные</option>
+                            <option value="group">Групповые</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="openModal('serviceModal')"><i class="fas fa-plus"></i> Добавить услугу</button>
+                    </div>
+                    <div id="servicesList" class="stats-grid"></div>
+                    </div>
+                    <div id="bookingsTabPanel_specialists" style="display:none;">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('specialistModal')"><i class="fas fa-plus"></i> Добавить специалиста</button>
+                    </div>
+                    <div id="specialistsList" class="stats-grid"></div>
+                    </div>
+                    <div id="bookingsTabPanel_rooms" style="display:none;">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="openModal('roomModal')"><i class="fas fa-plus"></i> Добавить помещение</button>
+                    </div>
+                    <div id="roomsList" class="stats-grid"></div>
+                    </div>
+                    <div id="bookingsTabPanel_schedules" style="display:none;">
                     <div class="toolbar">
                         <select class="filter-select" id="scheduleEmployee">
                             <option value="">Все сотрудники</option>
@@ -1600,10 +1545,87 @@
                             </table>
                         </div>
                     </div>
+                    </div>
                 </div>
 
-                <!-- Webinars (GetCourse) -->
-                <div class="section" id="section-webinars">
+
+                <!-- Learning -->
+                <div class="section" id="section-learning">
+                    <div class="section-tabs">
+                        <button class="section-tab-btn active" id="learningTab_trainings" onclick="switchSectionTab('learning','trainings')"><i class="fas fa-graduation-cap"></i> Курсы</button>
+                        <button class="section-tab-btn" id="learningTab_lessons" onclick="switchSectionTab('learning','lessons')"><i class="fas fa-book-open"></i> Уроки</button>
+                        <button class="section-tab-btn" id="learningTab_webinars" onclick="switchSectionTab('learning','webinars')"><i class="fas fa-video"></i> Вебинары</button>
+                        <button class="section-tab-btn" id="learningTab_quizzes" onclick="switchSectionTab('learning','quizzes')"><i class="fas fa-question-circle"></i> Тесты</button>
+                        <button class="section-tab-btn" id="learningTab_certificates" onclick="switchSectionTab('learning','certificates')"><i class="fas fa-certificate"></i> Сертификаты</button>
+                    </div>
+                    <div id="learningTabPanel_trainings">
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchTrainings" placeholder="Поиск тренингов...">
+                        </div>
+                        <select class="filter-select" id="filterTrainingAccess">
+                            <option value="">Все типы доступа</option>
+                            <option value="purchase">После покупки</option>
+                            <option value="group">По группе</option>
+                            <option value="free">Бесплатный</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="openModal('trainingModal')"><i class="fas fa-plus"></i> Создать тренинг</button>
+                    </div>
+                    <div class="stats-grid" style="margin-bottom:20px;">
+                        <div class="stat-card primary">
+                            <div class="value" id="trainingsTotal">0</div>
+                            <div class="label">Тренингов</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="value" id="trainingsStudents">0</div>
+                            <div class="label">Учеников</div>
+                        </div>
+                        <div class="stat-card warning">
+                            <div class="value" id="trainingsCompletion">0%</div>
+                            <div class="label">Ср. прохождение</div>
+                        </div>
+                    </div>
+                    <div id="trainingsList" class="stats-grid"></div>
+                    </div>
+                    <div id="learningTabPanel_lessons" style="display:none;">
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchLessons" placeholder="Поиск уроков...">
+                        </div>
+                        <select class="filter-select" id="filterLessonTraining">
+                            <option value="">Все тренинги</option>
+                        </select>
+                        <select class="filter-select" id="filterLessonType">
+                            <option value="">Все типы</option>
+                            <option value="video">Видео</option>
+                            <option value="text">Текст</option>
+                            <option value="quiz">Тест</option>
+                            <option value="homework">Домашнее задание</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="openModal('lessonModal')"><i class="fas fa-plus"></i> Создать урок</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>№</th>
+                                        <th>Урок</th>
+                                        <th>Тренинг</th>
+                                        <th>Тип</th>
+                                        <th>Длительность</th>
+                                        <th>Прошли</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lessonsTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+                    <div id="learningTabPanel_webinars" style="display:none;">
                     <div class="toolbar">
                         <select class="filter-select" id="filterWebinarType" onchange="filterWebinars()">
                             <option value="">Все типы</option>
@@ -1659,10 +1681,8 @@
                             </table>
                         </div>
                     </div>
-                </div>
-
-                <!-- Quizzes (GetCourse) -->
-                <div class="section" id="section-quizzes">
+                    </div>
+                    <div id="learningTabPanel_quizzes" style="display:none;">
                     <div class="toolbar">
                         <button class="btn btn-primary" onclick="openModal('quizModal')"><i class="fas fa-plus"></i> Создать тест</button>
                     </div>
@@ -1684,10 +1704,8 @@
                             </table>
                         </div>
                     </div>
-                </div>
-
-                <!-- Certificates (GetCourse) -->
-                <div class="section" id="section-certificates">
+                    </div>
+                    <div id="learningTabPanel_certificates" style="display:none;">
                     <div class="toolbar">
                         <div class="search-box">
                             <i class="fas fa-search"></i>
@@ -1739,7 +1757,9 @@
                             </table>
                         </div>
                     </div>
+                    </div>
                 </div>
+
 
                 <!-- Integrations -->
                 <div class="section" id="section-integrations">
@@ -1884,6 +1904,21 @@
     </div>
 
     <!-- Modals -->
+    <!-- Module Settings Modal -->
+    <div class="modal-overlay" id="moduleSettingsModal">
+        <div class="modal" style="max-width:550px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-puzzle-piece"></i> Настройка модулей</h2>
+                <button class="modal-close" onclick="closeModal('moduleSettingsModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="moduleSettingsBody"></div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('moduleSettingsModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveModuleSettings()"><i class="fas fa-save"></i> Сохранить</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Deal Modal -->
     <div class="modal-overlay" id="dealModal">
         <div class="modal" style="max-width:650px;">
@@ -3779,8 +3814,10 @@ XL"></textarea>
                     <input type="text" id="specialistPosition" placeholder="Мастер-стилист">
                 </div>
                 <div class="form-group">
-                    <label>Услуги</label>
-                    <select id="specialistServices" multiple style="height:100px;"></select>
+                    <label>Услуги специалиста</label>
+                    <div id="specialistServicesCheckboxes" class="specialist-services-checkboxes">
+                        <span style="color:var(--text-muted);font-size:12px;">Загрузка...</span>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Описание / Опыт</label>
@@ -3883,8 +3920,21 @@ XL"></textarea>
                 </div>
                 <div class="form-group">
                     <label style="display:flex;align-items:center;gap:8px;font-weight:normal;">
-                        <input type="checkbox" id="trainingCertificate"> Выдавать сертификат по завершении
+                        <input type="checkbox" id="trainingSequentialAccess"> Открывать уроки последовательно
                     </label>
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px;margin-left:26px;">Студенты смогут открыть следующий урок только после завершения предыдущего</div>
+                </div>
+                <div class="form-group">
+                    <label style="display:flex;align-items:center;gap:8px;font-weight:normal;">
+                        <input type="checkbox" id="trainingAutoCertificate" onchange="toggleAutoCertTemplate()"> Выдавать сертификат автоматически
+                    </label>
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px;margin-left:26px;">Сертификат будет выдан автоматически при завершении всех уроков</div>
+                </div>
+                <div class="form-group" id="autoCertTemplateGroup" style="display:none;margin-left:26px;">
+                    <label>Шаблон сертификата</label>
+                    <select id="trainingCertTemplate">
+                        <option value="">По умолчанию</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label style="display:flex;align-items:center;gap:8px;font-weight:normal;">
@@ -3932,7 +3982,7 @@ XL"></textarea>
                                 <button class="btn btn-sm btn-primary" onclick="enrollStudentModal()"><i class="fas fa-user-plus"></i> Записать</button>
                             </div>
                             <table>
-                                <thead><tr><th>Студент</th><th>Прогресс</th><th>Дата записи</th><th>Статус</th><th></th></tr></thead>
+                                <thead><tr><th>Студент</th><th>Прогресс</th><th>Дата записи</th><th>Последняя активность</th><th>Тест</th><th>Статус</th><th></th></tr></thead>
                                 <tbody id="trainingStudentsTable"></tbody>
                             </table>
                         </div>
@@ -4381,6 +4431,40 @@ XL"></textarea>
             border-left: 2px solid var(--border-color);
             padding-left: 15px;
         }
+
+        /* Section Tabs */
+        .section-tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 20px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .section-tabs::-webkit-scrollbar { display: none; }
+        .section-tab-btn {
+            border: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            border-radius: 0;
+            padding: 12px 20px;
+            color: var(--text-muted);
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .section-tab-btn.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        .section-tab-btn:hover:not(.active) {
+            color: var(--text-primary);
+            background: rgba(59,130,246,0.05);
+        }
+        .section-tab-btn i { margin-right: 6px; }
     </style>
 
     <script>
@@ -4440,6 +4524,49 @@ XL"></textarea>
                 document.body.appendChild(overlay);
                 window._confirmResolve = resolve;
             });
+        }
+
+        // ============================================================
+        // SECTION TAB SYSTEM
+        // ============================================================
+        const currentSectionTabs = {};
+        const sectionTabConfigs = {
+            sales: { tabs: ['deals','funnels','calls','regulations','goals','distribution'], default: 'deals' },
+            team: { tabs: ['employees','tasks','analytics'], default: 'employees' },
+            orders: { tabs: ['orders','payments'], default: 'orders' },
+            catalog: { tabs: ['products','categories','selections','promos','filters'], default: 'products' },
+            bookings: { tabs: ['calendar','services','specialists','rooms','schedules'], default: 'calendar' },
+            learning: { tabs: ['trainings','lessons','webinars','quizzes','certificates'], default: 'trainings' }
+        };
+
+        function switchSectionTab(section, tab) {
+            const config = sectionTabConfigs[section];
+            if (!config) return;
+            config.tabs.forEach(t => {
+                const panel = document.getElementById(`${section}TabPanel_${t}`);
+                const btn = document.getElementById(`${section}Tab_${t}`);
+                if (panel) panel.style.display = t === tab ? 'block' : 'none';
+                if (btn) {
+                    if (t === tab) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                }
+            });
+            currentSectionTabs[section] = tab;
+            loadTabData(section, tab);
+        }
+
+        function loadTabData(section, tab) {
+            const loaders = {
+                sales: { deals: loadDealsKanban, funnels: loadFunnels, calls: () => { loadCalls(); initUIS(); }, regulations: loadRegulations, goals: loadGoals, distribution: loadLeadDistribution },
+                team: { employees: loadEmployees, tasks: loadTasks, analytics: loadEmployeeAnalytics },
+                orders: { orders: loadOrders, payments: loadPayments },
+                catalog: { products: loadProducts, categories: loadCategories, selections: loadSelections, promos: loadPromoCodes, filters: loadProductFilters },
+                bookings: { calendar: loadBookings, services: loadServices, specialists: loadSpecialists, rooms: loadRooms, schedules: loadSchedules },
+                learning: { trainings: loadTrainings, lessons: loadLessons, webinars: loadWebinars, quizzes: loadQuizzes, certificates: loadCertificates }
+            };
+            if (loaders[section] && loaders[section][tab]) {
+                try { loaders[section][tab](); } catch(e) { console.error(`Error loading ${section}/${tab}:`, e); }
+            }
         }
 
         // Format helpers
@@ -4545,6 +4672,7 @@ XL"></textarea>
             });
 
             setupNavigation();
+            applyModuleVisibility();
             await loadAllData();
 
             // Handle hash-based navigation from admin.html
@@ -5063,53 +5191,178 @@ XL"></textarea>
         }
 
         function switchSection(section) {
+            // Block navigation to disabled modules
+            const moduleId = MODULE_SECTION_MAP[section];
+            if (moduleId !== null && moduleId !== undefined) {
+                const enabled = getEnabledModules();
+                if (enabled.length > 0 && !enabled.includes(moduleId)) {
+                    toast('Этот модуль отключён. Включите его в настройках модулей.', 'warning');
+                    return;
+                }
+            }
+
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.querySelector(`.nav-item[data-section="${section}"]`)?.classList.add('active');
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById('section-' + section)?.classList.add('active');
 
             const titles = {
-                dashboard: 'Дашборд', funnels: 'Воронки продаж', deals: 'Сделки',
-                clients: 'Пользователи', employees: 'Сотрудники',
-                tasks: 'Задачи', orders: 'Заказы', payments: 'Платежи',
-                products: 'Товары', services: 'Услуги', courses: 'Курсы',
-                calls: 'Звонки', regulations: 'Регламенты', goals: 'KPI и Цели',
-                'lead-distribution': 'Распределение лидов',
-                'employee-analytics': 'Аналитика сотрудников',
-                brands: 'Бренды', 'promo-codes': 'Промокоды', collections: 'Коллекции',
-                bookings: 'Записи на услуги', schedules: 'Расписание',
-                webinars: 'Вебинары', quizzes: 'Тесты и квизы', certificates: 'Сертификаты',
+                dashboard: 'Дашборд',
+                sales: 'Продажи',
+                clients: 'Клиенты',
+                team: 'Команда',
+                'shop-orders': 'Заказы',
+                catalog: 'Каталог',
+                appointments: 'Записи',
+                learning: 'Обучение',
                 integrations: 'Интеграции'
             };
             document.getElementById('pageTitle').textContent = titles[section] || section;
 
-            // Load section-specific data
+            // Load data for tabbed sections
+            if (section === 'sales') {
+                const tab = currentSectionTabs.sales || sectionTabConfigs.sales.default;
+                switchSectionTab('sales', tab);
+            }
             if (section === 'clients') { loadSegments(); loadTags(); loadClientGroups(); }
-            if (section === 'deals') loadDealsKanban();
-            if (section === 'tasks') loadTasks();
-            if (section === 'orders') loadOrders();
-            if (section === 'products') loadProducts();
-            if (section === 'services') loadServices();
-            if (section === 'courses') loadCourses();
-            if (section === 'payments') loadPayments();
-            if (section === 'calls') { loadCalls(); initUIS(); }
-            if (section === 'regulations') loadRegulations();
-            if (section === 'goals') loadGoals();
-            if (section === 'lead-distribution') loadLeadDistribution();
-            if (section === 'employee-analytics') loadEmployeeAnalytics();
-            // InSales
-            if (section === 'brands') loadBrands();
-            if (section === 'promo-codes') loadPromoCodes();
-            if (section === 'collections') loadCollections();
-            // YClients
-            if (section === 'bookings') loadBookings();
-            if (section === 'schedules') loadSchedules();
-            // GetCourse
-            if (section === 'webinars') loadWebinars();
-            if (section === 'quizzes') loadQuizzes();
-            if (section === 'certificates') loadCertificates();
-            // Settings
+            if (section === 'team') {
+                const tab = currentSectionTabs.team || sectionTabConfigs.team.default;
+                switchSectionTab('team', tab);
+            }
+            if (section === 'shop-orders') {
+                const tab = currentSectionTabs.orders || sectionTabConfigs.orders.default;
+                switchSectionTab('orders', tab);
+            }
+            if (section === 'catalog') {
+                const tab = currentSectionTabs.catalog || sectionTabConfigs.catalog.default;
+                switchSectionTab('catalog', tab);
+            }
+            if (section === 'appointments') {
+                const tab = currentSectionTabs.bookings || sectionTabConfigs.bookings.default;
+                switchSectionTab('bookings', tab);
+            }
+            if (section === 'learning') {
+                const tab = currentSectionTabs.learning || sectionTabConfigs.learning.default;
+                switchSectionTab('learning', tab);
+            }
             if (section === 'integrations') { loadIntegrations(); initProviderStatuses(); }
+        }
+
+        // ============================================================
+        // MODULE VISIBILITY
+        // ============================================================
+        const MODULE_SECTION_MAP = {
+            'dashboard': null,       // always visible
+            'sales': 'sales',
+            'clients': 'clients',
+            'team': 'team',
+            'shop-orders': 'orders',
+            'catalog': 'catalog',
+            'appointments': 'bookings',
+            'learning': 'learning',
+            'integrations': 'integrations'
+        };
+
+        const MODULE_INFO = {
+            sales: { name: 'Продажи', icon: 'fas fa-handshake' },
+            clients: { name: 'Клиенты', icon: 'fas fa-users' },
+            team: { name: 'Команда', icon: 'fas fa-user-tie' },
+            orders: { name: 'Заказы', icon: 'fas fa-shopping-cart' },
+            catalog: { name: 'Каталог', icon: 'fas fa-box' },
+            bookings: { name: 'Записи', icon: 'fas fa-calendar-check' },
+            learning: { name: 'Обучение', icon: 'fas fa-graduation-cap' },
+            integrations: { name: 'Интеграции', icon: 'fas fa-plug' }
+        };
+
+        function getEnabledModules() {
+            const projects = JSON.parse(localStorage.getItem('cms_projects') || '[]');
+            if (projects.length === 0) return [];
+            const proj = projects[0];
+            try { return JSON.parse(proj.enabled_modules || '[]'); } catch(e) { return []; }
+        }
+
+        function applyModuleVisibility() {
+            const enabled = getEnabledModules();
+            const showAll = !enabled.length; // backward compat: empty = show all
+
+            document.querySelectorAll('.nav-item[data-section]').forEach(item => {
+                const section = item.dataset.section;
+                const moduleId = MODULE_SECTION_MAP[section];
+                if (moduleId === null) return; // always visible (dashboard)
+                const parentNav = item.closest('.nav-section');
+                if (showAll || enabled.includes(moduleId)) {
+                    item.style.display = '';
+                    if (parentNav) parentNav.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                    // Hide parent nav-section if all children hidden
+                    if (parentNav) {
+                        const visibleItems = parentNav.querySelectorAll('.nav-item[data-section]:not([style*="display: none"])');
+                        if (visibleItems.length === 0) parentNav.style.display = 'none';
+                    }
+                }
+            });
+
+            applyDashboardCardVisibility();
+        }
+
+        function applyDashboardCardVisibility() {
+            const enabled = getEnabledModules();
+            const showAll = !enabled.length;
+            document.querySelectorAll('.stat-card[data-module]').forEach(card => {
+                const moduleId = card.dataset.module;
+                card.style.display = (showAll || enabled.includes(moduleId)) ? '' : 'none';
+            });
+        }
+
+        function openModuleSettings() {
+            const enabled = getEnabledModules();
+            const showAll = !enabled.length;
+            const allModules = Object.keys(MODULE_INFO);
+
+            let html = '<div style="margin-bottom:16px;color:var(--text-secondary);font-size:14px;">Включите модули, которые нужны вашему бизнесу. Отключённые модули скроются из меню.</div>';
+            html += '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">';
+            allModules.forEach(m => {
+                const info = MODULE_INFO[m];
+                const checked = showAll || enabled.includes(m) ? 'checked' : '';
+                html += `<label style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:8px;cursor:pointer;">
+                    <input type="checkbox" name="crm_module" value="${m}" ${checked} style="width:18px;height:18px;accent-color:var(--primary);">
+                    <div><div style="font-weight:600;"><i class="${info.icon}" style="color:var(--primary);margin-right:6px;"></i>${info.name}</div></div>
+                </label>`;
+            });
+            html += '</div>';
+
+            document.getElementById('moduleSettingsBody').innerHTML = html;
+            openModal('moduleSettingsModal');
+        }
+
+        async function saveModuleSettings() {
+            const selected = Array.from(document.querySelectorAll('input[name="crm_module"]:checked')).map(c => c.value);
+
+            // Save to localStorage project
+            const projects = JSON.parse(localStorage.getItem('cms_projects') || '[]');
+            if (projects.length > 0) {
+                projects[0].enabled_modules = JSON.stringify(selected);
+                localStorage.setItem('cms_projects', JSON.stringify(projects));
+            }
+
+            // Save to API if online
+            if (projectId) {
+                const token = localStorage.getItem('cms_token');
+                if (token) {
+                    try {
+                        await fetch(API_BASE + '/projects/' + projectId, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                            body: JSON.stringify({ enabled_modules: selected })
+                        });
+                    } catch(e) { /* offline */ }
+                }
+            }
+
+            closeModal('moduleSettingsModal');
+            applyModuleVisibility();
+            toast('Модули обновлены', 'success');
         }
 
         // Modal
@@ -5209,6 +5462,36 @@ XL"></textarea>
             if (res.success) {
                 renderKanban(res.funnel);
             }
+            loadSalesAnalytics();
+        }
+
+        async function loadSalesAnalytics() {
+            try {
+                const res = await api('GET', `/deals/${projectId}`);
+                if (!res.success) return;
+                const deals = res.deals || [];
+                const total = deals.length;
+                const won = deals.filter(d => d.status === 'won');
+                const closed = deals.filter(d => d.status === 'won' || d.status === 'lost');
+                const winRate = closed.length ? Math.round((won.length / closed.length) * 100) : 0;
+
+                let avgDays = 0;
+                const closedWithDates = closed.filter(d => d.created_at && d.closed_at);
+                if (closedWithDates.length) {
+                    const totalDays = closedWithDates.reduce((sum, d) => {
+                        return sum + (new Date(d.closed_at) - new Date(d.created_at)) / (1000 * 60 * 60 * 24);
+                    }, 0);
+                    avgDays = Math.round(totalDays / closedWithDates.length);
+                }
+
+                const pipeline = deals.filter(d => d.status !== 'won' && d.status !== 'lost')
+                    .reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0);
+
+                document.getElementById('salesStat-winRate').textContent = winRate + '%';
+                document.getElementById('salesStat-avgTime').textContent = avgDays + ' дн.';
+                document.getElementById('salesStat-pipeline').textContent = formatMoney(pipeline);
+                document.getElementById('salesStat-count').textContent = total;
+            } catch (e) {}
         }
 
         function renderKanban(funnel) {
@@ -5449,9 +5732,8 @@ XL"></textarea>
                 const btn = document.getElementById('clientsTab' + t.charAt(0).toUpperCase() + t.slice(1));
                 if (panel) panel.style.display = t === tab ? 'block' : 'none';
                 if (btn) {
-                    btn.style.borderBottomColor = t === tab ? 'var(--primary)' : 'transparent';
-                    btn.style.color = t === tab ? 'var(--primary)' : 'var(--text-muted)';
-                    btn.style.fontWeight = t === tab ? '600' : '400';
+                    if (t === tab) btn.classList.add('active');
+                    else btn.classList.remove('active');
                 }
             });
             if (tab === 'segments') loadSegments();
@@ -6135,6 +6417,55 @@ XL"></textarea>
             }
         }
 
+        let taskCalendarDate = new Date();
+        function switchTaskView(view) {
+            document.getElementById('tasksListView').style.display = view === 'list' ? 'block' : 'none';
+            document.getElementById('tasksCalendarView').style.display = view === 'calendar' ? 'block' : 'none';
+            const listBtn = document.getElementById('taskViewList');
+            const calBtn = document.getElementById('taskViewCalendar');
+            if (view === 'list') {
+                listBtn.style.background = 'var(--primary)'; listBtn.style.color = '#fff'; listBtn.className = 'btn btn-sm';
+                calBtn.style.background = ''; calBtn.style.color = ''; calBtn.className = 'btn btn-sm btn-outline';
+            } else {
+                calBtn.style.background = 'var(--primary)'; calBtn.style.color = '#fff'; calBtn.className = 'btn btn-sm';
+                listBtn.style.background = ''; listBtn.style.color = ''; listBtn.className = 'btn btn-sm btn-outline';
+                renderTaskCalendar();
+            }
+        }
+
+        function moveTaskCalendar(dir) {
+            taskCalendarDate.setMonth(taskCalendarDate.getMonth() + dir);
+            renderTaskCalendar();
+        }
+
+        function renderTaskCalendar() {
+            const year = taskCalendarDate.getFullYear();
+            const month = taskCalendarDate.getMonth();
+            const monthNames = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+            document.getElementById('taskCalendarMonth').textContent = `${monthNames[month]} ${year}`;
+            const firstDay = new Date(year, month, 1).getDay() || 7;
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+            const priorityColors = { urgent: 'var(--danger)', high: '#f59e0b', normal: 'var(--primary)', low: 'var(--text-muted)' };
+            const dayNames = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+            let html = dayNames.map(d => `<div style="text-align:center;font-weight:600;padding:8px;font-size:12px;color:var(--text-muted);">${d}</div>`).join('');
+            for (let i = 1; i < firstDay; i++) html += '<div style="padding:4px;min-height:80px;background:var(--bg-dark);border-radius:4px;"></div>';
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
+                const dayTasks = (tasks || []).filter(t => t.due_date && t.due_date.startsWith(dateStr));
+                let taskHtml = dayTasks.slice(0, 3).map(t => {
+                    const color = priorityColors[t.priority] || 'var(--primary)';
+                    const done = t.status === 'completed' ? 'text-decoration:line-through;opacity:0.5;' : '';
+                    return `<div style="font-size:10px;padding:2px 4px;margin-top:2px;border-radius:3px;background:${color}20;border-left:2px solid ${color};${done}" title="${escapeHtml(t.title)}">${escapeHtml(t.title.substring(0,20))}</div>`;
+                }).join('');
+                if (dayTasks.length > 3) taskHtml += `<div style="font-size:10px;color:var(--text-muted);">+${dayTasks.length - 3}</div>`;
+                const bg = isToday ? 'background:rgba(59,130,246,0.08);border:1px solid var(--primary);' : 'background:var(--bg-card);border:1px solid var(--border-color);';
+                html += `<div style="${bg}border-radius:4px;padding:4px;min-height:80px;"><div style="font-size:11px;font-weight:${isToday?'700':'500'};color:${isToday?'var(--primary)':'var(--text-primary)'};margin-bottom:2px;">${day}</div>${taskHtml}</div>`;
+            }
+            document.getElementById('taskCalendarGrid').innerHTML = html;
+        }
+
         async function toggleTaskStatus(id, current) {
             const newStatus = current === 'completed' ? 'pending' : 'completed';
             try {
@@ -6164,22 +6495,49 @@ XL"></textarea>
                 return;
             }
 
-            const statuses = { new: ['Новый', 'badge badge-new'], processing: ['В обработке', 'badge badge-warning'], shipped: ['Отправлен', 'badge badge-new'], completed: ['Завершён', 'badge badge-success'], cancelled: ['Отменён', 'badge badge-danger'] };
+            const statuses = {
+                new: ['Новый', 'badge badge-new', ''],
+                processing: ['В обработке', 'badge badge-warning', ''],
+                confirmed: ['Согласован', 'badge', 'background:rgba(99,102,241,0.2);color:#6366f1'],
+                assembled: ['Собран', 'badge', 'background:rgba(14,165,233,0.2);color:#0ea5e9'],
+                shipped: ['Отправлен', 'badge badge-new', ''],
+                delivered: ['Доставлен', 'badge badge-success', ''],
+                cancelled: ['Отменён', 'badge badge-danger', ''],
+                refund: ['Возврат', 'badge badge-danger', '']
+            };
             const paymentStatuses = { pending: ['Ожидает', 'badge badge-warning'], paid: ['Оплачен', 'badge badge-success'], refunded: ['Возврат', 'badge badge-danger'] };
+            const orderWorkflow = ['new', 'processing', 'confirmed', 'assembled', 'shipped', 'delivered'];
 
-            tbody.innerHTML = orders.map(o => `
-                <tr>
-                    <td><strong>${escapeHtml(o.order_number)}</strong></td>
-                    <td>${escapeHtml(o.customer_name || o.customer_email || '-')}</td>
-                    <td>${formatMoney(o.total)}</td>
-                    <td><span class="${statuses[o.status]?.[1] || 'badge'}">${statuses[o.status]?.[0] || o.status}</span></td>
-                    <td><span class="${paymentStatuses[o.payment_status]?.[1] || 'badge'}">${paymentStatuses[o.payment_status]?.[0] || o.payment_status}</span></td>
-                    <td>${new Date(o.created_at).toLocaleDateString('ru')}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline" onclick="viewOrder('${o.id}')"><i class="fas fa-eye"></i></button>
-                    </td>
-                </tr>
-            `).join('');
+            function orderStepper(status) {
+                if (status === 'cancelled' || status === 'refund') {
+                    const lbl = status === 'cancelled' ? 'Отменён' : 'Возврат';
+                    return '<div style="display:flex;align-items:center;gap:4px;margin-top:6px;"><span style="font-size:11px;color:var(--danger);"><i class="fas fa-times-circle"></i> ' + lbl + '</span></div>';
+                }
+                const idx = orderWorkflow.indexOf(status);
+                let html = '<div style="display:flex;align-items:center;gap:2px;margin-top:6px;">';
+                for (let i = 0; i < orderWorkflow.length; i++) {
+                    const w = i <= idx ? 16 : 12;
+                    const bg = i <= idx ? 'var(--primary)' : 'var(--border-color)';
+                    const title = statuses[orderWorkflow[i]]?.[0] || orderWorkflow[i];
+                    html += '<div style="width:' + w + 'px;height:4px;border-radius:2px;background:' + bg + ';" title="' + title + '"></div>';
+                }
+                html += '</div>';
+                return html;
+            }
+
+            tbody.innerHTML = orders.map(o => {
+                const st = statuses[o.status] || ['Неизвестно', 'badge', ''];
+                const stStyle = st[2] ? ' style="' + st[2] + '"' : '';
+                return '<tr>' +
+                    '<td><strong>' + escapeHtml(o.order_number) + '</strong></td>' +
+                    '<td>' + escapeHtml(o.customer_name || o.customer_email || '-') + '</td>' +
+                    '<td>' + formatMoney(o.total) + '</td>' +
+                    '<td><span class="' + st[1] + '"' + stStyle + '>' + st[0] + '</span>' + orderStepper(o.status) + '</td>' +
+                    '<td><span class="' + (paymentStatuses[o.payment_status]?.[1] || 'badge') + '">' + (paymentStatuses[o.payment_status]?.[0] || o.payment_status) + '</span></td>' +
+                    '<td>' + new Date(o.created_at).toLocaleDateString('ru') + '</td>' +
+                    '<td><button class="btn btn-sm btn-outline" onclick="viewOrder(\'' + o.id + '\')"><i class="fas fa-eye"></i></button></td>' +
+                    '</tr>';
+            }).join('');
         }
 
         // Products
@@ -6241,7 +6599,7 @@ XL"></textarea>
                     <td>${escapeHtml(p.sku || '-')}</td>
                     <td>
                         <strong>${formatMoney(p.price)}</strong>
-                        ${p.old_price ? `<span style="text-decoration:line-through;color:var(--text-muted);font-size:11px;margin-left:4px;">${formatMoney(p.old_price)}</span>` : ''}
+                        ${(p.compare_at_price || p.old_price) ? `<span style="text-decoration:line-through;color:var(--text-muted);font-size:11px;margin-left:4px;">${formatMoney(p.compare_at_price || p.old_price)}</span>` : ''}
                     </td>
                     <td>
                         <span class="${lowStock ? 'text-danger' : ''}">${p.stock || 0}</span>
@@ -6328,7 +6686,7 @@ XL"></textarea>
             }).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
             const productData = {
-                name, sku, price: parseFloat(price), old_price: parseFloat(old_price) || null,
+                name, sku, price: parseFloat(price), old_price: parseFloat(old_price) || null, compare_at_price: parseFloat(old_price) || null,
                 stock: parseInt(stock) || 0, description, is_active: true,
                 category_id: category_id || null,
                 meta_title, meta_description, url_slug: autoSlug,
@@ -6390,7 +6748,7 @@ XL"></textarea>
                     ${p.brand ? `<div style="color:var(--text-muted);margin-bottom:12px;">${escapeHtml(p.brand)}</div>` : ''}
                     <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:16px;">
                         <span style="font-size:24px;font-weight:700;color:var(--primary);">${formatMoney(p.price)}</span>
-                        ${p.old_price ? `<span style="text-decoration:line-through;color:var(--text-muted);">${formatMoney(p.old_price)}</span>` : ''}
+                        ${(p.compare_at_price || p.old_price) ? `<span style="text-decoration:line-through;color:var(--text-muted);">${formatMoney(p.compare_at_price || p.old_price)}</span>` : ''}
                     </div>
                     ${p.description ? `<div style="color:var(--text-secondary);line-height:1.6;margin-bottom:16px;">${escapeHtml(p.description)}</div>` : ''}
                     <div style="display:flex;gap:8px;margin-bottom:16px;">
@@ -6465,7 +6823,7 @@ XL"></textarea>
                 document.getElementById('productName').value = p.name || '';
                 document.getElementById('productSku').value = p.sku || '';
                 document.getElementById('productPrice').value = p.price || '';
-                document.getElementById('productOldPrice').value = p.old_price || '';
+                document.getElementById('productOldPrice').value = p.compare_at_price || p.old_price || '';
                 document.getElementById('productStock').value = p.stock || 0;
                 document.getElementById('productDescription').value = p.description || '';
                 document.getElementById('productCategory').value = p.category_id || '';
@@ -7049,7 +7407,7 @@ XL"></textarea>
                 tbody.innerHTML = '<tr><td colspan="4"><div class="empty-state"><i class="fas fa-calendar-check"></i><h3>Нет записей</h3></div></td></tr>';
             } else {
                 tbody.innerHTML = bookings.slice(0, 5).map(b => `
-                    <tr onclick="switchSection('bookings')" style="cursor:pointer;">
+                    <tr onclick="switchSection('appointments')" style="cursor:pointer;">
                         <td><strong>${b.start_time}</strong></td>
                         <td>${escapeHtml(b.client_name || '-')}</td>
                         <td>${escapeHtml(b.service_name || '-')}</td>
@@ -7069,7 +7427,7 @@ XL"></textarea>
                     return;
                 }
                 tbody.innerHTML = res.courses.slice(0, 5).map(c => `
-                    <tr onclick="switchSection('courses')" style="cursor:pointer;">
+                    <tr onclick="switchSection('learning')" style="cursor:pointer;">
                         <td><strong>${escapeHtml(c.name)}</strong></td>
                         <td>${c.students_count || 0}</td>
                         <td>
@@ -8425,7 +8783,6 @@ XL"></textarea>
                 tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-calendar-check"></i><h3>Нет записей</h3></div></td></tr>';
                 return;
             }
-            const statuses = { pending: ['Ожидает', 'badge-warning'], confirmed: ['Подтв.', 'badge-success'], completed: ['Завершено', 'badge-success'], cancelled: ['Отменено', 'badge-danger'] };
             tbody.innerHTML = bookings.map(b => `
                 <tr>
                     <td>${b.booking_date} ${b.start_time}</td>
@@ -8433,7 +8790,7 @@ XL"></textarea>
                     <td>${escapeHtml(b.service_name || '-')}</td>
                     <td>${escapeHtml(b.employee_name || '-')}</td>
                     <td>${b.price ? formatMoney(b.price) : '-'}</td>
-                    <td><span class="badge ${statuses[b.status]?.[1] || ''}">${statuses[b.status]?.[0] || b.status}</span></td>
+                    <td>${getBookingStatusBadge(b.status)}</td>
                     <td>
                         <button class="btn btn-sm btn-outline" onclick="confirmBooking('${b.id}')"><i class="fas fa-check"></i></button>
                         <button class="btn btn-sm btn-outline" onclick="cancelBooking('${b.id}')"><i class="fas fa-times"></i></button>
@@ -9249,6 +9606,38 @@ XL"></textarea>
             }
         }
 
+        // Booking Status Badge Helper
+        function getBookingStatusBadge(status) {
+            const map = {
+                confirmed: ['Подтверждено', 'badge-success'],
+                pending: ['Ожидает', 'badge-warning'],
+                completed: ['Завершено', 'badge-info'],
+                cancelled: ['Отменено', 'badge-danger'],
+                'no-show': ['Не пришёл', 'badge-muted']
+            };
+            const [label, cls] = map[status] || [status || 'Неизвестно', ''];
+            return `<span class="badge ${cls}">${label}</span>`;
+        }
+
+        // Booking Conflict Detection
+        async function checkBookingConflict(employee_id, booking_date, start_time, duration, editId) {
+            if (!employee_id || !booking_date || !start_time) return false;
+            try {
+                const res = await api('GET', `/bookings/${projectId}?from=${booking_date}&to=${booking_date}`);
+                if (!res.success) return false;
+                const bookings = (res.bookings || []).filter(b =>
+                    b.employee_id == employee_id && b.status !== 'cancelled' && (!editId || b.id != editId)
+                );
+                const newStart = parseInt(start_time.split(':')[0]) * 60 + parseInt(start_time.split(':')[1] || 0);
+                const newEnd = newStart + (parseInt(duration) || 60);
+                return bookings.some(b => {
+                    const bStart = parseInt(b.start_time?.split(':')[0] || 0) * 60 + parseInt(b.start_time?.split(':')[1] || 0);
+                    const bEnd = bStart + (parseInt(b.duration) || 60);
+                    return newStart < bEnd && newEnd > bStart;
+                });
+            } catch (e) { return false; }
+        }
+
         // Save Booking
         let currentBookingData = null;
 
@@ -9268,6 +9657,11 @@ XL"></textarea>
 
             if (!service_id || !booking_date || !start_time) {
                 return toast('Выберите услугу, дату и время', 'error');
+            }
+
+            const hasConflict = await checkBookingConflict(employee_id, booking_date, start_time, duration, editId);
+            if (hasConflict) {
+                toast('Внимание: у специалиста уже есть запись в это время!', 'warning');
             }
 
             showLoading();
@@ -9347,14 +9741,7 @@ XL"></textarea>
                     document.getElementById('detailsPrice').textContent = b.price ? formatMoney(b.price) : '—';
                     document.getElementById('detailsComment').textContent = b.comment || 'Нет комментария';
 
-                    const statuses = {
-                        pending: ['Ожидает подтверждения', 'badge-warning'],
-                        confirmed: ['Подтверждено', 'badge-success'],
-                        completed: ['Завершено', 'badge-success'],
-                        cancelled: ['Отменено', 'badge-danger']
-                    };
-                    const [label, badgeClass] = statuses[b.status] || [b.status, ''];
-                    document.getElementById('detailsStatus').innerHTML = `<span class="badge ${badgeClass}">${label}</span>`;
+                    document.getElementById('detailsStatus').innerHTML = getBookingStatusBadge(b.status);
 
                     openModal('bookingDetailsModal');
                 }
@@ -9943,13 +10330,37 @@ XL"></textarea>
         function renderSpecialists() {
             const container = document.getElementById('specialistsList');
             if (!container) return;
-            container.innerHTML = specialists.map(s => `
+            container.innerHTML = specialists.map(s => {
+                const linkedCount = (s.linked_services || []).length;
+                const linkedNames = (s.linked_services || []).map(sid => {
+                    const svc = services.find(sv => sv.id == sid);
+                    return svc ? escapeHtml(svc.name) : '';
+                }).filter(Boolean).join(', ');
+                return `
                 <div class="stat-card" onclick="editSpecialist('${s.id}')" style="cursor:pointer;">
                     <div style="font-size:32px;margin-bottom:10px;"><i class="fas fa-user-md"></i></div>
                     <div class="label">${escapeHtml(s.name || s.first_name + ' ' + (s.last_name || ''))}</div>
                     <div style="font-size:12px;color:var(--text-muted);">${escapeHtml(s.position || '')}</div>
-                </div>
-            `).join('') || '<p style="color:var(--text-muted);">Нет специалистов</p>';
+                    ${linkedCount > 0 ? `<div style="font-size:11px;color:var(--primary);margin-top:6px;" title="${linkedNames}"><i class="fas fa-concierge-bell"></i> ${linkedCount} услуг${linkedCount === 1 ? 'а' : linkedCount < 5 ? 'и' : ''}</div>` : ''}
+                </div>`;
+            }).join('') || '<p style="color:var(--text-muted);">Нет специалистов</p>';
+        }
+
+        async function loadSpecialistServiceCheckboxes(selectedIds) {
+            const container = document.getElementById('specialistServicesCheckboxes');
+            if (!container) return;
+            let svcList = services;
+            if (!svcList.length) {
+                const res = await api('GET', `/services/${projectId}`);
+                if (res.success) svcList = res.services || [];
+            }
+            if (!svcList.length) {
+                container.innerHTML = '<span style="color:var(--text-muted);font-size:12px;">Нет доступных услуг</span>';
+                return;
+            }
+            container.innerHTML = svcList.map(s => `
+                <label><input type="checkbox" value="${s.id}" ${(selectedIds || []).includes(s.id) || (selectedIds || []).includes(String(s.id)) ? 'checked' : ''}> ${escapeHtml(s.name)}</label>
+            `).join('');
         }
 
         function populateSpecialistSelects() {
@@ -9972,6 +10383,7 @@ XL"></textarea>
             const bioEl = document.getElementById('specialistBio');
             if (bioEl) bioEl.value = s.bio || '';
 
+            loadSpecialistServiceCheckboxes(s.linked_services || []);
             document.getElementById('specialistModalTitle').textContent = 'Редактировать специалиста';
             openModal('specialistModal');
         }
@@ -9982,6 +10394,7 @@ XL"></textarea>
                 const el = document.getElementById(id);
                 if (el) el.value = '';
             });
+            loadSpecialistServiceCheckboxes([]);
             document.getElementById('specialistModalTitle').textContent = 'Добавить специалиста';
         }
 
@@ -9990,11 +10403,13 @@ XL"></textarea>
             const first_name = document.getElementById('specialistFirstName').value;
             if (!first_name) return toast('Введите имя специалиста', 'error');
 
+            const checkedServices = [...document.querySelectorAll('#specialistServicesCheckboxes input[type=checkbox]:checked')].map(cb => cb.value);
             const data = {
                 first_name,
                 last_name: document.getElementById('specialistLastName').value,
                 position: document.getElementById('specialistPosition').value,
-                department: 'services'
+                department: 'services',
+                linked_services: checkedServices
             };
 
             showLoading();
@@ -10145,7 +10560,9 @@ XL"></textarea>
                     type: document.getElementById('trainingAccessType').value,
                     access_days: document.getElementById('trainingAccessDays').value || 0,
                     drip_content: document.getElementById('trainingDrip').value,
-                    certificate_enabled: document.getElementById('trainingCertificate').checked,
+                    sequential_access: document.getElementById('trainingSequentialAccess').checked,
+                    auto_certificate: document.getElementById('trainingAutoCertificate').checked,
+                    certificate_template_id: document.getElementById('trainingCertTemplate').value || null,
                     is_published: document.getElementById('trainingPublished').checked
                 });
 
@@ -10172,8 +10589,26 @@ XL"></textarea>
             });
             document.getElementById('trainingAccessType').value = 'purchase';
             document.getElementById('trainingDrip').value = '0';
-            document.getElementById('trainingCertificate').checked = false;
+            document.getElementById('trainingSequentialAccess').checked = false;
+            document.getElementById('trainingAutoCertificate').checked = false;
+            document.getElementById('trainingCertTemplate').value = '';
+            document.getElementById('autoCertTemplateGroup').style.display = 'none';
             document.getElementById('trainingPublished').checked = false;
+        }
+
+        function toggleAutoCertTemplate() {
+            const checked = document.getElementById('trainingAutoCertificate').checked;
+            document.getElementById('autoCertTemplateGroup').style.display = checked ? 'block' : 'none';
+            if (checked) populateAutoCertTemplateSelect();
+        }
+
+        function populateAutoCertTemplateSelect() {
+            const select = document.getElementById('trainingCertTemplate');
+            const currentVal = select.value;
+            const templates = typeof certTemplates !== 'undefined' ? certTemplates : JSON.parse(localStorage.getItem(`cert_templates_${projectId}`) || '[]');
+            select.innerHTML = '<option value="">По умолчанию</option>' +
+                templates.map(t => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('');
+            if (currentVal) select.value = currentVal;
         }
 
         async function openTrainingDetails(trainingId) {
@@ -10237,7 +10672,13 @@ XL"></textarea>
 
         function renderTrainingStudents(students) {
             const tbody = document.getElementById('trainingStudentsTable');
-            tbody.innerHTML = students.length ? students.map(s => `
+            tbody.innerHTML = students.length ? students.map(s => {
+                const progressColor = s.progress >= 100 ? 'var(--success)' : s.progress >= 50 ? 'var(--primary)' : s.progress > 0 ? 'var(--warning)' : '#334155';
+                const statusLabel = s.progress >= 100 ? 'Завершил' : s.progress > 0 ? 'В процессе' : 'Не начал';
+                const statusClass = s.progress >= 100 ? 'badge-success' : s.progress > 0 ? 'badge-warning' : '';
+                const quizScore = s.quiz_score != null ? `${s.quiz_score}%` : '\u2014';
+                const quizColor = s.quiz_score != null ? (s.quiz_score >= 80 ? 'var(--success)' : s.quiz_score >= 50 ? 'var(--warning)' : 'var(--danger)') : 'var(--text-muted)';
+                return `
                 <tr>
                     <td>
                         <strong>${escapeHtml(s.name || s.email)}</strong>
@@ -10245,19 +10686,22 @@ XL"></textarea>
                     </td>
                     <td>
                         <div style="display:flex;align-items:center;gap:8px;">
-                            <div style="width:60px;background:#334155;border-radius:4px;height:6px;">
-                                <div style="width:${s.progress || 0}%;height:100%;background:${s.progress >= 100 ? 'var(--success)' : 'var(--primary)'};border-radius:4px;"></div>
+                            <div style="width:80px;background:#334155;border-radius:4px;height:8px;">
+                                <div style="width:${s.progress || 0}%;height:100%;background:${progressColor};border-radius:4px;transition:width 0.3s;"></div>
                             </div>
-                            <span style="font-size:12px;">${s.progress || 0}%</span>
+                            <span style="font-size:12px;font-weight:500;">${s.progress || 0}%</span>
                         </div>
+                        ${s.completed_lessons != null && s.total_lessons ? `<div style="font-size:10px;color:var(--text-muted);margin-top:2px;">${s.completed_lessons}/${s.total_lessons} уроков</div>` : ''}
                     </td>
                     <td>${formatDate(s.enrolled_at)}</td>
-                    <td><span class="badge ${s.progress >= 100 ? 'badge-success' : ''}">${s.progress >= 100 ? 'Завершил' : 'В процессе'}</span></td>
+                    <td style="font-size:12px;">${s.last_active_at ? formatDate(s.last_active_at) : '<span style="color:var(--text-muted);">\u2014</span>'}</td>
+                    <td style="font-weight:500;color:${quizColor};">${quizScore}</td>
+                    <td><span class="badge ${statusClass}">${statusLabel}</span></td>
                     <td>
                         <button class="btn btn-sm btn-outline" onclick="unenrollStudent('${s.id}')"><i class="fas fa-user-minus"></i></button>
                     </td>
-                </tr>
-            `).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">Нет студентов</td></tr>';
+                </tr>`;
+            }).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);">Нет студентов</td></tr>';
         }
 
         function renderTrainingAnalytics(training) {
@@ -10300,7 +10744,11 @@ XL"></textarea>
             document.getElementById('trainingAccessType').value = t.type || 'purchase';
             document.getElementById('trainingAccessDays').value = t.access_days || 0;
             document.getElementById('trainingDrip').value = t.drip_content || '0';
-            document.getElementById('trainingCertificate').checked = t.certificate_enabled || false;
+            document.getElementById('trainingSequentialAccess').checked = t.sequential_access || false;
+            document.getElementById('trainingAutoCertificate').checked = t.auto_certificate || false;
+            document.getElementById('trainingCertTemplate').value = t.certificate_template_id || '';
+            document.getElementById('autoCertTemplateGroup').style.display = t.auto_certificate ? 'block' : 'none';
+            populateAutoCertTemplateSelect();
             document.getElementById('trainingPublished').checked = t.is_published || false;
 
             openModal('trainingModal');
@@ -10556,6 +11004,7 @@ XL"></textarea>
                             return `<td class="slot-cell booked" onclick="openBookingDetails('${booking.id}')" style="background:${statusColors[booking.status] || '#3b82f6'}20;border-left:3px solid ${statusColors[booking.status] || '#3b82f6'};">
                                 <div style="font-size:11px;font-weight:500;">${escapeHtml(booking.client_name || 'Клиент')}</div>
                                 <div style="font-size:10px;color:var(--text-muted);">${escapeHtml(booking.service_name || '')}</div>
+                                <div style="margin-top:2px;">${getBookingStatusBadge(booking.status)}</div>
                                 ${slotBookings.length > 1 ? `<div style="font-size:9px;color:var(--primary);">+${slotBookings.length - 1}</div>` : ''}
                             </td>`;
                         }

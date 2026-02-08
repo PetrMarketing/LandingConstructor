@@ -42,8 +42,10 @@ router.get('/:projectId', (req, res) => {
             params.push(stage_id);
         }
         if (status) {
-            query += ` AND d.status = ?`;
-            params.push(status);
+            if (status === 'won') query += ` AND d.won_at IS NOT NULL`;
+            else if (status === 'lost') query += ` AND d.lost_at IS NOT NULL`;
+            else if (status === 'open') query += ` AND d.won_at IS NULL AND d.lost_at IS NULL`;
+            else { query += ` AND 0`; }
         }
         if (assigned_to) {
             query += ` AND d.assigned_to = ?`;
@@ -63,11 +65,11 @@ router.get('/:projectId', (req, res) => {
         const stats = db.prepare(`
             SELECT
                 COUNT(*) as total,
-                SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) as open_count,
-                SUM(CASE WHEN status = 'won' THEN 1 ELSE 0 END) as won_count,
-                SUM(CASE WHEN status = 'lost' THEN 1 ELSE 0 END) as lost_count,
-                SUM(CASE WHEN status = 'won' THEN amount ELSE 0 END) as won_amount,
-                SUM(CASE WHEN status = 'open' THEN amount ELSE 0 END) as pipeline_amount
+                SUM(CASE WHEN won_at IS NULL AND lost_at IS NULL THEN 1 ELSE 0 END) as open_count,
+                SUM(CASE WHEN won_at IS NOT NULL THEN 1 ELSE 0 END) as won_count,
+                SUM(CASE WHEN lost_at IS NOT NULL THEN 1 ELSE 0 END) as lost_count,
+                SUM(CASE WHEN won_at IS NOT NULL THEN amount ELSE 0 END) as won_amount,
+                SUM(CASE WHEN won_at IS NULL AND lost_at IS NULL THEN amount ELSE 0 END) as pipeline_amount
             FROM deals WHERE project_id = ?
         `).get(req.params.projectId);
 
@@ -75,6 +77,8 @@ router.get('/:projectId', (req, res) => {
             success: true,
             deals: deals.map(d => ({
                 ...d,
+                status: d.won_at ? 'won' : d.lost_at ? 'lost' : 'open',
+                title: d.name || d.title,
                 tags: JSON.parse(d.tags || '[]'),
                 custom_fields: JSON.parse(d.custom_fields || '{}')
             })),

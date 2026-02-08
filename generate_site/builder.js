@@ -871,6 +871,278 @@ const pageTemplates = [
                 ]
             }
         ]
+    },
+
+    // === BEAUTY: SPA CENTER ===
+    {
+        id: 'spa-center', name: 'Спа-центр', category: 'services', thumbnail: '🧖',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'SPA Oasis', links: 'Услуги|О нас|Акции|Контакты' } },
+            { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(139,92,246,0.7), rgba(139,92,246,0.8)), url(https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Подарите себе день блаженства', subtitle: 'Спа-программы от 2 500₽. Забронируйте онлайн и получите скидку 15%.', buttonText: 'ЗАБРОНИРОВАТЬ', buttonColor: '#8b5cf6' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title: 'Наши спа-программы', subtitle: 'Полный релакс для тела и души', columns: 3, items: [{ icon: 'fas fa-hot-tub', title: 'Хаммам', description: 'Традиционная турецкая баня с пилингом' }, { icon: 'fas fa-spa', title: 'Стоун-терапия', description: 'Массаж горячими камнями' }, { icon: 'fas fa-leaf', title: 'Аромотерапия', description: 'Расслабляющие процедуры с эфирными маслами' }] } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#faf5ff' }, children: [
+                { type: 'leadForm', componentSettings: { title: 'Запишитесь на спа-программу', subtitle: 'Мы подберём идеальную программу для вас', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'select', name: 'program', label: 'Программа', options: ['Хаммам + массаж', 'Стоун-терапия', 'Полный день спа', 'Подарочный сертификат'] }], buttonText: 'ЗАПИСАТЬСЯ', buttonColor: '#8b5cf6' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+
+    // === BEAUTY: NAIL SALON ===
+    {
+        id: 'nail-salon', name: 'Ногтевая студия', category: 'services', thumbnail: '💅',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'Nail Art Studio', links: 'Услуги|Портфолио|Цены|Запись' } },
+            { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(236,72,153,0.7), rgba(236,72,153,0.85)), url(https://images.unsplash.com/photo-1604654894610-df63bc536371?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Маникюр и педикюр от мастеров', subtitle: 'Современные техники, стерильные инструменты, уютная атмосфера.', buttonText: 'ЗАПИСАТЬСЯ ОНЛАЙН', buttonColor: '#ec4899' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'pricing', componentSettings: { title: 'Наши услуги', items: [{ name: 'Маникюр', price: '1 500', period: '₽', features: ['Классический маникюр', 'Покрытие гель-лаком', 'Дизайн 2 ногтя'], buttonText: 'Записаться', popular: false }, { name: 'Комплекс', price: '3 500', period: '₽', features: ['Маникюр + педикюр', 'Покрытие гель-лаком', 'Дизайн 4 ногтя', 'SPA-уход'], buttonText: 'Записаться', popular: true }, { name: 'Педикюр', price: '2 000', period: '₽', features: ['Аппаратный педикюр', 'Покрытие гель-лаком', 'Увлажняющий уход'], buttonText: 'Записаться', popular: false }] } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fdf2f8' }, children: [
+                { type: 'leadForm', componentSettings: { title: 'Запись к мастеру', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }], buttonText: 'ЗАПИСАТЬСЯ', buttonColor: '#ec4899' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+
+    // === BEAUTY: BARBERSHOP ===
+    {
+        id: 'barbershop', name: 'Барбершоп', category: 'services', thumbnail: '💈',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'BARBER HOUSE', links: 'Услуги|Мастера|Цены|Запись' } },
+            { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(30,41,59,0.8), rgba(30,41,59,0.9)), url(https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Стрижки для настоящих мужчин', subtitle: 'Барбершоп с атмосферой. Виски в подарок при первом визите.', buttonText: 'ЗАПИСАТЬСЯ', buttonColor: '#d97706' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title: 'Наши услуги', columns: 3, items: [{ icon: 'fas fa-cut', title: 'Стрижка', description: 'Мужская стрижка от топ-мастеров' }, { icon: 'fas fa-razor', title: 'Бритьё', description: 'Классическое бритьё опасной бритвой' }, { icon: 'fas fa-beard', title: 'Борода', description: 'Моделирование и уход за бородой' }] } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#1e293b', color: '#f1f5f9' }, children: [
+                { type: 'leadForm', componentSettings: { title: 'Запишись к барберу', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }], buttonText: 'ЗАПИСАТЬСЯ', buttonColor: '#d97706' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+
+    // === EDUCATION: LANGUAGE SCHOOL ===
+    {
+        id: 'language-school', name: 'Языковая школа', category: 'education', thumbnail: '🌍',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'LingvaPlus', links: 'Курсы|Методика|Цены|Запись' } },
+            { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(14,165,233,0.8), rgba(14,165,233,0.9)), url(https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Заговорите на английском за 3 месяца', subtitle: 'Бесплатный пробный урок с носителем языка. Группы до 6 человек.', buttonText: 'ЗАПИСАТЬСЯ НА ПРОБНЫЙ УРОК', buttonColor: '#0ea5e9' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title: 'Почему LingvaPlus?', columns: 3, items: [{ icon: 'fas fa-users', title: 'Мини-группы', description: 'До 6 человек — максимум практики' }, { icon: 'fas fa-globe', title: 'Носители языка', description: 'Преподаватели из США и Великобритании' }, { icon: 'fas fa-certificate', title: 'Сертификат', description: 'Подготовка к IELTS, TOEFL, Cambridge' }] } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f0f9ff' }, children: [
+                { type: 'leadForm', componentSettings: { title: 'Запишитесь на бесплатный пробный урок', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'select', name: 'level', label: 'Ваш уровень', options: ['Нулевой', 'Начальный (A1-A2)', 'Средний (B1-B2)', 'Продвинутый (C1)'] }], buttonText: 'ЗАПИСАТЬСЯ', buttonColor: '#0ea5e9' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+
+    // === EDUCATION: KIDS ===
+    {
+        id: 'kids-education', name: 'Детский центр', category: 'education', thumbnail: '👶',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'КидсМир', links: 'Занятия|Расписание|О нас|Запись' } },
+            { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(245,158,11,0.8), rgba(245,158,11,0.9)), url(https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Развивающие занятия для детей от 2 лет', subtitle: 'Творчество, логика, подготовка к школе. Первое занятие бесплатно!', buttonText: 'ЗАПИСАТЬ РЕБЁНКА', buttonColor: '#f59e0b' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title: 'Направления', columns: 3, items: [{ icon: 'fas fa-palette', title: 'Творчество', description: 'Рисование, лепка, аппликации' }, { icon: 'fas fa-brain', title: 'Логика', description: 'Развитие мышления и памяти' }, { icon: 'fas fa-book-reader', title: 'Подготовка к школе', description: 'Чтение, письмо, счёт' }] } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fffbeb' }, children: [
+                { type: 'leadForm', componentSettings: { title: 'Запишите ребёнка на пробное занятие', fields: [{ type: 'text', name: 'name', label: 'Имя родителя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'select', name: 'age', label: 'Возраст ребёнка', options: ['2-3 года', '4-5 лет', '6-7 лет'] }], buttonText: 'ЗАПИСАТЬ', buttonColor: '#f59e0b' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+
+    // === EDUCATION: MASTERCLASS ===
+    {
+        id: 'masterclass', name: 'Мастер-класс', category: 'education', thumbnail: '🎓',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'MasterPro', links: 'Программа|Спикер|Отзывы|Регистрация' } },
+            { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(99,102,241,0.85), rgba(99,102,241,0.9)), url(https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Бесплатный мастер-класс по маркетингу', subtitle: 'Узнайте как привлекать клиентов без бюджета. 2 часа практики.', buttonText: 'ЗАРЕГИСТРИРОВАТЬСЯ', buttonColor: '#6366f1' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'program', componentSettings: { title: 'Программа мастер-класса', items: [{ day: 'Блок 1', title: 'Анализ рынка', topics: ['Определение целевой аудитории', 'Анализ конкурентов'] }, { day: 'Блок 2', title: 'Контент-маркетинг', topics: ['Создание контент-плана', 'Вирусный контент'] }, { day: 'Блок 3', title: 'Практика', topics: ['Разбор кейсов', 'Домашнее задание'] }] } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#eef2ff' }, children: [
+                { type: 'leadForm', componentSettings: { title: 'Зарегистрируйтесь на мастер-класс', subtitle: 'Количество мест ограничено', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'email', name: 'email', label: 'Email', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }], buttonText: 'ЗАРЕГИСТРИРОВАТЬСЯ', buttonColor: '#6366f1' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+
+    // === SERVICES: DENTAL CLINIC ===
+    {
+        id: 'dental-clinic', name: 'Стоматология', category: 'services', thumbnail: '🦷',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'DentaSmile', links: 'Услуги|Врачи|Цены|Запись' } },
+            { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(14,165,233,0.8), rgba(14,165,233,0.9)), url(https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Красивая улыбка начинается здесь', subtitle: 'Бесплатная консультация + панорамный снимок. Лечение без боли.', buttonText: 'ЗАПИСАТЬСЯ НА ПРИЁМ', buttonColor: '#0ea5e9' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title: 'Наши услуги', columns: 3, items: [{ icon: 'fas fa-tooth', title: 'Лечение', description: 'Безболезненное лечение кариеса' }, { icon: 'fas fa-teeth', title: 'Протезирование', description: 'Коронки, виниры, импланты' }, { icon: 'fas fa-teeth-open', title: 'Гигиена', description: 'Профессиональная чистка зубов' }] } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f0f9ff' }, children: [
+                { type: 'leadForm', componentSettings: { title: 'Запишитесь на бесплатную консультацию', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'select', name: 'service', label: 'Услуга', options: ['Консультация', 'Лечение кариеса', 'Чистка зубов', 'Имплантация', 'Виниры'] }], buttonText: 'ЗАПИСАТЬСЯ', buttonColor: '#0ea5e9' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+
+    // === SERVICES: LAW FIRM ===
+    {
+        id: 'law-firm', name: 'Юридическая фирма', category: 'services', thumbnail: '⚖️',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'ПравоПлюс', links: 'Услуги|Юристы|Кейсы|Контакты' } },
+            { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(30,41,59,0.85), rgba(30,41,59,0.9)), url(https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Защитим ваши права и интересы', subtitle: 'Бесплатная первичная консультация юриста. Более 1000 выигранных дел.', buttonText: 'ПОЛУЧИТЬ КОНСУЛЬТАЦИЮ', buttonColor: '#1e40af' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title: 'Направления', columns: 3, items: [{ icon: 'fas fa-building', title: 'Бизнес', description: 'Регистрация, договоры, споры' }, { icon: 'fas fa-home', title: 'Недвижимость', description: 'Сделки, споры, наследство' }, { icon: 'fas fa-gavel', title: 'Суды', description: 'Представительство в судах всех инстанций' }] } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'leadForm', componentSettings: { title: 'Получите бесплатную консультацию', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'select', name: 'area', label: 'Область права', options: ['Семейное право', 'Трудовые споры', 'Недвижимость', 'Бизнес', 'Уголовное право'] }], buttonText: 'ПОЛУЧИТЬ КОНСУЛЬТАЦИЮ', buttonColor: '#1e40af' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+
+    // === SERVICES: ACCOUNTING ===
+    {
+        id: 'accounting-firm', name: 'Бухгалтерия', category: 'services', thumbnail: '📊',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'Финанс Про', links: 'Услуги|Тарифы|О нас|Контакты' } },
+            { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(16,185,129,0.8), rgba(16,185,129,0.9)), url(https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Бухгалтерия под ключ для вашего бизнеса', subtitle: 'От 5 000₽/мес. Сдача отчётности, ведение учёта, консультации.', buttonText: 'РАССЧИТАТЬ СТОИМОСТЬ', buttonColor: '#10b981' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'pricing', componentSettings: { title: 'Тарифы', items: [{ name: 'Старт', price: '5 000', period: '₽/мес', features: ['ИП на УСН', 'До 50 операций', 'Сдача отчётности'], buttonText: 'Выбрать', popular: false }, { name: 'Бизнес', price: '15 000', period: '₽/мес', features: ['ООО', 'До 200 операций', 'Кадровый учёт', 'Консультации'], buttonText: 'Выбрать', popular: true }, { name: 'Премиум', price: '30 000', period: '₽/мес', features: ['Любая форма', 'Без ограничений', 'Личный бухгалтер', 'Аудит'], buttonText: 'Выбрать', popular: false }] } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f0fdf4' }, children: [
+                { type: 'leadForm', componentSettings: { title: 'Рассчитайте стоимость обслуживания', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'select', name: 'type', label: 'Форма организации', options: ['ИП', 'ООО', 'АО', 'Самозанятый'] }], buttonText: 'РАССЧИТАТЬ', buttonColor: '#10b981' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+
+    // === SERVICES: CLEANING ===
+    {
+        id: 'cleaning-company', name: 'Клининговая компания', category: 'services', thumbnail: '🧹',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'CleanHouse', links: 'Услуги|Цены|Отзывы|Заказать' } },
+            { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(14,165,233,0.8), rgba(14,165,233,0.9)), url(https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Профессиональная уборка квартир и офисов', subtitle: 'От 2 000₽. Экологичные средства. Работаем без выходных.', buttonText: 'ЗАКАЗАТЬ УБОРКУ', buttonColor: '#0ea5e9' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title: 'Виды уборки', columns: 3, items: [{ icon: 'fas fa-broom', title: 'Регулярная', description: 'Еженедельная поддерживающая уборка' }, { icon: 'fas fa-sparkles', title: 'Генеральная', description: 'Глубокая уборка всех помещений' }, { icon: 'fas fa-truck-moving', title: 'После ремонта', description: 'Вывоз мусора и мойка всех поверхностей' }] } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f0f9ff' }, children: [
+                { type: 'leadForm', componentSettings: { title: 'Рассчитайте стоимость уборки', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'select', name: 'type', label: 'Тип уборки', options: ['Регулярная', 'Генеральная', 'После ремонта', 'Мойка окон'] }], buttonText: 'РАССЧИТАТЬ', buttonColor: '#0ea5e9' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+
+    // === ECOMMERCE: ELECTRONICS ===
+    {
+        id: 'electronics-store', name: 'Магазин электроники', category: 'shop', thumbnail: '📱',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'TechStore', links: 'Каталог|Акции|Доставка|Контакты' } },
+            { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(30,41,59,0.85), rgba(30,41,59,0.9)), url(https://images.unsplash.com/photo-1468495244123-6c6c332eeece?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Техника по лучшим ценам', subtitle: 'Смартфоны, ноутбуки, гаджеты. Бесплатная доставка от 5 000₽.', buttonText: 'ПЕРЕЙТИ В КАТАЛОГ', buttonColor: '#3b82f6' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title: 'Почему мы?', columns: 3, items: [{ icon: 'fas fa-shield-alt', title: 'Гарантия', description: 'Официальная гарантия на всю технику' }, { icon: 'fas fa-shipping-fast', title: 'Доставка', description: 'Бесплатная доставка от 5 000₽' }, { icon: 'fas fa-undo', title: 'Возврат', description: '14 дней на возврат без вопросов' }] } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f8fafc' }, children: [
+                { type: 'leadForm', componentSettings: { title: 'Подпишитесь на акции', subtitle: 'Получайте лучшие предложения первыми', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'email', name: 'email', label: 'Email', required: true }], buttonText: 'ПОДПИСАТЬСЯ', buttonColor: '#3b82f6' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+
+    // === ECOMMERCE: GROCERY DELIVERY ===
+    {
+        id: 'grocery-delivery', name: 'Доставка продуктов', category: 'shop', thumbnail: '🛒',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'FreshBox', links: 'Каталог|Доставка|О нас|Контакты' } },
+            { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(16,185,129,0.8), rgba(16,185,129,0.9)), url(https://images.unsplash.com/photo-1542838132-92c53300491e?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Свежие продукты с доставкой за 60 минут', subtitle: 'Фермерские овощи, фрукты, молочные продукты. Минимальный заказ 1 000₽.', buttonText: 'ЗАКАЗАТЬ ДОСТАВКУ', buttonColor: '#10b981' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title: 'Наши преимущества', columns: 3, items: [{ icon: 'fas fa-leaf', title: 'Фермерское', description: 'Продукты напрямую от фермеров' }, { icon: 'fas fa-clock', title: '60 минут', description: 'Доставка в течение часа' }, { icon: 'fas fa-snowflake', title: 'Свежесть', description: 'Холодильный транспорт' }] } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f0fdf4' }, children: [
+                { type: 'leadForm', componentSettings: { title: 'Оставьте заявку на доставку', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'text', name: 'address', label: 'Адрес доставки', required: true }], buttonText: 'ЗАКАЗАТЬ', buttonColor: '#10b981' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+
+    // === ECOMMERCE: FLOWER SHOP ===
+    {
+        id: 'flower-shop', name: 'Цветочный магазин', category: 'shop', thumbnail: '💐',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'Bloom', links: 'Букеты|Доставка|Корпоративам|Контакты' } },
+            { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(236,72,153,0.7), rgba(236,72,153,0.85)), url(https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Букеты с доставкой от 1 часа', subtitle: 'Свежие цветы каждый день. Бесплатная открытка к каждому заказу.', buttonText: 'ВЫБРАТЬ БУКЕТ', buttonColor: '#ec4899' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title: 'Почему Bloom?', columns: 3, items: [{ icon: 'fas fa-seedling', title: 'Свежие цветы', description: 'Поставка напрямую с плантаций' }, { icon: 'fas fa-truck', title: 'Доставка за час', description: 'Курьер привезёт в удобное время' }, { icon: 'fas fa-camera', title: 'Фото до вручения', description: 'Присылаем фото готового букета' }] } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fdf2f8' }, children: [
+                { type: 'leadForm', componentSettings: { title: 'Заказать букет', fields: [{ type: 'text', name: 'name', label: 'Ваше имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'select', name: 'occasion', label: 'Повод', options: ['День рождения', 'Романтика', 'Свадьба', 'Корпоративный', 'Без повода'] }], buttonText: 'ЗАКАЗАТЬ', buttonColor: '#ec4899' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+
+    // === REALESTATE: PROPERTY LISTING ===
+    {
+        id: 'property-listing', name: 'Каталог недвижимости', category: 'realestate', thumbnail: '🏘️',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'HomeFinder', links: 'Купить|Снять|Новостройки|Контакты' } },
+            { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(5,150,105,0.8), rgba(5,150,105,0.9)), url(https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Найдите идеальный дом', subtitle: 'Более 10 000 объектов в базе. Подберём за 1 день.', buttonText: 'ПОДОБРАТЬ ОБЪЕКТ', buttonColor: '#059669' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'counter', componentSettings: { num1: '10K+', label1: 'Объектов', num2: '2K+', label2: 'Клиентов', num3: '98%', label3: 'Довольны' } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#f0fdf4' }, children: [
+                { type: 'leadForm', componentSettings: { title: 'Получите подборку объектов', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'select', name: 'type', label: 'Тип', options: ['Квартира', 'Дом', 'Коммерция', 'Земельный участок'] }], buttonText: 'ПОЛУЧИТЬ ПОДБОРКУ', buttonColor: '#059669' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+
+    // === REALESTATE: RENTAL ===
+    {
+        id: 'rental-agency', name: 'Агентство аренды', category: 'realestate', thumbnail: '🔑',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'RentPro', links: 'Квартиры|Офисы|Условия|Контакты' } },
+            { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(99,102,241,0.8), rgba(99,102,241,0.9)), url(https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Аренда квартир и офисов без комиссии', subtitle: 'Проверенные собственники. Юридическое сопровождение.', buttonText: 'НАЙТИ ОБЪЕКТ', buttonColor: '#6366f1' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title: 'Наши преимущества', columns: 3, items: [{ icon: 'fas fa-percent', title: 'Без комиссии', description: 'Не берём комиссию с арендаторов' }, { icon: 'fas fa-shield-alt', title: 'Проверка', description: 'Все документы проверены юристом' }, { icon: 'fas fa-handshake', title: 'Сопровождение', description: 'Помогаем на каждом этапе' }] } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#eef2ff' }, children: [
+                { type: 'leadForm', componentSettings: { title: 'Оставьте заявку на подбор', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'select', name: 'type', label: 'Что ищете', options: ['Квартира', 'Комната', 'Офис', 'Склад'] }], buttonText: 'ПОДОБРАТЬ', buttonColor: '#6366f1' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+
+    // === RESTAURANT: DELIVERY SERVICE ===
+    {
+        id: 'delivery-service', name: 'Служба доставки', category: 'restaurant', thumbnail: '🚴',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'FastFood', links: 'Меню|Доставка|Акции|Контакты' } },
+            { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(239,68,68,0.8), rgba(239,68,68,0.9)), url(https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Доставка вкусной еды за 30 минут', subtitle: 'Пицца, суши, бургеры — всё что хотите! Бесплатная доставка от 1 000₽.', buttonText: 'ЗАКАЗАТЬ ДОСТАВКУ', buttonColor: '#ef4444' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title: 'Почему выбирают нас', columns: 3, items: [{ icon: 'fas fa-stopwatch', title: '30 минут', description: 'Средное время доставки' }, { icon: 'fas fa-utensils', title: '200+ блюд', description: 'Огромное разнообразие меню' }, { icon: 'fas fa-tags', title: 'Акции', description: 'Скидки и комбо-предложения' }] } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fef2f2' }, children: [
+                { type: 'leadForm', componentSettings: { title: 'Заказать доставку', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'text', name: 'address', label: 'Адрес', required: true }], buttonText: 'ЗАКАЗАТЬ', buttonColor: '#ef4444' } }
+            ]},
+            { type: 'footer' }
+        ]
+    },
+
+    // === RESTAURANT: CATERING ===
+    {
+        id: 'catering', name: 'Кейтеринг', category: 'restaurant', thumbnail: '🍴',
+        elements: [
+            { type: 'navbar', componentSettings: { logo: 'Catering Pro', links: 'Меню|Форматы|Портфолио|Заявка' } },
+            { type: 'hero', styles: { backgroundImage: 'linear-gradient(rgba(120,53,15,0.8), rgba(120,53,15,0.9)), url(https://images.unsplash.com/photo-1555244162-803834f70033?w=1600)', backgroundSize: 'cover', backgroundPosition: 'center' }, componentSettings: { title: 'Кейтеринг для вашего мероприятия', subtitle: 'Банкеты, фуршеты, кофе-брейки. Обслуживание от 10 до 1000 гостей.', buttonText: 'ПОЛУЧИТЬ РАСЧЁТ', buttonColor: '#92400e' } },
+            { type: 'section', styles: { padding: '80px 20px' }, children: [
+                { type: 'features', componentSettings: { title: 'Форматы обслуживания', columns: 3, items: [{ icon: 'fas fa-glass-cheers', title: 'Фуршет', description: 'Изысканные закуски и напитки' }, { icon: 'fas fa-utensils', title: 'Банкет', description: 'Полноценное обслуживание столов' }, { icon: 'fas fa-coffee', title: 'Кофе-брейк', description: 'Для деловых мероприятий' }] } }
+            ]},
+            { type: 'section', styles: { padding: '80px 20px', backgroundColor: '#fffbeb' }, children: [
+                { type: 'leadForm', componentSettings: { title: 'Получите расчёт стоимости', fields: [{ type: 'text', name: 'name', label: 'Имя', required: true }, { type: 'tel', name: 'phone', label: 'Телефон', required: true }, { type: 'select', name: 'format', label: 'Формат', options: ['Фуршет', 'Банкет', 'Кофе-брейк', 'Барбекю'] }, { type: 'select', name: 'guests', label: 'Кол-во гостей', options: ['10-30', '30-50', '50-100', '100-300', '300+'] }], buttonText: 'ПОЛУЧИТЬ РАСЧЁТ', buttonColor: '#92400e' } }
+            ]},
+            { type: 'footer' }
+        ]
     }
 ];
 
@@ -7352,7 +7624,7 @@ document.getElementById('aiGenerateSubmit').addEventListener('click', async () =
 
     // Determine API base URL
     const apiBase = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-        ? `${location.protocol}//${location.hostname}:3000/api`
+        ? `${location.protocol}//${location.hostname}:3001/api`
         : 'https://cms-backend-34f8.onrender.com/api';
 
     // Safe JSON parse from fetch response

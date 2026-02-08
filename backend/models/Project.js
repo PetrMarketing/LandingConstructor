@@ -43,8 +43,8 @@ class Project {
         const id = uuidv4();
 
         const stmt = getDb().prepare(`
-            INSERT INTO projects (id, name, description, domain, owner_id, settings)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO projects (id, name, description, domain, owner_id, settings, niche, business_description, target_audience, key_products, enabled_modules, ai_generated)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
 
         stmt.run(
@@ -53,7 +53,13 @@ class Project {
             data.description || null,
             data.domain || null,
             data.owner_id,
-            JSON.stringify(data.settings || {})
+            JSON.stringify(data.settings || {}),
+            data.niche || null,
+            data.business_description || null,
+            data.target_audience || null,
+            data.key_products || null,
+            JSON.stringify(data.enabled_modules || []),
+            data.ai_generated ? 1 : 0
         );
 
         return this.findById(id);
@@ -86,6 +92,31 @@ class Project {
         if (data.is_active !== undefined) {
             fields.push('is_active = ?');
             values.push(data.is_active ? 1 : 0);
+        }
+
+        if (data.niche !== undefined) {
+            fields.push('niche = ?');
+            values.push(data.niche);
+        }
+
+        if (data.business_description !== undefined) {
+            fields.push('business_description = ?');
+            values.push(data.business_description);
+        }
+
+        if (data.target_audience !== undefined) {
+            fields.push('target_audience = ?');
+            values.push(data.target_audience);
+        }
+
+        if (data.key_products !== undefined) {
+            fields.push('key_products = ?');
+            values.push(data.key_products);
+        }
+
+        if (data.enabled_modules !== undefined) {
+            fields.push('enabled_modules = ?');
+            values.push(JSON.stringify(data.enabled_modules));
         }
 
         if (fields.length === 0) return this.findById(id);

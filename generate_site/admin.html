@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CMS - Панель управления</title>
+    <title>PK Business - Панель управления</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -251,7 +251,7 @@
             <div class="sidebar-header">
                 <a href="../index.html" class="sidebar-logo">
                     <i class="fas fa-cubes"></i>
-                    <span>AI CMS</span>
+                    <span>PK Business</span>
                 </a>
             </div>
 
@@ -547,27 +547,140 @@
         </div>
     </div>
 
-    <!-- Create Project Modal -->
+    <!-- Create Project Modal — 3-Step Wizard -->
     <div class="modal-overlay" id="createProjectModal">
-        <div class="modal">
+        <div class="modal xlarge" style="max-width:700px;">
             <div class="modal-header">
-                <h2><i class="fas fa-folder"></i> Новый проект</h2>
+                <h2><i class="fas fa-magic"></i> <span id="wizardTitle">Новый проект</span></h2>
                 <button class="modal-close" onclick="closeModal('createProjectModal')">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="form-group"><label>Название</label><input type="text" id="newProjectName" placeholder="Мой проект"></div>
+            <div class="modal-body" style="min-height:400px;">
+                <!-- Step Indicator -->
+                <div style="display:flex;gap:8px;margin-bottom:24px;" id="wizardSteps">
+                    <div class="wizard-step active" data-step="1"><span class="wizard-step-num">1</span> Бизнес</div>
+                    <div class="wizard-step" data-step="2"><span class="wizard-step-num">2</span> Анализ</div>
+                    <div class="wizard-step" data-step="3"><span class="wizard-step-num">3</span> Настройка</div>
+                </div>
+
+                <!-- Step 1: Business Info -->
+                <div id="wizardStep1">
+                    <div class="form-group">
+                        <label>Название проекта *</label>
+                        <input type="text" id="newProjectName" placeholder="Мой бизнес">
+                    </div>
+                    <div class="form-group">
+                        <label>Ниша *</label>
+                        <select id="projectNiche">
+                            <option value="">— Выберите нишу —</option>
+                            <optgroup label="Красота и здоровье">
+                                <option value="beauty">Салон красоты / Косметология</option>
+                                <option value="medical">Медицинская клиника</option>
+                                <option value="fitness">Фитнес / Спорт</option>
+                            </optgroup>
+                            <optgroup label="Образование">
+                                <option value="education">Онлайн-школа / Курсы</option>
+                            </optgroup>
+                            <optgroup label="Торговля">
+                                <option value="ecommerce">Интернет-магазин</option>
+                            </optgroup>
+                            <optgroup label="Услуги">
+                                <option value="services">Сервисная компания</option>
+                                <option value="realestate">Недвижимость</option>
+                            </optgroup>
+                            <optgroup label="Общепит">
+                                <option value="restaurant">Ресторан / Кафе / Доставка</option>
+                            </optgroup>
+                            <optgroup label="Другое">
+                                <option value="other">Другая ниша</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Описание бизнеса *</label>
+                        <textarea id="projectDescription" rows="3" placeholder="Чем занимается ваш бизнес?" style="width:100%;padding:12px 16px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit;resize:vertical;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Целевая аудитория</label>
+                        <input type="text" id="projectAudience" placeholder="Кто ваши клиенты?">
+                    </div>
+                    <div class="form-group">
+                        <label>Основные продукты / услуги</label>
+                        <input type="text" id="projectProducts" placeholder="Перечислите через запятую">
+                    </div>
+                </div>
+
+                <!-- Step 2: AI Analysis -->
+                <div id="wizardStep2" style="display:none;">
+                    <div id="aiLoading" style="text-align:center;padding:60px 20px;">
+                        <div style="width:50px;height:50px;border:3px solid var(--border-color);border-top-color:var(--primary);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 20px;"></div>
+                        <h3>ИИ анализирует ваш бизнес...</h3>
+                        <p style="color:var(--text-secondary);margin-top:8px;">Подбираем модули, страницы и воронку продаж</p>
+                    </div>
+                    <div id="aiResults" style="display:none;">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                            <h3 style="display:flex;align-items:center;gap:8px;"><i class="fas fa-robot" style="color:var(--primary);"></i> Рекомендации</h3>
+                            <button class="btn btn-secondary" onclick="runAIAnalysis()" style="padding:6px 12px;font-size:12px;"><i class="fas fa-redo"></i> Повторить</button>
+                        </div>
+
+                        <div style="margin-bottom:20px;">
+                            <label style="font-weight:600;font-size:13px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Модули CRM</label>
+                            <div id="aiModulesPreview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+                        </div>
+
+                        <div style="margin-bottom:20px;">
+                            <label style="font-weight:600;font-size:13px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Страницы сайта</label>
+                            <div id="aiPagesPreview" style="margin-top:8px;"></div>
+                        </div>
+
+                        <div style="margin-bottom:20px;">
+                            <label style="font-weight:600;font-size:13px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Воронка продаж</label>
+                            <div id="aiFunnelPreview" style="display:flex;gap:4px;margin-top:8px;flex-wrap:wrap;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Customize -->
+                <div id="wizardStep3" style="display:none;">
+                    <h3 style="margin-bottom:16px;">Модули CRM</h3>
+                    <div id="modulesGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px;"></div>
+
+                    <h3 style="margin-bottom:16px;">Страницы сайта</h3>
+                    <div id="pagesChecklist" style="margin-bottom:24px;"></div>
+
+                    <h3 style="margin-bottom:16px;">Воронка продаж</h3>
+                    <div id="funnelStagesList" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+                </div>
             </div>
             <div class="modal-footer">
+                <button class="btn btn-secondary" id="wizardBackBtn" onclick="previousStep()" style="display:none;"><i class="fas fa-arrow-left"></i> Назад</button>
+                <div style="flex:1;"></div>
                 <button class="btn btn-secondary" onclick="closeModal('createProjectModal')">Отмена</button>
-                <button class="btn btn-primary" onclick="saveNewProject()"><i class="fas fa-check"></i> Создать</button>
+                <button class="btn btn-primary" id="wizardNextBtn" onclick="nextStep()"><i class="fas fa-arrow-right"></i> Далее</button>
             </div>
         </div>
     </div>
 
+    <style>
+        .wizard-step { flex:1; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); border-radius:8px; color:var(--text-muted); font-size:13px; display:flex; align-items:center; gap:8px; }
+        .wizard-step.active { background:rgba(59,130,246,0.15); border-color:var(--primary); color:var(--primary); }
+        .wizard-step.done { background:rgba(16,185,129,0.1); border-color:var(--success); color:var(--success); }
+        .wizard-step-num { width:24px; height:24px; border-radius:50%; background:var(--bg-input); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; }
+        .wizard-step.active .wizard-step-num { background:var(--primary); color:white; }
+        .wizard-step.done .wizard-step-num { background:var(--success); color:white; }
+        .module-chip { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.3); border-radius:20px; font-size:13px; color:var(--primary); }
+        .module-checkbox { display:flex; align-items:center; gap:10px; padding:12px; background:var(--bg-input); border:1px solid var(--border-color); border-radius:8px; cursor:pointer; }
+        .module-checkbox.checked { background:rgba(59,130,246,0.1); border-color:var(--primary); }
+        .module-checkbox input[type=checkbox] { width:18px; height:18px; accent-color:var(--primary); }
+        .page-check-item { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); border-radius:8px; margin-bottom:8px; }
+        .page-check-item input[type=checkbox] { width:18px; height:18px; accent-color:var(--primary); }
+        .funnel-stage-tag { padding:8px 14px; background:var(--bg-input); border:1px solid var(--border-color); border-radius:20px; font-size:13px; color:var(--text-primary); display:flex; align-items:center; gap:6px; }
+        .funnel-stage-tag .stage-num { width:22px; height:22px; border-radius:50%; background:var(--primary); color:white; font-size:11px; display:flex; align-items:center; justify-content:center; font-weight:600; }
+    </style>
+
     <script>
         // ==================== API Client ====================
         const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-            ? `${location.protocol}//${location.hostname}:3000/api`
+            ? `${location.protocol}//${location.hostname}:3001/api`
             : '/api';
 
         const api = {
@@ -686,7 +799,25 @@
             { id: 'events-wedding', name: 'Свадьба', category: 'events', thumbnail: '💒' },
             { id: 'events-party', name: 'Праздник', category: 'events', thumbnail: '🎉' },
             { id: 'portfolio', name: 'Портфолио', category: 'personal', thumbnail: '🎨' },
-            { id: 'business-card', name: 'Визитка', category: 'personal', thumbnail: '💼' }
+            { id: 'business-card', name: 'Визитка', category: 'personal', thumbnail: '💼' },
+            // New templates
+            { id: 'spa-center', name: 'Спа-центр', category: 'services', thumbnail: '🧖' },
+            { id: 'nail-salon', name: 'Ногтевая студия', category: 'services', thumbnail: '💅' },
+            { id: 'barbershop', name: 'Барбершоп', category: 'services', thumbnail: '💈' },
+            { id: 'language-school', name: 'Языковая школа', category: 'education', thumbnail: '🌍' },
+            { id: 'kids-education', name: 'Детский центр', category: 'education', thumbnail: '👶' },
+            { id: 'masterclass', name: 'Мастер-класс', category: 'education', thumbnail: '🎓' },
+            { id: 'dental-clinic', name: 'Стоматология', category: 'services', thumbnail: '🦷' },
+            { id: 'law-firm', name: 'Юридическая фирма', category: 'services', thumbnail: '⚖️' },
+            { id: 'accounting-firm', name: 'Бухгалтерия', category: 'services', thumbnail: '📊' },
+            { id: 'cleaning-company', name: 'Клининговая компания', category: 'services', thumbnail: '🧹' },
+            { id: 'electronics-store', name: 'Магазин электроники', category: 'shop', thumbnail: '📱' },
+            { id: 'grocery-delivery', name: 'Доставка продуктов', category: 'shop', thumbnail: '🛒' },
+            { id: 'flower-shop', name: 'Цветочный магазин', category: 'shop', thumbnail: '💐' },
+            { id: 'property-listing', name: 'Каталог недвижимости', category: 'realestate', thumbnail: '🏘️' },
+            { id: 'rental-agency', name: 'Аренда', category: 'realestate', thumbnail: '🔑' },
+            { id: 'delivery-service', name: 'Служба доставки', category: 'restaurant', thumbnail: '🚴' },
+            { id: 'catering', name: 'Кейтеринг', category: 'restaurant', thumbnail: '🍴' }
         ];
 
         // ==================== State ====================
@@ -888,7 +1019,7 @@
                 <div class="project-menu-item ${currentProject && p.id === currentProject.id ? 'active' : ''}" onclick="switchProject('${p.id}')">
                     <i class="fas fa-folder"></i><span>${escapeHtml(p.name)}</span>
                 </div>
-            `).join('') + '<div class="project-menu-divider"></div><div class="project-menu-item create" onclick="openModal(\'createProjectModal\')"><i class="fas fa-plus"></i><span>Создать проект</span></div>';
+            `).join('') + '<div class="project-menu-divider"></div><div class="project-menu-item create" onclick="openCreateProjectWizard()"><i class="fas fa-plus"></i><span>Создать проект</span></div>';
         }
 
         async function switchProject(id) {
@@ -912,11 +1043,209 @@
             renderAll();
         }
 
-        async function saveNewProject() {
-            const name = document.getElementById('newProjectName').value || 'Новый проект';
+        // ==================== Wizard State ====================
+        let wizardCurrentStep = 1;
+        let aiRecommendations = null;
+
+        const MODULE_LABELS = {
+            sales: { name: 'Продажи', icon: 'fas fa-handshake', desc: 'Воронки, сделки, аналитика' },
+            clients: { name: 'Клиенты', icon: 'fas fa-users', desc: 'База клиентов, сегменты, теги' },
+            team: { name: 'Команда', icon: 'fas fa-user-tie', desc: 'Сотрудники, задачи' },
+            orders: { name: 'Заказы', icon: 'fas fa-shopping-cart', desc: 'Заказы и платежи' },
+            catalog: { name: 'Каталог', icon: 'fas fa-box', desc: 'Товары, категории, промо' },
+            bookings: { name: 'Записи', icon: 'fas fa-calendar-check', desc: 'Онлайн-запись, расписание' },
+            learning: { name: 'Обучение', icon: 'fas fa-graduation-cap', desc: 'Курсы, уроки, вебинары' },
+            integrations: { name: 'Интеграции', icon: 'fas fa-plug', desc: 'Внешние сервисы' }
+        };
+
+        const NICHE_DEFAULTS_CLIENT = {
+            beauty: { modules: ['sales','clients','team','bookings','catalog'], pages: [{name:'Главная',template:'services-beauty'},{name:'Услуги',template:'blank'},{name:'Запись',template:'blank'}], funnelStages: ['Новая заявка','Консультация','Записан','Выполнено','Повторный визит'] },
+            education: { modules: ['sales','clients','team','learning','catalog'], pages: [{name:'Главная',template:'education-course'},{name:'Курсы',template:'blank'},{name:'Регистрация',template:'blank'}], funnelStages: ['Лид','Пробный урок','Оплата','Обучение','Выпуск'] },
+            ecommerce: { modules: ['sales','clients','orders','catalog','integrations'], pages: [{name:'Главная',template:'shop-fashion'},{name:'Каталог',template:'blank'},{name:'Акции',template:'blank'}], funnelStages: ['Новый заказ','Подтверждён','Оплачен','Отправлен','Доставлен'] },
+            fitness: { modules: ['sales','clients','team','bookings','catalog'], pages: [{name:'Главная',template:'fitness-gym'},{name:'Расписание',template:'blank'},{name:'Абонементы',template:'blank'}], funnelStages: ['Заявка','Пробное занятие','Выбор абонемента','Оплата','Клиент'] },
+            services: { modules: ['sales','clients','team','bookings','orders'], pages: [{name:'Главная',template:'services-cleaning'},{name:'Услуги',template:'blank'},{name:'Контакты',template:'blank'}], funnelStages: ['Обращение','Оценка','Коммерческое предложение','Согласование','Выполнение'] },
+            realestate: { modules: ['sales','clients','team','catalog','integrations'], pages: [{name:'Главная',template:'realestate-agency'},{name:'Объекты',template:'blank'},{name:'Ипотека',template:'blank'}], funnelStages: ['Заявка','Показ','Переговоры','Бронирование','Сделка'] },
+            restaurant: { modules: ['sales','clients','orders','bookings','team'], pages: [{name:'Главная',template:'restaurant-main'},{name:'Меню',template:'blank'},{name:'Бронирование',template:'blank'}], funnelStages: ['Бронь','Подтверждено','Гость пришёл','Обслужен','Отзыв'] },
+            medical: { modules: ['sales','clients','team','bookings','catalog'], pages: [{name:'Главная',template:'blank'},{name:'Услуги',template:'blank'},{name:'Врачи',template:'blank'}], funnelStages: ['Обращение','Запись','Приём','Лечение','Контроль'] },
+            default: { modules: ['sales','clients','team','orders','catalog'], pages: [{name:'Главная',template:'landing-basic'},{name:'О нас',template:'blank'},{name:'Контакты',template:'blank'}], funnelStages: ['Новый лид','Квалификация','Предложение','Переговоры','Закрыто'] }
+        };
+
+        function openCreateProjectWizard() {
+            wizardCurrentStep = 1;
+            aiRecommendations = null;
+            document.getElementById('newProjectName').value = '';
+            document.getElementById('projectNiche').value = '';
+            document.getElementById('projectDescription').value = '';
+            document.getElementById('projectAudience').value = '';
+            document.getElementById('projectProducts').value = '';
+            updateWizardUI();
+            openModal('createProjectModal');
+        }
+
+        function updateWizardUI() {
+            // Steps indicator
+            document.querySelectorAll('.wizard-step').forEach(s => {
+                const step = parseInt(s.dataset.step);
+                s.classList.remove('active', 'done');
+                if (step === wizardCurrentStep) s.classList.add('active');
+                if (step < wizardCurrentStep) s.classList.add('done');
+            });
+
+            // Panels
+            document.getElementById('wizardStep1').style.display = wizardCurrentStep === 1 ? '' : 'none';
+            document.getElementById('wizardStep2').style.display = wizardCurrentStep === 2 ? '' : 'none';
+            document.getElementById('wizardStep3').style.display = wizardCurrentStep === 3 ? '' : 'none';
+
+            // Buttons
+            document.getElementById('wizardBackBtn').style.display = wizardCurrentStep > 1 ? '' : 'none';
+            const nextBtn = document.getElementById('wizardNextBtn');
+            if (wizardCurrentStep === 3) {
+                nextBtn.innerHTML = '<i class="fas fa-check"></i> Создать проект';
+            } else {
+                nextBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Далее';
+            }
+
+            // Titles
+            const titles = { 1: 'Новый проект — Информация', 2: 'Новый проект — Анализ', 3: 'Новый проект — Настройка' };
+            document.getElementById('wizardTitle').textContent = titles[wizardCurrentStep] || 'Новый проект';
+        }
+
+        function nextStep() {
+            if (wizardCurrentStep === 1) {
+                const name = document.getElementById('newProjectName').value.trim();
+                const niche = document.getElementById('projectNiche').value;
+                const desc = document.getElementById('projectDescription').value.trim();
+                if (!name) { document.getElementById('newProjectName').focus(); return; }
+                if (!niche) { document.getElementById('projectNiche').focus(); return; }
+                if (!desc) { document.getElementById('projectDescription').focus(); return; }
+
+                wizardCurrentStep = 2;
+                updateWizardUI();
+                runAIAnalysis();
+            } else if (wizardCurrentStep === 2) {
+                if (!aiRecommendations) return;
+                wizardCurrentStep = 3;
+                updateWizardUI();
+                populateCustomizeStep();
+            } else if (wizardCurrentStep === 3) {
+                finalizeProject();
+            }
+        }
+
+        function previousStep() {
+            if (wizardCurrentStep > 1) {
+                wizardCurrentStep--;
+                updateWizardUI();
+            }
+        }
+
+        async function runAIAnalysis() {
+            document.getElementById('aiLoading').style.display = '';
+            document.getElementById('aiResults').style.display = 'none';
+
+            const name = document.getElementById('newProjectName').value.trim();
+            const niche = document.getElementById('projectNiche').value;
+            const description = document.getElementById('projectDescription').value.trim();
+            const audience = document.getElementById('projectAudience').value.trim();
+            const products = document.getElementById('projectProducts').value.trim();
+
+            try {
+                if (api.isOnline) {
+                    const res = await api.post('/ai/analyze-business', { name, niche, description, audience, products });
+                    if (res.success && res.data) {
+                        aiRecommendations = res.data;
+                        displayAIRecommendations();
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.warn('AI analysis failed:', e);
+            }
+
+            // Fallback to client-side defaults
+            aiRecommendations = { ...(NICHE_DEFAULTS_CLIENT[niche] || NICHE_DEFAULTS_CLIENT.default) };
+            aiRecommendations.aiGenerated = false;
+            displayAIRecommendations();
+        }
+
+        function displayAIRecommendations() {
+            document.getElementById('aiLoading').style.display = 'none';
+            document.getElementById('aiResults').style.display = '';
+
+            // Modules preview
+            const modulesHtml = (aiRecommendations.modules || []).map(m => {
+                const info = MODULE_LABELS[m] || { name: m, icon: 'fas fa-puzzle-piece' };
+                return `<div class="module-chip"><i class="${info.icon}"></i> ${info.name}</div>`;
+            }).join('');
+            document.getElementById('aiModulesPreview').innerHTML = modulesHtml;
+
+            // Pages preview
+            const pagesHtml = (aiRecommendations.pages || []).map(p =>
+                `<div style="padding:8px 12px;background:var(--bg-input);border-radius:6px;margin-bottom:6px;display:flex;align-items:center;gap:8px;"><i class="fas fa-file-alt" style="color:var(--primary);"></i> <strong>${escapeHtml(p.name)}</strong> <span style="color:var(--text-muted);font-size:12px;">— ${escapeHtml(p.description || p.template || '')}</span></div>`
+            ).join('');
+            document.getElementById('aiPagesPreview').innerHTML = pagesHtml;
+
+            // Funnel stages preview
+            const funnelHtml = (aiRecommendations.funnelStages || []).map((s, i) =>
+                `<div class="funnel-stage-tag"><span class="stage-num">${i + 1}</span> ${escapeHtml(s)}</div>`
+            ).join('<i class="fas fa-arrow-right" style="color:var(--text-muted);font-size:10px;"></i>');
+            document.getElementById('aiFunnelPreview').innerHTML = funnelHtml;
+        }
+
+        function populateCustomizeStep() {
+            // Modules checkboxes
+            const allModules = Object.keys(MODULE_LABELS);
+            const recommended = aiRecommendations.modules || [];
+            const modulesHtml = allModules.map(m => {
+                const info = MODULE_LABELS[m];
+                const checked = recommended.includes(m) ? 'checked' : '';
+                return `<label class="module-checkbox ${checked ? 'checked' : ''}" onclick="this.classList.toggle('checked')">
+                    <input type="checkbox" name="module" value="${m}" ${checked}>
+                    <div><div style="font-weight:600;"><i class="${info.icon}" style="margin-right:6px;color:var(--primary);"></i>${info.name}</div><div style="font-size:12px;color:var(--text-muted);">${info.desc}</div></div>
+                </label>`;
+            }).join('');
+            document.getElementById('modulesGrid').innerHTML = modulesHtml;
+
+            // Pages checklist
+            const pagesHtml = (aiRecommendations.pages || []).map((p, i) =>
+                `<div class="page-check-item">
+                    <input type="checkbox" name="page" value="${i}" checked>
+                    <div><strong>${escapeHtml(p.name)}</strong> <span style="font-size:12px;color:var(--text-muted);">— ${escapeHtml(p.description || p.template || '')}</span></div>
+                </div>`
+            ).join('');
+            document.getElementById('pagesChecklist').innerHTML = pagesHtml;
+
+            // Funnel stages
+            const funnelHtml = (aiRecommendations.funnelStages || []).map((s, i) =>
+                `<div class="funnel-stage-tag"><span class="stage-num">${i + 1}</span> ${escapeHtml(s)}</div>`
+            ).join('');
+            document.getElementById('funnelStagesList').innerHTML = funnelHtml;
+        }
+
+        async function finalizeProject() {
+            const name = document.getElementById('newProjectName').value.trim() || 'Новый проект';
+            const niche = document.getElementById('projectNiche').value;
+            const description = document.getElementById('projectDescription').value.trim();
+            const audience = document.getElementById('projectAudience').value.trim();
+            const products = document.getElementById('projectProducts').value.trim();
+
+            // Gather selected modules
+            const enabledModules = Array.from(document.querySelectorAll('#modulesGrid input[name="module"]:checked')).map(c => c.value);
+
+            // Gather selected pages
+            const selectedPageIndices = Array.from(document.querySelectorAll('#pagesChecklist input[name="page"]:checked')).map(c => parseInt(c.value));
+            const selectedPages = (aiRecommendations.pages || []).filter((_, i) => selectedPageIndices.includes(i));
+
+            const funnelStages = aiRecommendations.funnelStages || [];
 
             if (api.isOnline) {
-                const res = await api.post('/projects', { name });
+                const res = await api.post('/projects/create-with-ai', {
+                    name, niche, description, audience, products,
+                    enabledModules,
+                    pages: selectedPages,
+                    funnelStages
+                });
+
                 if (res.success) {
                     projects.push(res.data);
                     closeModal('createProjectModal');
@@ -926,11 +1255,20 @@
             }
 
             // Fallback to localStorage
-            const proj = { id: generateId(), name, created: new Date().toISOString() };
+            const proj = {
+                id: generateId(), name, niche,
+                enabled_modules: JSON.stringify(enabledModules),
+                created: new Date().toISOString()
+            };
             projects.push(proj);
             saveDataLocal();
             closeModal('createProjectModal');
             switchProject(proj.id);
+        }
+
+        // Legacy function for backward compatibility
+        async function saveNewProject() {
+            openCreateProjectWizard();
         }
 
         // ==================== Tabs ====================

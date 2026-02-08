@@ -18,6 +18,12 @@ router.post('/', requirePermission('projects.create'), [
     body('name').notEmpty().withMessage('Введите название проекта')
 ], projectsController.create);
 
+// Create project with AI recommendations
+router.post('/create-with-ai', requirePermission('projects.create'), [
+    body('name').notEmpty().withMessage('Введите название проекта'),
+    body('niche').notEmpty().withMessage('Укажите нишу')
+], projectsController.createWithAI);
+
 // Update project
 router.put('/:id', [
     body('name').optional().notEmpty().withMessage('Название не может быть пустым')

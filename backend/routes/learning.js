@@ -602,6 +602,47 @@ router.put('/:projectId/webinars/:webinarId/status', (req, res) => {
 // CERTIFICATES / СЕРТИФИКАТЫ
 // ============================================================
 
+// Get all certificates for project
+router.get('/:projectId/certificates', (req, res) => {
+    try {
+        const db = getDb();
+        const { course_id, client_id, limit = 100, offset = 0 } = req.query;
+
+        let query = `
+            SELECT cert.*,
+                c.name as course_name,
+                cl.first_name as client_first_name,
+                cl.last_name as client_last_name,
+                (cl.first_name || ' ' || COALESCE(cl.last_name, '')) as client_name,
+                (cl.first_name || ' ' || COALESCE(cl.last_name, '')) as student_name
+            FROM certificates cert
+            LEFT JOIN courses c ON c.id = cert.course_id
+            LEFT JOIN clients cl ON cl.id = cert.client_id
+            WHERE c.project_id = ?
+        `;
+        const params = [req.params.projectId];
+
+        if (course_id) {
+            query += ` AND cert.course_id = ?`;
+            params.push(course_id);
+        }
+        if (client_id) {
+            query += ` AND cert.client_id = ?`;
+            params.push(client_id);
+        }
+
+        query += ` ORDER BY cert.issued_at DESC LIMIT ? OFFSET ?`;
+        params.push(Number(limit), Number(offset));
+
+        const certificates = db.prepare(query).all(...params);
+
+        res.json({ success: true, certificates });
+    } catch (error) {
+        console.error('Get certificates error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 // Get certificate templates
 router.get('/:projectId/certificates/templates', (req, res) => {
     try {

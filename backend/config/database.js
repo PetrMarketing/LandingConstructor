@@ -1427,6 +1427,26 @@ function createCMSTables(db) {
         )
     `);
 
+    // Project niche/modules columns (PK Business)
+    try {
+        db.exec(`ALTER TABLE projects ADD COLUMN niche TEXT`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE projects ADD COLUMN business_description TEXT`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE projects ADD COLUMN target_audience TEXT`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE projects ADD COLUMN key_products TEXT`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE projects ADD COLUMN enabled_modules TEXT DEFAULT '[]'`);
+    } catch (e) { /* column exists */ }
+    try {
+        db.exec(`ALTER TABLE projects ADD COLUMN ai_generated INTEGER DEFAULT 0`);
+    } catch (e) { /* column exists */ }
+
     // Расширение таблицы products (миграция)
     try {
         db.exec(`ALTER TABLE products ADD COLUMN brand_id TEXT`);

@@ -216,6 +216,219 @@ exports.editBlock = async (req, res) => {
     }
 };
 
+// ============================================================
+// NICHE DEFAULTS — fallback when AI is not available
+// ============================================================
+const NICHE_DEFAULTS = {
+    beauty: {
+        modules: ['sales', 'clients', 'team', 'bookings', 'catalog'],
+        pages: [
+            { name: 'Главная', template: 'services-beauty', description: 'Лендинг салона красоты' },
+            { name: 'Услуги', template: 'blank', description: 'Каталог услуг' },
+            { name: 'Запись', template: 'blank', description: 'Онлайн-запись' }
+        ],
+        funnelStages: ['Новая заявка', 'Консультация', 'Записан', 'Выполнено', 'Повторный визит']
+    },
+    education: {
+        modules: ['sales', 'clients', 'team', 'learning', 'catalog'],
+        pages: [
+            { name: 'Главная', template: 'education-course', description: 'Лендинг курса' },
+            { name: 'Курсы', template: 'blank', description: 'Каталог курсов' },
+            { name: 'Регистрация', template: 'blank', description: 'Запись на обучение' }
+        ],
+        funnelStages: ['Лид', 'Пробный урок', 'Оплата', 'Обучение', 'Выпуск']
+    },
+    ecommerce: {
+        modules: ['sales', 'clients', 'orders', 'catalog', 'integrations'],
+        pages: [
+            { name: 'Главная', template: 'shop-fashion', description: 'Главная магазина' },
+            { name: 'Каталог', template: 'blank', description: 'Каталог товаров' },
+            { name: 'Акции', template: 'blank', description: 'Промо-страница' }
+        ],
+        funnelStages: ['Новый заказ', 'Подтверждён', 'Оплачен', 'Отправлен', 'Доставлен']
+    },
+    fitness: {
+        modules: ['sales', 'clients', 'team', 'bookings', 'catalog'],
+        pages: [
+            { name: 'Главная', template: 'fitness-gym', description: 'Лендинг фитнес-клуба' },
+            { name: 'Расписание', template: 'blank', description: 'Расписание занятий' },
+            { name: 'Абонементы', template: 'blank', description: 'Тарифы и абонементы' }
+        ],
+        funnelStages: ['Заявка', 'Пробное занятие', 'Выбор абонемента', 'Оплата', 'Клиент']
+    },
+    services: {
+        modules: ['sales', 'clients', 'team', 'bookings', 'orders'],
+        pages: [
+            { name: 'Главная', template: 'services-cleaning', description: 'Лендинг услуг' },
+            { name: 'Услуги', template: 'blank', description: 'Каталог услуг' },
+            { name: 'Контакты', template: 'blank', description: 'Контактная информация' }
+        ],
+        funnelStages: ['Обращение', 'Оценка', 'Коммерческое предложение', 'Согласование', 'Выполнение']
+    },
+    realestate: {
+        modules: ['sales', 'clients', 'team', 'catalog', 'integrations'],
+        pages: [
+            { name: 'Главная', template: 'realestate-agency', description: 'Лендинг агентства' },
+            { name: 'Объекты', template: 'blank', description: 'Каталог объектов' },
+            { name: 'Ипотека', template: 'blank', description: 'Калькулятор ипотеки' }
+        ],
+        funnelStages: ['Заявка', 'Показ', 'Переговоры', 'Бронирование', 'Сделка']
+    },
+    restaurant: {
+        modules: ['sales', 'clients', 'orders', 'bookings', 'team'],
+        pages: [
+            { name: 'Главная', template: 'restaurant-main', description: 'Лендинг ресторана' },
+            { name: 'Меню', template: 'blank', description: 'Меню ресторана' },
+            { name: 'Бронирование', template: 'blank', description: 'Бронирование столиков' }
+        ],
+        funnelStages: ['Бронь', 'Подтверждено', 'Гость пришёл', 'Обслужен', 'Отзыв']
+    },
+    medical: {
+        modules: ['sales', 'clients', 'team', 'bookings', 'catalog'],
+        pages: [
+            { name: 'Главная', template: 'blank', description: 'Лендинг клиники' },
+            { name: 'Услуги', template: 'blank', description: 'Медицинские услуги' },
+            { name: 'Врачи', template: 'blank', description: 'Наши специалисты' }
+        ],
+        funnelStages: ['Обращение', 'Запись', 'Приём', 'Лечение', 'Контроль']
+    },
+    default: {
+        modules: ['sales', 'clients', 'team', 'orders', 'catalog'],
+        pages: [
+            { name: 'Главная', template: 'landing-basic', description: 'Главная страница' },
+            { name: 'О нас', template: 'blank', description: 'О компании' },
+            { name: 'Контакты', template: 'blank', description: 'Контакты' }
+        ],
+        funnelStages: ['Новый лид', 'Квалификация', 'Предложение', 'Переговоры', 'Закрыто']
+    }
+};
+
+// POST /api/ai/analyze-business — AI analysis for project creation
+exports.analyzeBusiness = async (req, res) => {
+    try {
+        const { name, niche, description, audience, products } = req.body;
+
+        if (!name || !niche || !description) {
+            return res.status(400).json({
+                success: false,
+                error: 'Укажите название, нишу и описание бизнеса'
+            });
+        }
+
+        const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+
+        // If no API key, return defaults for the niche
+        if (!OPENROUTER_API_KEY || OPENROUTER_API_KEY.includes('placeholder') || OPENROUTER_API_KEY.length < 20) {
+            const defaults = NICHE_DEFAULTS[niche] || NICHE_DEFAULTS.default;
+            return res.json({
+                success: true,
+                data: {
+                    modules: defaults.modules,
+                    pages: defaults.pages,
+                    funnelStages: defaults.funnelStages,
+                    aiGenerated: false
+                }
+            });
+        }
+
+        const analyzePrompt = `Ты — бизнес-аналитик для платформы PK Business. Проанализируй бизнес и верни рекомендации в JSON.
+
+Бизнес: "${name}"
+Ниша: "${niche}"
+Описание: ${description}
+Аудитория: ${audience || 'не указана'}
+Продукты/услуги: ${products || 'не указаны'}
+
+Верни ТОЛЬКО валидный JSON:
+{
+  "modules": ["sales", "clients", ...],
+  "pages": [{"name": "Главная", "template": "landing-basic", "description": "Описание"}],
+  "funnelStages": ["Этап 1", "Этап 2", ...]
+}
+
+Доступные модули: sales, clients, team, orders, catalog, bookings, learning, integrations
+Доступные шаблоны: blank, landing-basic, cosmetology, personal-coach, shop-fashion, realestate-agency, realestate-developer, restaurant-main, restaurant-cafe, restaurant-delivery, fitness-gym, fitness-trainer, fitness-yoga, education-course, education-school, education-tutor, services-beauty, services-cleaning, services-auto, events-conference, events-wedding, events-party, portfolio, business-card, spa-center, nail-salon, barbershop, language-school, kids-education, masterclass, dental-clinic, law-firm, accounting-firm, cleaning-company, electronics-store, grocery-delivery, flower-shop, property-listing, rental-agency, delivery-service, catering
+
+ПРАВИЛА:
+1. modules — 4-6 наиболее релевантных модулей для этого бизнеса
+2. pages — 3-5 страниц сайта с подходящими шаблонами
+3. funnelStages — 4-6 этапов воронки продаж для этой ниши
+4. Язык — русский`;
+
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 30000);
+
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                'HTTP-Referer': process.env.APP_URL || 'http://localhost:3000',
+                'X-Title': 'PK Business'
+            },
+            body: JSON.stringify({
+                model: 'google/gemini-2.0-flash-001',
+                messages: [
+                    { role: 'user', content: analyzePrompt }
+                ],
+                response_format: { type: 'json_object' },
+                temperature: 0.5,
+                max_tokens: 1500
+            }),
+            signal: controller.signal
+        });
+
+        clearTimeout(timeout);
+
+        if (!response.ok) {
+            throw new Error(`API error ${response.status}`);
+        }
+
+        const data = await response.json();
+        const content = data.choices?.[0]?.message?.content;
+
+        if (!content) {
+            throw new Error('No AI response');
+        }
+
+        const parsed = JSON.parse(content);
+
+        // Validate and sanitize
+        const validModules = ['sales', 'clients', 'team', 'orders', 'catalog', 'bookings', 'learning', 'integrations'];
+        const modules = (parsed.modules || []).filter(m => validModules.includes(m));
+        const pages = (parsed.pages || []).slice(0, 8).map(p => ({
+            name: p.name || 'Страница',
+            template: p.template || 'blank',
+            description: p.description || ''
+        }));
+        const funnelStages = (parsed.funnelStages || []).slice(0, 8);
+
+        res.json({
+            success: true,
+            data: {
+                modules: modules.length ? modules : (NICHE_DEFAULTS[niche] || NICHE_DEFAULTS.default).modules,
+                pages: pages.length ? pages : (NICHE_DEFAULTS[niche] || NICHE_DEFAULTS.default).pages,
+                funnelStages: funnelStages.length ? funnelStages : (NICHE_DEFAULTS[niche] || NICHE_DEFAULTS.default).funnelStages,
+                aiGenerated: true
+            }
+        });
+
+    } catch (error) {
+        console.error('[AI Analyze Business] Error:', error.message);
+        // On error, return defaults
+        const defaults = NICHE_DEFAULTS[req.body?.niche] || NICHE_DEFAULTS.default;
+        res.json({
+            success: true,
+            data: {
+                modules: defaults.modules,
+                pages: defaults.pages,
+                funnelStages: defaults.funnelStages,
+                aiGenerated: false
+            }
+        });
+    }
+};
+
 // Background AI generation
 async function runGeneration(jobId, params, apiKey) {
     const { niche, product, productDescription, audience, mainOffer, tone, colorScheme } = params;

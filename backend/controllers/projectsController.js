@@ -1,4 +1,6 @@
 const { validationResult } = require('express-validator');
+const { v4: uuidv4 } = require('uuid');
+const { getDb } = require('../config/database');
 const Project = require('../models/Project');
 const User = require('../models/User');
 
@@ -110,6 +112,82 @@ exports.create = async (req, res) => {
     }
 };
 
+// Create project with AI recommendations
+exports.createWithAI = async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ success: false, errors: errors.array() });
+        }
+
+        const { name, niche, description, audience, products, enabledModules, pages, funnelStages } = req.body;
+
+        // 1. Create project with niche data
+        const project = Project.create({
+            name,
+            description: description || '',
+            niche: niche || null,
+            business_description: description || null,
+            target_audience: audience || null,
+            key_products: products || null,
+            enabled_modules: enabledModules || [],
+            ai_generated: true,
+            owner_id: req.userId
+        });
+
+        const db = getDb();
+
+        // 2. Create default funnel with stages
+        if (funnelStages && funnelStages.length > 0) {
+            const funnelId = uuidv4();
+            db.prepare(`
+                INSERT INTO funnels (id, project_id, name, slug, description, is_default, is_active)
+                VALUES (?, ?, ?, ?, ?, 1, 1)
+            `).run(funnelId, project.id, 'Основная воронка', 'main', 'Автоматически созданная воронка');
+
+            funnelStages.forEach((stageName, index) => {
+                const stageId = uuidv4();
+                const isWon = index === funnelStages.length - 1 ? 1 : 0;
+                const colors = ['#3b82f6', '#8b5cf6', '#f59e0b', '#10b981', '#06b6d4', '#ec4899', '#6366f1', '#14b8a6'];
+                db.prepare(`
+                    INSERT INTO funnel_stages (id, funnel_id, name, color, sort_order, is_won, is_lost)
+                    VALUES (?, ?, ?, ?, ?, ?, 0)
+                `).run(stageId, funnelId, stageName, colors[index % colors.length], index, isWon);
+            });
+        }
+
+        // 3. Create pages
+        if (pages && pages.length > 0) {
+            pages.forEach((page) => {
+                const pageId = uuidv4();
+                db.prepare(`
+                    INSERT INTO pages (id, project_id, name, slug, content, status, created_by)
+                    VALUES (?, ?, ?, ?, ?, 'draft', ?)
+                `).run(
+                    pageId,
+                    project.id,
+                    page.name,
+                    page.name.toLowerCase().replace(/[^a-zа-яё0-9]/gi, '-').replace(/-+/g, '-'),
+                    JSON.stringify({ template: page.template || 'blank', elements: [] }),
+                    req.userId
+                );
+            });
+        }
+
+        res.status(201).json({
+            success: true,
+            data: {
+                ...project,
+                enabled_modules: JSON.parse(project.enabled_modules || '[]'),
+                settings: JSON.parse(project.settings || '{}')
+            }
+        });
+    } catch (error) {
+        console.error('Create project with AI error:', error);
+        res.status(500).json({ success: false, error: 'Ошибка при создании проекта' });
+    }
+};
+
 // Update project
 exports.update = async (req, res) => {
     try {
@@ -122,7 +200,7 @@ exports.update = async (req, res) => {
         }
 
         const { id } = req.params;
-        const { name, description, domain, settings, is_active } = req.body;
+        const { name, description, domain, settings, is_active, enabled_modules, niche, business_description, target_audience, key_products } = req.body;
 
         const project = Project.findById(id);
         if (!project) {
@@ -146,7 +224,12 @@ exports.update = async (req, res) => {
             description,
             domain,
             settings,
-            is_active
+            is_active,
+            enabled_modules,
+            niche,
+            business_description,
+            target_audience,
+            key_products
         });
 
         res.json({
