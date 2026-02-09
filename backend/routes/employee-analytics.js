@@ -95,6 +95,27 @@ router.get('/:projectId/overview', (req, res) => {
     }
 });
 
+// Get employee performance list
+router.get('/:projectId/performance', (req, res) => {
+    try {
+        const db = getDb();
+        const employees = db.prepare(`
+            SELECT e.id, e.first_name, e.last_name, e.position, e.avatar_url,
+                (SELECT COUNT(*) FROM deals WHERE assigned_to = e.id AND won_at IS NOT NULL) as deals_count,
+                (SELECT COALESCE(SUM(amount), 0) FROM deals WHERE assigned_to = e.id AND won_at IS NOT NULL) as revenue,
+                (SELECT COUNT(*) FROM calls WHERE employee_id = e.id) as calls_count
+            FROM employees e
+            WHERE e.project_id = ?
+            ORDER BY revenue DESC
+        `).all(req.params.projectId);
+
+        res.json({ success: true, employees });
+    } catch (error) {
+        console.error('Get performance error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 // Get detailed stats for single employee
 router.get('/:projectId/:employeeId', (req, res) => {
     try {

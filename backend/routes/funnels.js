@@ -663,4 +663,62 @@ router.delete('/:projectId/deals/:dealId', (req, res) => {
     }
 });
 
+// Mark deal as won
+router.post('/:projectId/deals/:dealId/win', (req, res) => {
+    try {
+        const db = getDb();
+        db.prepare(`
+            UPDATE deals SET won_at = datetime('now'), updated_at = datetime('now')
+            WHERE id = ? AND project_id = ?
+        `).run(req.params.dealId, req.params.projectId);
+
+        const deal = db.prepare('SELECT * FROM deals WHERE id = ?').get(req.params.dealId);
+        if (!deal) {
+            return res.status(404).json({ success: false, error: 'Сделка не найдена' });
+        }
+
+        res.json({
+            success: true,
+            deal: {
+                ...deal,
+                tags: JSON.parse(deal.tags || '[]'),
+                custom_fields: JSON.parse(deal.custom_fields || '{}')
+            }
+        });
+    } catch (error) {
+        console.error('Win deal error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Mark deal as lost
+router.post('/:projectId/deals/:dealId/lose', (req, res) => {
+    try {
+        const db = getDb();
+        const { reason } = req.body;
+
+        db.prepare(`
+            UPDATE deals SET lost_at = datetime('now'), lost_reason = ?, updated_at = datetime('now')
+            WHERE id = ? AND project_id = ?
+        `).run(reason || null, req.params.dealId, req.params.projectId);
+
+        const deal = db.prepare('SELECT * FROM deals WHERE id = ?').get(req.params.dealId);
+        if (!deal) {
+            return res.status(404).json({ success: false, error: 'Сделка не найдена' });
+        }
+
+        res.json({
+            success: true,
+            deal: {
+                ...deal,
+                tags: JSON.parse(deal.tags || '[]'),
+                custom_fields: JSON.parse(deal.custom_fields || '{}')
+            }
+        });
+    } catch (error) {
+        console.error('Lose deal error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 module.exports = router;

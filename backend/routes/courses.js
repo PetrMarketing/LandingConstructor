@@ -635,4 +635,84 @@ router.post('/:projectId/:courseId/progress/:clientId/certificate', (req, res) =
     }
 });
 
+// Duplicate course
+router.post('/:projectId/:courseId/duplicate', (req, res) => {
+    try {
+        const db = getDb();
+        const original = db.prepare('SELECT * FROM courses WHERE id = ? AND project_id = ?')
+            .get(req.params.courseId, req.params.projectId);
+
+        if (!original) {
+            return res.status(404).json({ success: false, error: 'Курс не найден' });
+        }
+
+        const newCourseId = uuidv4();
+        db.prepare(`
+            INSERT INTO courses (
+                id, project_id, name, slug, description, short_description, price, compare_price,
+                category_id, instructor_id, cover_image, preview_video, duration_hours,
+                level, language, what_you_learn, requirements, meta_title, meta_description,
+                is_featured, is_visible, status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).run(
+            newCourseId, req.params.projectId,
+            original.name + ' (копия)',
+            original.slug + '-copy-' + Date.now(),
+            original.description, original.short_description,
+            original.price, original.compare_price,
+            original.category_id, original.instructor_id,
+            original.cover_image, original.preview_video, original.duration_hours,
+            original.level, original.language,
+            original.what_you_learn, original.requirements,
+            original.meta_title, original.meta_description,
+            original.is_featured, original.is_visible, 'draft'
+        );
+
+        // Copy modules and lessons
+        const modules = db.prepare('SELECT * FROM course_modules WHERE course_id = ? ORDER BY sort_order')
+            .all(req.params.courseId);
+
+        for (const mod of modules) {
+            const newModId = uuidv4();
+            db.prepare(`
+                INSERT INTO course_modules (id, course_id, title, description, sort_order, is_free)
+                VALUES (?, ?, ?, ?, ?, ?)
+            `).run(newModId, newCourseId, mod.title, mod.description, mod.sort_order, mod.is_free);
+
+            const lessons = db.prepare('SELECT * FROM course_lessons WHERE module_id = ? ORDER BY sort_order')
+                .all(mod.id);
+
+            for (const lesson of lessons) {
+                db.prepare(`
+                    INSERT INTO course_lessons (id, module_id, course_id, title, description, content_type, content,
+                        video_url, video_duration, attachments, sort_order, is_free)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                `).run(
+                    uuidv4(), newModId, newCourseId, lesson.title, lesson.description,
+                    lesson.content_type, lesson.content, lesson.video_url, lesson.video_duration,
+                    lesson.attachments, lesson.sort_order, lesson.is_free
+                );
+            }
+        }
+
+        // Update lessons count
+        const { count } = db.prepare('SELECT COUNT(*) as count FROM course_lessons WHERE course_id = ?')
+            .get(newCourseId);
+        db.prepare('UPDATE courses SET lessons_count = ? WHERE id = ?').run(count, newCourseId);
+
+        const course = db.prepare('SELECT * FROM courses WHERE id = ?').get(newCourseId);
+        res.json({
+            success: true,
+            course: {
+                ...course,
+                what_you_learn: JSON.parse(course.what_you_learn || '[]'),
+                requirements: JSON.parse(course.requirements || '[]')
+            }
+        });
+    } catch (error) {
+        console.error('Duplicate course error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 module.exports = router;

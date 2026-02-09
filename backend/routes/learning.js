@@ -775,4 +775,163 @@ router.get('/:projectId/certificates/client/:clientId', (req, res) => {
     }
 });
 
+// ============================================================
+// DELETE WEBINAR
+// ============================================================
+
+router.delete('/:projectId/webinars/:webinarId', (req, res) => {
+    try {
+        const db = getDb();
+        db.prepare('DELETE FROM webinars WHERE id = ? AND project_id = ?')
+            .run(req.params.webinarId, req.params.projectId);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Delete webinar error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ============================================================
+// DELETE QUIZ
+// ============================================================
+
+router.delete('/:projectId/quizzes/:quizId', (req, res) => {
+    try {
+        const db = getDb();
+        // Quizzes don't have project_id directly, verify via course
+        db.prepare(`
+            DELETE FROM quizzes WHERE id = ? AND course_id IN (SELECT id FROM courses WHERE project_id = ?)
+        `).run(req.params.quizId, req.params.projectId);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Delete quiz error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ============================================================
+// LESSONS CRUD (flat, without course context in URL)
+// ============================================================
+
+// Create lesson
+router.post('/:projectId/lessons', (req, res) => {
+    try {
+        const db = getDb();
+        const id = uuidv4();
+        const { course_id, title, type, content, video_url, duration, order_index } = req.body;
+
+        if (!course_id || !title) {
+            return res.status(400).json({ success: false, error: 'course_id и title обязательны' });
+        }
+
+        // Find or create a module for this course
+        let module = db.prepare('SELECT id FROM course_modules WHERE course_id = ? ORDER BY sort_order LIMIT 1')
+            .get(course_id);
+
+        if (!module) {
+            const moduleId = uuidv4();
+            db.prepare('INSERT INTO course_modules (id, course_id, title, sort_order) VALUES (?, ?, ?, ?)')
+                .run(moduleId, course_id, 'Основной модуль', 0);
+            module = { id: moduleId };
+        }
+
+        db.prepare(`
+            INSERT INTO course_lessons (id, module_id, course_id, title, content_type, content, video_url, video_duration, sort_order)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).run(id, module.id, course_id, title, type || 'video', content, video_url, duration || null, order_index || 0);
+
+        // Update course lessons count
+        const { count } = db.prepare('SELECT COUNT(*) as count FROM course_lessons WHERE course_id = ?').get(course_id);
+        db.prepare('UPDATE courses SET lessons_count = ? WHERE id = ?').run(count, course_id);
+
+        const lesson = db.prepare('SELECT * FROM course_lessons WHERE id = ?').get(id);
+        res.json({
+            success: true,
+            lesson: { ...lesson, attachments: JSON.parse(lesson.attachments || '[]') }
+        });
+    } catch (error) {
+        console.error('Create lesson error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Update lesson
+router.put('/:projectId/lessons/:lessonId', (req, res) => {
+    try {
+        const db = getDb();
+        const { title, type, content, video_url, duration, order_index } = req.body;
+
+        db.prepare(`
+            UPDATE course_lessons SET
+                title = COALESCE(?, title),
+                content_type = COALESCE(?, content_type),
+                content = COALESCE(?, content),
+                video_url = COALESCE(?, video_url),
+                video_duration = COALESCE(?, video_duration),
+                sort_order = COALESCE(?, sort_order),
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        `).run(title, type, content, video_url, duration || null, order_index || null, req.params.lessonId);
+
+        const lesson = db.prepare('SELECT * FROM course_lessons WHERE id = ?').get(req.params.lessonId);
+        if (!lesson) {
+            return res.status(404).json({ success: false, error: 'Урок не найден' });
+        }
+
+        res.json({
+            success: true,
+            lesson: { ...lesson, attachments: JSON.parse(lesson.attachments || '[]') }
+        });
+    } catch (error) {
+        console.error('Update lesson error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ============================================================
+// ENROLLMENT (enroll / unenroll students)
+// ============================================================
+
+// Enroll student
+router.post('/:projectId/enroll', (req, res) => {
+    try {
+        const db = getDb();
+        const id = uuidv4();
+        const { course_id, client_id, start_date } = req.body;
+
+        if (!course_id || !client_id) {
+            return res.status(400).json({ success: false, error: 'course_id и client_id обязательны' });
+        }
+
+        db.prepare(`
+            INSERT INTO course_access (id, course_id, client_id, access_type, source, starts_at)
+            VALUES (?, ?, ?, 'full', 'manual', ?)
+            ON CONFLICT(course_id, client_id) DO UPDATE SET
+                is_active = 1,
+                starts_at = excluded.starts_at
+        `).run(id, course_id, client_id, start_date || null);
+
+        res.json({ success: true, enrollment_id: id });
+    } catch (error) {
+        console.error('Enroll student error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Unenroll student
+router.delete('/:projectId/enroll/:enrollmentId', (req, res) => {
+    try {
+        const db = getDb();
+        db.prepare(`
+            DELETE FROM course_access WHERE id = ?
+            AND course_id IN (SELECT id FROM courses WHERE project_id = ?)
+        `).run(req.params.enrollmentId, req.params.projectId);
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Unenroll student error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 module.exports = router;

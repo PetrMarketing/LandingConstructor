@@ -326,6 +326,33 @@ router.post('/:projectId', (req, res) => {
     }
 });
 
+// Get single booking
+router.get('/:projectId/:bookingId', (req, res) => {
+    try {
+        const db = getDb();
+        const booking = db.prepare(`
+            SELECT b.*,
+                s.name as service_name, s.duration as service_duration,
+                (e.first_name || ' ' || e.last_name) as employee_name,
+                c.first_name, c.last_name, c.phone as client_phone_db
+            FROM bookings b
+            LEFT JOIN services s ON s.id = b.service_id
+            LEFT JOIN employees e ON e.id = b.employee_id
+            LEFT JOIN clients c ON c.id = b.client_id
+            WHERE b.id = ? AND b.project_id = ?
+        `).get(req.params.bookingId, req.params.projectId);
+
+        if (!booking) {
+            return res.status(404).json({ success: false, error: 'Запись не найдена' });
+        }
+
+        res.json({ success: true, booking });
+    } catch (error) {
+        console.error('Get booking error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 // Update booking
 router.put('/:projectId/:bookingId', (req, res) => {
     try {
@@ -385,6 +412,24 @@ router.post('/:projectId/:bookingId/confirm', (req, res) => {
 
         res.json({ success: true });
     } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Send booking reminder
+router.post('/:projectId/:bookingId/reminder', (req, res) => {
+    try {
+        const db = getDb();
+        db.prepare(`
+            UPDATE bookings SET
+                reminder_sent = 1,
+                updated_at = datetime('now')
+            WHERE id = ? AND project_id = ?
+        `).run(req.params.bookingId, req.params.projectId);
+
+        res.json({ success: true, message: 'Напоминание отправлено' });
+    } catch (error) {
+        console.error('Send reminder error:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });

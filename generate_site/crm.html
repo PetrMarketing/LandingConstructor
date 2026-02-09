@@ -765,45 +765,36 @@
                 <!-- Sales -->
                 <div class="section" id="section-sales">
                     <div class="section-tabs">
-                        <button class="section-tab-btn active" id="salesTab_deals" onclick="switchSectionTab('sales','deals')"><i class="fas fa-handshake"></i> Сделки</button>
-                        <button class="section-tab-btn" id="salesTab_funnels" onclick="switchSectionTab('sales','funnels')"><i class="fas fa-filter"></i> Воронки</button>
+                        <button class="section-tab-btn active" id="salesTab_deals" onclick="switchSectionTab('sales','deals')"><i class="fas fa-filter"></i> Воронки</button>
                         <button class="section-tab-btn" id="salesTab_calls" onclick="switchSectionTab('sales','calls')"><i class="fas fa-phone"></i> Звонки</button>
                         <button class="section-tab-btn" id="salesTab_regulations" onclick="switchSectionTab('sales','regulations')"><i class="fas fa-clock"></i> Регламенты</button>
                         <button class="section-tab-btn" id="salesTab_goals" onclick="switchSectionTab('sales','goals')"><i class="fas fa-bullseye"></i> KPI/Цели</button>
                         <button class="section-tab-btn" id="salesTab_distribution" onclick="switchSectionTab('sales','distribution')"><i class="fas fa-random"></i> Распределение</button>
                     </div>
                     <div id="salesTabPanel_deals">
-                    <div class="stats-grid" id="salesAnalyticsGrid">
-                        <div class="stat-card success">
-                            <div class="value" id="salesStat-winRate">0%</div>
-                            <div class="label">Win Rate</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="value" id="salesStat-avgTime">0 дн.</div>
-                            <div class="label">Среднее время сделки</div>
-                        </div>
-                        <div class="stat-card primary">
-                            <div class="value" id="salesStat-pipeline">₽0</div>
-                            <div class="label">В воронке</div>
-                        </div>
-                        <div class="stat-card warning">
-                            <div class="value" id="salesStat-count">0</div>
-                            <div class="label">Всего сделок</div>
+                    <!-- Funnel selector + stats row -->
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+                        <select class="filter-select" id="filterFunnel" onchange="loadDealsKanban()" style="font-size:15px;font-weight:600;min-width:200px;padding:10px 14px;">
+                            <option value="">Выберите воронку</option>
+                        </select>
+                        <button class="btn btn-sm btn-outline" onclick="openModal('funnelModal')" title="Создать воронку"><i class="fas fa-plus"></i> Воронка</button>
+                        <button class="btn btn-sm btn-outline" onclick="openAddStageModal()" title="Добавить этап"><i class="fas fa-columns"></i> Этап</button>
+                        <button class="btn btn-sm btn-outline btn-danger" id="deleteFunnelBtn" onclick="deleteCurrentFunnel()" title="Удалить воронку" style="display:none;"><i class="fas fa-trash"></i></button>
+                        <div style="flex:1;"></div>
+                        <div style="display:flex;gap:16px;font-size:13px;color:var(--text-muted);">
+                            <span><b id="salesStat-count">0</b> сделок</span>
+                            <span>Воронка: <b id="salesStat-pipeline">₽0</b></span>
+                            <span>Win: <b id="salesStat-winRate">0%</b></span>
                         </div>
                     </div>
-                    <div class="toolbar" style="flex-wrap:wrap;">
+                    <!-- Filters row -->
+                    <div class="toolbar" style="flex-wrap:wrap;margin-bottom:12px;">
                         <div class="search-box">
                             <i class="fas fa-search"></i>
                             <input type="text" id="searchDeals" placeholder="Поиск сделок..." oninput="filterDeals()">
                         </div>
-                        <select class="filter-select" id="filterFunnel" onchange="loadDealsKanban()">
-                            <option value="">Все воронки</option>
-                        </select>
                         <select class="filter-select" id="filterDealEmployee" onchange="loadDealsKanban()">
                             <option value="">Все менеджеры</option>
-                        </select>
-                        <select class="filter-select" id="filterDealTag" onchange="loadDealsKanban()">
-                            <option value="">Все теги</option>
                         </select>
                         <select class="filter-select" id="filterDealSource" onchange="loadDealsKanban()">
                             <option value="">Все источники</option>
@@ -814,13 +805,8 @@
                         </select>
                         <button class="btn btn-primary" onclick="openModal('dealModal')"><i class="fas fa-plus"></i> Новая сделка</button>
                     </div>
+                    <!-- Kanban board -->
                     <div class="kanban" id="dealsKanban"></div>
-                    </div>
-                    <div id="salesTabPanel_funnels" style="display:none;">
-                    <div class="toolbar">
-                        <button class="btn btn-primary" onclick="openModal('funnelModal')"><i class="fas fa-plus"></i> Создать воронку</button>
-                    </div>
-                    <div id="funnelsList"></div>
                     </div>
                     <div id="salesTabPanel_calls" style="display:none;">
                     <div class="toolbar">
@@ -2330,6 +2316,40 @@
         </div>
     </div>
 
+    <!-- Stage Modal -->
+    <div class="modal-overlay" id="stageModal">
+        <div class="modal" style="max-width:400px;">
+            <div class="modal-header">
+                <h3>Новый этап</h3>
+                <button class="modal-close" onclick="closeModal('stageModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Название этапа *</label>
+                    <input type="text" id="stageName" placeholder="Переговоры">
+                </div>
+                <div class="form-group">
+                    <label>Цвет</label>
+                    <input type="color" id="stageColor" value="#3b82f6" style="width:60px;height:36px;padding:2px;">
+                </div>
+                <div class="form-group">
+                    <label style="display:flex;align-items:center;gap:8px;">
+                        <input type="checkbox" id="stageIsWon"> Этап "Выиграна"
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label style="display:flex;align-items:center;gap:8px;">
+                        <input type="checkbox" id="stageIsLost"> Этап "Проиграна"
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('stageModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveStage()">Добавить</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Employee Modal -->
     <div class="modal-overlay" id="employeeModal">
         <div class="modal">
@@ -2957,33 +2977,24 @@
                     <div class="form-group">
                         <textarea id="regEditorDescription" rows="2" placeholder="Краткое описание..." style="border:none;background:transparent;padding:0;color:var(--text-secondary);resize:none;"></textarea>
                     </div>
-                    <!-- Toolbar -->
-                    <div style="display:flex;gap:4px;padding:8px;background:var(--bg-input);border-radius:8px;margin-bottom:16px;flex-wrap:wrap;">
-                        <button type="button" class="btn btn-sm" onclick="regEditorExecCmd('bold')" title="Жирный"><i class="fas fa-bold"></i></button>
-                        <button type="button" class="btn btn-sm" onclick="regEditorExecCmd('italic')" title="Курсив"><i class="fas fa-italic"></i></button>
-                        <button type="button" class="btn btn-sm" onclick="regEditorExecCmd('underline')" title="Подчёркнутый"><i class="fas fa-underline"></i></button>
-                        <span style="width:1px;background:var(--border-color);margin:0 4px;"></span>
-                        <button type="button" class="btn btn-sm" onclick="regEditorHeading('H1')" title="Заголовок 1">H1</button>
-                        <button type="button" class="btn btn-sm" onclick="regEditorHeading('H2')" title="Заголовок 2">H2</button>
-                        <button type="button" class="btn btn-sm" onclick="regEditorHeading('H3')" title="Заголовок 3">H3</button>
-                        <span style="width:1px;background:var(--border-color);margin:0 4px;"></span>
-                        <button type="button" class="btn btn-sm" onclick="regEditorExecCmd('insertUnorderedList')" title="Маркированный список"><i class="fas fa-list-ul"></i></button>
-                        <button type="button" class="btn btn-sm" onclick="regEditorExecCmd('insertOrderedList')" title="Нумерованный список"><i class="fas fa-list-ol"></i></button>
-                        <button type="button" class="btn btn-sm" onclick="regEditorExecCmd('formatBlock', 'blockquote')" title="Цитата"><i class="fas fa-quote-right"></i></button>
-                        <button type="button" class="btn btn-sm" onclick="regEditorExecCmd('formatBlock', 'pre')" title="Код"><i class="fas fa-code"></i></button>
-                    </div>
                     <!-- Block-based content -->
                     <div id="regEditorBlocks" style="min-height:200px;"></div>
                     <!-- Add block button -->
                     <div style="margin-top:12px;position:relative;">
                         <button type="button" class="btn btn-sm btn-outline" onclick="toggleRegBlockMenu()" id="regAddBlockBtn"><i class="fas fa-plus"></i> Добавить блок</button>
-                        <div id="regBlockMenu" style="display:none;position:absolute;bottom:100%;left:0;background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:8px;box-shadow:0 4px 20px rgba(0,0,0,0.3);min-width:180px;margin-bottom:4px;">
-                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('text')"><i class="fas fa-paragraph"></i> Текст</div>
-                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('image')"><i class="fas fa-image"></i> Изображение</div>
-                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('video')"><i class="fas fa-video"></i> Видео</div>
-                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('table')"><i class="fas fa-table"></i> Таблица</div>
-                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('divider')"><i class="fas fa-minus"></i> Разделитель</div>
-                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('code')"><i class="fas fa-code"></i> Код</div>
+                        <div id="regBlockMenu" style="display:none;position:absolute;bottom:100%;left:0;background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:8px;box-shadow:0 4px 20px rgba(0,0,0,0.3);min-width:200px;margin-bottom:4px;max-height:360px;overflow-y:auto;">
+                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('text')"><i class="fas fa-paragraph" style="width:16px;text-align:center;"></i> Текст</div>
+                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('heading')"><i class="fas fa-heading" style="width:16px;text-align:center;"></i> Заголовок</div>
+                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('task')"><i class="fas fa-check-square" style="width:16px;text-align:center;"></i> Задача</div>
+                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('checklist')"><i class="fas fa-tasks" style="width:16px;text-align:center;"></i> Чеклист</div>
+                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('quote')"><i class="fas fa-quote-right" style="width:16px;text-align:center;"></i> Цитата</div>
+                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('alert')"><i class="fas fa-exclamation-circle" style="width:16px;text-align:center;"></i> Уведомление</div>
+                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('image')"><i class="fas fa-image" style="width:16px;text-align:center;"></i> Изображение</div>
+                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('video')"><i class="fas fa-video" style="width:16px;text-align:center;"></i> Видео</div>
+                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('table')"><i class="fas fa-table" style="width:16px;text-align:center;"></i> Таблица</div>
+                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('file')"><i class="fas fa-paperclip" style="width:16px;text-align:center;"></i> Файл</div>
+                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('code')"><i class="fas fa-code" style="width:16px;text-align:center;"></i> Код</div>
+                            <div style="padding:8px;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background=''" onclick="addRegulationBlock('divider')"><i class="fas fa-minus" style="width:16px;text-align:center;"></i> Разделитель</div>
                         </div>
                     </div>
                 </div>
@@ -4433,6 +4444,34 @@ XL"></textarea>
         }
 
         /* Section Tabs */
+        /* Regulation block editor */
+        .reg-block-wrapper { position: relative; margin-bottom: 8px; padding-left: 36px; }
+        .reg-block-wrapper:hover .reg-block-actions { opacity: 1; }
+        .reg-block-actions {
+            position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 2px; opacity: 0; transition: opacity 0.15s;
+        }
+        .reg-block-actions button {
+            width: 24px; height: 24px; border: 1px solid var(--border-color); border-radius: 4px;
+            background: var(--bg-card); color: var(--text-muted); cursor: pointer; font-size: 11px;
+            display: flex; align-items: center; justify-content: center; padding: 0;
+        }
+        .reg-block-actions button:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .reg-block-insert-btn {
+            position: absolute; left: 50%; transform: translateX(-50%); bottom: -14px;
+            width: 24px; height: 24px; border-radius: 50%; border: 1px dashed var(--border-color);
+            background: var(--bg-card); color: var(--text-muted); cursor: pointer; font-size: 12px;
+            display: none; align-items: center; justify-content: center; z-index: 2; padding: 0;
+        }
+        .reg-block-wrapper:hover .reg-block-insert-btn { display: flex; }
+        .reg-block-insert-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--bg-input); }
+        .reg-checklist-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+        .reg-checklist-item input[type="checkbox"] { flex-shrink: 0; }
+        .reg-checklist-item input[type="text"] { flex: 1; border: none; border-bottom: 1px solid var(--border-color); background: transparent; color: var(--text-primary); padding: 4px 0; outline: none; }
+        .reg-checklist-item input[type="text"]:focus { border-color: var(--primary); }
+        .reg-checklist-item button { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 2px 6px; font-size: 12px; }
+        .reg-checklist-item button:hover { color: var(--danger); }
+
         .section-tabs {
             display: flex;
             gap: 0;
@@ -4531,7 +4570,7 @@ XL"></textarea>
         // ============================================================
         const currentSectionTabs = {};
         const sectionTabConfigs = {
-            sales: { tabs: ['deals','funnels','calls','regulations','goals','distribution'], default: 'deals' },
+            sales: { tabs: ['deals','calls','regulations','goals','distribution'], default: 'deals' },
             team: { tabs: ['employees','tasks','analytics'], default: 'employees' },
             orders: { tabs: ['orders','payments'], default: 'orders' },
             catalog: { tabs: ['products','categories','selections','promos','filters'], default: 'products' },
@@ -4557,7 +4596,7 @@ XL"></textarea>
 
         function loadTabData(section, tab) {
             const loaders = {
-                sales: { deals: loadDealsKanban, funnels: loadFunnels, calls: () => { loadCalls(); initUIS(); }, regulations: loadRegulations, goals: loadGoals, distribution: loadLeadDistribution },
+                sales: { deals: loadDealsKanban, calls: () => { loadCalls(); initUIS(); }, regulations: loadRegulations, goals: loadGoals, distribution: loadLeadDistribution },
                 team: { employees: loadEmployees, tasks: loadTasks, analytics: loadEmployeeAnalytics },
                 orders: { orders: loadOrders, payments: loadPayments },
                 catalog: { products: loadProducts, categories: loadCategories, selections: loadSelections, promos: loadPromoCodes, filters: loadProductFilters },
@@ -5376,37 +5415,12 @@ XL"></textarea>
                 funnels = res.funnels;
                 renderFunnels();
                 updateFunnelSelects();
+                loadDealsKanban();
             }
         }
 
         function renderFunnels() {
-            const el = document.getElementById('funnelsList');
-            if (!funnels.length) {
-                el.innerHTML = '<div class="empty-state"><i class="fas fa-filter"></i><h3>Нет воронок</h3><p>Создайте первую воронку продаж</p></div>';
-                return;
-            }
-
-            el.innerHTML = funnels.map(f => `
-                <div class="card" style="margin-bottom: 16px;">
-                    <div class="card-header">
-                        <h3>${escapeHtml(f.name)}</h3>
-                        <div>
-                            <span class="badge badge-new">${f.stages?.length || 0} этапов</span>
-                            <span class="badge">${f.deals_count || 0} сделок</span>
-                        </div>
-                    </div>
-                    <div class="card-body" style="padding: 16px;">
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                            ${(f.stages || []).map(s => `
-                                <div style="padding: 8px 16px; background: ${s.color}20; border-radius: 8px; border-left: 3px solid ${s.color};">
-                                    <div style="font-weight: 500;">${escapeHtml(s.name)}</div>
-                                    <div style="font-size: 12px; color: var(--text-muted);">${s.deals_count || 0} сделок</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+            // No longer renders separate list — funnels are managed via dropdown
         }
 
         async function saveFunnel() {
@@ -5437,9 +5451,89 @@ XL"></textarea>
         }
 
         function updateFunnelSelects() {
-            const options = '<option value="">Выберите воронку</option>' + funnels.map(f => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join('');
-            document.getElementById('filterFunnel').innerHTML = '<option value="">Все воронки</option>' + funnels.map(f => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join('');
-            document.getElementById('dealFunnel').innerHTML = options;
+            const options = funnels.map(f => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join('');
+            document.getElementById('filterFunnel').innerHTML = (funnels.length ? '' : '<option value="">Создайте воронку</option>') + options;
+            document.getElementById('dealFunnel').innerHTML = '<option value="">Выберите воронку</option>' + options;
+            const delBtn = document.getElementById('deleteFunnelBtn');
+            if (delBtn) delBtn.style.display = funnels.length > 0 ? '' : 'none';
+        }
+
+        function openAddStageModal() {
+            document.getElementById('stageName').value = '';
+            document.getElementById('stageColor').value = '#3b82f6';
+            document.getElementById('stageIsWon').checked = false;
+            document.getElementById('stageIsLost').checked = false;
+            openModal('stageModal');
+        }
+
+        async function saveStage() {
+            const name = document.getElementById('stageName').value.trim();
+            const color = document.getElementById('stageColor').value;
+            const is_won = document.getElementById('stageIsWon').checked;
+            const is_lost = document.getElementById('stageIsLost').checked;
+
+            if (!name) return toast('Введите название этапа', 'error');
+
+            const funnelId = document.getElementById('filterFunnel').value;
+            if (!funnelId) return toast('Сначала выберите воронку', 'error');
+
+            showLoading();
+            try {
+                const res = await api('POST', `/funnels/${projectId}/${funnelId}/stages`, { name, color, is_won, is_lost });
+                if (res.success) {
+                    closeModal('stageModal');
+                    loadFunnels();
+                    toast('Этап добавлен', 'success');
+                } else {
+                    toast(res.error || 'Ошибка добавления этапа', 'error');
+                }
+            } catch (err) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function deleteStage(funnelId, stageId, stageName) {
+            if (!confirm(`Удалить этап "${stageName}"? Все сделки из этого этапа будут потеряны.`)) return;
+
+            showLoading();
+            try {
+                const res = await api('DELETE', `/funnels/${projectId}/${funnelId}/stages/${stageId}`);
+                if (res.success) {
+                    loadFunnels();
+                    toast('Этап удалён', 'success');
+                } else {
+                    toast(res.error || 'Ошибка удаления этапа', 'error');
+                }
+            } catch (err) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function deleteCurrentFunnel() {
+            const funnelId = document.getElementById('filterFunnel').value;
+            if (!funnelId) return toast('Воронка не выбрана', 'error');
+
+            const funnel = funnels.find(f => f.id === funnelId);
+            if (!confirm(`Удалить воронку "${funnel?.name || ''}"? Все этапы и сделки будут удалены.`)) return;
+
+            showLoading();
+            try {
+                const res = await api('DELETE', `/funnels/${projectId}/${funnelId}`);
+                if (res.success) {
+                    loadFunnels();
+                    toast('Воронка удалена', 'success');
+                } else {
+                    toast(res.error || 'Ошибка удаления воронки', 'error');
+                }
+            } catch (err) {
+                toast('Ошибка сети', 'error');
+            } finally {
+                hideLoading();
+            }
         }
 
         function loadDealStages() {
@@ -5496,12 +5590,35 @@ XL"></textarea>
 
         function renderKanban(funnel) {
             const kanban = document.getElementById('dealsKanban');
-            kanban.innerHTML = (funnel.stages || []).map(stage => `
+            if (!funnel || !funnel.stages || !funnel.stages.length) {
+                kanban.innerHTML = '<div class="empty-state" style="grid-column:1/-1;padding:40px;"><i class="fas fa-columns"></i><h3>Нет этапов</h3><p>Добавьте этапы в воронку</p></div>';
+                return;
+            }
+
+            // Update stats
+            const allDeals = funnel.stages.flatMap(s => s.deals || []);
+            const totalDeals = allDeals.length;
+            const pipeline = allDeals.reduce((s, d) => s + (parseFloat(d.amount) || 0), 0);
+            const won = allDeals.filter(d => d.won_at);
+            const lost = allDeals.filter(d => d.lost_at);
+            const closed = won.length + lost.length;
+            const winRate = closed > 0 ? Math.round((won.length / closed) * 100) : 0;
+            document.getElementById('salesStat-count').textContent = totalDeals;
+            document.getElementById('salesStat-pipeline').textContent = formatMoney(pipeline);
+            document.getElementById('salesStat-winRate').textContent = winRate + '%';
+
+            kanban.innerHTML = funnel.stages.map(stage => {
+                const stageTotal = (stage.deals || []).reduce((s, d) => s + (parseFloat(d.amount) || 0), 0);
+                return `
                 <div class="kanban-column" data-stage="${stage.id}">
-                    <div class="kanban-header">
+                    <div class="kanban-header" style="position:relative;">
                         <h4><span class="dot" style="background: ${stage.color}"></span> ${escapeHtml(stage.name)} <span class="count">(${stage.deals?.length || 0})</span></h4>
+                        <div style="display:flex;align-items:center;gap:6px;">
+                            <span style="font-size:11px;color:var(--text-muted);">${formatMoney(stageTotal)}</span>
+                            <button class="btn btn-sm" onclick="event.stopPropagation();deleteStage('${funnel.id}','${stage.id}','${escapeHtml(stage.name)}')" style="padding:2px 6px;font-size:11px;opacity:0.5;" title="Удалить этап"><i class="fas fa-times"></i></button>
+                        </div>
                     </div>
-                    <div class="kanban-body" ondragover="event.preventDefault()" ondrop="dropDeal(event, '${stage.id}')">
+                    <div class="kanban-body" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="this.classList.remove('drag-over');dropDeal(event, '${stage.id}')">
                         ${(stage.deals || []).map(deal => `
                             <div class="kanban-card" draggable="true" ondragstart="dragDeal(event, '${deal.id}')" onclick="openDealDetails('${deal.id}')" data-deal="${deal.id}">
                                 <div class="kanban-card-title">${escapeHtml(deal.name)}</div>
@@ -5514,10 +5631,10 @@ XL"></textarea>
                         `).join('')}
                     </div>
                     <div class="kanban-add" onclick="quickAddDeal('${stage.id}')">
-                        <i class="fas fa-plus"></i> Добавить сделку
+                        <i class="fas fa-plus"></i> Добавить
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         let draggedDealId = null;
@@ -8262,38 +8379,109 @@ XL"></textarea>
         function toggleRegBlockMenu() {
             const menu = document.getElementById('regBlockMenu');
             menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+            document.querySelectorAll('.reg-inline-block-menu').forEach(m => m.remove());
         }
 
-        function addRegulationBlock(type, data) {
+        function addRegulationBlock(type, data, insertBeforeIdx) {
             const idx = regBlockCount++;
             const container = document.getElementById('regEditorBlocks');
             const blockEl = document.createElement('div');
             blockEl.id = `regBlock_${idx}`;
+            blockEl.className = 'reg-block-wrapper';
             blockEl.setAttribute('data-type', type);
-            blockEl.style.cssText = 'position:relative;margin-bottom:12px;group:block;';
 
-            const deleteBtn = `<button type="button" onclick="removeRegBlock(${idx})" style="position:absolute;top:4px;right:4px;background:var(--danger);border:none;color:#fff;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:10px;opacity:0.7;z-index:1;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7"><i class="fas fa-times"></i></button>`;
+            const actionsHtml = `<div class="reg-block-actions">
+                <button type="button" onclick="moveRegBlock(${idx},-1)" title="Вверх"><i class="fas fa-chevron-up"></i></button>
+                <button type="button" onclick="moveRegBlock(${idx},1)" title="Вниз"><i class="fas fa-chevron-down"></i></button>
+                <button type="button" onclick="removeRegBlock(${idx})" title="Удалить" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
+            </div>`;
+            const insertBtn = `<button type="button" class="reg-block-insert-btn" onclick="regInsertBlockBefore(${idx})" title="Добавить блок">+</button>`;
+
+            let contentHtml = '';
+            const alertColors = { info: '#3b82f6', warning: '#f59e0b', success: '#22c55e', danger: '#ef4444' };
+            const alertIcons = { info: 'info-circle', warning: 'exclamation-triangle', success: 'check-circle', danger: 'times-circle' };
 
             switch(type) {
                 case 'text':
-                    blockEl.innerHTML = `${deleteBtn}<div contenteditable="true" id="regBlockContent_${idx}" style="min-height:60px;padding:12px;border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);line-height:1.6;outline:none;" placeholder="Введите текст...">${data?.content || ''}</div>`;
+                    contentHtml = `<div contenteditable="true" id="regBlockContent_${idx}" style="min-height:40px;padding:12px;border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);line-height:1.6;outline:none;" placeholder="Введите текст...">${data?.content || ''}</div>`;
                     break;
+                case 'heading': {
+                    const level = data?.level || 2;
+                    const sizes = { 1: '28px', 2: '22px', 3: '18px' };
+                    contentHtml = `<div style="display:flex;align-items:center;gap:8px;">
+                        <select id="regBlockLevel_${idx}" style="width:60px;padding:4px;border:1px solid var(--border-color);border-radius:4px;background:var(--bg-input);color:var(--text-primary);font-size:12px;" onchange="document.getElementById('regBlockContent_${idx}').style.fontSize={1:'28px',2:'22px',3:'18px'}[this.value]">
+                            <option value="1" ${level==1?'selected':''}>H1</option>
+                            <option value="2" ${level==2?'selected':''}>H2</option>
+                            <option value="3" ${level==3?'selected':''}>H3</option>
+                        </select>
+                        <input type="text" id="regBlockContent_${idx}" placeholder="Заголовок..." value="${escapeHtml(data?.content || '')}" style="flex:1;border:none;border-bottom:2px solid var(--border-color);background:transparent;color:var(--text-primary);padding:8px 0;font-size:${sizes[level]};font-weight:700;outline:none;">
+                    </div>`;
+                    break;
+                }
+                case 'task':
+                    contentHtml = `<div style="display:flex;align-items:center;gap:8px;border:1px solid var(--border-color);border-radius:8px;padding:12px;">
+                        <input type="checkbox" id="regBlockCheck_${idx}" style="flex-shrink:0;width:18px;height:18px;cursor:pointer;" ${data?.checked ? 'checked' : ''}>
+                        <input type="text" id="regBlockContent_${idx}" placeholder="Описание задачи..." value="${escapeHtml(data?.content || '')}" style="flex:1;border:none;border-bottom:1px solid var(--border-color);background:transparent;color:var(--text-primary);padding:4px 0;outline:none;">
+                        <input type="text" id="regBlockAssignee_${idx}" placeholder="Ответственный" value="${escapeHtml(data?.assignee || '')}" style="width:130px;border:none;border-bottom:1px solid var(--border-color);background:transparent;color:var(--text-secondary);padding:4px 0;outline:none;font-size:12px;">
+                        <input type="date" id="regBlockDeadline_${idx}" value="${data?.deadline || ''}" style="width:130px;border:1px solid var(--border-color);border-radius:4px;background:var(--bg-input);color:var(--text-primary);padding:4px;font-size:12px;">
+                    </div>`;
+                    break;
+                case 'checklist': {
+                    const items = data?.items || [{ text: '', checked: false }];
+                    let itemsHtml = '';
+                    items.forEach((item, i) => {
+                        itemsHtml += `<div class="reg-checklist-item" data-item="${i}">
+                            <input type="checkbox" ${item.checked ? 'checked' : ''}>
+                            <input type="text" value="${escapeHtml(item.text || '')}" placeholder="Пункт...">
+                            <button type="button" onclick="removeChecklistItem(${idx}, this)" title="Удалить"><i class="fas fa-times"></i></button>
+                        </div>`;
+                    });
+                    contentHtml = `<div style="border:1px solid var(--border-color);border-radius:8px;padding:12px;">
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><i class="fas fa-tasks" style="color:var(--primary);"></i><strong>Чеклист</strong></div>
+                        <div id="regBlockItems_${idx}">${itemsHtml}</div>
+                        <button type="button" class="btn btn-sm btn-outline" onclick="addChecklistItem(${idx})" style="margin-top:8px;"><i class="fas fa-plus"></i> Добавить пункт</button>
+                    </div>`;
+                    break;
+                }
+                case 'quote':
+                    contentHtml = `<div style="border-left:4px solid var(--primary);background:var(--bg-input);border-radius:0 8px 8px 0;padding:16px 16px 16px 20px;">
+                        <div contenteditable="true" id="regBlockContent_${idx}" style="min-height:30px;color:var(--text-secondary);font-style:italic;line-height:1.6;outline:none;" placeholder="Цитата...">${data?.content || ''}</div>
+                    </div>`;
+                    break;
+                case 'alert': {
+                    const variant = data?.variant || 'info';
+                    const color = alertColors[variant];
+                    const icon = alertIcons[variant];
+                    contentHtml = `<div id="regBlockAlert_${idx}" style="border:1px solid ${color}33;background:${color}11;border-radius:8px;padding:12px 16px;border-left:4px solid ${color};">
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                            <i class="fas fa-${icon}" style="color:${color};"></i>
+                            <select id="regBlockVariant_${idx}" style="border:none;background:transparent;color:var(--text-primary);font-weight:600;font-size:12px;cursor:pointer;outline:none;" onchange="updateAlertVariant(${idx}, this.value)">
+                                <option value="info" ${variant=='info'?'selected':''}>Информация</option>
+                                <option value="warning" ${variant=='warning'?'selected':''}>Внимание</option>
+                                <option value="success" ${variant=='success'?'selected':''}>Успех</option>
+                                <option value="danger" ${variant=='danger'?'selected':''}>Важно</option>
+                            </select>
+                        </div>
+                        <div contenteditable="true" id="regBlockContent_${idx}" style="min-height:24px;color:var(--text-primary);line-height:1.5;outline:none;" placeholder="Текст уведомления...">${data?.content || ''}</div>
+                    </div>`;
+                    break;
+                }
                 case 'image':
-                    blockEl.innerHTML = `${deleteBtn}<div style="border:1px solid var(--border-color);border-radius:8px;padding:12px;">
+                    contentHtml = `<div style="border:1px solid var(--border-color);border-radius:8px;padding:12px;">
                         ${data?.url ? `<img src="${data.url}" style="max-width:100%;border-radius:8px;margin-bottom:8px;">` : ''}
                         <input type="text" id="regBlockContent_${idx}" placeholder="URL изображения" value="${data?.url || ''}" style="width:100%;margin-bottom:4px;" onchange="this.previousElementSibling?.tagName==='IMG'?this.previousElementSibling.src=this.value:null">
                         <input type="text" id="regBlockCaption_${idx}" placeholder="Подпись (необязательно)" value="${data?.caption || ''}" style="width:100%;font-size:12px;">
                     </div>`;
                     break;
                 case 'video':
-                    blockEl.innerHTML = `${deleteBtn}<div style="border:1px solid var(--border-color);border-radius:8px;padding:12px;">
+                    contentHtml = `<div style="border:1px solid var(--border-color);border-radius:8px;padding:12px;">
                         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><i class="fas fa-video" style="color:var(--primary);"></i><strong>Видео</strong></div>
                         <input type="text" id="regBlockContent_${idx}" placeholder="YouTube / Vimeo URL" value="${data?.url || ''}" style="width:100%;">
                     </div>`;
                     break;
-                case 'table':
+                case 'table': {
                     const rows = data?.rows || [['', ''], ['', '']];
-                    let tableHtml = `${deleteBtn}<div style="border:1px solid var(--border-color);border-radius:8px;padding:12px;overflow-x:auto;">
+                    let tableHtml = `<div style="border:1px solid var(--border-color);border-radius:8px;padding:12px;overflow-x:auto;">
                         <div style="display:flex;gap:4px;margin-bottom:8px;">
                             <button type="button" class="btn btn-sm btn-outline" onclick="regTableAddRow(${idx})"><i class="fas fa-plus"></i> Строка</button>
                             <button type="button" class="btn btn-sm btn-outline" onclick="regTableAddCol(${idx})"><i class="fas fa-plus"></i> Столбец</button>
@@ -8307,20 +8495,44 @@ XL"></textarea>
                         tableHtml += '</tr>';
                     });
                     tableHtml += '</table></div>';
-                    blockEl.innerHTML = tableHtml;
+                    contentHtml = tableHtml;
                     break;
-                case 'divider':
-                    blockEl.innerHTML = `${deleteBtn}<hr style="border:none;border-top:2px solid var(--border-color);margin:16px 0;">`;
+                }
+                case 'file':
+                    contentHtml = `<div style="border:1px solid var(--border-color);border-radius:8px;padding:12px;">
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><i class="fas fa-paperclip" style="color:var(--primary);"></i><strong>Файл</strong></div>
+                        <input type="text" id="regBlockContent_${idx}" placeholder="URL файла" value="${data?.url || ''}" style="width:100%;margin-bottom:4px;">
+                        <input type="text" id="regBlockFileName_${idx}" placeholder="Название файла" value="${escapeHtml(data?.name || '')}" style="width:100%;font-size:12px;">
+                    </div>`;
                     break;
                 case 'code':
-                    blockEl.innerHTML = `${deleteBtn}<textarea id="regBlockContent_${idx}" rows="4" style="width:100%;font-family:monospace;font-size:13px;background:var(--bg-dark);color:var(--success);padding:12px;border:1px solid var(--border-color);border-radius:8px;resize:vertical;" placeholder="// Код...">${data?.content || ''}</textarea>`;
+                    contentHtml = `<textarea id="regBlockContent_${idx}" rows="4" style="width:100%;font-family:monospace;font-size:13px;background:var(--bg-dark);color:var(--success);padding:12px;border:1px solid var(--border-color);border-radius:8px;resize:vertical;" placeholder="// Код...">${data?.content || ''}</textarea>`;
+                    break;
+                case 'divider':
+                    contentHtml = `<hr style="border:none;border-top:2px solid var(--border-color);margin:16px 0;">`;
                     break;
             }
 
-            container.appendChild(blockEl);
-            document.getElementById('regBlockMenu').style.display = 'none';
+            blockEl.innerHTML = `${actionsHtml}<div class="reg-block-content">${contentHtml}</div>${insertBtn}`;
 
-            regEditorBlocks.push({ idx, type });
+            if (typeof insertBeforeIdx === 'number') {
+                const refEl = document.getElementById(`regBlock_${insertBeforeIdx}`);
+                if (refEl) {
+                    container.insertBefore(blockEl, refEl);
+                    const refArrIdx = regEditorBlocks.findIndex(b => b.idx === insertBeforeIdx);
+                    regEditorBlocks.splice(refArrIdx, 0, { idx, type });
+                } else {
+                    container.appendChild(blockEl);
+                    regEditorBlocks.push({ idx, type });
+                }
+            } else {
+                container.appendChild(blockEl);
+                regEditorBlocks.push({ idx, type });
+            }
+
+            // Hide all block menus
+            document.getElementById('regBlockMenu').style.display = 'none';
+            document.querySelectorAll('.reg-inline-block-menu').forEach(m => m.remove());
         }
 
         function removeRegBlock(idx) {
@@ -8350,12 +8562,81 @@ XL"></textarea>
             }
         }
 
-        function regEditorExecCmd(cmd, value) {
-            document.execCommand(cmd, false, value || null);
+        function addChecklistItem(blockIdx) {
+            const container = document.getElementById(`regBlockItems_${blockIdx}`);
+            if (!container) return;
+            const itemEl = document.createElement('div');
+            itemEl.className = 'reg-checklist-item';
+            itemEl.innerHTML = `<input type="checkbox"><input type="text" placeholder="Пункт..."><button type="button" onclick="removeChecklistItem(${blockIdx}, this)" title="Удалить"><i class="fas fa-times"></i></button>`;
+            container.appendChild(itemEl);
+            itemEl.querySelector('input[type="text"]').focus();
         }
 
-        function regEditorHeading(tag) {
-            document.execCommand('formatBlock', false, tag);
+        function removeChecklistItem(blockIdx, btn) {
+            const item = btn.closest('.reg-checklist-item');
+            if (item) item.remove();
+        }
+
+        function moveRegBlock(idx, direction) {
+            const arrIdx = regEditorBlocks.findIndex(b => b.idx === idx);
+            if (arrIdx < 0) return;
+            const newArrIdx = arrIdx + direction;
+            if (newArrIdx < 0 || newArrIdx >= regEditorBlocks.length) return;
+            const el = document.getElementById(`regBlock_${idx}`);
+            const container = document.getElementById('regEditorBlocks');
+            if (!el) return;
+            if (direction === -1 && el.previousElementSibling) {
+                container.insertBefore(el, el.previousElementSibling);
+            } else if (direction === 1 && el.nextElementSibling) {
+                container.insertBefore(el.nextElementSibling, el);
+            }
+            [regEditorBlocks[arrIdx], regEditorBlocks[newArrIdx]] = [regEditorBlocks[newArrIdx], regEditorBlocks[arrIdx]];
+        }
+
+        function regInsertBlockBefore(idx) {
+            document.querySelectorAll('.reg-inline-block-menu').forEach(m => m.remove());
+            const blockEl = document.getElementById(`regBlock_${idx}`);
+            if (!blockEl) return;
+            const menu = document.createElement('div');
+            menu.className = 'reg-inline-block-menu';
+            menu.style.cssText = 'position:relative;margin:8px 0 8px 36px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;padding:8px;box-shadow:0 4px 20px rgba(0,0,0,0.3);display:flex;flex-wrap:wrap;gap:4px;';
+            const types = [
+                { t: 'text', i: 'paragraph', l: 'Текст' }, { t: 'heading', i: 'heading', l: 'Заголовок' },
+                { t: 'task', i: 'check-square', l: 'Задача' }, { t: 'checklist', i: 'tasks', l: 'Чеклист' },
+                { t: 'quote', i: 'quote-right', l: 'Цитата' }, { t: 'alert', i: 'exclamation-circle', l: 'Уведомление' },
+                { t: 'image', i: 'image', l: 'Изображение' }, { t: 'video', i: 'video', l: 'Видео' },
+                { t: 'table', i: 'table', l: 'Таблица' }, { t: 'file', i: 'paperclip', l: 'Файл' },
+                { t: 'code', i: 'code', l: 'Код' }, { t: 'divider', i: 'minus', l: 'Разделитель' }
+            ];
+            types.forEach(({ t, i, l }) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'btn btn-sm btn-outline';
+                btn.innerHTML = `<i class="fas fa-${i}"></i> ${l}`;
+                btn.onclick = () => { menu.remove(); addRegulationBlock(t, null, idx); };
+                menu.appendChild(btn);
+            });
+            const closeBtn = document.createElement('button');
+            closeBtn.type = 'button';
+            closeBtn.className = 'btn btn-sm';
+            closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+            closeBtn.style.marginLeft = 'auto';
+            closeBtn.onclick = () => menu.remove();
+            menu.appendChild(closeBtn);
+            blockEl.parentNode.insertBefore(menu, blockEl);
+        }
+
+        function updateAlertVariant(blockIdx, variant) {
+            const colors = { info: '#3b82f6', warning: '#f59e0b', success: '#22c55e', danger: '#ef4444' };
+            const icons = { info: 'info-circle', warning: 'exclamation-triangle', success: 'check-circle', danger: 'times-circle' };
+            const alertEl = document.getElementById(`regBlockAlert_${blockIdx}`);
+            if (!alertEl) return;
+            const color = colors[variant] || colors.info;
+            alertEl.style.borderColor = color + '33';
+            alertEl.style.background = color + '11';
+            alertEl.style.borderLeftColor = color;
+            const iconEl = alertEl.querySelector('.fas');
+            if (iconEl) { iconEl.className = `fas fa-${icons[variant] || icons.info}`; iconEl.style.color = color; }
         }
 
         function getRegEditorBlocksData() {
@@ -8366,6 +8647,29 @@ XL"></textarea>
                 switch (type) {
                     case 'text':
                         blocks.push({ type: 'text', content: document.getElementById(`regBlockContent_${idx}`)?.innerHTML || '' });
+                        break;
+                    case 'heading':
+                        blocks.push({ type: 'heading', level: parseInt(document.getElementById(`regBlockLevel_${idx}`)?.value || '2'), content: document.getElementById(`regBlockContent_${idx}`)?.value || '' });
+                        break;
+                    case 'task':
+                        blocks.push({ type: 'task', content: document.getElementById(`regBlockContent_${idx}`)?.value || '', checked: document.getElementById(`regBlockCheck_${idx}`)?.checked || false, assignee: document.getElementById(`regBlockAssignee_${idx}`)?.value || '', deadline: document.getElementById(`regBlockDeadline_${idx}`)?.value || '' });
+                        break;
+                    case 'checklist': {
+                        const itemsContainer = document.getElementById(`regBlockItems_${idx}`);
+                        const items = [];
+                        if (itemsContainer) {
+                            itemsContainer.querySelectorAll('.reg-checklist-item').forEach(itemEl => {
+                                items.push({ text: itemEl.querySelector('input[type="text"]')?.value || '', checked: itemEl.querySelector('input[type="checkbox"]')?.checked || false });
+                            });
+                        }
+                        blocks.push({ type: 'checklist', items });
+                        break;
+                    }
+                    case 'quote':
+                        blocks.push({ type: 'quote', content: document.getElementById(`regBlockContent_${idx}`)?.innerHTML || '' });
+                        break;
+                    case 'alert':
+                        blocks.push({ type: 'alert', variant: document.getElementById(`regBlockVariant_${idx}`)?.value || 'info', content: document.getElementById(`regBlockContent_${idx}`)?.innerHTML || '' });
                         break;
                     case 'image':
                         blocks.push({ type: 'image', url: document.getElementById(`regBlockContent_${idx}`)?.value || '', caption: document.getElementById(`regBlockCaption_${idx}`)?.value || '' });
@@ -8387,11 +8691,14 @@ XL"></textarea>
                         blocks.push({ type: 'table', rows });
                         break;
                     }
-                    case 'divider':
-                        blocks.push({ type: 'divider' });
+                    case 'file':
+                        blocks.push({ type: 'file', url: document.getElementById(`regBlockContent_${idx}`)?.value || '', name: document.getElementById(`regBlockFileName_${idx}`)?.value || '' });
                         break;
                     case 'code':
                         blocks.push({ type: 'code', content: document.getElementById(`regBlockContent_${idx}`)?.value || '' });
+                        break;
+                    case 'divider':
+                        blocks.push({ type: 'divider' });
                         break;
                 }
             });
@@ -8492,7 +8799,7 @@ XL"></textarea>
                 renderGoals(res.goals || []);
             }
             // Load leaderboard
-            const leaderRes = await api('GET', `/goals/${projectId}/leaderboard?metric=revenue`);
+            const leaderRes = await api('GET', `/goals/${projectId}/leaderboard/revenue`);
             if (leaderRes.success) {
                 renderLeaderboard(leaderRes.leaderboard || []);
             }
@@ -8573,7 +8880,7 @@ XL"></textarea>
 
         async function assignLead(queueId) {
             try {
-                const res = await api('POST', `/lead-distribution/${projectId}/assign`);
+                const res = await api('POST', `/lead-distribution/${projectId}/distribute`);
                 if (res.success) { loadLeadDistribution(); toast('Лид назначен', 'success'); }
                 else toast(res.error || 'Ошибка назначения', 'error');
             } catch (e) { toast('Ошибка сети', 'error'); }
@@ -8617,12 +8924,18 @@ XL"></textarea>
         // Employee Analytics
         async function loadEmployeeAnalytics() {
             const period = document.getElementById('analyticsPeriod')?.value || 'month';
-            const res = await api('GET', `/employee-analytics/${projectId}/dashboard?period=${period}`);
-            if (res.success && res.stats) {
-                document.getElementById('analyticsDeals').textContent = res.stats.deals_closed || 0;
-                document.getElementById('analyticsRevenue').textContent = formatMoney(res.stats.revenue || 0);
-                document.getElementById('analyticsCalls').textContent = res.stats.calls || 0;
-                document.getElementById('analyticsConversion').textContent = (res.stats.conversion || 0) + '%';
+            const res = await api('GET', `/employee-analytics/${projectId}/overview`);
+            if (res.success && res.employees) {
+                const emps = res.employees;
+                const totalDealsWon = emps.reduce((s, e) => s + (e.deals_won || 0), 0);
+                const totalRevenue = emps.reduce((s, e) => s + (e.revenue || 0), 0);
+                const totalCalls = emps.reduce((s, e) => s + (e.calls_total || 0), 0);
+                const totalDeals = emps.reduce((s, e) => s + (e.deals_created || 0), 0);
+                const conversion = totalDeals > 0 ? Math.round((totalDealsWon / totalDeals) * 100) : 0;
+                document.getElementById('analyticsDeals').textContent = totalDealsWon;
+                document.getElementById('analyticsRevenue').textContent = formatMoney(totalRevenue);
+                document.getElementById('analyticsCalls').textContent = totalCalls;
+                document.getElementById('analyticsConversion').textContent = conversion + '%';
             }
             // Load employee list
             const empRes = await api('GET', `/employee-analytics/${projectId}/performance`);
@@ -9014,7 +9327,7 @@ XL"></textarea>
         async function startWebinar(id) {
             showLoading();
             try {
-                const res = await api('PUT', `/learning/${projectId}/webinars/${id}`, { status: 'live' });
+                const res = await api('PUT', `/learning/${projectId}/webinars/${id}/status`, { status: 'live' });
                 if (res.success) {
                     loadWebinars();
                     toast('Вебинар запущен!', 'success');
@@ -9028,7 +9341,7 @@ XL"></textarea>
             if (!await confirm('Завершить вебинар?', 'Завершение')) return;
             showLoading();
             try {
-                const res = await api('PUT', `/learning/${projectId}/webinars/${id}`, { status: 'completed' });
+                const res = await api('PUT', `/learning/${projectId}/webinars/${id}/status`, { status: 'completed' });
                 if (res.success) {
                     loadWebinars();
                     toast('Вебинар завершён', 'info');
@@ -9558,6 +9871,7 @@ XL"></textarea>
                     code, type, value: parseFloat(value),
                     min_order_amount: parseFloat(min_order_amount) || 0,
                     max_uses: max_uses ? parseInt(max_uses) : null,
+                    applies_to: document.getElementById('promoAppliesTo').value || 'all',
                     start_date: start_date || null, end_date: end_date || null
                 });
                 if (res.success) {
@@ -9842,8 +10156,8 @@ XL"></textarea>
 
             showLoading();
             try {
-                const res = await api('POST', `/bookings/${projectId}/schedules`, {
-                    employee_id, schedules
+                const res = await api('POST', `/bookings/${projectId}/schedules/${employee_id}`, {
+                    schedules
                 });
                 if (res.success) {
                     closeModal('scheduleModal');
@@ -10167,8 +10481,8 @@ XL"></textarea>
             showLoading();
             try {
                 const res = editId
-                    ? await api('PUT', `/ecommerce/${projectId}/categories/${editId}`, data)
-                    : await api('POST', `/ecommerce/${projectId}/categories`, data);
+                    ? await api('PUT', `/products/${projectId}/categories/${editId}`, data)
+                    : await api('POST', `/products/${projectId}/categories`, data);
                 if (res.success) {
                     closeModal('categoryModal');
                     resetCategoryForm();
@@ -11098,7 +11412,7 @@ XL"></textarea>
 
             showLoading();
             try {
-                const res = await api('POST', `/learning/${projectId}/certificates`, {
+                const res = await api('POST', `/learning/${projectId}/certificates/issue`, {
                     client_id: student,
                     course_id: training,
                     template_id: document.getElementById('certTemplate').value

@@ -17,9 +17,9 @@ router.get('/:projectId/dashboard', (req, res) => {
         const stats = {
             clients: db.prepare(`SELECT COUNT(*) as total FROM clients WHERE project_id = ?`).get(req.params.projectId),
             newClients: db.prepare(`SELECT COUNT(*) as total FROM clients WHERE project_id = ? AND created_at >= ${daysAgo}`).get(req.params.projectId),
-            orders: db.prepare(`SELECT COUNT(*) as total, COALESCE(SUM(total_amount), 0) as revenue FROM orders WHERE project_id = ? AND created_at >= ${daysAgo}`).get(req.params.projectId),
-            deals: db.prepare(`SELECT COUNT(*) as total, COALESCE(SUM(amount), 0) as pipeline FROM deals WHERE project_id = ? AND status = 'open'`).get(req.params.projectId),
-            wonDeals: db.prepare(`SELECT COUNT(*) as total, COALESCE(SUM(amount), 0) as revenue FROM deals WHERE project_id = ? AND status = 'won' AND closed_at >= ${daysAgo}`).get(req.params.projectId),
+            orders: db.prepare(`SELECT COUNT(*) as total, COALESCE(SUM(total), 0) as revenue FROM orders WHERE project_id = ? AND created_at >= ${daysAgo}`).get(req.params.projectId),
+            deals: db.prepare(`SELECT COUNT(*) as total, COALESCE(SUM(amount), 0) as pipeline FROM deals WHERE project_id = ? AND won_at IS NULL AND lost_at IS NULL`).get(req.params.projectId),
+            wonDeals: db.prepare(`SELECT COUNT(*) as total, COALESCE(SUM(amount), 0) as revenue FROM deals WHERE project_id = ? AND won_at IS NOT NULL AND won_at >= ${daysAgo}`).get(req.params.projectId),
             tasks: db.prepare(`SELECT COUNT(*) as total FROM tasks WHERE project_id = ? AND status != 'done'`).get(req.params.projectId),
             overdueTasks: db.prepare(`SELECT COUNT(*) as total FROM tasks WHERE project_id = ? AND status != 'done' AND due_date < datetime('now')`).get(req.params.projectId)
         };
@@ -50,7 +50,7 @@ router.get('/:projectId/funnels', (req, res) => {
             SELECT
                 fs.id, fs.name, fs.color, fs.sort_order,
                 COUNT(d.id) as deals_count,
-                COALESCE(SUM(d.amount), 0) as total_amount,
+                COALESCE(SUM(d.amount), 0) as total,
                 AVG(d.amount) as avg_amount
             FROM funnel_stages fs
             LEFT JOIN deals d ON d.stage_id = fs.id AND d.created_at >= ${daysAgo}
@@ -62,19 +62,20 @@ router.get('/:projectId/funnels', (req, res) => {
         // Win/loss ratio
         const outcomes = db.prepare(`
             SELECT
-                status,
+                CASE WHEN won_at IS NOT NULL THEN 'won' WHEN lost_at IS NOT NULL THEN 'lost' END as status,
                 COUNT(*) as count,
                 COALESCE(SUM(amount), 0) as amount
             FROM deals
-            WHERE project_id = ? AND closed_at >= ${daysAgo} AND status IN ('won', 'lost')
+            WHERE project_id = ? AND (won_at IS NOT NULL OR lost_at IS NOT NULL)
+                AND COALESCE(won_at, lost_at) >= ${daysAgo}
             GROUP BY status
         `).all(req.params.projectId);
 
         // Average deal cycle time
         const cycleTime = db.prepare(`
-            SELECT AVG(julianday(closed_at) - julianday(created_at)) as avg_days
+            SELECT AVG(julianday(won_at) - julianday(created_at)) as avg_days
             FROM deals
-            WHERE project_id = ? AND status = 'won' AND closed_at >= ${daysAgo}
+            WHERE project_id = ? AND won_at IS NOT NULL AND won_at >= ${daysAgo}
         `).get(req.params.projectId);
 
         // Deals by source
@@ -121,7 +122,7 @@ router.get('/:projectId/clients', (req, res) => {
             SELECT
                 c.id, c.first_name, c.last_name, c.email,
                 COUNT(o.id) as orders_count,
-                COALESCE(SUM(o.total_amount), 0) as total_spent
+                COALESCE(SUM(o.total), 0) as total_spent
             FROM clients c
             LEFT JOIN orders o ON o.client_id = c.id AND o.status = 'completed'
             WHERE c.project_id = ?
@@ -171,7 +172,7 @@ router.get('/:projectId/orders', (req, res) => {
 
         // Orders by status
         const byStatus = db.prepare(`
-            SELECT status, COUNT(*) as count, COALESCE(SUM(total_amount), 0) as amount
+            SELECT status, COUNT(*) as count, COALESCE(SUM(total), 0) as amount
             FROM orders
             WHERE project_id = ? AND created_at >= ${daysAgo}
             GROUP BY status
@@ -182,7 +183,7 @@ router.get('/:projectId/orders', (req, res) => {
             SELECT
                 date(created_at) as date,
                 COUNT(*) as orders,
-                COALESCE(SUM(total_amount), 0) as revenue
+                COALESCE(SUM(total), 0) as revenue
             FROM orders
             WHERE project_id = ? AND created_at >= ${daysAgo}
             GROUP BY date(created_at)
@@ -192,16 +193,16 @@ router.get('/:projectId/orders', (req, res) => {
         // Average order value
         const avgOrder = db.prepare(`
             SELECT
-                AVG(total_amount) as avg_value,
-                MAX(total_amount) as max_value,
-                MIN(total_amount) as min_value
+                AVG(total) as avg_value,
+                MAX(total) as max_value,
+                MIN(total) as min_value
             FROM orders
-            WHERE project_id = ? AND created_at >= ${daysAgo} AND total_amount > 0
+            WHERE project_id = ? AND created_at >= ${daysAgo} AND total > 0
         `).get(req.params.projectId);
 
         // Payment status breakdown
         const paymentStatus = db.prepare(`
-            SELECT payment_status, COUNT(*) as count, COALESCE(SUM(total_amount), 0) as amount
+            SELECT payment_status, COUNT(*) as count, COALESCE(SUM(total), 0) as amount
             FROM orders
             WHERE project_id = ? AND created_at >= ${daysAgo}
             GROUP BY payment_status
@@ -296,8 +297,8 @@ router.get('/:projectId/employees', (req, res) => {
         const performance = db.prepare(`
             SELECT
                 e.id, e.first_name, e.last_name, e.position,
-                (SELECT COUNT(*) FROM deals WHERE assigned_to = e.id AND status = 'won' AND closed_at >= ${daysAgo}) as won_deals,
-                (SELECT COALESCE(SUM(amount), 0) FROM deals WHERE assigned_to = e.id AND status = 'won' AND closed_at >= ${daysAgo}) as revenue,
+                (SELECT COUNT(*) FROM deals WHERE assigned_to = e.id AND won_at IS NOT NULL AND won_at >= ${daysAgo}) as won_deals,
+                (SELECT COALESCE(SUM(amount), 0) FROM deals WHERE assigned_to = e.id AND won_at IS NOT NULL AND won_at >= ${daysAgo}) as revenue,
                 (SELECT COUNT(*) FROM tasks WHERE assigned_to = e.id AND status = 'done' AND completed_at >= ${daysAgo}) as completed_tasks,
                 (SELECT COUNT(*) FROM tasks WHERE assigned_to = e.id AND status != 'done') as pending_tasks
             FROM employees e
@@ -338,13 +339,13 @@ router.get('/:projectId/ai-insights', async (req, res) => {
             newClientsThisMonth: db.prepare(`SELECT COUNT(*) as count FROM clients WHERE project_id = ? AND created_at >= datetime('now', '-30 days')`).get(req.params.projectId).count,
 
             // Sales metrics
-            openDeals: db.prepare('SELECT COUNT(*) as count, COALESCE(SUM(amount), 0) as amount FROM deals WHERE project_id = ? AND status = \'open\'').get(req.params.projectId),
-            wonThisMonth: db.prepare(`SELECT COUNT(*) as count, COALESCE(SUM(amount), 0) as amount FROM deals WHERE project_id = ? AND status = 'won' AND closed_at >= datetime('now', '-30 days')`).get(req.params.projectId),
-            lostThisMonth: db.prepare(`SELECT COUNT(*) as count FROM deals WHERE project_id = ? AND status = 'lost' AND closed_at >= datetime('now', '-30 days')`).get(req.params.projectId),
+            openDeals: db.prepare('SELECT COUNT(*) as count, COALESCE(SUM(amount), 0) as amount FROM deals WHERE project_id = ? AND won_at IS NULL AND lost_at IS NULL').get(req.params.projectId),
+            wonThisMonth: db.prepare(`SELECT COUNT(*) as count, COALESCE(SUM(amount), 0) as amount FROM deals WHERE project_id = ? AND won_at IS NOT NULL AND won_at >= datetime('now', '-30 days')`).get(req.params.projectId),
+            lostThisMonth: db.prepare(`SELECT COUNT(*) as count FROM deals WHERE project_id = ? AND lost_at IS NOT NULL AND lost_at >= datetime('now', '-30 days')`).get(req.params.projectId),
 
             // Order metrics
-            ordersThisMonth: db.prepare(`SELECT COUNT(*) as count, COALESCE(SUM(total_amount), 0) as revenue FROM orders WHERE project_id = ? AND created_at >= datetime('now', '-30 days')`).get(req.params.projectId),
-            avgOrderValue: db.prepare(`SELECT AVG(total_amount) as avg FROM orders WHERE project_id = ? AND total_amount > 0`).get(req.params.projectId),
+            ordersThisMonth: db.prepare(`SELECT COUNT(*) as count, COALESCE(SUM(total), 0) as revenue FROM orders WHERE project_id = ? AND created_at >= datetime('now', '-30 days')`).get(req.params.projectId),
+            avgOrderValue: db.prepare(`SELECT AVG(total) as avg FROM orders WHERE project_id = ? AND total > 0`).get(req.params.projectId),
 
             // Task metrics
             overdueTasks: db.prepare(`SELECT COUNT(*) as count FROM tasks WHERE project_id = ? AND status != 'done' AND due_date < datetime('now')`).get(req.params.projectId).count,
