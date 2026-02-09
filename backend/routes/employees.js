@@ -61,7 +61,7 @@ router.get('/:projectId/:employeeId', (req, res) => {
 
         // Get assigned tasks
         const tasks = db.prepare(`
-            SELECT * FROM tasks WHERE assignee_id = ? ORDER BY due_date, created_at DESC LIMIT 50
+            SELECT * FROM tasks WHERE assignee_id = ? ORDER BY due_date ASC, created_at DESC LIMIT 50
         `).all(employee.id);
 
         // Get assigned deals

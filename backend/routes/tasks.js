@@ -20,8 +20,8 @@ router.get('/:projectId', (req, res) => {
                 c.first_name as creator_first_name,
                 c.last_name as creator_last_name
             FROM tasks t
-            LEFT JOIN employees e ON e.id = t.assigned_to
-            LEFT JOIN employees c ON c.id = t.created_by
+            LEFT JOIN employees e ON e.id = t.assignee_id
+            LEFT JOIN employees c ON c.id = t.creator_id
             WHERE t.project_id = ?
         `;
         const params = [req.params.projectId];
@@ -35,7 +35,7 @@ router.get('/:projectId', (req, res) => {
             params.push(priority);
         }
         if (assigned_to) {
-            query += ` AND t.assigned_to = ?`;
+            query += ` AND t.assignee_id = ?`;
             params.push(assigned_to);
         }
         if (due_date === 'overdue') {
@@ -84,8 +84,8 @@ router.get('/:projectId/:taskId', (req, res) => {
                 c.first_name as creator_first_name,
                 c.last_name as creator_last_name
             FROM tasks t
-            LEFT JOIN employees e ON e.id = t.assigned_to
-            LEFT JOIN employees c ON c.id = t.created_by
+            LEFT JOIN employees e ON e.id = t.assignee_id
+            LEFT JOIN employees c ON c.id = t.creator_id
             WHERE t.id = ? AND t.project_id = ?
         `).get(req.params.taskId, req.params.projectId);
 
@@ -97,7 +97,7 @@ router.get('/:projectId/:taskId', (req, res) => {
         let relatedEntity = null;
         if (task.related_type && task.related_id) {
             if (task.related_type === 'deal') {
-                relatedEntity = db.prepare('SELECT id, title FROM deals WHERE id = ?').get(task.related_id);
+                relatedEntity = db.prepare('SELECT id, name FROM deals WHERE id = ?').get(task.related_id);
             } else if (task.related_type === 'client') {
                 relatedEntity = db.prepare('SELECT id, first_name, last_name FROM clients WHERE id = ?').get(task.related_id);
             } else if (task.related_type === 'order') {
@@ -122,8 +122,8 @@ router.post('/:projectId', (req, res) => {
         const db = getDb();
         const id = uuidv4();
         const {
-            title, description, priority, status, due_date, due_time,
-            assigned_to, created_by, related_type, related_id
+            title, description, priority, status, due_date,
+            assigned_to, assignee_id, created_by, related_type, related_id
         } = req.body;
 
         if (!title) {
@@ -133,19 +133,18 @@ router.post('/:projectId', (req, res) => {
         db.prepare(`
             INSERT INTO tasks (
                 id, project_id, title, description, priority, status,
-                due_date, due_time, assigned_to, created_by, related_type, related_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                due_date, assignee_id, creator_id
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).run(
             id, req.params.projectId, title, description,
-            priority || 'medium', status || 'todo',
-            due_date, due_time, assigned_to, created_by,
-            related_type, related_id
+            priority || 'medium', status || 'pending',
+            due_date, assignee_id || assigned_to, created_by
         );
 
         const task = db.prepare(`
             SELECT t.*, e.first_name as assignee_first_name, e.last_name as assignee_last_name
             FROM tasks t
-            LEFT JOIN employees e ON e.id = t.assigned_to
+            LEFT JOIN employees e ON e.id = t.assignee_id
             WHERE t.id = ?
         `).get(id);
 
@@ -161,13 +160,13 @@ router.put('/:projectId/:taskId', (req, res) => {
     try {
         const db = getDb();
         const {
-            title, description, priority, status, due_date, due_time,
-            assigned_to, related_type, related_id
+            title, description, priority, status, due_date,
+            assigned_to, assignee_id
         } = req.body;
 
         // If marking as done, set completed_at
         let completedAt = null;
-        if (status === 'done') {
+        if (status === 'done' || status === 'completed') {
             completedAt = new Date().toISOString();
         }
 
@@ -178,24 +177,20 @@ router.put('/:projectId/:taskId', (req, res) => {
                 priority = COALESCE(?, priority),
                 status = COALESCE(?, status),
                 due_date = COALESCE(?, due_date),
-                due_time = COALESCE(?, due_time),
-                assigned_to = COALESCE(?, assigned_to),
-                related_type = COALESCE(?, related_type),
-                related_id = COALESCE(?, related_id),
+                assignee_id = COALESCE(?, assignee_id),
                 completed_at = COALESCE(?, completed_at),
                 updated_at = CURRENT_TIMESTAMP
             WHERE id = ? AND project_id = ?
         `).run(
             title, description, priority, status,
-            due_date, due_time, assigned_to,
-            related_type, related_id, completedAt,
+            due_date, assignee_id || assigned_to, completedAt,
             req.params.taskId, req.params.projectId
         );
 
         const task = db.prepare(`
             SELECT t.*, e.first_name as assignee_first_name, e.last_name as assignee_last_name
             FROM tasks t
-            LEFT JOIN employees e ON e.id = t.assigned_to
+            LEFT JOIN employees e ON e.id = t.assignee_id
             WHERE t.id = ?
         `).get(req.params.taskId);
 
@@ -255,8 +250,8 @@ router.get('/:projectId/my/:employeeId', (req, res) => {
                 c.first_name as creator_first_name,
                 c.last_name as creator_last_name
             FROM tasks t
-            LEFT JOIN employees c ON c.id = t.created_by
-            WHERE t.project_id = ? AND t.assigned_to = ?
+            LEFT JOIN employees c ON c.id = t.creator_id
+            WHERE t.project_id = ? AND t.assignee_id = ?
             ORDER BY
                 CASE t.status WHEN 'in_progress' THEN 1 WHEN 'todo' THEN 2 ELSE 3 END,
                 CASE t.priority WHEN 'urgent' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 ELSE 4 END,

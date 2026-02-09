@@ -154,11 +154,13 @@ router.post('/:projectId', (req, res) => {
         const orderNumber = generateOrderNumber();
 
         const {
-            customer_id, customer_email, customer_phone, customer_name,
-            items, discount, shipping,
+            customer_id, client_id, customer_email, customer_phone, customer_name,
+            items, discount, shipping, total_amount,
             shipping_method, shipping_address, payment_method, source,
-            notes
+            notes, status, payment_status
         } = req.body;
+
+        const finalCustomerId = customer_id || client_id || null;
 
         // Calculate totals
         let subtotal = 0;
@@ -167,21 +169,32 @@ router.post('/:projectId', (req, res) => {
             subtotal += (item.price * item.quantity) - (item.discount_amount || 0);
         });
 
-        const total = subtotal - (discount || 0) + (shipping || 0);
+        const total = total_amount || subtotal - (discount || 0) + (shipping || 0);
+
+        // Look up client info if client_id provided
+        let cName = customer_name, cEmail = customer_email, cPhone = customer_phone;
+        if (finalCustomerId && (!cName || !cEmail)) {
+            const client = db.prepare('SELECT first_name, last_name, email, phone FROM clients WHERE id = ?').get(finalCustomerId);
+            if (client) {
+                cName = cName || [client.first_name, client.last_name].filter(Boolean).join(' ');
+                cEmail = cEmail || client.email;
+                cPhone = cPhone || client.phone;
+            }
+        }
 
         db.prepare(`
             INSERT INTO orders (
                 id, project_id, order_number, customer_id, customer_email, customer_phone,
                 customer_name, items, subtotal, discount,
                 shipping, total, shipping_method, shipping_address,
-                payment_method, source, notes
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                payment_method, source, notes, status, payment_status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).run(
-            id, req.params.projectId, orderNumber, customer_id, customer_email, customer_phone,
-            customer_name, JSON.stringify(orderItems), subtotal,
+            id, req.params.projectId, orderNumber, null, cEmail, cPhone,
+            cName, JSON.stringify(orderItems), subtotal,
             discount || 0, shipping || 0, total,
             shipping_method, JSON.stringify(shipping_address || {}), payment_method,
-            source || 'website', notes
+            source || 'website', notes, status || 'pending', payment_status || 'pending'
         );
 
         // Create order items
@@ -212,14 +225,14 @@ router.post('/:projectId', (req, res) => {
         `).run(uuidv4(), id);
 
         // Update client stats
-        if (customer_id) {
+        if (finalCustomerId) {
             db.prepare(`
                 UPDATE clients SET
                     total_orders = total_orders + 1,
                     total_spent = total_spent + ?,
                     last_order_at = CURRENT_TIMESTAMP
                 WHERE id = ?
-            `).run(total, customer_id);
+            `).run(total, finalCustomerId);
         }
 
         const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(id);

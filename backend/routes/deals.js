@@ -52,7 +52,7 @@ router.get('/:projectId', (req, res) => {
             params.push(assigned_to);
         }
         if (search) {
-            query += ` AND (d.title LIKE ? OR c.first_name LIKE ? OR c.last_name LIKE ? OR c.email LIKE ?)`;
+            query += ` AND (d.name LIKE ? OR c.first_name LIKE ? OR c.last_name LIKE ? OR c.email LIKE ?)`;
             params.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`);
         }
 
@@ -111,7 +111,7 @@ router.get('/:projectId/kanban/:funnelId', (req, res) => {
                 FROM deals d
                 LEFT JOIN clients c ON c.id = d.client_id
                 LEFT JOIN employees e ON e.id = d.assigned_to
-                WHERE d.stage_id = ? AND d.status = 'open'
+                WHERE d.stage_id = ? AND d.won_at IS NULL AND d.lost_at IS NULL
                 ORDER BY d.created_at DESC
             `).all(stage.id);
 
@@ -162,15 +162,15 @@ router.get('/:projectId/:dealId', (req, res) => {
         const history = db.prepare(`
             SELECT dsh.*, fs.name as stage_name, e.first_name, e.last_name
             FROM deal_stage_history dsh
-            LEFT JOIN funnel_stages fs ON fs.id = dsh.stage_id
-            LEFT JOIN employees e ON e.id = dsh.changed_by
+            LEFT JOIN funnel_stages fs ON fs.id = dsh.to_stage_id
+            LEFT JOIN employees e ON e.id = dsh.employee_id
             WHERE dsh.deal_id = ?
-            ORDER BY dsh.changed_at DESC
+            ORDER BY dsh.created_at DESC
         `).all(deal.id);
 
         // Get related tasks
         const tasks = db.prepare(`
-            SELECT * FROM tasks WHERE related_type = 'deal' AND related_id = ?
+            SELECT * FROM tasks WHERE deal_id = ?
             ORDER BY due_date ASC
         `).all(deal.id);
 
@@ -196,12 +196,13 @@ router.post('/:projectId', (req, res) => {
         const db = getDb();
         const id = uuidv4();
         const {
-            title, funnel_id, stage_id, client_id, assigned_to,
+            name, title, funnel_id, stage_id, client_id, assigned_to,
             amount, currency, probability, expected_close_date,
             source, tags, custom_fields, notes
         } = req.body;
 
-        if (!title || !funnel_id) {
+        const dealName = name || title;
+        if (!dealName || !funnel_id) {
             return res.status(400).json({ success: false, error: 'Название и воронка обязательны' });
         }
 
@@ -214,21 +215,23 @@ router.post('/:projectId', (req, res) => {
 
         db.prepare(`
             INSERT INTO deals (
-                id, project_id, title, funnel_id, stage_id, client_id, assigned_to,
+                id, project_id, name, funnel_id, stage_id, client_id, assigned_to,
                 amount, currency, probability, expected_close_date,
-                source, tags, custom_fields, notes, status
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'open')
+                source, tags, custom_fields, notes
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).run(
-            id, req.params.projectId, title, funnel_id, actualStageId, client_id, assigned_to,
+            id, req.params.projectId, dealName, funnel_id, actualStageId, client_id, assigned_to,
             amount || 0, currency || 'RUB', probability || 50, expected_close_date,
             source, JSON.stringify(tags || []), JSON.stringify(custom_fields || {}), notes
         );
 
         // Record stage history
-        db.prepare(`
-            INSERT INTO deal_stage_history (deal_id, stage_id, changed_by)
-            VALUES (?, ?, ?)
-        `).run(id, actualStageId, assigned_to);
+        if (actualStageId) {
+            db.prepare(`
+                INSERT INTO deal_stage_history (id, deal_id, to_stage_id)
+                VALUES (?, ?, ?)
+            `).run(uuidv4(), id, actualStageId);
+        }
 
         const deal = db.prepare('SELECT * FROM deals WHERE id = ?').get(id);
 
@@ -251,17 +254,19 @@ router.put('/:projectId/:dealId', (req, res) => {
     try {
         const db = getDb();
         const {
-            title, stage_id, client_id, assigned_to,
+            name, title, stage_id, client_id, assigned_to,
             amount, probability, expected_close_date,
-            source, tags, custom_fields, notes, status
+            source, tags, custom_fields, notes
         } = req.body;
+
+        const dealName = name || title;
 
         // Check if stage changed
         const currentDeal = db.prepare('SELECT stage_id FROM deals WHERE id = ?').get(req.params.dealId);
 
         db.prepare(`
             UPDATE deals SET
-                title = COALESCE(?, title),
+                name = COALESCE(?, name),
                 stage_id = COALESCE(?, stage_id),
                 client_id = COALESCE(?, client_id),
                 assigned_to = COALESCE(?, assigned_to),
@@ -272,24 +277,23 @@ router.put('/:projectId/:dealId', (req, res) => {
                 tags = COALESCE(?, tags),
                 custom_fields = COALESCE(?, custom_fields),
                 notes = COALESCE(?, notes),
-                status = COALESCE(?, status),
                 updated_at = CURRENT_TIMESTAMP
             WHERE id = ? AND project_id = ?
         `).run(
-            title, stage_id, client_id, assigned_to,
+            dealName, stage_id, client_id, assigned_to,
             amount, probability, expected_close_date,
             source, tags ? JSON.stringify(tags) : null,
             custom_fields ? JSON.stringify(custom_fields) : null,
-            notes, status,
+            notes,
             req.params.dealId, req.params.projectId
         );
 
         // Record stage change
         if (stage_id && currentDeal && currentDeal.stage_id !== stage_id) {
             db.prepare(`
-                INSERT INTO deal_stage_history (deal_id, stage_id, changed_by)
-                VALUES (?, ?, ?)
-            `).run(req.params.dealId, stage_id, assigned_to);
+                INSERT INTO deal_stage_history (id, deal_id, from_stage_id, to_stage_id)
+                VALUES (?, ?, ?, ?)
+            `).run(uuidv4(), req.params.dealId, currentDeal.stage_id, stage_id);
         }
 
         const deal = db.prepare('SELECT * FROM deals WHERE id = ?').get(req.params.dealId);
@@ -321,9 +325,9 @@ router.patch('/:projectId/:dealId/stage', (req, res) => {
 
         // Record stage change
         db.prepare(`
-            INSERT INTO deal_stage_history (deal_id, stage_id, changed_by)
-            VALUES (?, ?, ?)
-        `).run(req.params.dealId, stage_id, changed_by);
+            INSERT INTO deal_stage_history (id, deal_id, to_stage_id, employee_id)
+            VALUES (?, ?, ?, ?)
+        `).run(uuidv4(), req.params.dealId, stage_id, changed_by);
 
         res.json({ success: true });
     } catch (error) {
@@ -340,9 +344,8 @@ router.patch('/:projectId/:dealId/won', (req, res) => {
 
         db.prepare(`
             UPDATE deals SET
-                status = 'won',
+                won_at = CURRENT_TIMESTAMP,
                 amount = COALESCE(?, amount),
-                closed_at = CURRENT_TIMESTAMP,
                 updated_at = CURRENT_TIMESTAMP
             WHERE id = ? AND project_id = ?
         `).run(final_amount, req.params.dealId, req.params.projectId);
@@ -362,9 +365,8 @@ router.patch('/:projectId/:dealId/lost', (req, res) => {
 
         db.prepare(`
             UPDATE deals SET
-                status = 'lost',
+                lost_at = CURRENT_TIMESTAMP,
                 loss_reason = ?,
-                closed_at = CURRENT_TIMESTAMP,
                 updated_at = CURRENT_TIMESTAMP
             WHERE id = ? AND project_id = ?
         `).run(loss_reason, req.params.dealId, req.params.projectId);
