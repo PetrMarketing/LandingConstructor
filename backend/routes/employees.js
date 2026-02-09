@@ -97,12 +97,17 @@ router.post('/:projectId', (req, res) => {
         const id = uuidv4();
         const {
             email, first_name, last_name, middle_name, phone,
-            avatar_url, position, department, role, permissions, telegram_id
+            avatar_url, position, department, role, permissions, telegram_id,
+            linked_services
         } = req.body;
 
-        if (!email || !first_name || !last_name) {
-            return res.status(400).json({ success: false, error: 'Email, имя и фамилия обязательны' });
+        if (!first_name) {
+            return res.status(400).json({ success: false, error: 'Имя обязательно' });
         }
+
+        // Auto-generate email for specialists if not provided
+        const finalEmail = email || `${id.slice(0,8)}@staff.local`;
+        const finalLastName = last_name || '';
 
         db.prepare(`
             INSERT INTO employees (
@@ -110,10 +115,20 @@ router.post('/:projectId', (req, res) => {
                 avatar_url, position, department, role, permissions, telegram_id
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).run(
-            id, req.params.projectId, email, first_name, last_name, middle_name, phone,
+            id, req.params.projectId, finalEmail, first_name, finalLastName, middle_name, phone,
             avatar_url, position, department, role || 'manager',
             JSON.stringify(permissions || {}), telegram_id
         );
+
+        // Save linked services
+        if (Array.isArray(linked_services)) {
+            linked_services.forEach(serviceId => {
+                db.prepare(`
+                    INSERT OR IGNORE INTO service_employees (id, service_id, employee_id)
+                    VALUES (?, ?, ?)
+                `).run(uuidv4(), serviceId, id);
+            });
+        }
 
         const employee = db.prepare('SELECT * FROM employees WHERE id = ?').get(id);
 
@@ -121,7 +136,8 @@ router.post('/:projectId', (req, res) => {
             success: true,
             employee: {
                 ...employee,
-                permissions: JSON.parse(employee.permissions || '{}')
+                permissions: JSON.parse(employee.permissions || '{}'),
+                linked_services: linked_services || []
             }
         });
     } catch (error) {
@@ -136,7 +152,8 @@ router.put('/:projectId/:employeeId', (req, res) => {
         const db = getDb();
         const {
             email, first_name, last_name, middle_name, phone,
-            avatar_url, position, department, role, permissions, telegram_id, is_active
+            avatar_url, position, department, role, permissions, telegram_id, is_active,
+            linked_services
         } = req.body;
 
         db.prepare(`
@@ -163,13 +180,28 @@ router.put('/:projectId/:employeeId', (req, res) => {
             req.params.employeeId, req.params.projectId
         );
 
+        // Update linked services if provided
+        if (Array.isArray(linked_services)) {
+            db.prepare('DELETE FROM service_employees WHERE employee_id = ?').run(req.params.employeeId);
+            linked_services.forEach(serviceId => {
+                db.prepare(`
+                    INSERT OR IGNORE INTO service_employees (id, service_id, employee_id)
+                    VALUES (?, ?, ?)
+                `).run(uuidv4(), serviceId, req.params.employeeId);
+            });
+        }
+
         const employee = db.prepare('SELECT * FROM employees WHERE id = ?').get(req.params.employeeId);
+
+        // Get linked services
+        const services = db.prepare('SELECT service_id FROM service_employees WHERE employee_id = ?').all(req.params.employeeId);
 
         res.json({
             success: true,
             employee: {
                 ...employee,
-                permissions: JSON.parse(employee.permissions || '{}')
+                permissions: JSON.parse(employee.permissions || '{}'),
+                linked_services: services.map(s => s.service_id)
             }
         });
     } catch (error) {

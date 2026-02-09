@@ -234,7 +234,8 @@ router.post('/:projectId', (req, res) => {
         const id = uuidv4();
         const {
             client_id, employee_id, service_id, booking_date, start_time,
-            client_name, client_phone, client_email, comment, source
+            duration: reqDuration, client_name, client_phone, client_email, comment, source,
+            send_reminder, reminder_time
         } = req.body;
 
         if (!service_id || !booking_date || !start_time) {
@@ -247,7 +248,7 @@ router.post('/:projectId', (req, res) => {
             return res.status(404).json({ success: false, error: 'Услуга не найдена' });
         }
 
-        const duration = service.duration || 60;
+        const duration = reqDuration || service.duration || 60;
         const startMinutes = timeToMinutes(start_time);
         const end_time = minutesToTime(startMinutes + duration);
 
