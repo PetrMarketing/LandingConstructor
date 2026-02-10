@@ -5,8 +5,8 @@ module.exports = {
     PORT: process.env.PORT || 3000,
     NODE_ENV: process.env.NODE_ENV || 'development',
 
-    // Database (use /var/data on Render for persistence)
-    DB_PATH: process.env.DB_PATH || (process.env.NODE_ENV === 'production' ? '/var/data/cms.db' : './data/cms.db'),
+    // Database (use /var/data if Render disk mounted, fallback to /tmp/data)
+    DB_PATH: process.env.DB_PATH || (process.env.NODE_ENV === 'production' ? '/tmp/data/cms.db' : './data/cms.db'),
 
     // JWT
     JWT_SECRET: process.env.JWT_SECRET || 'your-super-secret-key-change-in-production',
