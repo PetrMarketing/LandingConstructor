@@ -142,7 +142,7 @@ exports.login = async (req, res) => {
         console.error('Login error:', error);
         res.status(500).json({
             success: false,
-            error: 'Ошибка при входе'
+            error: 'Ошибка при входе: ' + error.message
         });
     }
 };
