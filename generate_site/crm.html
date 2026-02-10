@@ -4689,13 +4689,24 @@ XL"></textarea>
         // Init
         async function init() {
             // Get project from localStorage or redirect to login
-            const projects = JSON.parse(localStorage.getItem('cms_projects') || '[]');
+            let projects = JSON.parse(localStorage.getItem('cms_projects') || '[]');
             if (projects.length === 0) {
                 toast('Сначала войдите в систему', 'error');
                 location.href = 'admin.html';
                 return;
             }
             projectId = projects[0].id;
+
+            // Verify project still exists on server (DB may have been reset)
+            const projCheck = await api('GET', `/projects`);
+            if (projCheck.success) {
+                const serverProjects = projCheck.data || projCheck.projects || [];
+                const found = serverProjects.find(p => p.id === projectId);
+                if (!found && serverProjects.length > 0) {
+                    projectId = serverProjects[0].id;
+                    localStorage.setItem('cms_projects', JSON.stringify(serverProjects));
+                }
+            }
 
             // Set default dates
             const today = new Date().toISOString().split('T')[0];
