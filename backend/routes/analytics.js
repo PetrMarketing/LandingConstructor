@@ -110,7 +110,7 @@ router.get('/:projectId/clients', (req, res) => {
         // New vs returning
         const clientTypes = db.prepare(`
             SELECT
-                CASE WHEN (SELECT COUNT(*) FROM orders WHERE client_id = c.id) > 1 THEN 'returning' ELSE 'new' END as type,
+                CASE WHEN (SELECT COUNT(*) FROM orders WHERE customer_id = c.id) > 1 THEN 'returning' ELSE 'new' END as type,
                 COUNT(*) as count
             FROM clients c
             WHERE c.project_id = ?
@@ -124,7 +124,7 @@ router.get('/:projectId/clients', (req, res) => {
                 COUNT(o.id) as orders_count,
                 COALESCE(SUM(o.total), 0) as total_spent
             FROM clients c
-            LEFT JOIN orders o ON o.client_id = c.id AND o.status = 'completed'
+            LEFT JOIN orders o ON o.customer_id = c.id AND o.status = 'completed'
             WHERE c.project_id = ?
             GROUP BY c.id
             ORDER BY total_spent DESC
@@ -147,7 +147,7 @@ router.get('/:projectId/clients', (req, res) => {
             SELECT COUNT(*) as count
             FROM clients c
             WHERE c.project_id = ?
-            AND (SELECT MAX(created_at) FROM orders WHERE client_id = c.id) < datetime('now', '-60 days')
+            AND (SELECT MAX(created_at) FROM orders WHERE customer_id = c.id) < datetime('now', '-60 days')
         `).get(req.params.projectId);
 
         res.json({

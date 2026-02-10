@@ -227,6 +227,187 @@ router.get('/:projectId/slots', (req, res) => {
     }
 });
 
+// ============================================================
+// EMPLOYEE SCHEDULES (must be before /:bookingId routes)
+// ============================================================
+
+// Get all schedules for project employees
+router.get('/:projectId/schedules', (req, res) => {
+    try {
+        const db = getDb();
+        const schedules = db.prepare(`
+            SELECT es.*, (e.first_name || ' ' || e.last_name) as employee_name
+            FROM employee_schedules es
+            JOIN employees e ON e.id = es.employee_id
+            WHERE e.project_id = ?
+            ORDER BY e.first_name, es.day_of_week
+        `).all(req.params.projectId);
+
+        res.json({ success: true, schedules });
+    } catch (error) {
+        console.error('Get schedules error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Get employees for booking context
+router.get('/:projectId/employees', (req, res) => {
+    try {
+        const db = getDb();
+        const { service_id } = req.query;
+
+        let query, params;
+        if (service_id) {
+            query = `
+                SELECT e.id, e.first_name, e.last_name, e.position, e.avatar_url,
+                    se.price_override, se.duration_override
+                FROM employees e
+                JOIN service_employees se ON se.employee_id = e.id AND se.service_id = ? AND se.is_active = 1
+                WHERE e.project_id = ? AND e.is_active = 1
+                ORDER BY e.first_name, e.last_name
+            `;
+            params = [service_id, req.params.projectId];
+        } else {
+            query = `
+                SELECT e.id, e.first_name, e.last_name, e.position, e.avatar_url
+                FROM employees e
+                WHERE e.project_id = ? AND e.is_active = 1
+                ORDER BY e.first_name, e.last_name
+            `;
+            params = [req.params.projectId];
+        }
+
+        const employees = db.prepare(query).all(...params);
+        res.json({ success: true, employees });
+    } catch (error) {
+        console.error('Get booking employees error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Get employee schedule
+router.get('/:projectId/schedules/:employeeId', (req, res) => {
+    try {
+        const db = getDb();
+        const schedules = db.prepare(`
+            SELECT * FROM employee_schedules WHERE employee_id = ? ORDER BY day_of_week
+        `).all(req.params.employeeId);
+
+        const exceptions = db.prepare(`
+            SELECT * FROM schedule_exceptions
+            WHERE employee_id = ? AND date >= date('now')
+            ORDER BY date
+            LIMIT 30
+        `).all(req.params.employeeId);
+
+        res.json({ success: true, schedules, exceptions });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Set employee schedule
+router.post('/:projectId/schedules/:employeeId', (req, res) => {
+    try {
+        const db = getDb();
+        const { schedules } = req.body;
+
+        const upsert = db.prepare(`
+            INSERT INTO employee_schedules (id, employee_id, day_of_week, start_time, end_time, is_working, break_start, break_end)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(employee_id, day_of_week) DO UPDATE SET
+                start_time = excluded.start_time,
+                end_time = excluded.end_time,
+                is_working = excluded.is_working,
+                break_start = excluded.break_start,
+                break_end = excluded.break_end
+        `);
+
+        const updateMany = db.transaction((items) => {
+            for (const s of items) {
+                upsert.run(
+                    uuidv4(), req.params.employeeId, s.day_of_week,
+                    s.start_time, s.end_time, s.is_working ? 1 : 0,
+                    s.break_start, s.break_end
+                );
+            }
+        });
+
+        updateMany(schedules);
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Set schedule error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Add schedule exception (day off, vacation, etc.)
+router.post('/:projectId/schedules/:employeeId/exceptions', (req, res) => {
+    try {
+        const db = getDb();
+        const { date, type, reason, start_time, end_time } = req.body;
+
+        db.prepare(`
+            INSERT INTO schedule_exceptions (id, employee_id, date, type, reason, start_time, end_time)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `).run(uuidv4(), req.params.employeeId, date, type || 'day_off', reason, start_time, end_time);
+
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Delete schedule exception
+router.delete('/:projectId/schedules/:employeeId/exceptions/:exceptionId', (req, res) => {
+    try {
+        const db = getDb();
+        db.prepare('DELETE FROM schedule_exceptions WHERE id = ?').run(req.params.exceptionId);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ============================================================
+// CLIENT VISITS (must be before /:bookingId routes)
+// ============================================================
+
+// Get client visit history
+router.get('/:projectId/clients/:clientId/visits', (req, res) => {
+    try {
+        const db = getDb();
+        const visits = db.prepare(`
+            SELECT v.*, s.name as service_name, (e.first_name || ' ' || e.last_name) as employee_name
+            FROM client_visits v
+            LEFT JOIN services s ON s.id = v.service_id
+            LEFT JOIN employees e ON e.id = v.employee_id
+            WHERE v.client_id = ?
+            ORDER BY v.visit_date DESC
+            LIMIT 50
+        `).all(req.params.clientId);
+
+        const stats = db.prepare(`
+            SELECT
+                COUNT(*) as total_visits,
+                SUM(amount_paid) as total_spent,
+                AVG(rating) as avg_rating,
+                MAX(visit_date) as last_visit
+            FROM client_visits
+            WHERE client_id = ?
+        `).get(req.params.clientId);
+
+        res.json({ success: true, visits, stats });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ============================================================
+// BOOKING CRUD (/:bookingId routes - must be after static routes)
+// ============================================================
+
 // Create booking
 router.post('/:projectId', (req, res) => {
     try {
@@ -509,183 +690,6 @@ router.delete('/:projectId/:bookingId', (req, res) => {
         db.prepare('DELETE FROM bookings WHERE id = ? AND project_id = ?')
             .run(req.params.bookingId, req.params.projectId);
         res.json({ success: true });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-// ============================================================
-// EMPLOYEE SCHEDULES
-// ============================================================
-
-// Get all schedules for project employees
-router.get('/:projectId/schedules', (req, res) => {
-    try {
-        const db = getDb();
-        const schedules = db.prepare(`
-            SELECT es.*, (e.first_name || ' ' || e.last_name) as employee_name
-            FROM employee_schedules es
-            JOIN employees e ON e.id = es.employee_id
-            WHERE e.project_id = ?
-            ORDER BY e.first_name, es.day_of_week
-        `).all(req.params.projectId);
-
-        res.json({ success: true, schedules });
-    } catch (error) {
-        console.error('Get schedules error:', error);
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-// Get employees for booking context
-router.get('/:projectId/employees', (req, res) => {
-    try {
-        const db = getDb();
-        const { service_id } = req.query;
-
-        let query, params;
-        if (service_id) {
-            query = `
-                SELECT e.id, e.first_name, e.last_name, e.position, e.avatar_url,
-                    se.price_override, se.duration_override
-                FROM employees e
-                JOIN service_employees se ON se.employee_id = e.id AND se.service_id = ? AND se.is_active = 1
-                WHERE e.project_id = ? AND e.is_active = 1
-                ORDER BY e.first_name, e.last_name
-            `;
-            params = [service_id, req.params.projectId];
-        } else {
-            query = `
-                SELECT e.id, e.first_name, e.last_name, e.position, e.avatar_url
-                FROM employees e
-                WHERE e.project_id = ? AND e.is_active = 1
-                ORDER BY e.first_name, e.last_name
-            `;
-            params = [req.params.projectId];
-        }
-
-        const employees = db.prepare(query).all(...params);
-        res.json({ success: true, employees });
-    } catch (error) {
-        console.error('Get booking employees error:', error);
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-// Get employee schedule
-router.get('/:projectId/schedules/:employeeId', (req, res) => {
-    try {
-        const db = getDb();
-        const schedules = db.prepare(`
-            SELECT * FROM employee_schedules WHERE employee_id = ? ORDER BY day_of_week
-        `).all(req.params.employeeId);
-
-        const exceptions = db.prepare(`
-            SELECT * FROM schedule_exceptions
-            WHERE employee_id = ? AND date >= date('now')
-            ORDER BY date
-            LIMIT 30
-        `).all(req.params.employeeId);
-
-        res.json({ success: true, schedules, exceptions });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-// Set employee schedule
-router.post('/:projectId/schedules/:employeeId', (req, res) => {
-    try {
-        const db = getDb();
-        const { schedules } = req.body; // Array of { day_of_week, start_time, end_time, is_working, break_start, break_end }
-
-        const upsert = db.prepare(`
-            INSERT INTO employee_schedules (id, employee_id, day_of_week, start_time, end_time, is_working, break_start, break_end)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ON CONFLICT(employee_id, day_of_week) DO UPDATE SET
-                start_time = excluded.start_time,
-                end_time = excluded.end_time,
-                is_working = excluded.is_working,
-                break_start = excluded.break_start,
-                break_end = excluded.break_end
-        `);
-
-        const updateMany = db.transaction((items) => {
-            for (const s of items) {
-                upsert.run(
-                    uuidv4(), req.params.employeeId, s.day_of_week,
-                    s.start_time, s.end_time, s.is_working ? 1 : 0,
-                    s.break_start, s.break_end
-                );
-            }
-        });
-
-        updateMany(schedules);
-
-        res.json({ success: true });
-    } catch (error) {
-        console.error('Set schedule error:', error);
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-// Add schedule exception (day off, vacation, etc.)
-router.post('/:projectId/schedules/:employeeId/exceptions', (req, res) => {
-    try {
-        const db = getDb();
-        const { date, type, reason, start_time, end_time } = req.body;
-
-        db.prepare(`
-            INSERT INTO schedule_exceptions (id, employee_id, date, type, reason, start_time, end_time)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        `).run(uuidv4(), req.params.employeeId, date, type || 'day_off', reason, start_time, end_time);
-
-        res.json({ success: true });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-// Delete schedule exception
-router.delete('/:projectId/schedules/:employeeId/exceptions/:exceptionId', (req, res) => {
-    try {
-        const db = getDb();
-        db.prepare('DELETE FROM schedule_exceptions WHERE id = ?').run(req.params.exceptionId);
-        res.json({ success: true });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-// ============================================================
-// CLIENT VISITS
-// ============================================================
-
-// Get client visit history
-router.get('/:projectId/clients/:clientId/visits', (req, res) => {
-    try {
-        const db = getDb();
-        const visits = db.prepare(`
-            SELECT v.*, s.name as service_name, (e.first_name || ' ' || e.last_name) as employee_name
-            FROM client_visits v
-            LEFT JOIN services s ON s.id = v.service_id
-            LEFT JOIN employees e ON e.id = v.employee_id
-            WHERE v.client_id = ?
-            ORDER BY v.visit_date DESC
-            LIMIT 50
-        `).all(req.params.clientId);
-
-        const stats = db.prepare(`
-            SELECT
-                COUNT(*) as total_visits,
-                SUM(amount_paid) as total_spent,
-                AVG(rating) as avg_rating,
-                MAX(visit_date) as last_visit
-            FROM client_visits
-            WHERE client_id = ?
-        `).get(req.params.clientId);
-
-        res.json({ success: true, visits, stats });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }

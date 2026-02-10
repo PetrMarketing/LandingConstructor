@@ -12,8 +12,8 @@ router.get('/:projectId', (req, res) => {
     try {
         const db = getDb();
         const themes = db.prepare(`
-            SELECT * FROM themes WHERE project_id = ? OR is_default = 1
-            ORDER BY is_default DESC, name
+            SELECT * FROM themes WHERE project_id = ? OR is_active = 1
+            ORDER BY is_active DESC, name
         `).all(req.params.projectId);
 
         res.json({
@@ -227,7 +227,7 @@ router.delete('/:projectId/:themeId', (req, res) => {
             return res.status(400).json({ success: false, error: 'Нельзя удалить активную тему' });
         }
 
-        db.prepare('DELETE FROM themes WHERE id = ? AND project_id = ? AND is_default = 0')
+        db.prepare('DELETE FROM themes WHERE id = ? AND project_id = ? AND is_active = 0')
             .run(req.params.themeId, req.params.projectId);
 
         res.json({ success: true });
