@@ -120,6 +120,15 @@ app.listen(PORT, async () => {
     } else if (maxApi) {
         console.log('MAX bot configured (webhook not set in dev mode)');
     }
+
+    // Keep-alive: ping self every 14 min to prevent Render free tier from sleeping
+    const KEEP_ALIVE_URL = process.env.RENDER_EXTERNAL_URL || process.env.APP_URL;
+    if (KEEP_ALIVE_URL) {
+        setInterval(() => {
+            fetch(KEEP_ALIVE_URL + '/api/channels').catch(() => {});
+        }, 14 * 60 * 1000);
+        console.log('Keep-alive enabled:', KEEP_ALIVE_URL);
+    }
 });
 
 module.exports = app;
