@@ -34,8 +34,8 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Telegram webhook
-if (bot) {
+// Telegram webhook (production only; in dev we use polling)
+if (bot && process.env.NODE_ENV === 'production') {
     app.use('/webhook/telegram', getWebhookCallback());
 }
 

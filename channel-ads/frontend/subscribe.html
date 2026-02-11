@@ -13,208 +13,202 @@
             --tg-theme-button-color: #2481cc;
             --tg-theme-button-text-color: #ffffff;
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--tg-theme-bg-color);
-            color: var(--tg-theme-text-color);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            text-align: center;
+            background: var(--tg-theme-bg-color); color: var(--tg-theme-text-color);
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 24px; text-align: center;
         }
-
-        .icon {
-            width: 80px;
-            height: 80px;
-            background: var(--tg-theme-button-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 24px;
-        }
-
-        .icon svg {
-            width: 40px;
-            height: 40px;
-            fill: var(--tg-theme-button-text-color);
-        }
-
-        h1 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .channel-name {
-            color: var(--tg-theme-button-color);
-        }
-
-        .description {
-            color: var(--tg-theme-hint-color);
-            font-size: 15px;
-            margin-bottom: 32px;
-            max-width: 300px;
-        }
-
+        .icon { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; font-size: 40px; }
+        .icon.loading { background: var(--tg-theme-button-color); }
+        .icon.waiting { background: #ff9800; }
+        .icon.success { background: #4caf50; }
+        h1 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+        .channel-name { color: var(--tg-theme-button-color); font-size: 20px; margin-bottom: 8px; }
+        .description { color: var(--tg-theme-hint-color); font-size: 15px; margin-bottom: 24px; max-width: 300px; }
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 14px 32px;
-            background: var(--tg-theme-button-color);
-            color: var(--tg-theme-button-text-color);
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            transition: opacity 0.2s;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 14px 32px; background: var(--tg-theme-button-color);
+            color: var(--tg-theme-button-text-color); border: none; border-radius: 12px;
+            font-size: 16px; font-weight: 500; cursor: pointer; text-decoration: none;
         }
-
-        .btn:hover {
-            opacity: 0.9;
-        }
-
-        .loader {
-            display: none;
-        }
-
-        .loader.active {
-            display: block;
-        }
-
-        .spinner {
-            width: 48px;
-            height: 48px;
-            border: 4px solid var(--tg-theme-hint-color);
-            border-top-color: var(--tg-theme-button-color);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 16px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .error {
-            color: #dc3545;
-            margin-top: 16px;
-        }
-
-        .content {
-            display: none;
-        }
-
-        .content.active {
-            display: block;
-        }
+        .btn:hover { opacity: 0.9; }
+        .spinner { width: 48px; height: 48px; border: 4px solid var(--tg-theme-hint-color); border-top-color: var(--tg-theme-button-color); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .error { color: #dc3545; margin-top: 16px; }
+        .screen { display: none; flex-direction: column; align-items: center; }
+        .screen.active { display: flex; }
+        .dots { display: inline-block; width: 20px; text-align: left; }
+        @keyframes dots { 0% { content: ''; } 33% { content: '.'; } 66% { content: '..'; } 100% { content: '...'; } }
     </style>
 </head>
 <body>
-    <!-- Лоадер -->
-    <div class="loader active" id="loader">
+    <!-- Screen 1: Loading -->
+    <div class="screen active" id="screenLoading">
         <div class="spinner"></div>
         <p>Загрузка...</p>
     </div>
 
-    <!-- Основной контент -->
-    <div class="content" id="content">
-        <div class="icon">
-            <svg viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
-        </div>
-
-        <h1>Подпишитесь на канал</h1>
-        <h2 class="channel-name" id="channel-name">Загрузка...</h2>
-
-        <p class="description">
-            Нажмите кнопку ниже, чтобы перейти к каналу и подписаться
-        </p>
-
-        <a class="btn" id="subscribe-btn" href="#" target="_blank">
-            Подписаться на канал
-        </a>
-
-        <p class="error" id="error" style="display: none;"></p>
+    <!-- Screen 2: Go to channel -->
+    <div class="screen" id="screenSubscribe">
+        <div class="icon waiting">📢</div>
+        <h2 class="channel-name" id="channelName"></h2>
+        <p class="description">Подпишитесь на канал и вернитесь сюда</p>
+        <a class="btn" id="openChannelBtn" href="#">Открыть канал</a>
+        <p style="margin-top: 16px; color: var(--tg-theme-hint-color); font-size: 13px;" id="checkingText"></p>
     </div>
 
-    <!-- Яндекс Метрика (вставится динамически) -->
-    <script id="ym-script"></script>
+    <!-- Screen 3: Checking subscription -->
+    <div class="screen" id="screenChecking">
+        <div class="spinner"></div>
+        <h1>Проверяем подписку</h1>
+        <p class="description">Подпишитесь на канал — мы автоматически это определим</p>
+        <a class="btn" id="openChannelBtn2" href="#" style="background:#ff9800;">Открыть канал ещё раз</a>
+    </div>
 
-    <!-- VK Pixel (вставится динамически) -->
-    <script id="vk-script"></script>
+    <!-- Screen 4: Success -->
+    <div class="screen" id="screenSuccess">
+        <div class="icon success">✓</div>
+        <h1>Вы подписались!</h1>
+        <p class="description" id="successText">Спасибо за подписку</p>
+    </div>
+
+    <!-- Screen 5: Error -->
+    <div class="screen" id="screenError">
+        <div class="icon loading">⚠</div>
+        <h1>Ошибка</h1>
+        <p class="error" id="errorText"></p>
+    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
 
-        // Применяем тему
+        // Apply theme
         if (tg.themeParams) {
-            const root = document.documentElement;
-            if (tg.themeParams.bg_color) root.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color);
-            if (tg.themeParams.text_color) root.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color);
-            if (tg.themeParams.hint_color) root.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color);
-            if (tg.themeParams.button_color) root.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color);
-            if (tg.themeParams.button_text_color) root.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color);
+            const r = document.documentElement;
+            if (tg.themeParams.bg_color) r.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color);
+            if (tg.themeParams.text_color) r.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color);
+            if (tg.themeParams.hint_color) r.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color);
+            if (tg.themeParams.button_color) r.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color);
+            if (tg.themeParams.button_text_color) r.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color);
         }
 
-        // Получаем параметры
         const startParam = tg.initDataUnsafe?.start_param || '';
         const user = tg.initDataUnsafe?.user;
+        const API = window.location.origin;
 
         let visitId = null;
         let channelData = null;
+        let checkInterval = null;
+        let ymReady = false;
 
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function showError(msg) {
+            document.getElementById('errorText').textContent = msg;
+            showScreen('screenError');
+        }
+
+        // ── Yandex Metrika ──
+        function initMetrika(counterId) {
+            if (!counterId) return;
+            const id = Number(counterId);
+            if (!id) return;
+
+            window.ym = window.ym || function() { (window.ym.a = window.ym.a || []).push(arguments); };
+            window.ym.l = +new Date();
+
+            const s = document.createElement('script');
+            s.src = 'https://mc.yandex.ru/metrika/tag.js';
+            s.async = true;
+            document.head.appendChild(s);
+
+            s.onload = () => {
+                ym(id, 'init', {
+                    clickmap: false, trackLinks: false, accurateTrackBounce: true,
+                    params: { telegram_id: user?.id, utm_source: channelData?.utm?.source, utm_campaign: channelData?.utm?.campaign }
+                });
+                ymReady = true;
+                console.log('[YM] Initialized counter:', id);
+            };
+        }
+
+        function fireMetrikaGoal(goalName) {
+            if (!ymReady || !window.ym) return;
+            const id = Number(channelData?.metrika?.counter_id);
+            if (!id || !goalName) return;
+
+            ym(id, 'reachGoal', goalName, {
+                telegram_id: user?.id,
+                utm_source: channelData?.utm?.source,
+                utm_campaign: channelData?.utm?.campaign
+            });
+            console.log('[YM] Goal fired:', goalName, 'counter:', id);
+        }
+
+        // ── Main flow ──
         async function init() {
-            if (!startParam) {
-                showError('Неверная ссылка');
-                return;
-            }
+            if (!startParam) { showError('Неверная ссылка'); return; }
 
             try {
-                // Получаем информацию о ссылке
-                const infoRes = await fetch('/api/track/info/' + startParam);
+                // 1. Get link info
+                const infoRes = await fetch(API + '/api/track/info/' + startParam);
                 const info = await infoRes.json();
-
-                if (!info.success) {
-                    showError(info.error || 'Ссылка не найдена');
-                    return;
-                }
+                if (!info.success) { showError(info.error || 'Ссылка не найдена'); return; }
 
                 channelData = info;
+                const channelUrl = 'https://t.me/' + info.channel.username;
 
-                // Показываем контент
-                document.getElementById('channel-name').textContent = info.channel.title;
-                document.getElementById('subscribe-btn').href = 'https://t.me/' + info.channel.username;
+                // 2. Init Metrika (link-level counter)
+                initMetrika(info.metrika?.counter_id);
 
-                document.getElementById('loader').classList.remove('active');
-                document.getElementById('content').classList.add('active');
+                // 3. Record visit
+                const visitRes = await fetch(API + '/api/track/visit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        shortCode: startParam, initData: tg.initData,
+                        telegramId: user?.id, username: user?.username, firstName: user?.first_name
+                    })
+                });
+                const visitData = await visitRes.json();
+                if (visitData.success) visitId = visitData.visitId;
 
-                // Инициализируем аналитику (канал + ссылка)
-                initAnalytics(info.analytics);
-                initLinkMetrika(info.metrika);
+                // 4. Setup UI
+                document.getElementById('channelName').textContent = info.channel.title;
+                document.getElementById('openChannelBtn').href = channelUrl;
+                document.getElementById('openChannelBtn2').href = channelUrl;
 
-                // Записываем визит
-                await trackVisit();
+                // 5. Auto-open channel
+                showScreen('screenSubscribe');
 
-                // Отправляем событие "открыл мини-апп"
-                sendAnalyticsEvent('miniapp_opened');
+                // Open channel link via Telegram
+                try {
+                    tg.openTelegramLink(channelUrl);
+                } catch (e) {
+                    // Fallback: just show the button
+                    console.log('Could not auto-open, showing button');
+                }
+
+                // 6. Start polling for subscription
+                startSubscriptionCheck(info.channel.id);
+
+                // Open channel button handlers
+                document.getElementById('openChannelBtn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    try { tg.openTelegramLink(channelUrl); } catch(err) { window.open(channelUrl, '_blank'); }
+                    showScreen('screenChecking');
+                });
+                document.getElementById('openChannelBtn2').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    try { tg.openTelegramLink(channelUrl); } catch(err) { window.open(channelUrl, '_blank'); }
+                });
 
             } catch (e) {
                 console.error('Init error:', e);
@@ -222,192 +216,61 @@
             }
         }
 
-        async function trackVisit() {
-            try {
-                const res = await fetch('/api/track/visit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        shortCode: startParam,
-                        initData: tg.initData,
-                        telegramId: user?.id,
-                        username: user?.username,
-                        firstName: user?.first_name
-                    })
-                });
+        function startSubscriptionCheck(channelId) {
+            if (!user?.id) return;
+            let attempts = 0;
 
-                const data = await res.json();
-                if (data.success) {
-                    visitId = data.visitId;
-                    console.log('Visit tracked:', visitId);
-                }
-            } catch (e) {
-                console.error('Track visit error:', e);
-            }
-        }
+            checkInterval = setInterval(async () => {
+                attempts++;
+                try {
+                    const res = await fetch(API + `/api/track/check-subscription?channelId=${channelId}&telegramId=${user.id}`);
+                    const data = await res.json();
 
-        // Инициализация аналитики
-        function initAnalytics(analytics) {
-            // Яндекс Метрика
-            if (analytics.yandex_metrika_id) {
-                const ymId = analytics.yandex_metrika_id;
-                window.ym = window.ym || function() { (window.ym.a = window.ym.a || []).push(arguments); };
-                window.ym.l = +new Date();
-
-                const script = document.createElement('script');
-                script.src = 'https://mc.yandex.ru/metrika/tag.js';
-                script.async = true;
-                document.head.appendChild(script);
-
-                script.onload = () => {
-                    ym(ymId, 'init', {
-                        clickmap: true,
-                        trackLinks: true,
-                        accurateTrackBounce: true,
-                        webvisor: false,
-                        params: {
-                            telegram_id: user?.id,
-                            utm_source: channelData?.utm?.source,
-                            utm_campaign: channelData?.utm?.campaign
-                        }
-                    });
-                    console.log('YM initialized:', ymId);
-                };
-            }
-
-            // VK Pixel
-            if (analytics.vk_pixel_id) {
-                const vkId = analytics.vk_pixel_id;
-                window.VK = window.VK || {};
-                window.VK.Retargeting = window.VK.Retargeting || {};
-
-                const script = document.createElement('script');
-                script.src = 'https://vk.com/js/api/openapi.js?169';
-                script.async = true;
-                document.head.appendChild(script);
-
-                script.onload = () => {
-                    VK.Retargeting.Init(vkId);
-                    VK.Retargeting.Hit();
-                    console.log('VK Pixel initialized:', vkId);
-                };
-            }
-        }
-
-        // Отправка событий аналитики
-        function sendAnalyticsEvent(eventName, params = {}) {
-            const eventParams = {
-                telegram_id: user?.id,
-                utm_source: channelData?.utm?.source,
-                utm_campaign: channelData?.utm?.campaign,
-                ...params
-            };
-
-            // Яндекс Метрика
-            if (channelData?.analytics?.yandex_metrika_id && window.ym) {
-                ym(channelData.analytics.yandex_metrika_id, 'reachGoal', eventName, eventParams);
-                console.log('YM event:', eventName);
-            }
-
-            // VK Pixel
-            if (channelData?.analytics?.vk_pixel_id && window.VK?.Retargeting) {
-                VK.Retargeting.Event(eventName);
-                console.log('VK event:', eventName);
-            }
-        }
-
-        // Инициализация Яндекс Метрики из настроек ссылки
-        function initLinkMetrika(metrika) {
-            if (!metrika || !metrika.counter_id) return;
-
-            const ymId = Number(metrika.counter_id);
-            if (!ymId) return;
-
-            // Не инициализировать повторно если уже есть тот же счётчик с канала
-            if (channelData?.analytics?.yandex_metrika_id === metrika.counter_id) {
-                console.log('Link YM counter matches channel counter, skipping duplicate');
-                return;
-            }
-
-            window['ym_link'] = window['ym_link'] || function() {
-                (window['ym_link'].a = window['ym_link'].a || []).push(arguments);
-            };
-
-            const script = document.createElement('script');
-            script.src = 'https://mc.yandex.ru/metrika/tag.js';
-            script.async = true;
-            document.head.appendChild(script);
-
-            script.onload = () => {
-                if (!window.ym) {
-                    window.ym = function() { (window.ym.a = window.ym.a || []).push(arguments); };
-                    window.ym.l = +new Date();
-                }
-                ym(ymId, 'init', {
-                    clickmap: false,
-                    trackLinks: false,
-                    accurateTrackBounce: true,
-                    params: {
-                        telegram_id: user?.id,
-                        utm_source: channelData?.utm?.source,
-                        utm_campaign: channelData?.utm?.campaign,
-                        link_code: startParam
+                    if (data.subscribed) {
+                        clearInterval(checkInterval);
+                        onSubscribed();
+                    } else if (attempts > 5) {
+                        // Show checking screen after a few attempts
+                        showScreen('screenChecking');
                     }
-                });
-                console.log('Link YM initialized:', ymId);
-            };
+                } catch (e) {
+                    console.error('Check error:', e);
+                }
+            }, 2500);
+
+            // Stop after 5 minutes
+            setTimeout(() => { if (checkInterval) clearInterval(checkInterval); }, 300000);
         }
 
-        // Отправить цель Яндекс Метрики из настроек ссылки
-        function fireLinkMetrikaGoal() {
-            const metrika = channelData?.metrika;
-            if (!metrika || !metrika.counter_id || !metrika.goal_name) return;
+        async function onSubscribed() {
+            // 1. Fire Metrika goal
+            const goalName = channelData?.metrika?.goal_name;
+            if (goalName) {
+                fireMetrikaGoal(goalName);
+            }
 
-            const ymId = Number(metrika.counter_id);
-            if (!ymId || !window.ym) return;
-
-            ym(ymId, 'reachGoal', metrika.goal_name, {
-                telegram_id: user?.id,
-                utm_source: channelData?.utm?.source,
-                utm_campaign: channelData?.utm?.campaign,
-                link_code: startParam
-            });
-            console.log('Link YM goal fired:', metrika.goal_name, 'counter:', ymId);
-        }
-
-        // Клик по кнопке подписки
-        document.getElementById('subscribe-btn').addEventListener('click', () => {
-            sendAnalyticsEvent('subscribe_clicked');
-
-            // Стреляем цель Яндекс Метрики из настроек ссылки
-            fireLinkMetrikaGoal();
-
-            // Записываем подписку (предварительно, реальная подписка отслеживается через chat_member)
-            if (user?.id) {
-                fetch('/api/track/subscribe', {
+            // 2. Record subscription in DB
+            try {
+                await fetch(API + '/api/track/subscribe', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        shortCode: startParam,
-                        initData: tg.initData,
-                        telegramId: user.id,
-                        username: user.username,
-                        firstName: user.first_name,
-                        visitId: visitId
+                        shortCode: startParam, initData: tg.initData,
+                        telegramId: user?.id, username: user?.username,
+                        firstName: user?.first_name, visitId
                     })
-                }).catch(console.error);
-            }
-        });
+                });
+            } catch (e) { console.error('Subscribe record error:', e); }
 
-        function showError(message) {
-            document.getElementById('loader').classList.remove('active');
-            document.getElementById('content').classList.add('active');
-            document.getElementById('error').textContent = message;
-            document.getElementById('error').style.display = 'block';
-            document.getElementById('subscribe-btn').style.display = 'none';
+            // 3. Show success screen
+            document.getElementById('successText').textContent =
+                `Спасибо за подписку на ${channelData?.channel?.title || 'канал'}!`;
+            showScreen('screenSuccess');
+
+            // 4. Close mini app after delay
+            setTimeout(() => { try { tg.close(); } catch(e) {} }, 3000);
         }
 
-        // Запуск
         init();
     </script>
 </body>

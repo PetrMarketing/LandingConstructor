@@ -148,6 +148,27 @@ router.post('/visit', (req, res) => {
     });
 });
 
+// Проверить подписку пользователя на канал через Bot API
+router.get('/check-subscription', async (req, res) => {
+    const { channelId, telegramId } = req.query;
+    if (!channelId || !telegramId) {
+        return res.json({ success: false, subscribed: false });
+    }
+
+    try {
+        const { getBot } = require('../bot');
+        const bot = getBot();
+        if (!bot) return res.json({ success: false, subscribed: false });
+
+        const member = await bot.api.getChatMember(channelId, telegramId);
+        const subscribed = ['member', 'administrator', 'creator'].includes(member.status);
+        res.json({ success: true, subscribed });
+    } catch (e) {
+        // User not found in channel = not subscribed
+        res.json({ success: true, subscribed: false });
+    }
+});
+
 // Записать подписку (вызывается после проверки подписки в Mini App)
 router.post('/subscribe', (req, res) => {
     const { shortCode, initData, telegramId, username, firstName, visitId, platform, maxUserId } = req.body;

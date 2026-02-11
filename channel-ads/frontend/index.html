@@ -306,6 +306,15 @@
                 <div class="instruction-box">
                     <p>Используйте эту ссылку в рекламе. Когда пользователь перейдёт по ней и подпишется на канал — это будет отслежено в статистике.</p>
                 </div>
+                <div class="instruction-box" style="background: #fff3cd; border-color: #ffc107; color: #856404; margin-top: 12px;">
+                    <h4 style="margin-bottom: 8px;">⚠️ Важно: настройте Яндекс Метрику</h4>
+                    <p style="margin-bottom: 8px;">Для передачи событий подписки в Метрику, откройте <b>настройки ссылки</b> (иконка ⚙️) и укажите:</p>
+                    <ol style="margin-left: 16px; line-height: 1.8;">
+                        <li><b>Номер счётчика</b> — ID из Яндекс Метрики</li>
+                        <li><b>Название цели</b> — JS-событие (например: <code>subscribe_channel</code>)</li>
+                    </ol>
+                    <p style="margin-top: 8px; font-size: 13px;">После подписки пользователя событие автоматически отправится в Метрику.</p>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" id="closeLinkCreatedBtn">Готово</button>
