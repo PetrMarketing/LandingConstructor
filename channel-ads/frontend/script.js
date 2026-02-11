@@ -514,7 +514,7 @@ function renderLinks(links) {
         // Generate URL based on channel platform
         let fullUrl;
         if (channelPlatform === 'max') {
-            fullUrl = `https://max.ru/app/id575307462228_bot?startapp=${link.short_code}`;
+            fullUrl = `https://max.ru/id575307462228_bot?startapp=${link.short_code}`;
         } else {
             fullUrl = `https://t.me/PKmarketingBot/subscribe?startapp=${link.short_code}`;
         }
@@ -651,7 +651,7 @@ function openLinkSettings(linkId, shortCode, ymCounterId, ymGoalName) {
     const channelPlatform = selectedChannel?.platform || 'telegram';
     let fullUrl;
     if (channelPlatform === 'max') {
-        fullUrl = `https://max.ru/app/id575307462228_bot?startapp=${shortCode}`;
+        fullUrl = `https://max.ru/id575307462228_bot?startapp=${shortCode}`;
     } else {
         fullUrl = `https://t.me/PKmarketingBot/subscribe?startapp=${shortCode}`;
     }
