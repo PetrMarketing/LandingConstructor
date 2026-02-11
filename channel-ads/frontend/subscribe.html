@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Подписка на канал</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://st.max.ru/js/max-web-app.js"></script>
     <style>
         :root {
             --tg-theme-bg-color: #ffffff;
@@ -39,8 +40,6 @@
         .error { color: #dc3545; margin-top: 16px; }
         .screen { display: none; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
-        .dots { display: inline-block; width: 20px; text-align: left; }
-        @keyframes dots { 0% { content: ''; } 33% { content: '.'; } 66% { content: '..'; } 100% { content: '...'; } }
     </style>
 </head>
 <body>
@@ -82,24 +81,58 @@
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
+        // ── Platform detection ──
+        let detectedPlatform = 'unknown';
+        let startParam = '';
+        let user = null;
+        let initData = '';
 
-        // Apply theme
-        if (tg.themeParams) {
-            const r = document.documentElement;
-            if (tg.themeParams.bg_color) r.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color);
-            if (tg.themeParams.text_color) r.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color);
-            if (tg.themeParams.hint_color) r.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color);
-            if (tg.themeParams.button_color) r.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color);
-            if (tg.themeParams.button_text_color) r.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color);
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Detect MAX
+        if (window.WebApp && window.WebApp.initDataUnsafe && window.WebApp.initDataUnsafe.start_param) {
+            detectedPlatform = 'max';
+            window.WebApp.ready();
+            startParam = window.WebApp.initDataUnsafe.start_param;
+            initData = window.WebApp.initData || '';
+            const mu = window.WebApp.initDataUnsafe.user;
+            if (mu) {
+                user = { id: mu.id, username: mu.username, first_name: mu.first_name };
+            }
+            console.log('[Platform] MAX detected, startParam:', startParam);
+        }
+        // Detect Telegram
+        else if (window.Telegram && window.Telegram.WebApp) {
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+            tg.expand();
+            if (tg.initDataUnsafe?.start_param) {
+                detectedPlatform = 'telegram';
+                startParam = tg.initDataUnsafe.start_param;
+                initData = tg.initData || '';
+                const tu = tg.initDataUnsafe.user;
+                if (tu) {
+                    user = { id: tu.id, username: tu.username, first_name: tu.first_name };
+                }
+                // Apply Telegram theme
+                if (tg.themeParams) {
+                    const r = document.documentElement;
+                    if (tg.themeParams.bg_color) r.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color);
+                    if (tg.themeParams.text_color) r.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color);
+                    if (tg.themeParams.hint_color) r.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color);
+                    if (tg.themeParams.button_color) r.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color);
+                    if (tg.themeParams.button_text_color) r.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color);
+                }
+                console.log('[Platform] Telegram detected, startParam:', startParam);
+            }
         }
 
-        const startParam = tg.initDataUnsafe?.start_param || '';
-        const user = tg.initDataUnsafe?.user;
-        const API = window.location.origin;
+        // Fallback: try URL param
+        if (!startParam) {
+            startParam = urlParams.get('startapp') || '';
+        }
 
+        const API = window.location.origin;
         let visitId = null;
         let channelData = null;
         let checkInterval = null;
@@ -113,6 +146,40 @@
         function showError(msg) {
             document.getElementById('errorText').textContent = msg;
             showScreen('screenError');
+        }
+
+        // ── Open channel link (platform-aware) ──
+        function openChannelLink(url) {
+            try {
+                if (detectedPlatform === 'max' && window.WebApp) {
+                    // MAX: use openLink for external URLs or openMaxLink for max.ru links
+                    if (url.includes('max.ru')) {
+                        window.WebApp.openMaxLink(url);
+                    } else {
+                        window.WebApp.openLink(url);
+                    }
+                } else if (detectedPlatform === 'telegram' && window.Telegram) {
+                    window.Telegram.WebApp.openTelegramLink(url);
+                } else {
+                    window.open(url, '_blank');
+                }
+            } catch (e) {
+                console.log('Could not open link, fallback:', e);
+                window.open(url, '_blank');
+            }
+        }
+
+        // ── Close mini app ──
+        function closeMiniApp() {
+            try {
+                if (detectedPlatform === 'max' && window.WebApp) {
+                    window.WebApp.close();
+                } else if (detectedPlatform === 'telegram' && window.Telegram) {
+                    window.Telegram.WebApp.close();
+                }
+            } catch (e) {
+                console.log('Could not close mini app:', e);
+            }
         }
 
         // ── Yandex Metrika ──
@@ -132,7 +199,7 @@
             s.onload = () => {
                 ym(id, 'init', {
                     clickmap: false, trackLinks: false, accurateTrackBounce: true,
-                    params: { telegram_id: user?.id, utm_source: channelData?.utm?.source, utm_campaign: channelData?.utm?.campaign }
+                    params: { user_id: user?.id, platform: detectedPlatform, utm_source: channelData?.utm?.source, utm_campaign: channelData?.utm?.campaign }
                 });
                 ymReady = true;
                 console.log('[YM] Initialized counter:', id);
@@ -145,11 +212,28 @@
             if (!id || !goalName) return;
 
             ym(id, 'reachGoal', goalName, {
-                telegram_id: user?.id,
+                user_id: user?.id,
+                platform: detectedPlatform,
                 utm_source: channelData?.utm?.source,
                 utm_campaign: channelData?.utm?.campaign
             });
             console.log('[YM] Goal fired:', goalName, 'counter:', id);
+        }
+
+        // ── Build channel URL based on platform ──
+        function getChannelUrl(info) {
+            const channelPlatform = info.platform || 'telegram';
+
+            if (channelPlatform === 'max') {
+                // MAX channel: use the stored link or construct from chat_id
+                if (info.channel.username && info.channel.username.startsWith('http')) {
+                    return info.channel.username;
+                }
+                return 'https://max.ru/chat/' + (info.channel.max_chat_id || info.channel.id);
+            }
+
+            // Telegram channel
+            return 'https://t.me/' + info.channel.username;
         }
 
         // ── Main flow ──
@@ -163,19 +247,32 @@
                 if (!info.success) { showError(info.error || 'Ссылка не найдена'); return; }
 
                 channelData = info;
-                const channelUrl = 'https://t.me/' + info.channel.username;
+                const channelPlatform = info.platform || 'telegram';
+                const channelUrl = getChannelUrl(info);
 
                 // 2. Init Metrika (link-level counter)
                 initMetrika(info.metrika?.counter_id);
 
                 // 3. Record visit
+                const visitBody = {
+                    shortCode: startParam,
+                    initData: initData,
+                    platform: detectedPlatform !== 'unknown' ? detectedPlatform : channelPlatform
+                };
+                if (detectedPlatform === 'max') {
+                    visitBody.maxUserId = user?.id;
+                    visitBody.username = user?.username;
+                    visitBody.firstName = user?.first_name;
+                } else {
+                    visitBody.telegramId = user?.id;
+                    visitBody.username = user?.username;
+                    visitBody.firstName = user?.first_name;
+                }
+
                 const visitRes = await fetch(API + '/api/track/visit', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        shortCode: startParam, initData: tg.initData,
-                        telegramId: user?.id, username: user?.username, firstName: user?.first_name
-                    })
+                    body: JSON.stringify(visitBody)
                 });
                 const visitData = await visitRes.json();
                 if (visitData.success) visitId = visitData.visitId;
@@ -185,29 +282,22 @@
                 document.getElementById('openChannelBtn').href = channelUrl;
                 document.getElementById('openChannelBtn2').href = channelUrl;
 
-                // 5. Auto-open channel
+                // 5. Show subscribe screen & auto-open channel
                 showScreen('screenSubscribe');
-
-                // Open channel link via Telegram
-                try {
-                    tg.openTelegramLink(channelUrl);
-                } catch (e) {
-                    // Fallback: just show the button
-                    console.log('Could not auto-open, showing button');
-                }
+                openChannelLink(channelUrl);
 
                 // 6. Start polling for subscription
-                startSubscriptionCheck(info.channel.id);
+                startSubscriptionCheck(info.channel.id, channelPlatform);
 
                 // Open channel button handlers
                 document.getElementById('openChannelBtn').addEventListener('click', (e) => {
                     e.preventDefault();
-                    try { tg.openTelegramLink(channelUrl); } catch(err) { window.open(channelUrl, '_blank'); }
+                    openChannelLink(channelUrl);
                     showScreen('screenChecking');
                 });
                 document.getElementById('openChannelBtn2').addEventListener('click', (e) => {
                     e.preventDefault();
-                    try { tg.openTelegramLink(channelUrl); } catch(err) { window.open(channelUrl, '_blank'); }
+                    openChannelLink(channelUrl);
                 });
 
             } catch (e) {
@@ -216,21 +306,28 @@
             }
         }
 
-        function startSubscriptionCheck(channelId) {
+        function startSubscriptionCheck(channelId, channelPlatform) {
             if (!user?.id) return;
             let attempts = 0;
 
             checkInterval = setInterval(async () => {
                 attempts++;
                 try {
-                    const res = await fetch(API + `/api/track/check-subscription?channelId=${channelId}&telegramId=${user.id}`);
+                    // Build check URL based on platform
+                    let checkUrl;
+                    if (channelPlatform === 'max' || detectedPlatform === 'max') {
+                        checkUrl = API + `/api/track/check-subscription?channelId=${channelId}&maxUserId=${user.id}&platform=max`;
+                    } else {
+                        checkUrl = API + `/api/track/check-subscription?channelId=${channelId}&telegramId=${user.id}`;
+                    }
+
+                    const res = await fetch(checkUrl);
                     const data = await res.json();
 
                     if (data.subscribed) {
                         clearInterval(checkInterval);
                         onSubscribed();
                     } else if (attempts > 5) {
-                        // Show checking screen after a few attempts
                         showScreen('screenChecking');
                     }
                 } catch (e) {
@@ -251,14 +348,26 @@
 
             // 2. Record subscription in DB
             try {
+                const subBody = {
+                    shortCode: startParam,
+                    initData: initData,
+                    visitId,
+                    platform: detectedPlatform !== 'unknown' ? detectedPlatform : (channelData?.platform || 'telegram')
+                };
+                if (detectedPlatform === 'max') {
+                    subBody.maxUserId = user?.id;
+                    subBody.username = user?.username;
+                    subBody.firstName = user?.first_name;
+                } else {
+                    subBody.telegramId = user?.id;
+                    subBody.username = user?.username;
+                    subBody.firstName = user?.first_name;
+                }
+
                 await fetch(API + '/api/track/subscribe', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        shortCode: startParam, initData: tg.initData,
-                        telegramId: user?.id, username: user?.username,
-                        firstName: user?.first_name, visitId
-                    })
+                    body: JSON.stringify(subBody)
                 });
             } catch (e) { console.error('Subscribe record error:', e); }
 
@@ -268,7 +377,7 @@
             showScreen('screenSuccess');
 
             // 4. Close mini app after delay
-            setTimeout(() => { try { tg.close(); } catch(e) {} }, 3000);
+            setTimeout(() => closeMiniApp(), 3000);
         }
 
         init();

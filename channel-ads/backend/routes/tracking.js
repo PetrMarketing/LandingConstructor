@@ -148,9 +148,21 @@ router.post('/visit', (req, res) => {
     });
 });
 
-// Проверить подписку пользователя на канал через Bot API
+// Проверить подписку пользователя на канал
 router.get('/check-subscription', async (req, res) => {
-    const { channelId, telegramId } = req.query;
+    const { channelId, telegramId, maxUserId, platform } = req.query;
+
+    // MAX: check our DB (subscriptions recorded via webhook)
+    if (platform === 'max' && maxUserId) {
+        const db = getDb();
+        const sub = db.prepare(`
+            SELECT id FROM subscriptions
+            WHERE channel_id = ? AND max_user_id = ?
+        `).get(channelId, maxUserId);
+        return res.json({ success: true, subscribed: !!sub });
+    }
+
+    // Telegram: check via Bot API
     if (!channelId || !telegramId) {
         return res.json({ success: false, subscribed: false });
     }
