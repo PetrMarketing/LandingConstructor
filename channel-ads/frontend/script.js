@@ -296,6 +296,12 @@ function openChannelSettings(trackingCode) {
     document.getElementById('maxConnectedInfo').style.display = 'none';
     document.getElementById('maxStatusLabel').textContent = 'Загрузка...';
 
+    // Set Metrika domain
+    const metrikaDomain = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'channel-ads.onrender.com'
+        : window.location.hostname;
+    document.getElementById('settingsMetrikaDomain').value = metrikaDomain;
+
     openModal('channelSettingsModal');
 
     // Load MAX status

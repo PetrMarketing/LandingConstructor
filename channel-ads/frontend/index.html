@@ -203,13 +203,43 @@
             <div class="modal-body">
                 <input type="hidden" id="settingsChannelCode">
 
-                <h4 class="settings-section-title">Аналитика</h4>
+                <h4 class="settings-section-title">Яндекс Метрика</h4>
+
+                <div class="instruction-box" style="background: #e8f4fd; border-color: #2196f3; margin-bottom: 16px;">
+                    <h4 style="margin-bottom: 10px;">📊 Настройка счётчика</h4>
+                    <p style="margin-bottom: 8px;">При создании счётчика в <b>Яндекс Метрике</b> укажите:</p>
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <label style="font-size: 13px; color: #555;">Адрес сайта:</label>
+                        <div class="link-display">
+                            <input type="text" id="settingsMetrikaDomain" readonly style="font-weight: 600;">
+                            <button class="btn btn-outline btn-small" onclick="copyToClipboard(document.getElementById('settingsMetrikaDomain').value)">📋</button>
+                        </div>
+                    </div>
+                    <p style="margin-bottom: 10px; font-size: 13px; color: #555;">Имя счётчика — любое (например, название канала)</p>
+
+                    <div class="divider" style="margin: 12px 0;"></div>
+
+                    <h4 style="margin-bottom: 10px;">🎯 Настройка цели</h4>
+                    <p style="margin-bottom: 8px;">В счётчике создайте цель → тип <b>«JavaScript-событие»</b>:</p>
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <label style="font-size: 13px; color: #555;">Идентификатор цели:</label>
+                        <div class="link-display">
+                            <input type="text" value="subscribe_channel" readonly style="font-weight: 600;">
+                            <button class="btn btn-outline btn-small" onclick="copyToClipboard('subscribe_channel')">📋</button>
+                        </div>
+                    </div>
+                    <p style="font-size: 13px; color: #555;">Этот идентификатор укажите потом в настройках каждой ссылки</p>
+                </div>
 
                 <div class="form-group">
                     <label>ID счётчика Яндекс Метрики</label>
                     <input type="text" id="settingsYmId" placeholder="12345678">
-                    <div class="form-hint">Найдите в настройках Метрики: Настройка → Код счётчика</div>
+                    <div class="form-hint">После создания счётчика вставьте его номер сюда</div>
                 </div>
+
+                <div class="divider"></div>
+
+                <h4 class="settings-section-title">VK Реклама</h4>
 
                 <div class="form-group">
                     <label>ID пикселя VK Рекламы</label>
@@ -347,13 +377,13 @@
                 <div class="form-group">
                     <label>Номер счётчика Яндекс Метрики</label>
                     <input type="text" id="editYmCounterId" placeholder="12345678">
-                    <div class="form-hint">Счётчик будет встроен в Mini App для этой ссылки</div>
+                    <div class="form-hint">Номер из настроек канала (создайте счётчик в Метрике, если ещё нет)</div>
                 </div>
 
                 <div class="form-group">
-                    <label>Название цели (JS-событие)</label>
+                    <label>Идентификатор цели (JS-событие)</label>
                     <input type="text" id="editYmGoalName" placeholder="subscribe_channel">
-                    <div class="form-hint">Цель сработает при нажатии на кнопку подписки в Mini App</div>
+                    <div class="form-hint">Укажите тот же идентификатор, что создали в Метрике (например: <code>subscribe_channel</code>)</div>
                 </div>
             </div>
             <div class="modal-footer">
